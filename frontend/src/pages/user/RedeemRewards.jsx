@@ -88,7 +88,7 @@ const RedeemRewards = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-8 space-y-6">
+        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
           <div className="flex justify-between items-center">
             <div className="space-y-1">
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Redeem Points</h2>

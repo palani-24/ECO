@@ -45,7 +45,7 @@ const Leaderboard = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-8 space-y-8">
+        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-8">
           {/* Header */}
           <div className="space-y-2">
             <div className="flex items-center space-x-3">

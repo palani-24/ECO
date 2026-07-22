@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { 
   FaRecycle, FaMobileAlt, FaRobot, FaGift, FaArrowRight, 
   FaCheckCircle, FaChevronDown, FaChevronUp, FaMapMarkedAlt, 
-  FaRegPaperPlane, FaUserShield, FaChartPie, FaLeaf
+  FaRegPaperPlane, FaUserShield, FaChartPie, FaLeaf,
+  FaShareAlt, FaCopy, FaCheck, FaWhatsapp, FaTwitter, FaFacebook
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -13,6 +14,13 @@ const LandingPage = () => {
   const [faqOpen, setFaqOpen] = useState(null);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const stats = [
     { value: '25K+', label: 'Happy Users' },
@@ -136,7 +144,7 @@ const LandingPage = () => {
                 {/* Visual Simulation card */}
                 <div className="relative h-48 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-200/40 dark:border-slate-700">
                   <img 
-                    src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=400" 
+                    src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&auto=format&fit=crop&q=80" 
                     alt="AI Waste detection demo" 
                     className="w-full h-full object-cover opacity-80"
                   />
@@ -307,6 +315,77 @@ const LandingPage = () => {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Share Section */}
+      <section className="py-20 bg-gradient-to-tr from-emerald-500/10 via-transparent to-primary-500/10 border-y border-slate-200/40 dark:border-slate-800/80 transition-colors duration-300">
+        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
+          <div className="inline-flex p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+            <FaShareAlt className="h-6 w-6" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">Spread the Green Movement!</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+            Help your friends and family recycle smart, protect the environment, and earn valuable rewards. Share the EcoReward platform with them!
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto pt-2">
+            {/* Copy Link input/button */}
+            <div className="flex w-full items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+              <input 
+                type="text" 
+                readOnly
+                value={window.location.href}
+                className="flex-1 px-4 py-3 bg-transparent text-xs font-mono text-slate-600 dark:text-slate-400 focus:outline-none"
+              />
+              <button 
+                onClick={handleCopyLink}
+                className="px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs transition-colors flex items-center space-x-1.5"
+              >
+                {copied ? (
+                  <>
+                    <FaCheck className="h-3.5 w-3.5" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <FaCopy className="h-3.5 w-3.5" />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-4 pt-2">
+            <a 
+              href={`https://api.whatsapp.com/send?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!%20Check%20it%20out%20here:%20${encodeURIComponent(window.location.href)}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"
+            >
+              <FaWhatsapp className="h-4 w-4" />
+              <span>WhatsApp</span>
+            </a>
+            <a 
+              href={`https://twitter.com/intent/tweet?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!&url=${encodeURIComponent(window.location.href)}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"
+            >
+              <FaTwitter className="h-4 w-4" />
+              <span>Twitter / X</span>
+            </a>
+            <a 
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-750 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"
+            >
+              <FaFacebook className="h-4 w-4" />
+              <span>Facebook</span>
+            </a>
           </div>
         </div>
       </section>

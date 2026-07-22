@@ -220,7 +220,7 @@ const UserDashboard = () => {
         <Sidebar />
 
         {/* Main Dashboard Panel */}
-        <main className="flex-1 p-6 md:p-8 space-y-6 overflow-hidden">
+        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
           
           {/* Welcome Card */}
           <div className="bg-gradient-to-r from-emerald-600 to-primary-500 rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden">
@@ -525,6 +525,31 @@ const UserDashboard = () => {
                   <span>MAY</span>
                   <span>JUN</span>
                   <span>JUL</span>
+                </div>
+              </div>
+
+              {/* Share Platform Card */}
+              <div className="bg-gradient-to-tr from-emerald-500/10 to-primary-500/15 border border-emerald-500/20 p-5 rounded-3xl shadow-sm space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg">📢</span>
+                  <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm">Spread the word!</h3>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                  Invite your friends to join EcoReward and make the world a cleaner place.
+                </p>
+                <div className="flex items-center space-x-2 bg-white dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200/50 dark:border-slate-800/80">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 select-all truncate flex-1">
+                    {window.location.origin}
+                  </span>
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.origin);
+                      alert('Platform link copied to clipboard!');
+                    }}
+                    className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-[10px] font-bold"
+                  >
+                    Copy
+                  </button>
                 </div>
               </div>
 

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// The Vite dev server will proxy requests starting with /api to our Node server (port 5000)
+// Connect to deployed API url if VITE_API_URL env is set, otherwise use local /api proxy
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json'
   }

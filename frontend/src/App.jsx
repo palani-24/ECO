@@ -16,6 +16,7 @@ import SchedulePickup from './pages/user/SchedulePickup';
 import MyPickups from './pages/user/MyPickups';
 import RedeemRewards from './pages/user/RedeemRewards';
 import Profile from './pages/user/Profile';
+import Leaderboard from './pages/user/Leaderboard';
 
 // Driver Pages
 import DriverDashboard from './pages/driver/DriverDashboard';
@@ -71,6 +72,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['user']}>
                 <RedeemRewards />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/leaderboard" 
+            element={
+              <ProtectedRoute allowedRoles={['user']}>
+                <Leaderboard />
               </ProtectedRoute>
             } 
           />

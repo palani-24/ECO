@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
-  FaQrcode, FaDollarSign
+  FaQrcode, FaDollarSign, FaTrophy
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -23,6 +23,7 @@ const Sidebar = () => {
     { path: '/my-pickups', label: 'My Pickups', icon: FaHistory },
     { path: '/schedule-pickup', label: 'Schedule Pickup', icon: FaCalendarAlt },
     { path: '/redeem', label: 'Redeem Rewards', icon: FaGift },
+    { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/profile', label: 'Profile Settings', icon: FaUser },
   ];
 

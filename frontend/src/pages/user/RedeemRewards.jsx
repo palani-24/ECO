@@ -4,7 +4,10 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
-import { FaCoins, FaGift, FaTicketAlt, FaPaypal, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { 
+  FaCoins, FaGift, FaTicketAlt, FaPaypal, FaCheckCircle, 
+  FaExclamationTriangle, FaMobileAlt, FaUniversity, FaAmazon, FaShoppingCart 
+} from 'react-icons/fa';
 
 const RedeemRewards = () => {
   const { user } = useAuth();
@@ -14,6 +17,11 @@ const RedeemRewards = () => {
 
   // Forms
   const [cashbackEmail, setCashbackEmail] = useState('');
+  const [upiId, setUpiId] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [ifsc, setIfsc] = useState('');
+  const [accountHolderName, setAccountHolderName] = useState('');
   const [selectedCoupon, setSelectedCoupon] = useState(null);
 
   const [error, setError] = useState('');
@@ -60,6 +68,11 @@ const RedeemRewards = () => {
         // Refresh listings
         fetchRewardsData();
         setCashbackEmail('');
+        setUpiId('');
+        setBankName('');
+        setAccountNumber('');
+        setIfsc('');
+        setAccountHolderName('');
         setSelectedCoupon(null);
       }
     } catch (err) {
@@ -110,66 +123,197 @@ const RedeemRewards = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
-              {/* Left Cols - Coupons Catalog & Cashback Options */}
+              {/* Left Cols - Point Redemption Options */}
               <div className="lg:col-span-2 space-y-6">
                 
-                {/* Cashback claims */}
+                {/* Direct Point Claims (Amazon GC & EcoStore Coupon) */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
                   <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
-                    <FaPaypal className="text-sky-500" />
-                    <span>PayPal Cashback Rewards</span>
+                    <FaGift className="text-emerald-500" />
+                    <span>Instant Digital Vouchers</span>
                   </h3>
-                  <p className="text-xs text-slate-400 font-semibold">Deduct 500 points to cash out $5.00 PayPal transfer directly.</p>
                   
-                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                    <input 
-                      type="email" 
-                      value={cashbackEmail}
-                      onChange={(e) => setCashbackEmail(e.target.value)}
-                      placeholder="paypal@example.com" 
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-sm focus:outline-none"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Amazon Gift Card */}
+                    <div className="p-5 border border-slate-200 dark:border-slate-800/80 rounded-2xl flex flex-col justify-between h-44 hover:border-primary-500/50 transition-colors bg-slate-50/20">
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-1.5">
+                          <FaAmazon className="text-amber-600" />
+                          <span>$10 Amazon Gift Card</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                          Get a $10 digital gift card sent directly to your registered email address.
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">1000 pts</span>
+                        <button 
+                          onClick={() => handleRedeem('giftcard', { email: user?.email })}
+                          disabled={processLoading || (user?.points < 1000)}
+                          className="px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
+                        >
+                          Claim Card
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* EcoStore Coupon */}
+                    <div className="p-5 border border-slate-200 dark:border-slate-800/80 rounded-2xl flex flex-col justify-between h-44 hover:border-primary-500/50 transition-colors bg-slate-50/20">
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-1.5">
+                          <FaShoppingCart className="text-emerald-500" />
+                          <span>15% Off EcoStore Voucher</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                          Unlock a 15% discount code valid on organic and eco-friendly products.
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">300 pts</span>
+                        <button 
+                          onClick={() => handleRedeem('discount')}
+                          disabled={processLoading || (user?.points < 300)}
+                          className="px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
+                        >
+                          Claim Coupon
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cashback Claims (PayPal, UPI, Bank Transfer) */}
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-6">
+                  <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                    <FaCoins className="text-amber-500 animate-pulse" />
+                    <span>Cashout & Bank Transfers</span>
+                  </h3>
+                  
+                  {/* PayPal */}
+                  <div className="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-3 bg-slate-50/10">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                      <FaPaypal className="text-sky-500" />
+                      <span>PayPal Transfer ($5.00) — 500 points</span>
+                    </h4>
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <input 
+                        type="email" 
+                        value={cashbackEmail}
+                        onChange={(e) => setCashbackEmail(e.target.value)}
+                        placeholder="paypal-email@example.com" 
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                      <button 
+                        onClick={() => handleRedeem('cashback', { email: cashbackEmail })}
+                        disabled={processLoading || !cashbackEmail || (user?.points < 500)}
+                        className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-xs transition-colors disabled:opacity-50"
+                      >
+                        Claim
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* UPI Cashback */}
+                  <div className="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-3 bg-slate-50/10">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                      <FaMobileAlt className="text-indigo-500" />
+                      <span>UPI Cashback Transfer (₹100) — 400 points</span>
+                    </h4>
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <input 
+                        type="text" 
+                        value={upiId}
+                        onChange={(e) => setUpiId(e.target.value)}
+                        placeholder="username@upi / mobile@ybl" 
+                        className="flex-1 px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                      <button 
+                        onClick={() => handleRedeem('upi', { upiId })}
+                        disabled={processLoading || !upiId || (user?.points < 400)}
+                        className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-xs transition-colors disabled:opacity-50"
+                      >
+                        Claim
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Bank Transfer */}
+                  <div className="p-4 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-3 bg-slate-50/10">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                      <FaUniversity className="text-amber-600" />
+                      <span>Direct Bank Account Transfer (₹250) — 800 points</span>
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <input 
+                        type="text" 
+                        value={accountHolderName}
+                        onChange={(e) => setAccountHolderName(e.target.value)}
+                        placeholder="Account Holder Name" 
+                        className="px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                      <input 
+                        type="text" 
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
+                        placeholder="Bank Name" 
+                        className="px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                      <input 
+                        type="text" 
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        placeholder="Account Number" 
+                        className="px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                      <input 
+                        type="text" 
+                        value={ifsc}
+                        onChange={(e) => setIfsc(e.target.value)}
+                        placeholder="IFSC Code" 
+                        className="px-3 py-2 rounded-xl border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                      />
+                    </div>
                     <button 
-                      onClick={() => handleRedeem('cashback', { email: cashbackEmail })}
-                      disabled={processLoading || !cashbackEmail}
-                      className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center space-x-1.5 disabled:opacity-50"
+                      onClick={() => handleRedeem('bank_transfer', { bankName, accountNumber, ifsc, accountHolderName })}
+                      disabled={processLoading || !bankName || !accountNumber || !ifsc || !accountHolderName || (user?.points < 800)}
+                      className="w-full py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-xs transition-colors disabled:opacity-50"
                     >
-                      <span>Redeem $5 Cashback</span>
+                      Redeem ₹250 Bank Transfer
                     </button>
                   </div>
                 </div>
 
                 {/* Coupons Catalog */}
-                <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
-                  <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
-                    <FaTicketAlt className="text-amber-500" />
-                    <span>Purchase Coupons & Vouchers</span>
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {coupons.map((coupon) => (
-                      <div key={coupon._id} className="p-5 border border-slate-200 dark:border-slate-800/80 rounded-2xl flex flex-col justify-between h-44 hover:border-primary-500/50 transition-colors bg-slate-50/20">
-                        <div className="space-y-1">
-                          <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">{coupon.title}</h4>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">{coupon.description}</p>
+                {coupons.length > 0 && (
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                    <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                      <FaTicketAlt className="text-amber-500" />
+                      <span>Administrative Coupons & Vouchers</span>
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {coupons.map((coupon) => (
+                        <div key={coupon._id} className="p-5 border border-slate-200 dark:border-slate-800/80 rounded-2xl flex flex-col justify-between h-44 hover:border-primary-500/50 transition-colors bg-slate-50/20">
+                          <div className="space-y-1">
+                            <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">{coupon.title}</h4>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">{coupon.description}</p>
+                          </div>
+                          <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{coupon.pointsCost} pts</span>
+                            <button 
+                              onClick={() => handleRedeem('coupon', { couponId: coupon._id })}
+                              disabled={processLoading || (user?.points < coupon.pointsCost)}
+                              className="px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
+                            >
+                              Claim
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-800/60">
-                          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{coupon.pointsCost} pts</span>
-                          <button 
-                            onClick={() => handleRedeem('coupon', { couponId: coupon._id })}
-                            disabled={processLoading || (user?.points < coupon.pointsCost)}
-                            className="px-3.5 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
-                          >
-                            Claim
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    {coupons.length === 0 && (
-                      <p className="text-xs text-slate-400 py-4 col-span-2 text-center">No active coupons available in catalog.</p>
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
               </div>
 

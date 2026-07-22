@@ -204,6 +204,24 @@ export const redeemReward = async (req, res) => {
       provider = 'PayPal';
       code = `PAYPAL-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     } 
+    else if (rewardType === 'upi') {
+      const { upiId } = req.body;
+      if (!upiId) return res.status(400).json({ success: false, message: 'UPI ID is required' });
+      pointsCost = 400; // e.g. 400 points = ₹100 cashback
+      title = '₹100 UPI Cashback';
+      provider = 'UPI';
+      code = `UPI-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    } 
+    else if (rewardType === 'bank_transfer') {
+      const { bankName, accountNumber, ifsc, accountHolderName } = req.body;
+      if (!bankName || !accountNumber || !ifsc || !accountHolderName) {
+        return res.status(400).json({ success: false, message: 'All bank details are required' });
+      }
+      pointsCost = 800; // e.g. 800 points = ₹250 bank transfer
+      title = '₹250 Bank Transfer';
+      provider = 'Bank Transfer';
+      code = `BANK-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    } 
     else if (rewardType === 'giftcard') {
       pointsCost = 1000; // e.g. 1000 points = $10 Gift Card
       title = '$10 Amazon Gift Card';
@@ -242,7 +260,17 @@ export const redeemReward = async (req, res) => {
       pointsRedeemed: pointsCost,
       rewardType,
       status: rewardType === 'coupon' || rewardType === 'discount' ? 'completed' : 'pending',
-      details: { email, code, provider, title }
+      details: { 
+        email, 
+        code, 
+        provider, 
+        title,
+        upiId: req.body.upiId,
+        bankName: req.body.bankName,
+        accountNumber: req.body.accountNumber,
+        ifsc: req.body.ifsc,
+        accountHolderName: req.body.accountHolderName
+      }
     });
 
     // Send Notification
@@ -283,3 +311,17 @@ export const markNotificationRead = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Get User Leaderboard
+export const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await User.find({ role: 'user' })
+      .select('name points profileImage')
+      .sort({ points: -1 })
+      .limit(10);
+    res.json({ success: true, data: leaderboard });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

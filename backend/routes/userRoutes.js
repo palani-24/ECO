@@ -8,7 +8,8 @@ import {
   getMyRedemptions,
   redeemReward,
   getMyNotifications,
-  markNotificationRead
+  markNotificationRead,
+  getLeaderboard
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -26,5 +27,6 @@ router.get('/redemptions', getMyRedemptions);
 router.post('/redeem', redeemReward);
 router.get('/notifications', getMyNotifications);
 router.put('/notifications/:id/read', markNotificationRead);
+router.get('/leaderboard', getLeaderboard);
 
 export default router;

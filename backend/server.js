@@ -1,0 +1,75 @@
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import connectDB from './config/db.js';
+
+// Route Imports
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import driverRoutes from './routes/driverRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+
+// Load Env
+dotenv.config();
+
+// Connect DB
+connectDB();
+
+const app = express();
+
+// Security Middlewares
+app.use(helmet());
+app.use(cors({
+  origin: '*', // Set specific domain in production
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Body parser
+app.use(express.json());
+
+// Rate Limiting (Prevent abuse)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // limit each IP to 1000 requests per window
+  message: { success: false, message: 'Too many requests from this IP, please try again later.' }
+});
+app.use('/api/', limiter);
+
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/driver', driverRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Root Healthcheck
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'EcoReward AI Waste Management System API is running...',
+    version: '1.0.0',
+    timestamp: new Date()
+  });
+});
+
+// Custom 404 Route
+app.use((req, res, next) => {
+  res.status(404).json({ success: false, message: `Route not found - ${req.originalUrl}` });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('[Global Error Handler]', err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Server Error',
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+});

@@ -1,0 +1,225 @@
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import Driver from '../models/Driver.js';
+
+// Generate Token
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'ecoreward_secret_key_123', {
+    expiresIn: '30d'
+  });
+};
+
+/**
+ * @desc    Register a new user or driver
+ * @route   POST /api/auth/signup
+ * @access  Public
+ */
+export const registerUser = async (req, res) => {
+  const { name, email, password, role, vehicleNumber, vehicleType, address } = req.body;
+
+  try {
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
+    // Prepare default address if provided
+    const addresses = address ? [ { ...address, isDefault: true } ] : [];
+
+    // Create User
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: role || 'user',
+      addresses
+    });
+
+    if (user) {
+      let driver = null;
+
+      // If registering as a driver, create Driver profile (requires approval)
+      if (role === 'driver') {
+        if (!vehicleNumber || !vehicleType) {
+          await User.findByIdAndDelete(user._id);
+          return res.status(400).json({
+            success: false,
+            message: 'Vehicle number and type are required for driver registration'
+          });
+        }
+
+        driver = await Driver.create({
+          user: user._id,
+          vehicleNumber,
+          vehicleType,
+          isApproved: false, // Default is false; needs admin approval
+          status: 'inactive'
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          points: user.points,
+          addresses: user.addresses,
+          token: generateToken(user._id),
+          isApproved: driver ? driver.isApproved : undefined
+        }
+      });
+    } else {
+      res.status(400).json({ success: false, message: 'Invalid user data' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @desc    Auth user & get token
+ * @route   POST /api/auth/login
+ * @access  Public
+ */
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user && (await user.matchPassword(password))) {
+      let isApproved = true;
+
+      // If driver, check approval status
+      if (user.role === 'driver') {
+        const driver = await Driver.findOne({ user: user._id });
+        if (driver) {
+          isApproved = driver.isApproved;
+        }
+      }
+
+      res.json({
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          points: user.points,
+          addresses: user.addresses,
+          token: generateToken(user._id),
+          isApproved
+        }
+      });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @desc    Forgot Password Request
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ */
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // In production, send email with reset link containing signed token.
+    // For local test, we return a mock reset code.
+    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'ecoreward_secret_key_123', {
+      expiresIn: '10m'
+    });
+
+    console.log(`[Forgot Password] Reset token generated: ${resetToken}`);
+
+    res.json({
+      success: true,
+      message: 'Password reset link sent to your email. (Simulated)',
+      resetToken // Return for ease of use in local test
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * @desc    Reset Password
+ * @route   POST /api/auth/reset-password
+ * @access  Public
+ */
+export const resetPassword = async (req, res) => {
+  const { resetToken, newPassword } = req.body;
+  try {
+    if (!resetToken || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Reset token and new password are required' });
+    }
+
+    const decoded = jwt.verify(resetToken, process.env.JWT_SECRET || 'ecoreward_secret_key_123');
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Set new password
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ success: true, message: 'Password reset successful' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
+  }
+};
+
+/**
+ * @desc    Get Current User profile
+ * @route   GET /api/auth/profile
+ * @access  Private
+ */
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (user) {
+      let isApproved = true;
+      let driverDetails = null;
+
+      if (user.role === 'driver') {
+        const driver = await Driver.findOne({ user: user._id });
+        if (driver) {
+          isApproved = driver.isApproved;
+          driverDetails = driver;
+        }
+      }
+
+      res.json({
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          points: user.points,
+          addresses: user.addresses,
+          profileImage: user.profileImage,
+          isApproved,
+          driverDetails
+        }
+      });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

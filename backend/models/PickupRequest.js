@@ -1,0 +1,41 @@
+import mongoose from 'mongoose';
+
+const pickupRequestSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  driver: { type: mongoose.Schema.Types.ObjectId, ref: 'Driver' },
+  wasteCategory: { 
+    type: String, 
+    enum: ['Plastic', 'Paper', 'Metal', 'Glass', 'Organic', 'E-Waste'],
+    required: true 
+  },
+  estimatedWeight: { type: Number, required: true },
+  actualWeight: { type: Number },
+  pickupDate: { type: Date, required: true },
+  pickupTimeSlot: { type: String, required: true },
+  pickupAddress: {
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String, required: true }
+  },
+  status: { 
+    type: String, 
+    enum: ['pending', 'assigned', 'accepted', 'completed', 'cancelled'], 
+    default: 'pending' 
+  },
+  wasteImageUrl: { type: String },
+  wasteAnalysis: {
+    wasteType: { type: String },
+    estimatedWeight: { type: Number },
+    qualityScore: { type: Number },
+    confidenceScore: { type: Number }
+  },
+  pointsAwarded: { type: Number, default: 0 },
+  completedAt: { type: Date },
+  receiptUrl: { type: String }
+}, {
+  timestamps: true
+});
+
+const PickupRequest = mongoose.model('PickupRequest', pickupRequestSchema);
+export default PickupRequest;

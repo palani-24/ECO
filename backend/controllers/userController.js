@@ -77,7 +77,7 @@ export const manageAddresses = async (req, res) => {
 
 // Schedule Waste Pickup
 export const schedulePickup = async (req, res) => {
-  const { wasteCategory, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress } = req.body;
+  const { wasteCategory, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress, notes, isRecurring } = req.body;
 
   try {
     if (!wasteCategory || !estimatedWeight || !pickupDate || !pickupTimeSlot || !pickupAddress) {
@@ -92,7 +92,9 @@ export const schedulePickup = async (req, res) => {
       pickupDate,
       pickupTimeSlot,
       pickupAddress,
-      status: 'pending'
+      status: 'pending',
+      notes,
+      isRecurring: !!isRecurring
     });
 
     // Send pickup creation alert

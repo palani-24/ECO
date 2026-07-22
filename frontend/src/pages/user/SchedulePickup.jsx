@@ -16,6 +16,59 @@ const SchedulePickup = () => {
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTimeSlot, setPickupTimeSlot] = useState('10:00 AM - 12:00 PM');
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+  const [driverNotes, setDriverNotes] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [itemCounts, setItemCounts] = useState({
+    Plastic: 0,
+    Paper: 0,
+    Metal: 0,
+    Glass: 0,
+    Organic: 0,
+    'E-Waste': 0
+  });
+
+  const calculatorSpecs = {
+    Plastic: { label: 'Plastic Bottles / Containers', weight: 0.05, unit: 'pcs' },
+    Paper: { label: 'Cardboard Boxes / Paper Bundles', weight: 2.0, unit: 'items' },
+    Metal: { label: 'Metal Cans / Scrap Parts', weight: 0.1, unit: 'pcs' },
+    Glass: { label: 'Glass Bottles / Jars', weight: 0.3, unit: 'pcs' },
+    Organic: { label: 'Bio Waste Bags (approx 2L)', weight: 1.5, unit: 'bags' },
+    'E-Waste': { label: 'Old Chargers / Cables / Gadgets', weight: 0.8, unit: 'items' }
+  };
+
+  const guidelines = {
+    Plastic: [
+      'Wash and rinse containers to remove food residues.',
+      'Crush plastic bottles to reduce bulk.',
+      'Remove metal caps or non-plastic seals.'
+    ],
+    Paper: [
+      'Keep newspapers and cardboards dry.',
+      'Remove plastic wrappers, bindings, or glossy coatings.',
+      'Flatten all cardboard boxes before collection.'
+    ],
+    Metal: [
+      'Rinse beverage/food cans.',
+      'Separate aluminum items from iron or steel scraps.',
+      'Crush cans if possible to save space.'
+    ],
+    Glass: [
+      'Rinse bottles and jars completely.',
+      'Remove metal caps, lids, and corks.',
+      'Do NOT include window panes, mirrors, or ceramics.'
+    ],
+    Organic: [
+      'Only include food remains, vegetable skins, and dry leaves.',
+      'Do not mix plastic bags, metal wires, or glass scraps.',
+      'Drain excess water to keep it dry.'
+    ],
+    'E-Waste': [
+      'Remove dry batteries/cells from gadgets.',
+      'Wrap cables neatly to avoid tangling.',
+      'Handle glass displays carefully to avoid cracks.'
+    ]
+  };
 
   // New address helper if none exist
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -79,7 +132,9 @@ const SchedulePickup = () => {
       estimatedWeight,
       pickupDate,
       pickupTimeSlot,
-      pickupAddress: user.addresses[selectedAddressIndex]
+      pickupAddress: user.addresses[selectedAddressIndex],
+      notes: driverNotes,
+      isRecurring
     };
 
     try {
@@ -158,6 +213,21 @@ const SchedulePickup = () => {
                     </button>
                   ))}
                 </div>
+
+                {/* Guidelines Tips */}
+                {wasteCategory && guidelines[wasteCategory] && (
+                  <div className="p-5 bg-primary-50/50 dark:bg-primary-950/10 border border-primary-500/20 rounded-2xl space-y-2.5 animate-fadeIn">
+                    <h4 className="font-extrabold text-xs text-primary-700 dark:text-primary-400 uppercase tracking-wider flex items-center space-x-1.5">
+                      <span>♻️ {wasteCategory} Sorting Guidelines</span>
+                    </h4>
+                    <ul className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 font-semibold list-disc list-inside">
+                      {guidelines[wasteCategory].map((tip, idx) => (
+                        <li key={idx} className="leading-normal">{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 <div className="flex justify-end pt-4">
                   <button
                     disabled={!wasteCategory}
@@ -179,9 +249,18 @@ const SchedulePickup = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Weight Input */}
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1">
-                      <span>Estimated Weight (kg)</span>
-                    </label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1">
+                        <span>Estimated Weight (kg)</span>
+                      </label>
+                      <button 
+                        type="button" 
+                        onClick={() => setShowCalculator(!showCalculator)} 
+                        className="text-[10px] font-extrabold text-primary-500 hover:underline"
+                      >
+                        {showCalculator ? 'Hide Calculator' : 'Weight Calculator'}
+                      </button>
+                    </div>
                     <input
                       type="number"
                       min="1"
@@ -191,6 +270,77 @@ const SchedulePickup = () => {
                       required
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-sm focus:outline-none"
                     />
+
+                    {showCalculator && calculatorSpecs[wasteCategory] && (
+                      <div className="mt-2 p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3 animate-fadeIn">
+                        <div className="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-350">
+                          <span>{calculatorSpecs[wasteCategory].label}</span>
+                          <span className="font-mono text-emerald-600 dark:text-emerald-400">
+                            {calculatorSpecs[wasteCategory].weight} kg per {calculatorSpecs[wasteCategory].unit}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between space-x-2">
+                          <button 
+                            type="button"
+                            onClick={() => setItemCounts({
+                              ...itemCounts,
+                              [wasteCategory]: Math.max(0, itemCounts[wasteCategory] - 5)
+                            })}
+                            className="h-8 w-8 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-xs"
+                          >
+                            -5
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => setItemCounts({
+                              ...itemCounts,
+                              [wasteCategory]: Math.max(0, itemCounts[wasteCategory] - 1)
+                            })}
+                            className="h-8 w-8 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-xs"
+                          >
+                            -1
+                          </button>
+                          <span className="flex-1 text-center font-bold text-slate-800 dark:text-white text-xs">
+                            {itemCounts[wasteCategory]} {calculatorSpecs[wasteCategory].unit}
+                          </span>
+                          <button 
+                            type="button"
+                            onClick={() => setItemCounts({
+                              ...itemCounts,
+                              [wasteCategory]: itemCounts[wasteCategory] + 1
+                            })}
+                            className="h-8 w-8 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-xs"
+                          >
+                            +1
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => setItemCounts({
+                              ...itemCounts,
+                              [wasteCategory]: itemCounts[wasteCategory] + 5
+                            })}
+                            className="h-8 w-8 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-xs"
+                          >
+                            +5
+                          </button>
+                        </div>
+                        
+                        <div className="flex justify-between items-center border-t border-slate-200/50 dark:border-slate-750 pt-2.5">
+                          <span className="text-[11px] font-bold text-slate-500">Approx. Total: <span className="text-slate-850 dark:text-slate-200">{(itemCounts[wasteCategory] * calculatorSpecs[wasteCategory].weight).toFixed(2)} kg</span></span>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const calculated = Math.max(1, Math.round(itemCounts[wasteCategory] * calculatorSpecs[wasteCategory].weight));
+                              setEstimatedWeight(calculated);
+                              setShowCalculator(false);
+                            }}
+                            className="px-3 py-1.5 bg-primary-600 hover:bg-primary-750 text-white font-bold text-[10px] rounded-lg"
+                          >
+                            Apply Weight
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Date Input */}
@@ -303,6 +453,41 @@ const SchedulePickup = () => {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 dark:border-slate-805/60 pt-6">
+                  {/* Driver Notes input */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                      Instructions for Collection Driver
+                    </label>
+                    <textarea
+                      rows="3"
+                      value={driverNotes}
+                      onChange={(e) => setDriverNotes(e.target.value)}
+                      placeholder="e.g. Ring bell, leave bags at the gate, lift available..."
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Recurring pickup toggle */}
+                  <div className="space-y-3.5 bg-slate-50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800/85">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Recurring collection service</h4>
+                        <p className="text-[10px] text-slate-400 font-bold">Pick up waste every week automatically</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={isRecurring} 
+                          onChange={(e) => setIsRecurring(e.target.checked)} 
+                          className="sr-only peer" 
+                        />
+                        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-primary-600"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
                     onClick={() => setStep(1)}
@@ -340,6 +525,14 @@ const SchedulePickup = () => {
                   <div className="flex justify-between border-b border-slate-200/40 pb-2">
                     <span className="font-semibold text-slate-400">Scheduled Date & Slot:</span>
                     <span className="font-bold text-slate-800 dark:text-white">{pickupDate} ({pickupTimeSlot})</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/40 pb-2">
+                    <span className="font-semibold text-slate-400">Recurring Service:</span>
+                    <span className="font-bold text-slate-800 dark:text-white">{isRecurring ? 'Weekly' : 'One-time'}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/40 pb-2">
+                    <span className="font-semibold text-slate-400">Driver Notes:</span>
+                    <span className="font-bold text-slate-800 dark:text-white max-w-xs truncate">{driverNotes || 'None'}</span>
                   </div>
                   <div className="flex justify-between pb-2 items-start">
                     <span className="font-semibold text-slate-400">Pickup Address:</span>

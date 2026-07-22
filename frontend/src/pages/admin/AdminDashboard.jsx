@@ -82,7 +82,7 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-8 space-y-6">
+        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Admin Dashboard</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Monitor global waste quantities, B2B revenues, driver registrations, and point systems.</p>

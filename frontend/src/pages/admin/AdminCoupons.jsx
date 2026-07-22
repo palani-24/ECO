@@ -87,7 +87,7 @@ const AdminCoupons = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-8 space-y-6">
+        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Coupons Catalog</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Create and manage vouchers that customers purchase using reward points.</p>

@@ -17,7 +17,7 @@ const LandingPage = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText('https://eco-liart-eta.vercel.app');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -336,7 +336,7 @@ const LandingPage = () => {
               <input 
                 type="text" 
                 readOnly
-                value={window.location.href}
+                value="https://eco-liart-eta.vercel.app"
                 className="flex-1 px-4 py-3 bg-transparent text-xs font-mono text-slate-600 dark:text-slate-400 focus:outline-none"
               />
               <button 
@@ -360,7 +360,7 @@ const LandingPage = () => {
 
           <div className="flex items-center justify-center gap-4 pt-2">
             <a 
-              href={`https://api.whatsapp.com/send?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!%20Check%20it%20out%20here:%20${encodeURIComponent(window.location.href)}`}
+              href={`https://api.whatsapp.com/send?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!%20Check%20it%20out%20here:%20${encodeURIComponent('https://eco-liart-eta.vercel.app')}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center space-x-2 px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"
@@ -369,7 +369,7 @@ const LandingPage = () => {
               <span>WhatsApp</span>
             </a>
             <a 
-              href={`https://twitter.com/intent/tweet?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!&url=${encodeURIComponent(window.location.href)}`}
+              href={`https://twitter.com/intent/tweet?text=Join%20me%20on%20EcoReward%20to%20recycle%20smart%20and%20earn%20rewards!&url=${encodeURIComponent('https://eco-liart-eta.vercel.app')}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center space-x-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"
@@ -378,7 +378,7 @@ const LandingPage = () => {
               <span>Twitter / X</span>
             </a>
             <a 
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://eco-liart-eta.vercel.app')}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-750 text-white font-bold rounded-2xl text-xs shadow-sm transition-all"

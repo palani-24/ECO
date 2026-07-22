@@ -539,11 +539,11 @@ const UserDashboard = () => {
                 </p>
                 <div className="flex items-center space-x-2 bg-white dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200/50 dark:border-slate-800/80">
                   <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 select-all truncate flex-1">
-                    {window.location.origin}
+                    https://eco-liart-eta.vercel.app
                   </span>
                   <button 
                     onClick={() => {
-                      navigator.clipboard.writeText(window.location.origin);
+                      navigator.clipboard.writeText('https://eco-liart-eta.vercel.app');
                       alert('Platform link copied to clipboard!');
                     }}
                     className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-[10px] font-bold"

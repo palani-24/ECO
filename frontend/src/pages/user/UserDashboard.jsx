@@ -131,6 +131,33 @@ const UserDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [trackingDriver, setTrackingDriver] = useState(null);
+  const [monthlyRecycleKg, setMonthlyRecycleKg] = useState(25);
+
+  // Daily Spin Wheel States
+  const [showSpinWheel, setShowSpinWheel] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [wonPrize, setWonPrize] = useState(null);
+  const [rotation, setRotation] = useState(0);
+
+  const handleSpin = () => {
+    if (spinning) return;
+    setSpinning(true);
+    setWonPrize(null);
+
+    const prizes = [10, 25, 50, 100, 200];
+    const randomIndex = Math.floor(Math.random() * prizes.length);
+    const prize = prizes[randomIndex];
+    const extraDegrees = 360 * 5 + randomIndex * (360 / prizes.length);
+    const newRotation = rotation + extraDegrees;
+
+    setRotation(newRotation);
+
+    setTimeout(async () => {
+      setSpinning(false);
+      setWonPrize(prize);
+      user.points = (user.points || 0) + prize;
+    }, 3000);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -232,6 +259,14 @@ const UserDashboard = () => {
               <p className="text-sm opacity-90 max-w-xl">
                 Ready to make a difference today? Schedule a waste pickup, sorting items increases your point rates.
               </p>
+              <div className="pt-2 flex flex-wrap gap-3">
+                <button 
+                  onClick={() => setShowSpinWheel(true)}
+                  className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs shadow-md transition-all flex items-center space-x-1.5 animate-pulse"
+                >
+                  <span>🎰 Daily Bonus Spin Wheel</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -343,6 +378,73 @@ const UserDashboard = () => {
                     <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Energy Saved</p>
                   </div>
                 </div>
+              </div>
+
+              {/* IoT Smart Bin Telemetry Widget & Carbon Footprint Slider */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* IoT Smart Bin Telemetry */}
+                <div className="bg-slate-900 text-white p-5 rounded-3xl border border-slate-800 space-y-3 shadow-md">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-2">
+                      <span className="h-2.5 w-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                      <h4 className="font-extrabold text-xs text-white">📡 IoT Smart Bin Fleet Telemetry</h4>
+                    </div>
+                    <span className="text-[9px] font-mono bg-slate-800 text-emerald-400 px-2 py-0.5 rounded-md font-bold">ONLINE</span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between items-center p-2.5 bg-slate-800/60 rounded-xl border border-slate-700/50">
+                      <div>
+                        <p className="font-bold text-slate-200">SmartBin #08 (Eco Hub A)</p>
+                        <span className="text-[10px] text-slate-400 font-mono">Fill: 88% • Battery: 94%</span>
+                      </div>
+                      <span className="px-2 py-1 bg-amber-500/20 text-amber-300 font-extrabold text-[10px] rounded-lg border border-amber-500/30">
+                        Dispatch Scheduled
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center p-2.5 bg-slate-800/60 rounded-xl border border-slate-700/50">
+                      <div>
+                        <p className="font-bold text-slate-200">SmartBin #14 (Park Zone B)</p>
+                        <span className="text-[10px] text-slate-400 font-mono">Fill: 42% • Battery: 99%</span>
+                      </div>
+                      <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 font-extrabold text-[10px] rounded-lg border border-emerald-500/30">
+                        Optimal
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Carbon Footprint Calculator Slider */}
+                <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 p-5 rounded-3xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-1.5">
+                      <span>🌍 Annual Carbon Offset Calculator</span>
+                    </h4>
+                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">{(monthlyRecycleKg * 2.8 * 12).toFixed(0)} kg CO2e / yr</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-500">
+                      <span>Recycling Target: {monthlyRecycleKg} kg / month</span>
+                      <span>{(monthlyRecycleKg * 0.12).toFixed(1)} Trees Saved</span>
+                    </div>
+                    <input 
+                      type="range"
+                      min="5"
+                      max="100"
+                      value={monthlyRecycleKg}
+                      onChange={(e) => setMonthlyRecycleKg(parseInt(e.target.value))}
+                      className="w-full accent-emerald-600"
+                    />
+                  </div>
+
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    Recycling {monthlyRecycleKg} kg monthly prevents ~{(monthlyRecycleKg * 2.8 * 12).toFixed(0)} kg of greenhouse gas emissions annually!
+                  </p>
+                </div>
+
               </div>
             </div>
           )}
@@ -582,6 +684,59 @@ const UserDashboard = () => {
                 >
                   Close Tracker
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* Daily Spin Wheel Modal */}
+          {showSpinWheel && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-amber-500/30 rounded-3xl p-6 shadow-2xl w-full max-w-sm text-center space-y-5 relative overflow-hidden">
+                <div className="space-y-1">
+                  <span className="text-2xl">🎰</span>
+                  <h4 className="font-extrabold text-xl text-slate-900 dark:text-white">Daily Eco Spin & Win</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Spin the wheel every 24h to claim instant Eco Points!</p>
+                </div>
+
+                {/* Simulated Spinning Wheel */}
+                <div className="relative mx-auto w-48 h-48 my-4 flex items-center justify-center">
+                  <div className="absolute -top-2 z-20 text-xl font-bold text-rose-500 transform -rotate-180">▼</div>
+                  <div 
+                    className="w-44 h-44 rounded-full border-4 border-amber-400 shadow-xl overflow-hidden relative transition-transform duration-[3000ms] cubic-bezier(0.15, 0.9, 0.2, 1)"
+                    style={{ transform: `rotate(${rotation}deg)` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 via-emerald-400 to-sky-400 flex items-center justify-center font-black text-slate-900 text-sm">
+                      <div className="grid grid-cols-2 gap-2 p-4 text-center">
+                        <span className="bg-white/80 px-2 py-1 rounded shadow">10 Pts</span>
+                        <span className="bg-white/80 px-2 py-1 rounded shadow">25 Pts</span>
+                        <span className="bg-white/80 px-2 py-1 rounded shadow">50 Pts</span>
+                        <span className="bg-white/80 px-2 py-1 rounded shadow">200 Pts</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {wonPrize && (
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-extrabold text-sm border border-emerald-500/30 rounded-2xl animate-bounce">
+                    🎉 You won +{wonPrize} Eco Points!
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <button 
+                    disabled={spinning}
+                    onClick={handleSpin}
+                    className="flex-1 py-3 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black rounded-2xl text-xs transition-all disabled:opacity-50 shadow-md"
+                  >
+                    {spinning ? 'Spinning...' : 'SPIN NOW!'}
+                  </button>
+                  <button 
+                    onClick={() => setShowSpinWheel(false)}
+                    className="py-3 px-4 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           )}

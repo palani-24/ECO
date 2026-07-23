@@ -73,25 +73,61 @@ const DriverEarnings = () => {
                         <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">License Plate Number</span>
                         <p className="font-extrabold text-slate-800 dark:text-white text-sm">{driverProfile.vehicleNumber}</p>
                       </div>
-                      <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
-                        <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Account Approval Status</span>
-                        <span className="inline-flex items-center space-x-1 font-bold text-emerald-600 dark:text-emerald-400 pt-0.5">
-                          <FaCheckCircle /> <span>Approved & Active</span>
-                        </span>
+                        <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
+                          <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Account Approval Status</span>
+                          <span className="inline-flex items-center space-x-1 font-bold text-emerald-600 dark:text-emerald-400 pt-0.5">
+                            <FaCheckCircle /> <span>Approved & Active</span>
+                          </span>
+                        </div>
+                        <div className="pt-1 space-y-2">
+                          <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">Vehicle Fitness & Documents</span>
+                          <div className="space-y-1.5 text-[11px] font-semibold">
+                            <div className="flex justify-between">
+                              <span className="text-slate-500">Commercial Insurance:</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Active (Dec 2026)</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-500">Emission PUC Certificate:</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Valid (180 days)</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-500">Tire & Scale Calibration:</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Verified OK</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Weekly Milestone Incentive Banner */}
+                  <div className="bg-gradient-to-tr from-emerald-600 to-primary-500 rounded-3xl p-6 text-white shadow-md space-y-3 relative overflow-hidden">
+                    <div className="absolute right-0 bottom-0 opacity-10">
+                      <FaDollarSign className="h-32 w-32" />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] uppercase font-bold tracking-wider opacity-90">Payout Incentives</span>
+                      <span className="px-2.5 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px] rounded-full">🏆 Bonus Active</span>
+                    </div>
+                    <h4 className="text-2xl font-black">₹{totalIncentive.toLocaleString()}</h4>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-1 pt-1">
+                      <div className="flex justify-between text-[10px] font-bold opacity-90">
+                        <span>Weekly Goal: {pickups.length}/20 Pickups</span>
+                        <span>₹500 Bonus at 20</span>
+                      </div>
+                      <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-amber-400 rounded-full transition-all duration-500" 
+                          style={{ width: `${Math.min(100, (pickups.length / 20) * 100)}%` }}
+                        ></div>
                       </div>
                     </div>
-                  )}
-                </div>
-
-                <div className="bg-gradient-to-tr from-emerald-600 to-primary-500 rounded-3xl p-6 text-white shadow-md relative overflow-hidden">
-                  <div className="absolute right-0 bottom-0 opacity-10">
-                    <FaDollarSign className="h-32 w-32" />
+                    
+                    <p className="text-[10px] opacity-80 pt-2 font-semibold">Credits are transferred weekly to registered driver accounts.</p>
                   </div>
-                  <span className="text-[10px] uppercase font-bold tracking-wider opacity-80 block">Payout Incentives</span>
-                  <h4 className="text-2xl font-black pt-1">₹{totalIncentive.toLocaleString()}</h4>
-                  <p className="text-[10px] opacity-80 pt-4 font-semibold">Credits are transferred weekly to registered driver accounts.</p>
                 </div>
-              </div>
 
               {/* Right Columns - Jobs completed log */}
               <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">

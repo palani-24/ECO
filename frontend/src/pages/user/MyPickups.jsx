@@ -11,6 +11,20 @@ const MyPickups = () => {
   const [error, setError] = useState('');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
+  // In-App Chat Modal States
+  const [chatPickup, setChatPickup] = useState(null);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'driver', text: 'Hello! I am on my way for your waste pickup. / வணக்கம்! சேகரிக்க வந்து கொண்டு இருக்கிறேன்.', time: '10:15 AM' }
+  ]);
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    setChatMessages(prev => [...prev, { sender: 'user', text: chatInput, time: 'Just now' }]);
+    setChatInput('');
+  };
+
   useEffect(() => {
     const fetchPickups = async () => {
       try {
@@ -68,51 +82,65 @@ const MyPickups = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-950/40">
-                      <th className="py-4 px-6">Category</th>
-                      <th className="py-4 px-6">Scheduled Details</th>
-                      <th className="py-4 px-6">Est. Weight</th>
-                      <th className="py-4 px-6">Actual Weight</th>
-                      <th className="py-4 px-6">Points Awarded</th>
-                      <th className="py-4 px-6">Status</th>
-                      <th className="py-4 px-6 text-right">Invoice</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40 text-xs text-slate-700 dark:text-slate-300">
-                    {pickups.map((p) => (
-                      <tr key={p._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                        <td className="py-4 px-6 font-bold flex items-center space-x-2">
-                          <FaRecycle className="text-emerald-500" />
-                          <span>{p.wasteCategory}</span>
-                        </td>
-                        <td className="py-4 px-6 font-semibold">
-                          <div className="space-y-0.5">
-                            <p className="text-slate-800 dark:text-white">{new Date(p.pickupDate).toLocaleDateString()}</p>
-                            <span className="text-[10px] text-slate-400 flex items-center space-x-1"><FaClock className="h-3 w-3" /> <span>{p.pickupTimeSlot}</span></span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-6 font-semibold">{p.estimatedWeight} kg</td>
-                        <td className="py-4 px-6 font-semibold">{p.actualWeight ? `${p.actualWeight} kg` : '--'}</td>
-                        <td className="py-4 px-6 font-extrabold text-emerald-600 dark:text-emerald-400">
-                          {p.pointsAwarded ? `+${p.pointsAwarded}` : '--'}
-                        </td>
-                        <td className="py-4 px-6">{getStatusBadge(p.status)}</td>
-                        <td className="py-4 px-6 text-right">
-                          {p.status === 'completed' ? (
-                            <button 
-                              onClick={() => setSelectedReceipt(p)}
-                              className="p-2 text-slate-400 hover:text-emerald-500 transition-colors inline-flex items-center space-x-1"
-                              title="View Receipt"
-                            >
-                              <FaFileInvoice />
-                              <span className="text-[10px] font-bold">Receipt</span>
-                            </button>
-                          ) : (
-                            <span className="text-slate-400 text-[10px]">--</span>
-                          )}
-                        </td>
+                      <tr className="border-b border-slate-200 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-950/40">
+                        <th className="py-4 px-6">Category</th>
+                        <th className="py-4 px-6">Scheduled Details</th>
+                        <th className="py-4 px-6">Handover OTP</th>
+                        <th className="py-4 px-6">Est. Weight</th>
+                        <th className="py-4 px-6">Points</th>
+                        <th className="py-4 px-6">Status</th>
+                        <th className="py-4 px-6 text-right">Actions</th>
                       </tr>
-                    ))}
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40 text-xs text-slate-700 dark:text-slate-300">
+                      {pickups.map((p) => (
+                        <tr key={p._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                          <td className="py-4 px-6 font-bold flex items-center space-x-2">
+                            <FaRecycle className="text-emerald-500" />
+                            <span>{p.wasteCategory}</span>
+                          </td>
+                          <td className="py-4 px-6 font-semibold">
+                            <div className="space-y-0.5">
+                              <p className="text-slate-800 dark:text-white">{new Date(p.pickupDate).toLocaleDateString()}</p>
+                              <span className="text-[10px] text-slate-400 flex items-center space-x-1"><FaClock className="h-3 w-3" /> <span>{p.pickupTimeSlot}</span></span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 font-mono font-bold">
+                            {p.status !== 'completed' && p.status !== 'cancelled' ? (
+                              <span className="px-2 py-1 bg-amber-400/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-lg text-xs font-black">
+                                OTP: 4829
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">Verified</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-6 font-semibold">{p.estimatedWeight} kg</td>
+                          <td className="py-4 px-6 font-extrabold text-emerald-600 dark:text-emerald-400">
+                            {p.pointsAwarded ? `+${p.pointsAwarded}` : '--'}
+                          </td>
+                          <td className="py-4 px-6">{getStatusBadge(p.status)}</td>
+                          <td className="py-4 px-6 text-right flex items-center justify-end space-x-2">
+                            {p.driver && p.status !== 'completed' && (
+                              <button 
+                                onClick={() => setChatPickup(p)}
+                                className="px-2.5 py-1 bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:bg-sky-500/20 rounded-lg text-[10px] font-bold"
+                              >
+                                💬 Chat Driver
+                              </button>
+                            )}
+                            {p.status === 'completed' && (
+                              <button 
+                                onClick={() => setSelectedReceipt(p)}
+                                className="p-2 text-slate-400 hover:text-emerald-500 transition-colors inline-flex items-center space-x-1"
+                                title="View Receipt"
+                              >
+                                <FaFileInvoice />
+                                <span className="text-[10px] font-bold">Receipt</span>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
                     {pickups.length === 0 && (
                       <tr>
                         <td colSpan="7" className="text-center py-8 text-slate-400">No scheduled pickup requests found.</td>
@@ -164,12 +192,99 @@ const MyPickups = () => {
                   <span className="font-black text-lg">+{selectedReceipt.pointsAwarded} Points</span>
                 </div>
 
-                <button 
-                  onClick={() => setSelectedReceipt(null)}
-                  className="w-full py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors"
-                >
-                  Close Receipt
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => alert('Downloading official Eco Receipt PDF...')}
+                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-colors text-xs"
+                  >
+                    Download PDF Receipt
+                  </button>
+                  <button 
+                    onClick={() => setSelectedReceipt(null)}
+                    className="py-3 px-5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors text-xs"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Live Driver Chat Modal */}
+          {chatPickup && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">💬</span>
+                    <div>
+                      <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Collector Driver Chat</h4>
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">{chatPickup.driver?.user?.name || 'Driver'}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setChatPickup(null)}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Messages Box */}
+                <div className="h-60 overflow-y-auto space-y-3 p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/40 dark:border-slate-800 text-xs">
+                  {chatMessages.map((msg, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                    >
+                      <div 
+                        className={`max-w-[80%] p-3 rounded-2xl ${
+                          msg.sender === 'user' 
+                            ? 'bg-emerald-600 text-white font-medium rounded-br-none' 
+                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/50 dark:border-slate-700 rounded-bl-none'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                      <span className="text-[9px] text-slate-400 mt-1 font-bold">{msg.time}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Preset Tamil / English Quick Buttons */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <button 
+                    type="button"
+                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'கதவு அருகே பை வைத்துள்ளேன் (Left bag near security gate)', time: 'Just now' }])}
+                    className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                  >
+                    📍 Left at Gate
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'நான் வீட்டில் உள்ளேன் (I am at home)', time: 'Just now' }])}
+                    className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
+                  >
+                    🏠 I am at Home
+                  </button>
+                </div>
+
+                {/* Input Bar */}
+                <form onSubmit={handleSendMessage} className="flex space-x-2 pt-2">
+                  <input 
+                    type="text" 
+                    placeholder="Type message in Tamil or English..."
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none"
+                  />
+                  <button 
+                    type="submit"
+                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors"
+                  >
+                    Send
+                  </button>
+                </form>
               </div>
             </div>
           )}

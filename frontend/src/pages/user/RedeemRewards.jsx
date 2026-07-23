@@ -179,6 +179,29 @@ const RedeemRewards = () => {
                         </button>
                       </div>
                     </div>
+
+                    {/* Plant 5 Trees Donation */}
+                    <div className="p-5 border border-emerald-500/30 rounded-2xl flex flex-col justify-between h-44 hover:border-emerald-500 transition-colors bg-emerald-500/5 sm:col-span-2">
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-1.5">
+                          <span className="text-lg">🌱</span>
+                          <span>Plant 5 Real Trees (Green Impact Donation)</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                          Convert 400 points into a verified Reforestation Certificate planting 5 trees in endangered forest reserves.
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-200/50 dark:border-slate-800/60">
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">400 pts</span>
+                        <button 
+                          onClick={() => handleRedeem('discount', { email: user?.email, title: 'Plant 5 Trees Certificate' })}
+                          disabled={processLoading || (user?.points < 400)}
+                          className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
+                        >
+                          Plant Trees Now
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

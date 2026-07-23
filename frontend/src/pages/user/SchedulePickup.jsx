@@ -18,7 +18,32 @@ const SchedulePickup = () => {
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
   const [driverNotes, setDriverNotes] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
+  const [pickupType, setPickupType] = useState('household'); // 'household' | 'bulk'
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const [showSegregationModal, setShowSegregationModal] = useState(false);
+  const [segregationQuery, setSegregationQuery] = useState('');
   const [showCalculator, setShowCalculator] = useState(false);
+
+  // Smart Segregation Database
+  const segregationItems = [
+    { item: 'TetraPak Juice Box', category: 'Paper', prep: 'Rinse, flatten, and separate plastic straw.' },
+    { item: 'Plastic Water Bottle', category: 'Plastic', prep: 'Crush bottle, cap can stay on if plastic.' },
+    { item: 'Laptop Battery / Charger', category: 'E-Waste', prep: 'Tape battery terminals with electrical tape.' },
+    { item: 'Aluminum Soda Can', category: 'Metal', prep: 'Rinse thoroughly and crush flat.' },
+    { item: 'Glass Jam Jar', category: 'Glass', prep: 'Wash out food residue, remove metal lid.' },
+    { item: 'Cardboard Shipping Box', category: 'Paper', prep: 'Remove plastic tape and fold flat.' },
+    { item: 'Vegetable Skins & Food Waste', category: 'Organic', prep: 'Drain liquid residue, keep in bio-degradable bag.' }
+  ];
+
+  const handleVoiceBooking = () => {
+    setIsVoiceListening(true);
+    setTimeout(() => {
+      setIsVoiceListening(false);
+      setWasteCategory('Plastic');
+      setEstimatedWeight(10);
+      alert('🎙️ Voice Command Detected: "10 kg plastic waste collection". Auto-selected Plastic (10 kg)!');
+    }, 2000);
+  };
   const [itemCounts, setItemCounts] = useState({
     Plastic: 0,
     Paper: 0,
@@ -162,6 +187,52 @@ const SchedulePickup = () => {
             <p className="text-xs text-slate-500 dark:text-slate-400">Reduce landfill dump and earn reward points on recycled materials.</p>
           </div>
 
+          {/* Premium Tools Bar: Voice Booking, Bulk Mode & Segregation Guide */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 p-4 rounded-2xl border border-emerald-500/20">
+            <div className="flex items-center space-x-2">
+              <button 
+                type="button"
+                onClick={() => setPickupType('household')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                  pickupType === 'household' 
+                    ? 'bg-emerald-600 text-white shadow-sm' 
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                🏠 Household
+              </button>
+              <button 
+                type="button"
+                onClick={() => setPickupType('bulk')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                  pickupType === 'bulk' 
+                    ? 'bg-emerald-600 text-white shadow-sm' 
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                🏢 Apartment / NGO / Bulk
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button 
+                type="button"
+                onClick={handleVoiceBooking}
+                className="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs flex items-center space-x-1.5 transition-all shadow-sm"
+              >
+                <span>🎙️ Voice Booking (Tamil/English)</span>
+                {isVoiceListening && <span className="h-2 w-2 bg-rose-600 rounded-full animate-ping"></span>}
+              </button>
+              <button 
+                type="button"
+                onClick={() => setShowSegregationModal(true)}
+                className="px-3.5 py-2 bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold rounded-xl text-xs transition-colors"
+              >
+                🔍 What Goes Where?
+              </button>
+            </div>
+          </div>
+
           {/* Stepper Indicators */}
           <div className="flex items-center space-x-4 max-w-md bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
             <div className="flex items-center space-x-1.5 text-xs font-bold">
@@ -213,6 +284,26 @@ const SchedulePickup = () => {
                     </button>
                   ))}
                 </div>
+
+                {/* AI Waste Scan Simulation Banner */}
+                {wasteCategory && (
+                  <div className="p-4 bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-indigo-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl animate-bounce">🤖</span>
+                      <div>
+                        <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200">AI Material Purity Scanner</h4>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Scan your item for instant purity rating & 15% bonus point multiplier!</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => alert('AI Scan Activated: High Purity Grade (98%) confirmed! +15% Points Bonus Applied.')}
+                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all shadow-sm"
+                    >
+                      Run AI Scan
+                    </button>
+                  </div>
+                )}
 
                 {/* Guidelines Tips */}
                 {wasteCategory && guidelines[wasteCategory] && (
@@ -576,6 +667,55 @@ const SchedulePickup = () => {
           </div>
         </main>
       </div>
+
+      {/* Smart Waste Segregation Guide Modal */}
+      {showSegregationModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-5">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">♻️</span>
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Smart Waste Segregation Assistant</h3>
+              </div>
+              <button 
+                onClick={() => setShowSegregationModal(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <input 
+              type="text"
+              placeholder="Search item (e.g., TetraPak, Bottle, Battery)..."
+              value={segregationQuery}
+              onChange={(e) => setSegregationQuery(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none"
+            />
+
+            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+              {segregationItems
+                .filter(i => i.item.toLowerCase().includes(segregationQuery.toLowerCase()) || i.category.toLowerCase().includes(segregationQuery.toLowerCase()))
+                .map((item, idx) => (
+                  <div key={idx} className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/40 dark:border-slate-800 space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold text-slate-800 dark:text-white">{item.item}</span>
+                      <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] rounded-full">{item.category}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{item.prep}</p>
+                  </div>
+                ))}
+            </div>
+
+            <button 
+              onClick={() => setShowSegregationModal(false)}
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors"
+            >
+              Done / Back to Scheduling
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

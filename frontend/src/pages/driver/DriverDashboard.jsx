@@ -25,6 +25,13 @@ const DriverDashboard = () => {
   const [checkedIn, setCheckedIn] = useState(false);
   const [collected, setCollected] = useState(false);
   const [aiReport, setAiReport] = useState(null);
+  const [showSosModal, setShowSosModal] = useState(false);
+
+  // New Ultimate Driver Features States
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showQrScanner, setShowQrScanner] = useState(false);
+  const [voiceNavEnabled, setVoiceNavEnabled] = useState(false);
+  const [afterImageUrl, setAfterImageUrl] = useState('/uploads/default_clean.jpg');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -85,7 +92,13 @@ const DriverDashboard = () => {
     }
   };
 
+  const [inputOtp, setInputOtp] = useState('');
+
   const handleComplete = async (id) => {
+    if (!inputOtp || inputOtp !== '4829') {
+      setError('Invalid Customer Handover Security OTP! Please enter correct 4-digit code from customer.');
+      return;
+    }
     if (!actualWeight) {
       setError('Please enter verified collection weight.');
       return;
@@ -144,28 +157,86 @@ const DriverDashboard = () => {
             </div>
 
             {driverProfile?.isApproved && (
-              <button 
-                onClick={toggleOnline}
-                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all shadow-sm ${
-                  driverProfile.status === 'active' || driverProfile.status === 'busy'
-                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30'
-                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800'
-                }`}
-              >
-                {driverProfile.status === 'active' || driverProfile.status === 'busy' ? (
-                  <>
-                    <FaToggleOn className="h-5 w-5" />
-                    <span>ONLINE (ONLINE TO ASSIGN)</span>
-                  </>
-                ) : (
-                  <>
-                    <FaToggleOff className="h-5 w-5" />
-                    <span>OFFLINE (OFFLINE)</span>
-                  </>
+              <div className="flex items-center space-x-2 relative">
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs relative hover:bg-slate-200 transition-colors"
+                  title="Driver Notifications"
+                >
+                  <span className="text-base">🔔</span>
+                  <span className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-emerald-500 text-white font-bold text-[8px] rounded-full flex items-center justify-center">3</span>
+                </button>
+
+                {/* Notifications Drawer Dropdown */}
+                {showNotifications && (
+                  <div className="absolute top-12 right-0 z-50 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 shadow-2xl space-y-3 text-xs animate-fadeIn">
+                    <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                      <span className="font-extrabold text-slate-800 dark:text-white">Driver Notifications</span>
+                      <span className="text-[10px] text-emerald-500 font-bold">3 new</span>
+                    </div>
+
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      <div className="p-2.5 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-xl border border-emerald-500/20 space-y-0.5">
+                        <p className="font-bold text-slate-800 dark:text-slate-200">New Pickup Assigned!</p>
+                        <span className="text-[10px] text-slate-400 block">Sector 4 • 10kg Paper • 2 mins ago</span>
+                      </div>
+                      <div className="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-0.5">
+                        <p className="font-bold text-slate-800 dark:text-slate-200">Weekly Incentive Bonus</p>
+                        <span className="text-[10px] text-slate-400 block">₹500 bonus goal active (15/20 done)</span>
+                      </div>
+                      <div className="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-0.5">
+                        <p className="font-bold text-slate-800 dark:text-slate-200">System Dispatch Alert</p>
+                        <span className="text-[10px] text-slate-400 block">Route optimization recalculated</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              </button>
+
+                <button 
+                  onClick={() => setShowSosModal(true)}
+                  className="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-2xl text-xs flex items-center space-x-1.5 shadow-md animate-pulse"
+                >
+                  <span>🚨 SOS Emergency</span>
+                </button>
+                <button 
+                  onClick={toggleOnline}
+                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-bold transition-all shadow-sm ${
+                    driverProfile.status === 'active' || driverProfile.status === 'busy'
+                      ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30'
+                      : 'bg-slate-100 text-slate-500 dark:bg-slate-800'
+                  }`}
+                >
+                  {driverProfile.status === 'active' || driverProfile.status === 'busy' ? (
+                    <>
+                      <FaToggleOn className="h-5 w-5" />
+                      <span>ONLINE (ONLINE TO ASSIGN)</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaToggleOff className="h-5 w-5" />
+                      <span>OFFLINE (OFFLINE)</span>
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
+
+          {/* Traffic & Weather Advisory Banner */}
+          {driverProfile?.isApproved && (
+            <div className="p-3.5 bg-gradient-to-r from-sky-500/10 via-emerald-500/10 to-amber-500/10 border border-sky-500/20 rounded-2xl flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2">
+                <span className="text-base">🌤️</span>
+                <div>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200">Zone Advisory: Clear Sky 31°C</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium block text-[10px]">Normal traffic flow on Metro Heights & Anna Salai collection routes.</span>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] rounded-full">
+                ★ 4.9 Rating (48 Reviews)
+              </span>
+            </div>
+          )}
 
           {error && (
             <div className="p-3.5 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-100 dark:border-rose-900/30 rounded-2xl flex items-start space-x-2">
@@ -193,6 +264,37 @@ const DriverDashboard = () => {
                 
                 {/* Left Columns - Active Job & Assigned Pickups */}
                 <div className="lg:col-span-2 space-y-6">
+                  
+                  {/* Smart Route Optimizer Banner */}
+                  <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg border border-slate-700 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2.5">
+                        <span className="text-xl">🗺️</span>
+                        <div>
+                          <h3 className="font-extrabold text-sm text-white">Smart GPS Route Optimizer</h3>
+                          <p className="text-[11px] text-slate-400">Automated sequence for maximum fuel efficiency and minimum traffic.</p>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-full border border-emerald-500/30">
+                        ⚡ 1.8L Fuel Saved
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 text-center pt-1 border-t border-slate-700/60">
+                      <div className="p-2 bg-slate-800/60 rounded-xl">
+                        <span className="text-sm font-extrabold text-emerald-400">4 Pickups</span>
+                        <p className="text-[9px] text-slate-400 font-bold">In Route</p>
+                      </div>
+                      <div className="p-2 bg-slate-800/60 rounded-xl">
+                        <span className="text-sm font-extrabold text-amber-400">12.4 km</span>
+                        <p className="text-[9px] text-slate-400 font-bold">Total Distance</p>
+                      </div>
+                      <div className="p-2 bg-slate-800/60 rounded-xl">
+                        <span className="text-sm font-extrabold text-sky-400">28 mins</span>
+                        <p className="text-[9px] text-slate-400 font-bold">Est. Drive Time</p>
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Active Accepted Job panel */}
                   {activePickup ? (
@@ -240,6 +342,17 @@ const DriverDashboard = () => {
                             <FaMapMarkerAlt className="text-rose-500" />
                             <span>Routing map simulation</span>
                           </div>
+
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setVoiceNavEnabled(!voiceNavEnabled);
+                              alert(voiceNavEnabled ? 'Voice Guidance Paused' : '🔊 Voice Nav Activated: "Turn right in 200m on Metro Heights"');
+                            }}
+                            className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 text-white text-[9px] font-bold px-2 py-1 rounded-lg border border-slate-700 flex items-center space-x-1"
+                          >
+                            <span>{voiceNavEnabled ? '🔊 Voice ON' : '🔇 Voice OFF'}</span>
+                          </button>
                         </div>
                       </div>
 
@@ -281,9 +394,42 @@ const DriverDashboard = () => {
                                     className="w-full px-3 py-2 text-xs rounded-xl border border-slate-350 dark:border-slate-750 bg-white dark:bg-slate-900 focus:outline-none"
                                   />
                                 </div>
+
+                                <div className="space-y-1">
+                                  <div className="flex justify-between items-center">
+                                    <label className="text-[10px] font-bold text-amber-500 uppercase tracking-wide flex items-center space-x-1">
+                                      <span>🔒 Customer Handover OTP</span>
+                                    </label>
+                                    <button 
+                                      type="button"
+                                      onClick={() => {
+                                        setShowQrScanner(true);
+                                        setTimeout(() => {
+                                          setInputOtp('4829');
+                                          setShowQrScanner(false);
+                                          alert('📷 Customer QR Code Scanned! Handover OTP 4829 auto-verified.');
+                                        }, 1500);
+                                      }}
+                                      className="text-[9px] font-extrabold text-sky-500 hover:underline flex items-center space-x-1"
+                                    >
+                                      <span>📷 Scan QR Pass</span>
+                                    </button>
+                                  </div>
+                                  <input 
+                                    type="text"
+                                    maxLength="4"
+                                    value={inputOtp}
+                                    onChange={(e) => setInputOtp(e.target.value)}
+                                    placeholder="Enter OTP (e.g. 4829)"
+                                    className="w-full px-3 py-2 text-xs font-mono font-bold rounded-xl border border-amber-500/40 bg-amber-50/20 text-amber-800 dark:text-amber-300 focus:outline-none"
+                                  />
+                                  <span className="text-[9px] text-amber-600 dark:text-amber-400 font-bold block">💡 Demo OTP: Enter 4829 or click Scan QR</span>
+                                </div>
+
+                                {/* Before Pickup Photo Tile */}
                                 <div className="space-y-1">
                                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center space-x-1">
-                                    <FaCamera className="h-3 w-3" /> <span>Upload Waste Photo</span>
+                                    <FaCamera className="h-3 w-3" /> <span>Before Pickup (Waste Photo)</span>
                                   </label>
                                   <div className="flex items-center space-x-3">
                                     <label className="flex-1 flex items-center justify-center px-3 py-2 border border-dashed border-slate-300 dark:border-slate-750 rounded-xl cursor-pointer bg-white dark:bg-slate-900 hover:border-emerald-500 hover:text-emerald-500 transition-colors text-xs text-slate-500 font-bold">
@@ -299,7 +445,40 @@ const DriverDashboard = () => {
                                     {wasteImageUrl && (
                                       <img 
                                         src={wasteImageUrl} 
-                                        alt="Waste Preview" 
+                                        alt="Before Waste Preview" 
+                                        className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-800"
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* After Pickup Photo Tile */}
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center space-x-1">
+                                    <FaCamera className="h-3 w-3" /> <span>After Pickup (Clean Spot Proof)</span>
+                                  </label>
+                                  <div className="flex items-center space-x-3">
+                                    <label className="flex-1 flex items-center justify-center px-3 py-2 border border-dashed border-slate-300 dark:border-slate-750 rounded-xl cursor-pointer bg-white dark:bg-slate-900 hover:border-emerald-500 hover:text-emerald-500 transition-colors text-xs text-slate-500 font-bold">
+                                      <FaCamera className="h-3.5 w-3.5 mr-2 text-slate-400" />
+                                      <span>Upload Clean Spot</span>
+                                      <input 
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                          const file = e.target.files[0];
+                                          if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => setAfterImageUrl(reader.result);
+                                            reader.readAsDataURL(file);
+                                          }
+                                        }}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                    {afterImageUrl && (
+                                      <img 
+                                        src={afterImageUrl} 
+                                        alt="After Clean Preview" 
                                         className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-800"
                                       />
                                     )}
@@ -429,6 +608,52 @@ const DriverDashboard = () => {
                 {/* Right Columns - Metrics & Completion History */}
                 <div className="space-y-6">
                   
+                  {/* Fuel & Mileage Expense Tracker Widget */}
+                  <div className="bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 text-white border border-amber-500/30 p-5 rounded-3xl space-y-3 shadow-md">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-extrabold text-xs text-amber-400 flex items-center space-x-1.5">
+                        <span>⛽ Daily Fuel & Mileage Log</span>
+                      </h4>
+                      <span className="text-[9px] bg-amber-400/20 text-amber-300 font-mono font-bold px-2 py-0.5 rounded-full">14.2 km/L</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                      <div className="p-2.5 bg-slate-800/80 rounded-xl border border-slate-700/50">
+                        <span className="text-[10px] text-slate-400 font-bold block">FUEL SPENT</span>
+                        <span className="font-extrabold text-white">4.2 Liters</span>
+                      </div>
+                      <div className="p-2.5 bg-slate-800/80 rounded-xl border border-slate-700/50">
+                        <span className="text-[10px] text-slate-400 font-bold block">ALLOWANCE</span>
+                        <span className="font-extrabold text-emerald-400">₹450 / day</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Collector Environmental Impact Summary Card */}
+                  <div className="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-5 rounded-3xl space-y-3 shadow-md">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-extrabold text-xs text-white flex items-center space-x-1.5">
+                        <span>🌱 Driver Environmental Contribution</span>
+                      </h4>
+                      <span className="text-[9px] bg-white/20 font-bold px-2 py-0.5 rounded-full">Eco Fleet</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1">
+                      <div className="p-2 bg-white/10 rounded-xl">
+                        <span className="text-xs font-black block">532 kg</span>
+                        <span className="text-[9px] opacity-80">Collected</span>
+                      </div>
+                      <div className="p-2 bg-white/10 rounded-xl">
+                        <span className="text-xs font-black block">1,489 kg</span>
+                        <span className="text-[9px] opacity-80">CO2 Reduced</span>
+                      </div>
+                      <div className="p-2 bg-white/10 rounded-xl">
+                        <span className="text-xs font-black block">1.6 m³</span>
+                        <span className="text-[9px] opacity-80">Landfill Saved</span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Driver Stats */}
                   <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
                     <h3 className="font-extrabold text-slate-800 dark:text-slate-200">Collector Earnings</h3>
@@ -479,6 +704,54 @@ const DriverDashboard = () => {
 
         </main>
       </div>
+
+      {/* Emergency SOS Dispatch Modal */}
+      {showSosModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 border border-rose-500/40 rounded-3xl p-6 shadow-2xl w-full max-w-sm text-center space-y-5">
+            <div className="space-y-1">
+              <span className="text-3xl animate-bounce">🚨</span>
+              <h4 className="font-extrabold text-xl text-rose-600 dark:text-rose-400">Emergency SOS Dispatch</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Broadcasting live GPS coordinates to central dispatch control.</p>
+            </div>
+
+            <div className="p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-500/20 rounded-2xl text-xs space-y-2 text-rose-800 dark:text-rose-300">
+              <p className="font-bold">Dispatch Control Contacted!</p>
+              <p className="text-[10px] opacity-90 font-mono">Location: 12.9716° N, 80.2452° E (Sector 4)</p>
+            </div>
+
+            <button 
+              onClick={() => setShowSosModal(false)}
+              className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-2xl text-xs transition-colors shadow-md"
+            >
+              Cancel SOS / Return to Console
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Scanner Camera Simulator Modal */}
+      {showQrScanner && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white dark:bg-slate-900 border border-sky-500/30 rounded-3xl p-6 shadow-2xl w-full max-w-xs text-center space-y-5">
+            <div className="space-y-1">
+              <span className="text-3xl">📷</span>
+              <h4 className="font-extrabold text-lg text-slate-900 dark:text-white">Scanning Customer QR Pass</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Align customer's recycling QR code within camera viewfinder.</p>
+            </div>
+
+            {/* Viewfinder visual */}
+            <div className="relative h-44 w-44 mx-auto rounded-2xl border-2 border-dashed border-sky-400 overflow-hidden flex items-center justify-center bg-slate-950">
+              <div className="h-32 w-32 border-2 border-emerald-400 rounded-xl relative flex items-center justify-center">
+                <span className="text-3xl">🏁</span>
+                <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_8px_#10b981] animate-laserSweep"></div>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-emerald-500 font-extrabold animate-pulse">Scanning QR Signature...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

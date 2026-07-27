@@ -23,6 +23,12 @@ import CommunityChallenges from './pages/user/CommunityChallenges';
 // Driver Pages
 import DriverDashboard from './pages/driver/DriverDashboard';
 import DriverEarnings from './pages/driver/DriverEarnings';
+import DriverGatePass from './pages/driver/DriverGatePass';
+import DriverQualityAudit from './pages/driver/DriverQualityAudit';
+import DriverBatteryTelematics from './pages/driver/DriverBatteryTelematics';
+import DriverRoadHazards from './pages/driver/DriverRoadHazards';
+import DriverShifts from './pages/driver/DriverShifts';
+import DriverEquipment from './pages/driver/DriverEquipment';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -117,6 +123,54 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['driver']}>
                 <DriverEarnings />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/gate-pass" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverGatePass />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/quality-audit" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverQualityAudit />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/battery-telematics" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverBatteryTelematics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/road-hazards" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverRoadHazards />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/shifts" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverShifts />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/driver/equipment" 
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverEquipment />
               </ProtectedRoute>
             } 
           />

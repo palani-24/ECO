@@ -5,7 +5,8 @@ import {
   getAssignedPickups,
   acceptPickup,
   updateCoordinates,
-  completePickup
+  completePickup,
+  verifyQRPass
 } from '../controllers/driverController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -20,5 +21,7 @@ router.get('/pickups', getAssignedPickups);
 router.put('/pickups/:id/accept', acceptPickup);
 router.put('/pickups/:id/complete', completePickup);
 router.post('/coordinates', updateCoordinates);
+router.post('/verify-qr', verifyQRPass);
 
 export default router;
+

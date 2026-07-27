@@ -197,3 +197,28 @@ export const completePickup = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Verify Customer QR Pass Token
+export const verifyQRPass = async (req, res) => {
+  const { qrToken, pickupId } = req.body;
+  try {
+    const pickup = await PickupRequest.findById(pickupId).populate('user', 'name email');
+    if (!pickup) return res.status(404).json({ success: false, message: 'Pickup request not found' });
+
+    if (pickup.qrToken && pickup.qrToken !== qrToken) {
+      return res.status(400).json({ success: false, message: 'Invalid QR Pass token. Verification failed!' });
+    }
+
+    pickup.isVerified = true;
+    await pickup.save();
+
+    res.json({
+      success: true,
+      message: 'Customer QR Pass verified successfully! You can now proceed to weigh and complete collection.',
+      data: pickup
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

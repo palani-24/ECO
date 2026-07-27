@@ -4,7 +4,9 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, ChartSkeleton } from '../../components/LoadingSkeleton';
-import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck } from 'react-icons/fa';
+import QRPassModal from '../../components/QRPassModal';
+import EcoCertificateModal from '../../components/EcoCertificateModal';
+import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward } from 'react-icons/fa';
 
 
 const LiveMap = ({ driverName, vehicleInfo }) => {
@@ -132,6 +134,8 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [trackingDriver, setTrackingDriver] = useState(null);
   const [monthlyRecycleKg, setMonthlyRecycleKg] = useState(25);
+  const [showCertModal, setShowCertModal] = useState(false);
+  const [selectedQrPickup, setSelectedQrPickup] = useState(null);
 
   // Daily Spin Wheel States
   const [showSpinWheel, setShowSpinWheel] = useState(false);
@@ -265,6 +269,13 @@ const UserDashboard = () => {
                   className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black rounded-xl text-xs shadow-md transition-all flex items-center space-x-1.5 animate-pulse"
                 >
                   <span>🎰 Daily Bonus Spin Wheel</span>
+                </button>
+                <button 
+                  onClick={() => setShowCertModal(true)}
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-extrabold rounded-xl text-xs backdrop-blur-md transition-all flex items-center space-x-1.5 border border-white/30"
+                >
+                  <FaAward className="text-amber-300" />
+                  <span>View Official Eco Certificate</span>
                 </button>
               </div>
             </div>
@@ -502,13 +513,22 @@ const UserDashboard = () => {
                             <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{activePickup.driver.user.name}</h4>
                             <p className="text-[10px] text-slate-400 font-bold">{activePickup.driver.vehicleType} ({activePickup.driver.vehicleNumber})</p>
                           </div>
-                          <button 
-                            onClick={() => setTrackingDriver(activePickup.driver)}
-                            className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center space-x-1.5"
-                          >
-                            <FaCompass className="h-3.5 w-3.5" />
-                            <span>Track Driver Live</span>
-                          </button>
+                      <div className="pt-2">
+                        <button
+                          onClick={() => setSelectedQrPickup(activePickup)}
+                          className="w-full py-2 px-3 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5"
+                        >
+                          <FaQrcode />
+                          <span>Show Digital QR Verification Pass</span>
+                        </button>
+                      </div>
+                      <button 
+                        onClick={() => setTrackingDriver(activePickup.driver)}
+                        className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center space-x-1.5"
+                      >
+                        <FaCompass className="h-3.5 w-3.5" />
+                        <span>Track Driver Live</span>
+                      </button>
                         </>
                       ) : (
                         <div className="my-auto space-y-2">
@@ -740,6 +760,21 @@ const UserDashboard = () => {
               </div>
             </div>
           )}
+
+          {/* QR Verification Pass Modal */}
+          <QRPassModal
+            isOpen={!!selectedQrPickup}
+            onClose={() => setSelectedQrPickup(null)}
+            pickup={selectedQrPickup}
+          />
+
+          {/* Official Eco Certificate Modal */}
+          <EcoCertificateModal
+            isOpen={showCertModal}
+            onClose={() => setShowCertModal(false)}
+            user={user}
+            impactData={analytics?.ecology}
+          />
 
         </main>
       </div>

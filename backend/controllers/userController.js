@@ -5,6 +5,8 @@ import Reward from '../models/Reward.js';
 import Coupon from '../models/Coupon.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
+import Challenge from '../models/Challenge.js';
+import WasteRecord from '../models/WasteRecord.js';
 import { sendNotification } from '../services/notificationService.js';
 
 // Update User Profile
@@ -84,6 +86,8 @@ export const schedulePickup = async (req, res) => {
       return res.status(400).json({ success: false, message: 'All pickup details are required' });
     }
 
+    const qrToken = `ECO-QR-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+
     // Create Pickup Request
     const pickup = await PickupRequest.create({
       user: req.user._id,
@@ -92,6 +96,7 @@ export const schedulePickup = async (req, res) => {
       pickupDate,
       pickupTimeSlot,
       pickupAddress,
+      qrToken,
       status: 'pending',
       notes,
       isRecurring: !!isRecurring
@@ -326,4 +331,121 @@ export const getLeaderboard = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Get User Carbon Impact & ESG Metrics
+export const getImpactMetrics = async (req, res) => {
+  try {
+    const pickups = await PickupRequest.find({ user: req.user._id, status: 'completed' });
+    
+    let totalWeight = 0;
+    const categoryBreakdown = {
+      Plastic: 0,
+      Paper: 0,
+      Metal: 0,
+      Glass: 0,
+      Organic: 0,
+      'E-Waste': 0
+    };
+
+    pickups.forEach(p => {
+      const w = p.actualWeight || p.estimatedWeight || 0;
+      totalWeight += w;
+      if (p.wasteCategory in categoryBreakdown) {
+        categoryBreakdown[p.wasteCategory] += w;
+      }
+    });
+
+    // Environmental coefficients:
+    // 1kg waste recycled = ~1.8kg CO2 avoided
+    // 1 tree absorbs ~20kg CO2 per year
+    // 1kg recycled saves ~15 liters of water
+    // 1kg recycled saves ~2.5 kWh energy
+    const co2SavedKg = parseFloat((totalWeight * 1.8).toFixed(1));
+    const treesPlantedEquiv = parseFloat((co2SavedKg / 20).toFixed(1));
+    const waterSavedLiters = Math.round(totalWeight * 15);
+    const energySavedKwh = Math.round(totalWeight * 2.5);
+    const landfillSavedM3 = parseFloat((totalWeight * 0.003).toFixed(2));
+
+    res.json({
+      success: true,
+      data: {
+        totalWeightRecycled: parseFloat(totalWeight.toFixed(2)),
+        totalPickupsCompleted: pickups.length,
+        co2SavedKg,
+        treesPlantedEquiv,
+        waterSavedLiters,
+        energySavedKwh,
+        landfillSavedM3,
+        categoryBreakdown
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get Community Challenges
+export const getChallenges = async (req, res) => {
+  try {
+    let challenges = await Challenge.find({}).populate('participants', 'name profileImage');
+    
+    // Seed sample challenges if empty
+    if (challenges.length === 0) {
+      const sample1 = await Challenge.create({
+        title: 'Chennai 500kg Plastic Cleanup',
+        description: 'Collect & recycle 500kg of plastic across Chennai to earn +250 bonus points!',
+        category: 'Plastic',
+        targetWeight: 500,
+        currentWeight: 310,
+        bonusPoints: 250,
+        icon: '♻️',
+        location: 'Chennai Region',
+        endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+      });
+      const sample2 = await Challenge.create({
+        title: 'Paper Saver Movement',
+        description: 'Recycle paper & cardboard to save 100 mature trees this month.',
+        category: 'Paper',
+        targetWeight: 300,
+        currentWeight: 185,
+        bonusPoints: 150,
+        icon: '🌳',
+        location: 'All Cities',
+        endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000)
+      });
+      challenges = [sample1, sample2];
+    }
+
+    res.json({ success: true, data: challenges });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Join Community Challenge
+export const joinChallenge = async (req, res) => {
+  try {
+    const challenge = await Challenge.findById(req.params.id);
+    if (!challenge) return res.status(404).json({ success: false, message: 'Challenge not found' });
+
+    if (challenge.participants.includes(req.user._id)) {
+      return res.status(400).json({ success: false, message: 'You have already joined this challenge' });
+    }
+
+    challenge.participants.push(req.user._id);
+    await challenge.save();
+
+    await sendNotification(
+      req.user._id,
+      'Joined Challenge!',
+      `You successfully joined "${challenge.title}". Recycle to help reach the goal!`,
+      'general'
+    );
+
+    res.json({ success: true, message: 'Joined challenge successfully', data: challenge });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 

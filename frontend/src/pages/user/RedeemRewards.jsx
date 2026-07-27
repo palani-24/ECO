@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
@@ -11,6 +12,7 @@ import {
 
 const RedeemRewards = () => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [coupons, setCoupons] = useState([]);
   const [redemptions, setRedemptions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +65,7 @@ const RedeemRewards = () => {
       setProcessLoading(false);
       if (res.data.success) {
         setSuccess(`Redeemed successfully! Details: ${res.data.data.details.title}. Voucher code: ${res.data.data.details.code}`);
+        addToast(`🎉 Reward Redeemed! Voucher Code: ${res.data.data.details.code}`, 'reward', 'Voucher Unlocked!');
         // Refresh local user points
         user.points = res.data.remainingPoints;
         // Refresh listings
@@ -77,7 +80,9 @@ const RedeemRewards = () => {
       }
     } catch (err) {
       setProcessLoading(false);
-      setError(err.response?.data?.message || 'Failed to process redemption request.');
+      const msg = err.response?.data?.message || 'Failed to process redemption request.';
+      setError(msg);
+      addToast(msg, 'error', 'Redemption Error');
     }
   };
 

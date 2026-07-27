@@ -1,11 +1,7 @@
 /**
- * EcoReward AI Waste Detection Module
- * 
- * This service is modularly structured to allow drop-in replacements with 
- * Google Cloud Vision API or TensorFlow.js Node models.
+ * EcoReward AI Waste Detection & Vision Engine
  */
 
-// Default rates (points per kg) - fallback values matching schema
 const POINT_RATES = {
   Plastic: 10,
   Paper: 8,
@@ -15,64 +11,59 @@ const POINT_RATES = {
   'E-Waste': 15
 };
 
+const SUB_TYPES = {
+  Plastic: ['PET Bottle #1', 'HDPE Container #2', 'PP Food Box', 'LDPE Film'],
+  Paper: ['Corrugated Cardboard', 'Office Paper', 'Newspaper', 'Kraft Box'],
+  Metal: ['Aluminum Can', 'Steel Tin', 'Copper Wire', 'Metal Scrap'],
+  Glass: ['Flint Glass Bottle', 'Amber Jar', 'Green Glass Container'],
+  Organic: ['Bio Food Waste', 'Garden Composting Material', 'Fruit Peels'],
+  'E-Waste': ['PCB Circuit Board', 'Lithium Battery', 'Copper Cable', 'E-Scrap']
+};
+
 /**
- * Simulates analyzing an uploaded waste image.
- * 
- * @param {string} imagePath - Local path or URL of the uploaded image
- * @param {string} claimedCategory - The category declared by the user
- * @param {number} claimedWeight - The estimated weight declared by the user
- * @returns {Promise<Object>} The classification and verification report
+ * Analyzes an uploaded waste image with AI vision simulation.
  */
 export const analyzeWasteImage = async (imagePath, claimedCategory, claimedWeight) => {
-  // Simulate API delay (e.g. 1s)
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 800));
 
-  // Determine classification. In a real scenario, this is where TensorFlow / Vision API runs.
-  // We will simulate verification.
-  
-  // 1. Detect Category
-  // We trust the category mostly but add high confidence
   const detectedCategory = claimedCategory || 'Plastic';
-  const confidenceScore = parseFloat((0.88 + Math.random() * 0.10).toFixed(2)); // 88% - 98%
+  const confidenceScore = parseFloat((0.89 + Math.random() * 0.09).toFixed(2));
 
-  // 2. Estimate weight (simulate scale sensor or volume-based estimation)
-  // Usually close to the claimed weight, e.g. within 5-15% variance
-  const weightVariance = (Math.random() * 0.2) - 0.1; // -10% to +10%
+  const weightVariance = (Math.random() * 0.16) - 0.08; 
   const actualWeight = parseFloat((claimedWeight * (1 + weightVariance)).toFixed(2)) || 1.0;
 
-  // 3. Quality evaluation (impurity index)
-  // Grades: High, Medium, Low. Quality score: 0 to 100
-  const qualityScore = Math.floor(75 + Math.random() * 20); // 75 - 95%
+  const qualityScore = Math.floor(80 + Math.random() * 18);
   let qualityGrade = 'Medium';
-  if (qualityScore >= 90) qualityGrade = 'High';
-  if (qualityScore < 80) qualityGrade = 'Low';
+  if (qualityScore >= 92) qualityGrade = 'High';
+  if (qualityScore < 82) qualityGrade = 'Low';
 
-  // 4. Calculate reward points based on category
   const rate = POINT_RATES[detectedCategory] || 10;
   const pointsAwarded = Math.round(actualWeight * rate);
+
+  const availableSubTypes = SUB_TYPES[detectedCategory] || [detectedCategory];
+  const detectedMaterial = availableSubTypes[Math.floor(Math.random() * availableSubTypes.length)];
+  const contaminationPct = Math.max(2, 100 - qualityScore);
+
+  // Simulated bounding box annotations for interactive scanner overlay
+  const detectedObjects = [
+    {
+      label: detectedMaterial,
+      confidence: confidenceScore,
+      box: { x: 18, y: 15, width: 64, height: 70 }
+    }
+  ];
 
   return {
     success: true,
     wasteType: detectedCategory,
+    materialSubtype: detectedMaterial,
     confidenceScore,
     estimatedWeight: actualWeight,
     qualityScore,
     qualityGrade,
+    contaminationPct,
     pointsAwarded,
-    remarks: `AI analysis complete. Detected ${detectedCategory} with ${Math.round(confidenceScore * 100)}% confidence. Material quality is ${qualityGrade}.`
+    detectedObjects,
+    remarks: `AI Vision scan complete. Identified ${detectedMaterial} with ${Math.round(confidenceScore * 100)}% accuracy. Impurity index: ${contaminationPct}%.`
   };
 };
-
-/**
- * Future integration example for Google Cloud Vision API:
- * 
- * import vision from '@google-cloud/vision';
- * const client = new vision.ImageAnnotatorClient();
- * 
- * export const analyzeWasteImageVisionAPI = async (imagePath) => {
- *   const [result] = await client.labelDetection(imagePath);
- *   const labels = result.labelAnnotations;
- *   // Process labels to detect Plastic, Metal, Paper, Glass etc.
- *   ...
- * }
- */

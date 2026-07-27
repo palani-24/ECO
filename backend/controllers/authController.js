@@ -223,3 +223,54 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+/**
+ * @desc    Update Current User profile (all roles)
+ * @route   PUT /api/auth/profile
+ * @access  Private
+ */
+export const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.profileImage = req.body.profileImage || user.profileImage;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+
+    let isApproved = true;
+    let driverDetails = null;
+
+    if (updatedUser.role === 'driver') {
+      const driver = await Driver.findOne({ user: updatedUser._id });
+      if (driver) {
+        isApproved = driver.isApproved;
+        driverDetails = driver;
+      }
+    }
+
+    res.json({
+      success: true,
+      data: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        points: updatedUser.points,
+        addresses: updatedUser.addresses,
+        profileImage: updatedUser.profileImage,
+        isApproved,
+        driverDetails
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

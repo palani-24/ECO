@@ -289,6 +289,7 @@ const seedDatabase = async () => {
       pickupDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       pickupTimeSlot: '10:00 AM - 12:00 PM',
       pickupAddress: normalUser.addresses[0],
+      qrToken: 'ECO-QR-GLS5KG-9921',
       status: 'pending'
     });
 
@@ -301,6 +302,7 @@ const seedDatabase = async () => {
       pickupDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       pickupTimeSlot: '02:00 PM - 04:00 PM',
       pickupAddress: normalUser.addresses[0],
+      qrToken: 'ECO-QR-EWA3KG-8842',
       status: 'assigned'
     });
 

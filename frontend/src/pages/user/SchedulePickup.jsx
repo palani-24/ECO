@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import AIWasteScanner from '../../components/AIWasteScanner';
 import api from '../../utils/api';
-import { FaTrash, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCheck, FaCoins, FaInfoCircle, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { FaTrash, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCheck, FaCoins, FaInfoCircle, FaArrowRight, FaArrowLeft, FaMagic } from 'react-icons/fa';
 
 const SchedulePickup = () => {
   const { user, addAddress } = useAuth();
@@ -23,6 +24,7 @@ const SchedulePickup = () => {
   const [showSegregationModal, setShowSegregationModal] = useState(false);
   const [segregationQuery, setSegregationQuery] = useState('');
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showAIScanner, setShowAIScanner] = useState(false);
 
   // Smart Segregation Database
   const segregationItems = [
@@ -285,25 +287,37 @@ const SchedulePickup = () => {
                   ))}
                 </div>
 
-                {/* AI Waste Scan Simulation Banner */}
-                {wasteCategory && (
-                  <div className="p-4 bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-indigo-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between">
+                {/* AI Waste Scan Section */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAIScanner(!showAIScanner)}
+                    className="w-full p-4 bg-gradient-to-r from-emerald-600/90 to-teal-700 text-white rounded-2xl flex items-center justify-between font-bold text-xs shadow-lg hover:brightness-110 transition-all"
+                  >
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl animate-bounce">🤖</span>
-                      <div>
-                        <h4 className="font-extrabold text-xs text-slate-800 dark:text-slate-200">AI Material Purity Scanner</h4>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Scan your item for instant purity rating & 15% bonus point multiplier!</p>
+                      <FaMagic className="h-5 w-5 text-emerald-300 animate-pulse" />
+                      <div className="text-left">
+                        <p className="font-black">Test Photo with Neural AI Scanner</p>
+                        <p className="text-[10px] text-emerald-100 font-normal">Auto-detect material subtype, quality score, and reward points</p>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => alert('AI Scan Activated: High Purity Grade (98%) confirmed! +15% Points Bonus Applied.')}
-                      className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all shadow-sm"
-                    >
-                      Run AI Scan
-                    </button>
-                  </div>
-                )}
+                    <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-wider">
+                      {showAIScanner ? 'Close Scanner' : 'Open AI Scanner'}
+                    </span>
+                  </button>
+
+                  {showAIScanner && (
+                    <div className="pt-4">
+                      <AIWasteScanner
+                        initialCategory={wasteCategory || 'Plastic'}
+                        onAnalysisComplete={(report) => {
+                          setWasteCategory(report.category);
+                          setEstimatedWeight(report.estimatedWeight);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {/* Guidelines Tips */}
                 {wasteCategory && guidelines[wasteCategory] && (

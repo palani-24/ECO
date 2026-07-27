@@ -9,7 +9,10 @@ import {
   redeemReward,
   getMyNotifications,
   markNotificationRead,
-  getLeaderboard
+  getLeaderboard,
+  getImpactMetrics,
+  getChallenges,
+  joinChallenge
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -28,5 +31,9 @@ router.post('/redeem', redeemReward);
 router.get('/notifications', getMyNotifications);
 router.put('/notifications/:id/read', markNotificationRead);
 router.get('/leaderboard', getLeaderboard);
+router.get('/impact', getImpactMetrics);
+router.get('/challenges', getChallenges);
+router.post('/challenges/:id/join', joinChallenge);
 
 export default router;
+

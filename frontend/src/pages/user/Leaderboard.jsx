@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
+import EcoCertificateModal from '../../components/EcoCertificateModal';
 import { FaTrophy, FaMedal, FaCrown, FaUsers, FaUser } from 'react-icons/fa';
 
 const Leaderboard = () => {
@@ -211,47 +212,12 @@ const Leaderboard = () => {
             </div>
           )}
 
-          {/* Eco Hero Certificate Modal */}
-          {showCertificate && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md">
-              <div className="bg-white dark:bg-slate-900 border-4 border-amber-400 rounded-3xl p-8 shadow-2xl w-full max-w-lg text-center space-y-6 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-400"></div>
-                <div className="space-y-2">
-                  <span className="text-4xl">📜</span>
-                  <h3 className="font-black text-2xl tracking-tight text-slate-900 dark:text-white uppercase font-serif">Certificate of Eco Impact</h3>
-                  <p className="text-[11px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-extrabold">Official Green Contribution Award</p>
-                </div>
-
-                <div className="p-6 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl space-y-3">
-                  <p className="text-xs text-slate-500 dark:text-slate-400">This is to certify that</p>
-                  <h4 className="text-xl font-extrabold text-slate-900 dark:text-white underline decoration-emerald-500 decoration-2">{user?.name}</h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    has actively recycled waste materials, saved CO₂ emissions, and earned <span className="font-black text-emerald-600 dark:text-emerald-400">{user?.points} Eco Points</span> on the platform.
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 px-4">
-                  <span>Issued by EcoReward Platform</span>
-                  <span>Verification ID: ECO-{user?._id?.slice(-6).toUpperCase()}</span>
-                </div>
-
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => alert('Certificate PNG downloaded successfully!')}
-                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs transition-colors shadow-md"
-                  >
-                    Download Certificate
-                  </button>
-                  <button 
-                    onClick={() => setShowCertificate(false)}
-                    className="py-3 px-5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl text-xs"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Official Eco Certificate Modal */}
+          <EcoCertificateModal 
+            isOpen={showCertificate} 
+            onClose={() => setShowCertificate(false)} 
+            user={user} 
+          />
 
         </main>
       </div>

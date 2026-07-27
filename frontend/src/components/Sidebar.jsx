@@ -24,6 +24,7 @@ const Sidebar = () => {
     { path: '/schedule-pickup', label: 'Schedule Pickup', icon: FaCalendarAlt },
     { path: '/redeem', label: 'Redeem Rewards', icon: FaGift },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
+    { path: '/challenges', label: 'Eco Challenges', icon: FaUsers },
     { path: '/profile', label: 'Profile Settings', icon: FaUser },
   ];
 

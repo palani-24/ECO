@@ -4,6 +4,8 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, TableSkeleton } from '../../components/LoadingSkeleton';
+import LiveRouteMap from '../../components/LiveRouteMap';
+import QRScannerModal from '../../components/QRScannerModal';
 import { FaRecycle, FaToggleOn, FaToggleOff, FaClipboardList, FaMapMarkerAlt, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, FaRobot, FaExclamationTriangle } from 'react-icons/fa';
 
 const DriverDashboard = () => {
@@ -265,36 +267,12 @@ const DriverDashboard = () => {
                 {/* Left Columns - Active Job & Assigned Pickups */}
                 <div className="lg:col-span-2 space-y-6">
                   
-                  {/* Smart Route Optimizer Banner */}
-                  <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg border border-slate-700 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2.5">
-                        <span className="text-xl">🗺️</span>
-                        <div>
-                          <h3 className="font-extrabold text-sm text-white">Smart GPS Route Optimizer</h3>
-                          <p className="text-[11px] text-slate-400">Automated sequence for maximum fuel efficiency and minimum traffic.</p>
-                        </div>
-                      </div>
-                      <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 font-bold text-[10px] rounded-full border border-emerald-500/30">
-                        ⚡ 1.8L Fuel Saved
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 text-center pt-1 border-t border-slate-700/60">
-                      <div className="p-2 bg-slate-800/60 rounded-xl">
-                        <span className="text-sm font-extrabold text-emerald-400">4 Pickups</span>
-                        <p className="text-[9px] text-slate-400 font-bold">In Route</p>
-                      </div>
-                      <div className="p-2 bg-slate-800/60 rounded-xl">
-                        <span className="text-sm font-extrabold text-amber-400">12.4 km</span>
-                        <p className="text-[9px] text-slate-400 font-bold">Total Distance</p>
-                      </div>
-                      <div className="p-2 bg-slate-800/60 rounded-xl">
-                        <span className="text-sm font-extrabold text-sky-400">28 mins</span>
-                        <p className="text-[9px] text-slate-400 font-bold">Est. Drive Time</p>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Interactive Live Route Map with TSP optimization */}
+                  <LiveRouteMap 
+                    driverName={user?.name || 'Ramesh Kumar'} 
+                    vehicleNumber={driverProfile?.vehicleNumber || 'TN-01-AX-9945'} 
+                    pickups={pickups} 
+                  />
                   
                   {/* Active Accepted Job panel */}
                   {activePickup ? (
@@ -730,28 +708,16 @@ const DriverDashboard = () => {
         </div>
       )}
 
-      {/* QR Code Scanner Camera Simulator Modal */}
-      {showQrScanner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 border border-sky-500/30 rounded-3xl p-6 shadow-2xl w-full max-w-xs text-center space-y-5">
-            <div className="space-y-1">
-              <span className="text-3xl">📷</span>
-              <h4 className="font-extrabold text-lg text-slate-900 dark:text-white">Scanning Customer QR Pass</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Align customer's recycling QR code within camera viewfinder.</p>
-            </div>
-
-            {/* Viewfinder visual */}
-            <div className="relative h-44 w-44 mx-auto rounded-2xl border-2 border-dashed border-sky-400 overflow-hidden flex items-center justify-center bg-slate-950">
-              <div className="h-32 w-32 border-2 border-emerald-400 rounded-xl relative flex items-center justify-center">
-                <span className="text-3xl">🏁</span>
-                <div className="absolute inset-x-0 h-0.5 bg-emerald-400 shadow-[0_0_8px_#10b981] animate-laserSweep"></div>
-              </div>
-            </div>
-
-            <p className="text-[10px] text-emerald-500 font-extrabold animate-pulse">Scanning QR Signature...</p>
-          </div>
-        </div>
-      )}
+      {/* Dedicated Interactive QR Scanner Modal */}
+      <QRScannerModal
+        isOpen={showQrScanner}
+        onClose={() => setShowQrScanner(false)}
+        pickup={activePickup}
+        onVerified={(pickupId) => {
+          setInputOtp('4829');
+          setShowQrScanner(false);
+        }}
+      />
     </div>
   );
 };

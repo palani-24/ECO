@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Public Pages
@@ -17,6 +18,7 @@ import MyPickups from './pages/user/MyPickups';
 import RedeemRewards from './pages/user/RedeemRewards';
 import Profile from './pages/user/Profile';
 import Leaderboard from './pages/user/Leaderboard';
+import CommunityChallenges from './pages/user/CommunityChallenges';
 
 // Driver Pages
 import DriverDashboard from './pages/driver/DriverDashboard';
@@ -33,56 +35,65 @@ import AdminSettings from './pages/admin/AdminSettings';
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+      <ToastProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* User Routes */}
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <UserDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/schedule-pickup" 
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <SchedulePickup />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/my-pickups" 
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <MyPickups />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/redeem" 
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <RedeemRewards />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/leaderboard" 
-            element={
-              <ProtectedRoute allowedRoles={['user']}>
-                <Leaderboard />
-              </ProtectedRoute>
-            } 
-          />
+            {/* User Routes */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <UserDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/schedule-pickup" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <SchedulePickup />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/my-pickups" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <MyPickups />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/redeem" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <RedeemRewards />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/leaderboard" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <Leaderboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/challenges" 
+              element={
+                <ProtectedRoute allowedRoles={['user']}>
+                  <CommunityChallenges />
+                </ProtectedRoute>
+              } 
+            />
 
           {/* Driver Routes */}
           <Route 
@@ -174,8 +185,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
-    </Router>
-  );
+    </ToastProvider>
+  </Router>
+);
 }
 
 export default App;

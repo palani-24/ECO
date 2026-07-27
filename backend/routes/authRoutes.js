@@ -4,7 +4,8 @@ import {
   loginUser, 
   forgotPassword, 
   resetPassword, 
-  getUserProfile 
+  getUserProfile,
+  updateUserProfile
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -15,5 +16,7 @@ router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/profile', protect, getUserProfile);
+router.put('/profile', protect, updateUserProfile);
 
 export default router;
+

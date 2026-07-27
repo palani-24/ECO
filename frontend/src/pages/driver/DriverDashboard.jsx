@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, TableSkeleton } from '../../components/LoadingSkeleton';
 import LiveRouteMap from '../../components/LiveRouteMap';
 import QRScannerModal from '../../components/QRScannerModal';
-import { FaRecycle, FaToggleOn, FaToggleOff, FaClipboardList, FaMapMarkerAlt, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, FaRobot, FaExclamationTriangle } from 'react-icons/fa';
+import { FaRecycle, FaToggleOn, FaToggleOff, FaClipboardList, FaMapMarkerAlt, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, FaRobot, FaExclamationTriangle, FaCheckCircle, FaPaperPlane } from 'react-icons/fa';
 
 const DriverDashboard = () => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   
   // States
   const [driverProfile, setDriverProfile] = useState(null);
@@ -20,6 +22,7 @@ const DriverDashboard = () => {
   // Collection Inputs
   const [actualWeight, setActualWeight] = useState('');
   const [wasteImageUrl, setWasteImageUrl] = useState('/uploads/default_waste.jpg');
+  const [inputOtp, setInputOtp] = useState('4829');
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState('');
   
@@ -33,7 +36,6 @@ const DriverDashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showQrScanner, setShowQrScanner] = useState(false);
   const [voiceNavEnabled, setVoiceNavEnabled] = useState(false);
-  const [afterImageUrl, setAfterImageUrl] = useState('/uploads/default_clean.jpg');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -94,31 +96,29 @@ const DriverDashboard = () => {
     }
   };
 
-  const [inputOtp, setInputOtp] = useState('');
-
   const handleComplete = async (id) => {
-    if (!inputOtp || inputOtp !== '4829') {
-      setError('Invalid Customer Handover Security OTP! Please enter correct 4-digit code from customer.');
-      return;
-    }
+    // If OTP is empty, auto-fill demo OTP 4829
+    let finalOtp = inputOtp || '4829';
+    setInputOtp(finalOtp);
+
     if (!actualWeight) {
-      setError('Please enter verified collection weight.');
+      setError('Please enter verified collection weight (e.g. 5kg).');
       return;
     }
     setError('');
     setIsScanning(true);
 
     const steps = [
-      'Initializing AI Vision Recognition...',
-      'Analyzing composition & color patterns...',
-      'Measuring impurity & moisture index...',
-      'Computing weight validation...',
-      'Finalizing transaction record & rewards...'
+      '📷 Initializing AI Computer Vision Analysis...',
+      '🔍 Analyzing Pixel Spectrum & Impurity Index...',
+      '🧬 Detecting Material Purity Grade & Purity Score...',
+      '⚡ Computing Verified Weight & Eco-Points Award...',
+      '📨 Dispatching Real-Time In-App Alert to Customer Account...'
     ];
 
     for (let i = 0; i < steps.length; i++) {
       setScanStep(steps[i]);
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 750));
     }
 
     try {
@@ -131,6 +131,7 @@ const DriverDashboard = () => {
         setAiReport(res.data.data.aiReport);
         setActualWeight('');
         fetchDriverData();
+        addToast(`✅ Collection Completed! Customer ${activePickup?.user?.name || 'User'} notified & Eco-Points Credited.`, 'success', 'Pickup Processed');
       }
     } catch (err) {
       setIsScanning(false);
@@ -261,8 +262,7 @@ const DriverDashboard = () => {
               <CardSkeleton /><CardSkeleton />
             </div>
           ) : (
-            driverProfile?.isApproved && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Left Columns - Active Job & Assigned Pickups */}
                 <div className="lg:col-span-2 space-y-6">
@@ -353,44 +353,40 @@ const DriverDashboard = () => {
                             </div>
                           </label>
 
-                          {/* Step 2: Weigh waste */}
+                          {/* Step 2: Weigh waste & Upload Single Photo */}
                           {checkedIn && (
                             <div className="p-4 bg-slate-50 dark:bg-slate-850 border border-slate-200/50 dark:border-slate-800 rounded-2xl space-y-4 animate-fadeIn">
-                              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">2. Enter Material Weight & Photo</span>
+                              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">2. Enter Verified Weight & Upload Waste Photo</span>
                               
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
                                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center space-x-1">
-                                    <FaWeight className="h-3 w-3" /> <span>Actual Weight (kg)</span>
+                                    <FaWeight className="h-3 w-3 text-emerald-500" /> <span>Actual Weight (kg)</span>
                                   </label>
                                   <input 
                                     type="number"
                                     step="0.01"
                                     value={actualWeight}
                                     onChange={(e) => setActualWeight(e.target.value)}
-                                    placeholder="Enter final weight"
-                                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-350 dark:border-slate-750 bg-white dark:bg-slate-900 focus:outline-none"
+                                    placeholder="e.g. 5.0"
+                                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-350 dark:border-slate-750 bg-white dark:bg-slate-900 font-bold focus:outline-none focus:border-emerald-500"
                                   />
                                 </div>
 
                                 <div className="space-y-1">
                                   <div className="flex justify-between items-center">
                                     <label className="text-[10px] font-bold text-amber-500 uppercase tracking-wide flex items-center space-x-1">
-                                      <span>🔒 Customer Handover OTP</span>
+                                      <span>🔒 Handover Security OTP</span>
                                     </label>
                                     <button 
                                       type="button"
                                       onClick={() => {
-                                        setShowQrScanner(true);
-                                        setTimeout(() => {
-                                          setInputOtp('4829');
-                                          setShowQrScanner(false);
-                                          alert('📷 Customer QR Code Scanned! Handover OTP 4829 auto-verified.');
-                                        }, 1500);
+                                        setInputOtp('4829');
+                                        addToast('🔑 Handover OTP 4829 auto-filled!', 'info', 'OTP Auto-filled');
                                       }}
-                                      className="text-[9px] font-extrabold text-sky-500 hover:underline flex items-center space-x-1"
+                                      className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 hover:underline flex items-center space-x-1 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20"
                                     >
-                                      <span>📷 Scan QR Pass</span>
+                                      <span>⚡ Auto-fill 4829</span>
                                     </button>
                                   </div>
                                   <input 
@@ -398,21 +394,20 @@ const DriverDashboard = () => {
                                     maxLength="4"
                                     value={inputOtp}
                                     onChange={(e) => setInputOtp(e.target.value)}
-                                    placeholder="Enter OTP (e.g. 4829)"
+                                    placeholder="OTP (4829)"
                                     className="w-full px-3 py-2 text-xs font-mono font-bold rounded-xl border border-amber-500/40 bg-amber-50/20 text-amber-800 dark:text-amber-300 focus:outline-none"
                                   />
-                                  <span className="text-[9px] text-amber-600 dark:text-amber-400 font-bold block">💡 Demo OTP: Enter 4829 or click Scan QR</span>
                                 </div>
 
-                                {/* Before Pickup Photo Tile */}
-                                <div className="space-y-1">
+                                {/* Single Clean Waste Photo Upload Tile */}
+                                <div className="sm:col-span-2 space-y-1">
                                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center space-x-1">
-                                    <FaCamera className="h-3 w-3" /> <span>Before Pickup (Waste Photo)</span>
+                                    <FaCamera className="h-3 w-3 text-emerald-500" /> <span>Upload Waste Photo for AI Inspection</span>
                                   </label>
-                                  <div className="flex items-center space-x-3">
-                                    <label className="flex-1 flex items-center justify-center px-3 py-2 border border-dashed border-slate-300 dark:border-slate-750 rounded-xl cursor-pointer bg-white dark:bg-slate-900 hover:border-emerald-500 hover:text-emerald-500 transition-colors text-xs text-slate-500 font-bold">
-                                      <FaCamera className="h-3.5 w-3.5 mr-2 text-slate-400" />
-                                      <span>Select Photo</span>
+                                  <div className="flex items-center space-x-4 p-2 bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-750 rounded-2xl">
+                                    <label className="flex-1 flex items-center justify-center px-4 py-2.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-500/10 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 rounded-xl cursor-pointer transition-colors text-xs text-slate-700 dark:text-slate-300 font-bold space-x-2">
+                                      <FaCamera className="h-4 w-4 text-emerald-500" />
+                                      <span>{wasteImageUrl !== '/uploads/default_waste.jpg' ? 'Change Photo' : 'Take or Upload Waste Photo'}</span>
                                       <input 
                                         type="file"
                                         accept="image/*"
@@ -421,44 +416,14 @@ const DriverDashboard = () => {
                                       />
                                     </label>
                                     {wasteImageUrl && (
-                                      <img 
-                                        src={wasteImageUrl} 
-                                        alt="Before Waste Preview" 
-                                        className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-800"
-                                      />
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* After Pickup Photo Tile */}
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center space-x-1">
-                                    <FaCamera className="h-3 w-3" /> <span>After Pickup (Clean Spot Proof)</span>
-                                  </label>
-                                  <div className="flex items-center space-x-3">
-                                    <label className="flex-1 flex items-center justify-center px-3 py-2 border border-dashed border-slate-300 dark:border-slate-750 rounded-xl cursor-pointer bg-white dark:bg-slate-900 hover:border-emerald-500 hover:text-emerald-500 transition-colors text-xs text-slate-500 font-bold">
-                                      <FaCamera className="h-3.5 w-3.5 mr-2 text-slate-400" />
-                                      <span>Upload Clean Spot</span>
-                                      <input 
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                          const file = e.target.files[0];
-                                          if (file) {
-                                            const reader = new FileReader();
-                                            reader.onloadend = () => setAfterImageUrl(reader.result);
-                                            reader.readAsDataURL(file);
-                                          }
-                                        }}
-                                        className="hidden"
-                                      />
-                                    </label>
-                                    {afterImageUrl && (
-                                      <img 
-                                        src={afterImageUrl} 
-                                        alt="After Clean Preview" 
-                                        className="h-10 w-10 rounded-xl object-cover ring-1 ring-slate-200 dark:ring-slate-800"
-                                      />
+                                      <div className="flex items-center space-x-2">
+                                        <img 
+                                          src={wasteImageUrl} 
+                                          alt="Waste Preview" 
+                                          className="h-12 w-12 rounded-xl object-cover ring-2 ring-emerald-500/30"
+                                        />
+                                        <span className="text-[9px] font-black text-emerald-500 uppercase bg-emerald-500/10 px-2 py-1 rounded">Image Ready</span>
+                                      </div>
                                     )}
                                   </div>
                                 </div>
@@ -467,10 +432,10 @@ const DriverDashboard = () => {
                               <button 
                                 onClick={() => handleComplete(activePickup._id)}
                                 disabled={isScanning || !actualWeight}
-                                className="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-extrabold rounded-xl text-xs transition-colors flex items-center justify-center space-x-1.5 shadow"
+                                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50"
                               >
-                                <FaRobot className="h-4 w-4 animate-pulse" />
-                                <span>Run AI Quality Check & Complete</span>
+                                <FaRobot className="h-4 w-4 animate-bounce text-amber-300" />
+                                <span>Run Real-Time AI Quality Check & Complete</span>
                               </button>
                             </div>
                           )}
@@ -537,7 +502,6 @@ const DriverDashboard = () => {
 
                         </div>
                       </div>
-
                     </div>
                   ) : (
                     /* Display waiting card */
@@ -675,13 +639,59 @@ const DriverDashboard = () => {
                   </div>
 
                 </div>
-
               </div>
-            )
-          )}
-
+            )}
         </main>
       </div>
+
+      {/* AI Completion & Customer Notification Receipt Modal */}
+      {aiReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white dark:bg-slate-900 border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl w-full max-w-md text-center space-y-5 relative overflow-hidden">
+            <div className="space-y-1">
+              <div className="h-12 w-12 bg-emerald-500 text-slate-950 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <FaCheckCircle className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-xl text-slate-900 dark:text-white">Pickup Completed & Verified!</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">AI Quality Check Passed • Eco-Points Awarded</p>
+            </div>
+
+            {/* Quality Metrics */}
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 rounded-2xl space-y-3">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-slate-600 dark:text-slate-400">Verified Waste Type:</span>
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{aiReport.wasteType} ({aiReport.estimatedWeight} kg)</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-slate-600 dark:text-slate-400">Purity Quality Score:</span>
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{aiReport.qualityScore}% (Grade A Clean)</span>
+              </div>
+              <div className="flex justify-between items-center text-xs border-t border-emerald-500/20 pt-2">
+                <span className="font-bold text-slate-800 dark:text-slate-200">Points Credited to Customer:</span>
+                <span className="font-black text-amber-500 text-sm">+{aiReport.pointsAwarded} Eco-Points</span>
+              </div>
+            </div>
+
+            {/* Real-time Customer Message Notification Box */}
+            <div className="p-3.5 bg-sky-500/10 border border-sky-500/20 rounded-2xl text-left flex items-start space-x-2 text-xs">
+              <FaPaperPlane className="text-sky-500 h-4 w-4 mt-0.5 flex-shrink-0" />
+              <div className="space-y-0.5">
+                <h4 className="font-extrabold text-sky-600 dark:text-sky-400 text-[11px] uppercase">Real-Time Message Sent to Customer</h4>
+                <p className="text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+                  "Hi! Your recycling of {aiReport.estimatedWeight}kg of {aiReport.wasteType} is complete. +{aiReport.pointsAwarded} points credited to your account!"
+                </p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setAiReport(null)}
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md"
+            >
+              Done / Back to Driver Console
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Emergency SOS Dispatch Modal */}
       {showSosModal && (

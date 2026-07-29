@@ -346,8 +346,9 @@ const DriverDashboard = () => {
                           <button 
                             type="button"
                             onClick={() => {
-                              setVoiceNavEnabled(!voiceNavEnabled);
-                              alert(voiceNavEnabled ? 'Voice Guidance Paused' : '🔊 Voice Nav Activated: "Turn right in 200m on Metro Heights"');
+                              const nextState = !voiceNavEnabled;
+                              setVoiceNavEnabled(nextState);
+                              addToast(nextState ? '🔊 Voice Nav Activated: "Turn right in 200m on Metro Heights"' : 'Voice Guidance Paused', 'info', 'Voice Navigation');
                             }}
                             className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 text-white text-[9px] font-bold px-2 py-1 rounded-lg border border-slate-700 flex items-center space-x-1"
                           >

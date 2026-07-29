@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
@@ -7,6 +8,9 @@ import { CardSkeleton, ChartSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
 import EcoCertificateModal from '../../components/EcoCertificateModal';
 import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward } from 'react-icons/fa';
+
+// LiveMap component remains intact
+
 
 
 const LiveMap = ({ driverName, vehicleInfo }) => {
@@ -127,7 +131,8 @@ const LiveMap = ({ driverName, vehicleInfo }) => {
 };
 
 const UserDashboard = () => {
-  const { user } = useAuth();
+  const { user, updateUserPoints } = useAuth();
+  const { addToast } = useToast();
   const [pickups, setPickups] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [analytics, setAnalytics] = useState(null);
@@ -156,10 +161,12 @@ const UserDashboard = () => {
 
     setRotation(newRotation);
 
-    setTimeout(async () => {
+    setTimeout(() => {
       setSpinning(false);
       setWonPrize(prize);
-      user.points = (user.points || 0) + prize;
+      const updated = (user?.points || 0) + prize;
+      updateUserPoints(updated);
+      addToast(`🎉 Daily Spin Bonus: +${prize} Eco Points credited to your wallet!`, 'reward', 'Spin & Win');
     }, 3000);
   };
 
@@ -666,7 +673,7 @@ const UserDashboard = () => {
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText('https://eco-liart-eta.vercel.app');
-                      alert('Platform link copied to clipboard!');
+                      addToast('Platform link copied to clipboard!', 'success', 'Link Copied');
                     }}
                     className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors text-[10px] font-bold"
                   >

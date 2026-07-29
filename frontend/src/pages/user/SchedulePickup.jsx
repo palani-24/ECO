@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import AIWasteScanner from '../../components/AIWasteScanner';
@@ -9,6 +10,7 @@ import { FaTrash, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCheck, FaCoins, FaIn
 
 const SchedulePickup = () => {
   const { user, addAddress } = useAuth();
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
@@ -43,7 +45,7 @@ const SchedulePickup = () => {
       setIsVoiceListening(false);
       setWasteCategory('Plastic');
       setEstimatedWeight(10);
-      alert('🎙️ Voice Command Detected: "10 kg plastic waste collection". Auto-selected Plastic (10 kg)!');
+      addToast('🎙️ Voice Command Detected: "10 kg plastic waste collection". Auto-selected Plastic (10 kg)!', 'info', 'Voice Booking');
     }, 2000);
   };
   const [itemCounts, setItemCounts] = useState({

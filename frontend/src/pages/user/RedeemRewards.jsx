@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 
 const RedeemRewards = () => {
-  const { user } = useAuth();
+  const { user, updateUserPoints } = useAuth();
   const { addToast } = useToast();
   const [coupons, setCoupons] = useState([]);
   const [redemptions, setRedemptions] = useState([]);
@@ -67,7 +67,7 @@ const RedeemRewards = () => {
         setSuccess(`Redeemed successfully! Details: ${res.data.data.details.title}. Voucher code: ${res.data.data.details.code}`);
         addToast(`🎉 Reward Redeemed! Voucher Code: ${res.data.data.details.code}`, 'reward', 'Voucher Unlocked!');
         // Refresh local user points
-        user.points = res.data.remainingPoints;
+        updateUserPoints(res.data.remainingPoints);
         // Refresh listings
         fetchRewardsData();
         setCashbackEmail('');

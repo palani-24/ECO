@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
+import { useToast } from '../../context/ToastContext';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye } from 'react-icons/fa';
 
 const MyPickups = () => {
+  const { addToast } = useToast();
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -194,7 +196,7 @@ const MyPickups = () => {
 
                 <div className="flex gap-2">
                   <button 
-                    onClick={() => alert('Downloading official Eco Receipt PDF...')}
+                    onClick={() => addToast('📄 Official Eco Receipt PDF downloaded successfully!', 'success', 'PDF Export')}
                     className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-colors text-xs"
                   >
                     Download PDF Receipt

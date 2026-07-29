@@ -134,6 +134,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserPoints = (newPoints) => {
+    setUser(prev => prev ? { ...prev, points: newPoints } : null);
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -142,6 +146,7 @@ export const AuthProvider = ({ children }) => {
       signup, 
       logout, 
       updateProfile, 
+      updateUserPoints,
       addAddress, 
       removeAddress, 
       setDefaultAddress 

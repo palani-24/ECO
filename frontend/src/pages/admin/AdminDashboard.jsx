@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
+import { useToast } from '../../context/ToastContext';
 import { CardSkeleton, TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaRecycle, FaUsers, FaTruck, FaClipboardCheck, FaCoins, FaCheck, FaTimes, FaTools, FaAngleRight } from 'react-icons/fa';
 
 const AdminDashboard = () => {
+  const { addToast } = useToast();
   const [analytics, setAnalytics] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [pickups, setPickups] = useState([]);
@@ -65,7 +67,7 @@ const AdminDashboard = () => {
       });
       if (res.data.success) {
         setSettings(res.data.data);
-        alert('Configurations saved!');
+        addToast('System configurations saved successfully!', 'success', 'Settings Saved');
       }
     } catch (err) {
       setError('Failed to save settings.');

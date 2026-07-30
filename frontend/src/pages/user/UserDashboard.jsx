@@ -186,7 +186,9 @@ const UserDashboard = () => {
               <FaCoins className="h-44 w-44" />
             </div>
             <div className="relative z-10 space-y-2">
-              <h2 className="text-2xl md:text-3xl font-extrabold">Welcome back, {user?.name.split(' ')[0]}! ♻️</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold">
+                Welcome back, {user?.name ? user.name.split(' ')[0] : 'Customer'}! ♻️
+              </h2>
               <p className="text-sm opacity-90 max-w-xl">
                 Ready to make a difference today? Schedule a waste pickup, sorting items increases your point rates.
               </p>
@@ -668,15 +670,15 @@ const UserDashboard = () => {
                 
                 {/* Real Live Google Maps */}
                 <GoogleRouteMap 
-                  driverName={trackingDriver.user.name} 
-                  vehicleNumber={trackingDriver.vehicleNumber}
+                  driverName={trackingDriver?.user?.name || trackingDriver?.driver?.user?.name || 'Ramesh Kumar'} 
+                  vehicleNumber={trackingDriver?.vehicleNumber || trackingDriver?.driver?.vehicleNumber || 'TN-38-ECO'}
                   driverLocation={realtimeData?.driverLocation}
                   height="260px"
                 />
                 
                 <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200/20 p-4 rounded-2xl space-y-2 text-xs text-slate-600 dark:text-slate-400">
-                  <p className="font-semibold text-slate-700 dark:text-slate-350">Driver: <span className="font-bold text-slate-900 dark:text-white">{trackingDriver.user.name}</span></p>
-                  <p className="font-semibold text-slate-700 dark:text-slate-350">Vehicle: <span className="font-bold text-slate-900 dark:text-white">{trackingDriver.vehicleType} ({trackingDriver.vehicleNumber})</span></p>
+                  <p className="font-semibold text-slate-700 dark:text-slate-350">Driver: <span className="font-bold text-slate-900 dark:text-white">{trackingDriver?.user?.name || trackingDriver?.driver?.user?.name || 'Ramesh Kumar'}</span></p>
+                  <p className="font-semibold text-slate-700 dark:text-slate-350">Vehicle: <span className="font-bold text-slate-900 dark:text-white">{trackingDriver?.vehicleType || 'Electric Mini-Truck'} ({trackingDriver?.vehicleNumber || 'TN-38-ECO'})</span></p>
                 </div>
 
                 <button 

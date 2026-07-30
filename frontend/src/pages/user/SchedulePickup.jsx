@@ -156,6 +156,13 @@ const SchedulePickup = () => {
       return;
     }
 
+    const maxWeightLimit = pickupType === 'bulk' ? 500 : 100;
+    if (estimatedWeight <= 0 || estimatedWeight > maxWeightLimit) {
+      setError(`Estimated weight must be between 0.1 kg and ${maxWeightLimit} kg per request.`);
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       wasteCategory,
       estimatedWeight,
@@ -163,7 +170,8 @@ const SchedulePickup = () => {
       pickupTimeSlot,
       pickupAddress: user.addresses[selectedAddressIndex],
       notes: driverNotes,
-      isRecurring
+      isRecurring,
+      pickupType
     };
 
     try {
@@ -370,13 +378,25 @@ const SchedulePickup = () => {
                     </div>
                     <input
                       type="number"
-                      min="1"
-                      max="100"
+                      min="0.1"
+                      max={pickupType === 'bulk' ? 500 : 100}
+                      step="0.1"
                       value={estimatedWeight}
-                      onChange={(e) => setEstimatedWeight(Math.max(1, parseInt(e.target.value) || 1))}
+                      onChange={(e) => {
+                        const maxVal = pickupType === 'bulk' ? 500 : 100;
+                        const val = parseFloat(e.target.value);
+                        if (isNaN(val)) {
+                          setEstimatedWeight(1);
+                        } else {
+                          setEstimatedWeight(Math.min(maxVal, Math.max(0.1, val)));
+                        }
+                      }}
                       required
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-sm focus:outline-none"
                     />
+                    <span className="text-[10px] text-slate-400 font-bold block pt-1">
+                      * Maximum weight cap: {pickupType === 'bulk' ? '500 kg (Bulk Mode)' : '100 kg (Household Mode)'}
+                    </span>
 
                     {showCalculator && calculatorSpecs[wasteCategory] && (
                       <div className="mt-2 p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3 animate-fadeIn">

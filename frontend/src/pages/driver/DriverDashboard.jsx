@@ -400,9 +400,15 @@ const DriverDashboard = () => {
                                   <input 
                                     type="number"
                                     step="0.01"
+                                    min="0.1"
+                                    max="500"
                                     value={actualWeight}
-                                    onChange={(e) => setActualWeight(e.target.value)}
-                                    placeholder="e.g. 5.0"
+                                    onChange={(e) => {
+                                      const val = parseFloat(e.target.value);
+                                      if (isNaN(val)) setActualWeight('');
+                                      else setActualWeight(Math.min(500, Math.max(0.1, val)));
+                                    }}
+                                    placeholder="e.g. 5.0 (Max 500kg)"
                                     className="w-full px-3 py-2 text-xs rounded-xl border border-slate-350 dark:border-slate-750 bg-white dark:bg-slate-900 font-bold focus:outline-none focus:border-emerald-500"
                                   />
                                 </div>

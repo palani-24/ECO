@@ -80,11 +80,21 @@ export const manageAddresses = async (req, res) => {
 
 // Schedule Waste Pickup
 export const schedulePickup = async (req, res) => {
-  const { wasteCategory, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress, notes, isRecurring } = req.body;
+  const { wasteCategory, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress, notes, isRecurring, pickupType } = req.body;
 
   try {
     if (!wasteCategory || !estimatedWeight || !pickupDate || !pickupTimeSlot || !pickupAddress) {
       return res.status(400).json({ success: false, message: 'All pickup details are required' });
+    }
+
+    // Weight Limit Validation (Max 100kg household, 500kg bulk)
+    const maxLimit = pickupType === 'bulk' ? 500 : 100;
+    const weightNum = parseFloat(estimatedWeight);
+    if (isNaN(weightNum) || weightNum <= 0 || weightNum > maxLimit) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Estimated weight must be a realistic quantity between 0.1 kg and ${maxLimit} kg per pickup.` 
+      });
     }
 
     const qrToken = `ECO-QR-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
@@ -93,7 +103,7 @@ export const schedulePickup = async (req, res) => {
     const pickup = await PickupRequest.create({
       user: req.user._id,
       wasteCategory,
-      estimatedWeight,
+      estimatedWeight: weightNum,
       pickupDate,
       pickupTimeSlot,
       pickupAddress,

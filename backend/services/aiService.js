@@ -30,7 +30,8 @@ export const analyzeWasteImage = async (imagePath, claimedCategory, claimedWeigh
   const confidenceScore = parseFloat((0.89 + Math.random() * 0.09).toFixed(2));
 
   const weightVariance = (Math.random() * 0.16) - 0.08; 
-  const actualWeight = parseFloat((claimedWeight * (1 + weightVariance)).toFixed(2)) || 1.0;
+  const rawWeight = parseFloat((claimedWeight * (1 + weightVariance)).toFixed(2)) || 1.0;
+  const actualWeight = Math.min(500, Math.max(0.1, rawWeight));
 
   const qualityScore = Math.floor(80 + Math.random() * 18);
   let qualityGrade = 'Medium';
@@ -38,7 +39,7 @@ export const analyzeWasteImage = async (imagePath, claimedCategory, claimedWeigh
   if (qualityScore < 82) qualityGrade = 'Low';
 
   const rate = POINT_RATES[detectedCategory] || 10;
-  const pointsAwarded = Math.round(actualWeight * rate);
+  const pointsAwarded = Math.min(1000, Math.round(actualWeight * rate));
 
   const availableSubTypes = SUB_TYPES[detectedCategory] || [detectedCategory];
   const detectedMaterial = availableSubTypes[Math.floor(Math.random() * availableSubTypes.length)];

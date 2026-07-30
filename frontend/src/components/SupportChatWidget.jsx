@@ -214,7 +214,7 @@ const SupportChatWidget = () => {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-2xl hover:shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 border-2 border-white/30 group"
+        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 p-3.5 sm:p-4 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-2xl hover:shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 border-2 border-white/30 group"
       >
         <div className="relative">
           <FaComments className="h-6 w-6" />

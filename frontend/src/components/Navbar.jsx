@@ -59,8 +59,8 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14">
           
           {/* Logo */}
           <Link 
@@ -68,8 +68,8 @@ const Navbar = () => {
             className="flex items-center space-x-2 flex-shrink-0" 
             onClick={() => setIsOpen(false)}
           >
-            <FaRecycle className="h-8 w-8 text-emerald-500 animate-spin-slow" style={{ animationDuration: '8s' }} />
-            <span className="font-black text-xl tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-cyan-300">
+            <FaRecycle className="h-7 w-7 text-emerald-500 animate-spin-slow" style={{ animationDuration: '8s' }} />
+            <span className="font-black text-lg tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-cyan-300">
               EcoReward
             </span>
           </Link>
@@ -90,7 +90,7 @@ const Navbar = () => {
               <div className="hidden md:flex items-center space-x-3">
                 <button 
                   onClick={() => setDarkMode(!darkMode)}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
                 >
                   {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4" />}
                 </button>
@@ -98,18 +98,18 @@ const Navbar = () => {
                 {user ? (
                   <Link 
                     to={getDashboardLink()} 
-                    className="px-5 py-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-md transition-all"
+                    className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs shadow transition-all"
                   >
                     Go to Dashboard
                   </Link>
                 ) : (
                   <div className="flex items-center space-x-2 text-xs font-extrabold">
-                    <Link to="/login" className="px-4 py-2 text-slate-700 dark:text-slate-200 hover:text-emerald-500 transition-colors">
+                    <Link to="/login" className="px-3 py-1.5 text-slate-700 dark:text-slate-200 hover:text-emerald-500 transition-colors">
                       Login
                     </Link>
                     <Link 
                       to="/signup" 
-                      className="px-5 py-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold shadow-md transition-all"
+                      className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold shadow transition-all"
                     >
                       Sign Up
                     </Link>
@@ -119,69 +119,46 @@ const Navbar = () => {
             </>
           ) : (
             
-            /* DASHBOARD HEADER LAYOUT (Active for all authenticated dashboard pages) */
-            <div className="flex-1 flex items-center justify-between ml-4 sm:ml-8">
+            /* DASHBOARD HEADER LAYOUT (Compact, Sleek, Single Row) */
+            <div className="flex-1 flex items-center justify-between ml-3 sm:ml-6">
               
-              {/* Search Bar */}
-              <div className="relative w-full max-w-xs hidden sm:block">
-                <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 text-xs" />
+              {/* Compact Search Bar */}
+              <div className="relative w-36 sm:w-60">
+                <FaSearch className="absolute left-3 top-2.5 text-slate-400 text-[11px]" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search anything... (Ctrl + K)"
-                  className="w-full pl-9 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all border border-transparent dark:border-slate-700"
+                  placeholder="Search... (Ctrl + K)"
+                  className="w-full pl-8 pr-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all border border-transparent dark:border-slate-700"
                 />
               </div>
 
-              {/* Right Side Dashboard Controls */}
-              <div className="flex items-center space-x-3 ml-auto">
+              {/* Right Side Dashboard Controls: Notifications, Dark Mode, Profile, Logout */}
+              <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
                 
-                {/* Live Sync Status Indicator */}
-                {user && (
-                  <div 
-                    className={`hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide border ${
-                      isConnected 
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' 
-                        : 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
-                    }`}
-                    title={isConnected ? 'Connected to Live Socket Stream' : 'Connecting to Live Stream...'}
-                  >
-                    <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-ping' : 'bg-amber-500'}`}></span>
-                    <span className="uppercase">{isConnected ? 'Live Sync' : 'Connecting'}</span>
-                  </div>
-                )}
-
-                {/* Wallet Points Badge */}
-                {user && user.role === 'user' && (
-                  <div className="flex items-center space-x-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-600 dark:text-emerald-400 text-xs font-black">
-                    <FaCoins className="h-3.5 w-3.5" />
-                    <span>{user.points || 100} pts</span>
-                  </div>
-                )}
-
                 {/* Notifications Bell */}
                 {user && (
                   <button 
                     onClick={() => addToast('You have 3 unread pickup notifications', 'info', 'Notifications')}
-                    className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 rounded-2xl text-xs relative transition-colors"
+                    className="p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs relative transition-colors"
                     title="Notifications"
                   >
                     <FaBell className="h-4 w-4" />
-                    <span className="absolute top-1 right-1 h-2 w-2 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-emerald-500 rounded-full animate-ping"></span>
                   </button>
                 )}
 
                 {/* Dark Mode Toggle */}
                 <button 
                   onClick={() => setDarkMode(!darkMode)}
-                  className="p-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-400 transition-colors"
+                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-400 transition-colors"
                   aria-label="Toggle Dark Mode"
                 >
                   {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4" />}
                 </button>
 
-                {/* User Profile Info */}
+                {/* User Profile Avatar & Name */}
                 {user && (
                   <Link 
                     to={getSettingsLink()}
@@ -190,23 +167,9 @@ const Navbar = () => {
                     <img 
                       src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=10b981&color=fff`} 
                       alt="User Avatar" 
-                      className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/40"
+                      className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40"
                     />
-                    <div className="text-left hidden xl:block">
-                      <p className="font-extrabold text-slate-900 dark:text-white text-xs truncate max-w-[100px]">{user.name}</p>
-                      <span className="text-[9px] text-emerald-500 font-bold block uppercase tracking-wider">{user.role}</span>
-                    </div>
-                  </Link>
-                )}
-
-                {/* Settings Gear */}
-                {user && (
-                  <Link
-                    to={getSettingsLink()}
-                    className="p-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors hidden sm:block"
-                    title="Account Settings"
-                  >
-                    <FaCogs className="h-4 w-4" />
+                    <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[90px]">{user.name}</span>
                   </Link>
                 )}
 
@@ -214,7 +177,7 @@ const Navbar = () => {
                 {user && (
                   <button 
                     onClick={handleLogout}
-                    className="p-2 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors border border-rose-200/50 dark:border-rose-800/50"
+                    className="p-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors border border-rose-200/50 dark:border-rose-800/50"
                     title="Logout"
                   >
                     <FaSignOutAlt className="h-4 w-4" />
@@ -226,10 +189,10 @@ const Navbar = () => {
           )}
 
           {/* Mobile hamburger menu toggle */}
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="md:hidden flex items-center space-x-1 ml-2">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 focus:outline-none transition-colors"
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 focus:outline-none transition-colors"
             >
               {isOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
             </button>

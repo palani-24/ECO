@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaRecycle, FaUser, FaEnvelope, FaLock, FaTruck, FaMapPin, FaClipboardCheck, FaInfoCircle } from 'react-icons/fa';
+import { FaRecycle, FaUser, FaEnvelope, FaLock, FaTruck, FaMapPin, FaClipboardCheck, FaInfoCircle, FaSignInAlt } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 
 const Signup = () => {
@@ -270,9 +270,18 @@ const Signup = () => {
             </button>
           </form>
 
-          <p className="text-xs text-center text-slate-500 dark:text-slate-400">
-            Already have an account? <Link to="/login" className="font-semibold text-primary-500 hover:text-primary-600">Sign In</Link>
-          </p>
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+            <p className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center justify-center space-x-2">
+              <span>Already have an account?</span>
+              <Link 
+                to="/login" 
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold border border-emerald-500/30 transition-all hover:scale-105 shadow-sm inline-flex items-center space-x-1.5"
+              >
+                <span>Sign In</span>
+                <FaSignInAlt className="h-3 w-3" />
+              </Link>
+            </p>
+          </div>
 
         </div>
       </div>

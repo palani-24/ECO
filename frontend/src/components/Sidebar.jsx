@@ -34,6 +34,7 @@ const Sidebar = () => {
     { path: '/driver', label: 'Driver Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
     { path: '/driver/earnings', label: 'Earnings & Profile', icon: FaCoins },
+    { path: '/driver/settings', label: 'Driver Settings', icon: FaCogs },
   ];
 
   const adminLinks = [

@@ -30,6 +30,7 @@ import DriverBatteryTelematics from './pages/driver/DriverBatteryTelematics';
 import DriverRoadHazards from './pages/driver/DriverRoadHazards';
 import DriverShifts from './pages/driver/DriverShifts';
 import DriverEquipment from './pages/driver/DriverEquipment';
+import DriverSettings from './pages/driver/DriverSettings';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -127,6 +128,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['driver']}>
                   <DriverEarnings />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/settings" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverSettings />
                 </ProtectedRoute>
               } 
             />

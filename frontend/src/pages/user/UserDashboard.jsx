@@ -7,6 +7,8 @@ import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, ChartSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
+import EcoCertificateModal from '../../components/EcoCertificateModal';
+import GoogleRouteMap from '../../components/GoogleRouteMap';
 import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import DriverChatModal from '../../components/DriverChatModal';
 import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt } from 'react-icons/fa';

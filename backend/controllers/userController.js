@@ -352,7 +352,7 @@ export const getLeaderboard = async (req, res) => {
     const topUsers = await User.find({ role: 'user' })
       .select('name points profileImage')
       .sort({ points: -1 })
-      .limit(10)
+      .limit(20)
       .lean();
 
     // Aggregate completed pickup weights per user
@@ -365,7 +365,7 @@ export const getLeaderboard = async (req, res) => {
     const weightMap = {};
     weightAgg.forEach(w => { weightMap[w._id.toString()] = w.totalWeight; });
 
-    const formattedLeaderboard = topUsers.map((u, index) => {
+    let formattedLeaderboard = topUsers.map((u, index) => {
       const pts = u.points || 0;
       let tier = 'Green Warrior';
       let badge = '🎖️ Rising Star';
@@ -388,6 +388,28 @@ export const getLeaderboard = async (req, res) => {
         isCurrentUser: req.user?._id.toString() === u._id.toString()
       };
     });
+
+    // If current user is logged in and not in top 20, calculate their rank and append
+    if (req.user && !formattedLeaderboard.some(item => item.isCurrentUser)) {
+      const currentUserData = await User.findById(req.user._id).select('name points profileImage').lean();
+      if (currentUserData) {
+        const higherCount = await User.countDocuments({ role: 'user', points: { $gt: currentUserData.points || 0 } });
+        const userRank = higherCount + 1;
+        const pts = currentUserData.points || 0;
+        
+        formattedLeaderboard.push({
+          _id: currentUserData._id,
+          rank: userRank,
+          name: currentUserData.name,
+          avatar: currentUserData.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUserData.name)}&background=10b981&color=fff`,
+          points: pts,
+          recycledKg: parseFloat((pts * 0.15).toFixed(1)),
+          tier: 'Eco Scout',
+          badge: '🌱 Green Scout',
+          isCurrentUser: true
+        });
+      }
+    }
 
     res.json({ success: true, data: formattedLeaderboard });
   } catch (error) {

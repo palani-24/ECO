@@ -8,6 +8,7 @@ import Notification from '../models/Notification.js';
 import Challenge from '../models/Challenge.js';
 import WasteRecord from '../models/WasteRecord.js';
 import { sendNotification } from '../services/notificationService.js';
+import { emitToUser, emitToRole, broadcastEvent } from '../config/socket.js';
 
 // Update User Profile
 export const editProfile = async (req, res) => {
@@ -137,6 +138,11 @@ export const schedulePickup = async (req, res) => {
         'general'
       );
     }
+
+    // Real-Time WebSockets Broadcast
+    emitToUser(req.user._id, 'pickup:created', pickup);
+    emitToRole('admin', 'pickup:new', pickup);
+    emitToRole('drivers', 'pickup:new', pickup);
 
     res.status(201).json({ success: true, data: pickup });
   } catch (error) {
@@ -447,5 +453,40 @@ export const joinChallenge = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Spin Daily Wheel Bonus Points
+export const spinDailyWheel = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const prizes = [10, 25, 50, 100, 200];
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+
+    user.points += prize;
+    await user.save();
+
+    // Log Transaction Ledger
+    await Transaction.create({
+      user: user._id,
+      pointsChange: prize,
+      type: 'earn',
+      description: 'Daily Spin & Win Bonus'
+    });
+
+    // Send Realtime Socket Emit
+    emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: prize });
+
+    res.json({
+      success: true,
+      message: `🎉 Daily Spin Bonus: +${prize} EcoPoints credited to your wallet!`,
+      prize,
+      totalPoints: user.points
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 

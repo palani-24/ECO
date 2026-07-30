@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Driver from '../models/Driver.js';
+import Transaction from '../models/Transaction.js';
 
 // Generate Token
 const generateToken = (id) => {
@@ -26,6 +27,7 @@ export const registerUser = async (req, res) => {
 
     // Prepare default address if provided
     const addresses = address ? [ { ...address, isDefault: true } ] : [];
+    const welcomePoints = (role === 'driver' || role === 'admin') ? 0 : 50;
 
     // Create User
     const user = await User.create({
@@ -33,8 +35,18 @@ export const registerUser = async (req, res) => {
       email,
       password,
       role: role || 'user',
+      points: welcomePoints,
       addresses
     });
+
+    if (welcomePoints > 0) {
+      await Transaction.create({
+        user: user._id,
+        pointsChange: welcomePoints,
+        type: 'earn',
+        description: 'Welcome Bonus for joining EcoReward'
+      });
+    }
 
     if (user) {
       let driver = null;
@@ -67,6 +79,7 @@ export const registerUser = async (req, res) => {
           role: user.role,
           points: user.points,
           addresses: user.addresses,
+          profileImage: user.profileImage || '',
           token: generateToken(user._id),
           isApproved: driver ? driver.isApproved : undefined
         }
@@ -110,6 +123,7 @@ export const loginUser = async (req, res) => {
           role: user.role,
           points: user.points,
           addresses: user.addresses,
+          profileImage: user.profileImage || '',
           token: generateToken(user._id),
           isApproved
         }
@@ -273,4 +287,42 @@ export const updateUserProfile = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+/**
+ * @desc    Upload profile picture (avatar file)
+ * @route   POST /api/auth/upload-avatar
+ * @access  Private
+ */
+export const uploadAvatarImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file uploaded' });
+    }
+
+    const imageUrl = `/uploads/profiles/${req.file.filename}`;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    user.profileImage = imageUrl;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Profile picture uploaded and saved successfully',
+      imageUrl,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        points: user.points,
+        addresses: user.addresses,
+        profileImage: user.profileImage
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 

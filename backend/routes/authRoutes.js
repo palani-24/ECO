@@ -5,9 +5,11 @@ import {
   forgotPassword, 
   resetPassword, 
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  uploadAvatarImage
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
+import { uploadAvatar } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -17,6 +19,8 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/profile', protect, getUserProfile);
 router.put('/profile', protect, updateUserProfile);
+router.post('/upload-avatar', protect, uploadAvatar.single('avatar'), uploadAvatarImage);
 
 export default router;
+
 

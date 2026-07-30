@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt } from 'react-icons/fa';
+import { useSocket } from '../context/SocketContext';
+import { FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, FaWifi } from 'react-icons/fa';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { isConnected } = useSocket() || {};
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark' || 
@@ -58,6 +60,21 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
+            {/* Realtime Connection Status Pill */}
+            {user && (
+              <div 
+                className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all border ${
+                  isConnected 
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' 
+                    : 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                }`}
+                title={isConnected ? 'Connected to Real-Time Data Stream' : 'Connecting to Live Data Stream...'}
+              >
+                <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-ping' : 'bg-amber-500'}`}></span>
+                <span className="text-[10px] tracking-wide uppercase">{isConnected ? 'Live Sync' : 'Connecting'}</span>
+              </div>
+            )}
+
             {/* Dark Mode Toggle */}
             <button 
               onClick={() => setDarkMode(!darkMode)}

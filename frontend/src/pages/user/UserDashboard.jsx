@@ -1,138 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useSocket } from '../../context/SocketContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, ChartSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
 import EcoCertificateModal from '../../components/EcoCertificateModal';
+import GoogleRouteMap from '../../components/GoogleRouteMap';
 import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward } from 'react-icons/fa';
-
-// LiveMap component remains intact
-
-
-
-const LiveMap = ({ driverName, vehicleInfo }) => {
-  const [position, setPosition] = useState({ x: 15, y: 20 });
-  const [eta, setEta] = useState(12);
-  const [progress, setProgress] = useState(0);
-
-  const path = [
-    { x: 15, y: 20 },
-    { x: 15, y: 60 },
-    { x: 75, y: 60 },
-    { x: 75, y: 80 }
-  ];
-
-  useEffect(() => {
-    let index = 0;
-    const interval = setInterval(() => {
-      setProgress(p => {
-        const nextProgress = p + 1;
-        if (nextProgress >= 100) {
-          clearInterval(interval);
-          setEta(0);
-          return 100;
-        }
-        
-        const totalSegments = path.length - 1;
-        const segmentProgress = 100 / totalSegments;
-        const currentSegment = Math.floor(nextProgress / segmentProgress);
-        
-        if (currentSegment < totalSegments) {
-          const start = path[currentSegment];
-          const end = path[currentSegment + 1];
-          const segmentPercent = (nextProgress % segmentProgress) / segmentProgress;
-          
-          const curX = start.x + (end.x - start.x) * segmentPercent;
-          const curY = start.y + (end.y - start.y) * segmentPercent;
-          
-          setPosition({ x: curX, y: curY });
-        }
-        
-        setEta(Math.max(1, Math.round(12 * (1 - nextProgress / 100))));
-        return nextProgress;
-      });
-    }, 150);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="space-y-4">
-      {/* Live Map Frame */}
-      <div className="relative w-full h-52 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-inner">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Main Grid Roads */}
-          <line x1="0" y1="60" x2="100" y2="60" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" opacity="0.25" />
-          <line x1="0" y1="60" x2="100" y2="60" stroke="#64748b" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.6" />
-          
-          <line x1="15" y1="0" x2="15" y2="100" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" opacity="0.25" />
-          <line x1="15" y1="0" x2="15" y2="100" stroke="#64748b" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.6" />
-
-          <line x1="75" y1="0" x2="75" y2="100" stroke="#94a3b8" strokeWidth="6" strokeLinecap="round" opacity="0.25" />
-          <line x1="75" y1="0" x2="75" y2="100" stroke="#64748b" strokeWidth="0.5" strokeDasharray="3,3" opacity="0.6" />
-
-          {/* Glowing collection route */}
-          <path
-            d="M 15 20 L 15 60 L 75 60 L 75 80"
-            fill="none"
-            stroke="#10b981"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray="4,4"
-            className="animate-pulse"
-          />
-
-          {/* User Home Location Pin */}
-          <circle cx="75" cy="80" r="5" fill="#f43f5e" className="animate-ping" opacity="0.4" />
-          <circle cx="75" cy="80" r="3.5" fill="#f43f5e" />
-        </svg>
-
-        <div className="absolute top-[82%] left-[73%] flex flex-col items-center">
-          <span className="text-[8px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded-md shadow whitespace-nowrap">Your Home</span>
-        </div>
-
-        {/* Live Moving Truck marker */}
-        <div 
-          className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-150 ease-linear"
-          style={{ left: `${position.x}%`, top: `${position.y}%` }}
-        >
-          <div className="relative">
-            <div className="absolute -inset-2 bg-emerald-500/20 rounded-full blur animate-pulse"></div>
-            <div className="relative h-7 w-7 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg border border-emerald-400">
-              <FaTruck className="h-3.5 w-3.5" />
-            </div>
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[8px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shadow-md">
-              {driverName}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ETA Stats row */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200/20 p-3 rounded-xl text-center">
-          <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-            {eta > 0 ? `${eta} mins` : 'Arrived!'}
-          </span>
-          <p className="text-[9px] uppercase font-bold text-slate-400 dark:text-slate-500">ETA</p>
-        </div>
-        <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200/20 p-3 rounded-xl text-center">
-          <span className="text-xl font-black text-primary-600 dark:text-primary-400">
-            {progress}%
-          </span>
-          <p className="text-[9px] uppercase font-bold text-slate-400 dark:text-slate-500">Progress</p>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const UserDashboard = () => {
   const { user, updateUserPoints } = useAuth();
   const { addToast } = useToast();
+  const { realtimeData } = useSocket() || {};
   const [pickups, setPickups] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [analytics, setAnalytics] = useState(null);
@@ -142,32 +24,66 @@ const UserDashboard = () => {
   const [showCertModal, setShowCertModal] = useState(false);
   const [selectedQrPickup, setSelectedQrPickup] = useState(null);
 
+  const [coinPopup, setCoinPopup] = useState(null);
+
+  // Sync Real-Time Socket Pickup Updates
+  useEffect(() => {
+    if (realtimeData?.latestPickup) {
+      const updatedPickup = realtimeData.latestPickup;
+      setPickups(prev => {
+        const index = prev.findIndex(p => p._id === updatedPickup._id);
+        if (index !== -1) {
+          const newPickups = [...prev];
+          newPickups[index] = { ...newPickups[index], ...updatedPickup };
+          return newPickups;
+        }
+        return [updatedPickup, ...prev];
+      });
+    }
+  }, [realtimeData?.latestPickup]);
+
+  // Sync Real-Time Coin Award Celebration Popup
+  useEffect(() => {
+    if (realtimeData?.lastPointsAwarded) {
+      setCoinPopup({
+        amount: realtimeData.lastPointsAwarded
+      });
+    }
+  }, [realtimeData?.lastPointsAwarded]);
+
   // Daily Spin Wheel States
   const [showSpinWheel, setShowSpinWheel] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [wonPrize, setWonPrize] = useState(null);
   const [rotation, setRotation] = useState(0);
 
-  const handleSpin = () => {
+  const handleSpin = async () => {
     if (spinning) return;
     setSpinning(true);
     setWonPrize(null);
 
-    const prizes = [10, 25, 50, 100, 200];
-    const randomIndex = Math.floor(Math.random() * prizes.length);
-    const prize = prizes[randomIndex];
-    const extraDegrees = 360 * 5 + randomIndex * (360 / prizes.length);
-    const newRotation = rotation + extraDegrees;
+    try {
+      const res = await api.post('/user/spin');
+      if (res.data.success) {
+        const prize = res.data.prize;
+        const prizes = [10, 25, 50, 100, 200];
+        const prizeIndex = prizes.indexOf(prize) !== -1 ? prizes.indexOf(prize) : 2;
+        const extraDegrees = 360 * 5 + prizeIndex * (360 / prizes.length);
+        const newRotation = rotation + extraDegrees;
 
-    setRotation(newRotation);
+        setRotation(newRotation);
 
-    setTimeout(() => {
+        setTimeout(() => {
+          setSpinning(false);
+          setWonPrize(prize);
+          updateUserPoints(res.data.totalPoints);
+          addToast(res.data.message, 'reward', 'Spin & Win');
+        }, 3000);
+      }
+    } catch (err) {
       setSpinning(false);
-      setWonPrize(prize);
-      const updated = (user?.points || 0) + prize;
-      updateUserPoints(updated);
-      addToast(`🎉 Daily Spin Bonus: +${prize} Eco Points credited to your wallet!`, 'reward', 'Spin & Win');
-    }, 3000);
+      addToast(err.response?.data?.message || 'Spin failed', 'error', 'Spin & Win');
+    }
   };
 
   useEffect(() => {
@@ -697,8 +613,13 @@ const UserDashboard = () => {
                   </p>
                 </div>
                 
-                {/* Live Animated Map */}
-                <LiveMap driverName={trackingDriver.user.name} vehicleInfo={trackingDriver.vehicleType} />
+                {/* Real Live Google Maps */}
+                <GoogleRouteMap 
+                  driverName={trackingDriver.user.name} 
+                  vehicleNumber={trackingDriver.vehicleNumber}
+                  driverLocation={realtimeData?.driverLocation}
+                  height="260px"
+                />
                 
                 <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200/20 p-4 rounded-2xl space-y-2 text-xs text-slate-600 dark:text-slate-400">
                   <p className="font-semibold text-slate-700 dark:text-slate-350">Driver: <span className="font-bold text-slate-900 dark:text-white">{trackingDriver.user.name}</span></p>
@@ -782,6 +703,37 @@ const UserDashboard = () => {
             user={user}
             impactData={analytics?.ecology}
           />
+
+          {/* Realtime Coins Received Celebration Modal */}
+          {coinPopup && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+              <div className="bg-slate-900 border-2 border-amber-500/50 p-8 rounded-3xl max-w-sm w-full text-center space-y-5 shadow-2xl shadow-amber-500/20 transform animate-bounce-short">
+                <div className="relative inline-block">
+                  <div className="absolute -inset-4 bg-amber-500/30 rounded-full blur-xl animate-pulse"></div>
+                  <div className="h-24 w-24 bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 rounded-full flex items-center justify-center mx-auto shadow-2xl border-4 border-yellow-200">
+                    <FaCoins className="h-12 w-12 text-slate-950 animate-bounce" />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-black tracking-widest text-amber-400">RECYCLING VERIFIED BY DRIVER</span>
+                  <h3 className="text-4xl font-black bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 bg-clip-text text-transparent">
+                    +{coinPopup.amount} Coins!
+                  </h3>
+                  <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                    Driver has verified your recycling weight and AI quality metrics! EcoPoints credited to your wallet balance.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setCoinPopup(null)}
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black rounded-2xl text-xs uppercase tracking-wider shadow-lg transition-transform active:scale-95"
+                >
+                  Collect & Continue
+                </button>
+              </div>
+            </div>
+          )}
 
         </main>
       </div>

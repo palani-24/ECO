@@ -31,6 +31,7 @@ const pickupRequestSchema = new mongoose.Schema({
     confidenceScore: { type: Number }
   },
   pointsAwarded: { type: Number, default: 0 },
+  isPointsAwarded: { type: Boolean, default: false },
   completedAt: { type: Date },
   receiptUrl: { type: String },
   qrToken: { type: String },

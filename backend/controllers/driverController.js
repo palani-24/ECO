@@ -5,6 +5,7 @@ import WasteRecord from '../models/WasteRecord.js';
 import Transaction from '../models/Transaction.js';
 import { analyzeWasteImage } from '../services/aiService.js';
 import { sendNotification } from '../services/notificationService.js';
+import { emitToUser, emitToRole, broadcastEvent } from '../config/socket.js';
 
 // Get Driver Profile & Status
 export const getDriverProfile = async (req, res) => {
@@ -75,20 +76,50 @@ export const acceptPickup = async (req, res) => {
     }
 
     pickup.status = 'accepted';
+    
+    // Award points immediately upon acceptance if not already awarded
+    let awardedPoints = 0;
+    if (!pickup.isPointsAwarded) {
+      const user = await User.findById(pickup.user);
+      if (user) {
+        awardedPoints = Math.round((pickup.estimatedWeight || 1) * 10);
+        user.points += awardedPoints;
+        await user.save();
+
+        pickup.pointsAwarded = awardedPoints;
+        pickup.isPointsAwarded = true;
+
+        // Create transaction entry
+        await Transaction.create({
+          user: user._id,
+          pointsChange: awardedPoints,
+          type: 'earn',
+          description: `Earned points for accepted pickup request (${pickup.wasteCategory})`
+        });
+
+        // Emit real-time points update
+        emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: awardedPoints });
+      }
+    }
+
     await pickup.save();
 
     driver.status = 'busy';
     await driver.save();
 
-    // Notify User
+    // Notify User with required exact message format
     await sendNotification(
       pickup.user,
-      'Pickup Accepted',
-      `Driver ${req.user.name} is on the way to collect your waste.`,
+      'Request Accepted & Points Credited!',
+      'Your request has been accepted. Reward points have been added to your account.',
       'pickup_status'
     );
 
-    res.json({ success: true, data: pickup });
+    // Socket Emit
+    emitToUser(pickup.user, 'pickup:updated', pickup);
+    emitToRole('admin', 'pickup:updated', pickup);
+
+    res.json({ success: true, data: pickup, pointsAwarded: awardedPoints });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -96,13 +127,28 @@ export const acceptPickup = async (req, res) => {
 
 // Update Driver Live GPS Coordinates (Simulation)
 export const updateCoordinates = async (req, res) => {
-  const { lat, lng } = req.body;
+  const { lat, lng, userId, pickupId } = req.body;
   try {
     const driver = await Driver.findOne({ user: req.user._id });
     if (!driver) return res.status(404).json({ success: false, message: 'Driver profile not found' });
 
     driver.currentCoordinates = { lat, lng };
     await driver.save();
+
+    const locationData = {
+      driverId: driver._id,
+      driverName: req.user.name,
+      lat,
+      lng,
+      pickupId,
+      timestamp: new Date()
+    };
+
+    if (userId) {
+      emitToUser(userId, 'driver:location_update', locationData);
+    }
+    emitToRole('admin', 'driver:location_update', locationData);
+
     res.json({ success: true, message: 'Coordinates updated', coords: driver.currentCoordinates });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -131,20 +177,37 @@ export const completePickup = async (req, res) => {
     // 1. Execute AI Waste verification module
     const aiReport = await analyzeWasteImage(finalImage, pickup.wasteCategory, finalWeight);
 
-    // 2. Award Points to User
+    // 2. Award Points to User (only if not already awarded upon acceptance, or credit difference if higher)
     const user = await User.findById(pickup.user);
     if (!user) return res.status(404).json({ success: false, message: 'Customer user not found' });
 
-    user.points += aiReport.pointsAwarded;
-    await user.save();
+    let additionalPoints = 0;
+    if (!pickup.isPointsAwarded) {
+      additionalPoints = aiReport.pointsAwarded;
+      user.points += additionalPoints;
+      await user.save();
+      pickup.pointsAwarded = aiReport.pointsAwarded;
+      pickup.isPointsAwarded = true;
 
-    // 3. Create Points Transaction Entry
-    await Transaction.create({
-      user: user._id,
-      pointsChange: aiReport.pointsAwarded,
-      type: 'earn',
-      description: `Earned points for recycling ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}`
-    });
+      await Transaction.create({
+        user: user._id,
+        pointsChange: additionalPoints,
+        type: 'earn',
+        description: `Earned points for recycling ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}`
+      });
+    } else if (aiReport.pointsAwarded > pickup.pointsAwarded) {
+      additionalPoints = aiReport.pointsAwarded - pickup.pointsAwarded;
+      user.points += additionalPoints;
+      await user.save();
+      pickup.pointsAwarded = aiReport.pointsAwarded;
+
+      await Transaction.create({
+        user: user._id,
+        pointsChange: additionalPoints,
+        type: 'earn',
+        description: `Quality bonus points for recycling ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}`
+      });
+    }
 
     // 4. Create Waste Record
     await WasteRecord.create({
@@ -176,13 +239,20 @@ export const completePickup = async (req, res) => {
     driver.totalPickupsCount += 1;
     await driver.save();
 
-    // 7. Send Notifications
+    // 7. Send Notifications & Real-Time Socket Emitters
     await sendNotification(
       user._id,
       'Recycling Completed!',
       `Successfully processed ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}. Verified quality: ${aiReport.qualityScore}%. You earned +${aiReport.pointsAwarded} points. Receipt: ${receiptCode}`,
       'points_earned'
     );
+
+    // Real-Time Socket Events
+    emitToUser(user._id, 'pickup:updated', pickup);
+    emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: aiReport.pointsAwarded });
+    emitToRole('admin', 'pickup:updated', pickup);
+    emitToRole('admin', 'stats:updated', { completedPickupId: pickup._id, weight: aiReport.estimatedWeight });
+    emitToRole('drivers', 'pickup:updated', pickup);
 
     res.json({
       success: true,

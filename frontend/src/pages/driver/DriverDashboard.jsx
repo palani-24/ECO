@@ -1,23 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useSocket } from '../../context/SocketContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, TableSkeleton } from '../../components/LoadingSkeleton';
 import LiveRouteMap from '../../components/LiveRouteMap';
+import GoogleRouteMap from '../../components/GoogleRouteMap';
 import QRScannerModal from '../../components/QRScannerModal';
 import { FaRecycle, FaToggleOn, FaToggleOff, FaClipboardList, FaMapMarkerAlt, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, FaRobot, FaExclamationTriangle, FaCheckCircle, FaPaperPlane } from 'react-icons/fa';
 
 const DriverDashboard = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const { realtimeData } = useSocket() || {};
   
   // States
   const [driverProfile, setDriverProfile] = useState(null);
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Sync Real-Time Socket Pickups for Drivers
+  useEffect(() => {
+    if (realtimeData?.latestPickup) {
+      const updatedPickup = realtimeData.latestPickup;
+      setPickups(prev => {
+        const index = prev.findIndex(p => p._id === updatedPickup._id);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = { ...updated[index], ...updatedPickup };
+          return updated;
+        }
+        return [updatedPickup, ...prev];
+      });
+    }
+  }, [realtimeData?.latestPickup]);
   
   // Collection Inputs
   const [actualWeight, setActualWeight] = useState('');
@@ -326,22 +345,14 @@ const DriverDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Navigation simulated */}
-                        <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl h-36 border border-slate-200/40 dark:border-slate-700 overflow-hidden relative">
-                          <svg className="w-full h-full object-cover" viewBox="0 0 100 100">
-                            {/* Mock Grid Lines */}
-                            <path d="M 0 20 H 100 M 0 50 H 100 M 0 80 H 100 M 20 0 V 100 M 50 0 V 100 M 80 0 V 100" stroke="rgba(0,0,0,0.05)" strokeWidth="0.5" />
-                            {/* Route Path */}
-                            <path d="M 10 90 L 40 90 L 40 40 L 80 40" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeDasharray="3" />
-                            {/* Driver Icon */}
-                            <circle cx="10" cy="90" r="4" fill="#0284c7" />
-                            {/* User Location */}
-                            <circle cx="80" cy="40" r="4" fill="#ef4444" />
-                          </svg>
-                          <div className="absolute bottom-2 left-2 bg-slate-900/70 text-white font-bold text-[9px] px-2 py-0.5 rounded-full flex items-center space-x-1">
-                            <FaMapMarkerAlt className="text-rose-500" />
-                            <span>Routing map simulation</span>
-                          </div>
+                        {/* Real Google Navigation Map */}
+                        <div className="rounded-2xl overflow-hidden border border-slate-200/40 dark:border-slate-700 relative">
+                          <GoogleRouteMap 
+                            pickups={[activePickup]} 
+                            height="200px" 
+                            isDriver={true} 
+                            pickupId={activePickup._id}
+                          />
 
                           <button 
                             type="button"

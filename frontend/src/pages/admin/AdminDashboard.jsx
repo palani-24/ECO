@@ -3,11 +3,13 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
+import { useSocket } from '../../context/SocketContext';
 import { CardSkeleton, TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaRecycle, FaUsers, FaTruck, FaClipboardCheck, FaCoins, FaCheck, FaTimes, FaTools, FaAngleRight } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const { addToast } = useToast();
+  const { realtimeData } = useSocket() || {};
   const [analytics, setAnalytics] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [pickups, setPickups] = useState([]);
@@ -32,12 +34,12 @@ const AdminDashboard = () => {
       if (driverRes.data.success) setDrivers(driverRes.data.data);
       if (settingsRes.data.success) {
         setSettings(settingsRes.data.data);
-        setBasePoints(settingsRes.data.data.basePoints);
-        setSystemMaintenance(settingsRes.data.data.systemMaintenance);
+        setBasePoints(settingsRes.data.data.basePoints || 5);
+        setSystemMaintenance(settingsRes.data.data.systemMaintenance || false);
       }
-      if (pickupRes.data.success) setPickups(pickupRes.data.data.slice(0, 5));
+      if (pickupRes.data.success) setPickups(pickupRes.data.data);
     } catch (err) {
-      setError('Failed to fetch admin data.');
+      setError(err.response?.data?.message || 'Failed to fetch admin metrics');
     } finally {
       setLoading(false);
     }
@@ -46,6 +48,13 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchAdminData();
   }, []);
+
+  // Real-Time Socket Refresh for Admin
+  useEffect(() => {
+    if (realtimeData?.latestPickup) {
+      fetchAdminData();
+    }
+  }, [realtimeData?.latestPickup]);
 
   const handleApproveDriver = async (id) => {
     try {

@@ -12,7 +12,8 @@ import {
   getLeaderboard,
   getImpactMetrics,
   getChallenges,
-  joinChallenge
+  joinChallenge,
+  spinDailyWheel
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -34,6 +35,7 @@ router.get('/leaderboard', getLeaderboard);
 router.get('/impact', getImpactMetrics);
 router.get('/challenges', getChallenges);
 router.post('/challenges/:id/join', joinChallenge);
+router.post('/spin', spinDailyWheel);
 
 export default router;
 

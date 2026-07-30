@@ -6,6 +6,7 @@ import Reward from '../models/Reward.js';
 import Coupon from '../models/Coupon.js';
 import AdminSettings from '../models/AdminSettings.js';
 import { sendNotification } from '../services/notificationService.js';
+import { emitToUser, emitToRole, broadcastEvent } from '../config/socket.js';
 
 // Get Admin Analytics Dashboard Metrics
 export const getAdminAnalytics = async (req, res) => {
@@ -136,6 +137,9 @@ export const approveDriver = async (req, res) => {
       'Congratulations! Your EcoReward driver registration is approved. You can now accept pickup orders.',
       'general'
     );
+
+    emitToUser(driver.user._id, 'driver:approved', driver);
+    emitToRole('admin', 'driver:updated', driver);
 
     res.json({ success: true, message: `Driver ${driver.user.name} approved successfully`, data: driver });
   } catch (error) {
@@ -273,6 +277,8 @@ export const approveRewardRedemption = async (req, res) => {
       `Your cash out request of ${reward.details.title} has been transferred. Check your PayPal: ${reward.details.email}`,
       'points_redeemed'
     );
+
+    emitToUser(reward.user._id, 'reward:approved', reward);
 
     res.json({ success: true, message: 'Reward redemption approved and processed', data: reward });
   } catch (error) {

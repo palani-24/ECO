@@ -76,6 +76,35 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [addrLoading, setAddrLoading] = useState(false);
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    setLoading(true);
+    setProfileError('');
+    setProfileSuccess('');
+
+    try {
+      const res = await api.post('/auth/upload-avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.data.success) {
+        const fullUrl = res.data.imageUrl.startsWith('http') ? res.data.imageUrl : `${api.defaults.baseURL.replace('/api', '')}${res.data.imageUrl}`;
+        setProfileImage(fullUrl);
+        await updateProfile({ profileImage: fullUrl });
+        setProfileSuccess('Profile picture uploaded and saved successfully!');
+        setShowAvatarSelector(false);
+      }
+    } catch (err) {
+      setProfileError(err.response?.data?.message || 'Failed to upload profile picture');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setProfileError('');
@@ -206,7 +235,17 @@ const Profile = () => {
                 ))}
               </div>
 
-              <div className="space-y-1.5 pt-2">
+              {/* File Upload Option */}
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <label className="text-xs font-bold text-slate-500 uppercase">Upload Image from Device</label>
+                <label className="cursor-pointer px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center space-x-2">
+                  <FaCamera className="h-3.5 w-3.5" />
+                  <span>Choose Photo File</span>
+                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                </label>
+              </div>
+
+              <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <label className="text-xs font-bold text-slate-500 uppercase">Or Enter Custom Image URL</label>
                 <div className="flex gap-2">
                   <input 

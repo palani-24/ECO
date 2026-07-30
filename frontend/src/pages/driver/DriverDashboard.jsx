@@ -10,6 +10,7 @@ import LiveRouteMap from '../../components/LiveRouteMap';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import QRScannerModal from '../../components/QRScannerModal';
 import { FaRecycle, FaToggleOn, FaToggleOff, FaClipboardList, FaMapMarkerAlt, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, FaRobot, FaExclamationTriangle, FaCheckCircle, FaPaperPlane } from 'react-icons/fa';
+import DriverChatModal from '../../components/DriverChatModal';
 
 const DriverDashboard = () => {
   const { user } = useAuth();
@@ -21,6 +22,7 @@ const DriverDashboard = () => {
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showCitizenChat, setShowCitizenChat] = useState(false);
 
   // Sync Real-Time Socket Pickups for Drivers
   useEffect(() => {
@@ -817,6 +819,15 @@ const DriverDashboard = () => {
           setInputOtp('4829');
           setShowQrScanner(false);
         }}
+      />
+
+      {/* Citizen <-> Driver Live Chat Modal */}
+      <DriverChatModal
+        isOpen={showCitizenChat}
+        onClose={() => setShowCitizenChat(false)}
+        pickupId={activePickup?._id}
+        recipientName={activePickup?.user?.name || 'Customer Arjun Sharma'}
+        recipientRole="user"
       />
     </div>
   );

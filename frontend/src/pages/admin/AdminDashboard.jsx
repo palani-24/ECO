@@ -422,6 +422,45 @@ const AdminDashboard = () => {
             {/* Right Col - Settings & Pending Drivers */}
             <div className="space-y-6">
               
+              {/* Top Drivers Leaderboard Widget */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-2">
+                    <FaTruck className="text-emerald-500" />
+                    <span>Top Performing Drivers</span>
+                  </h3>
+                  <span className="text-[10px] font-black uppercase text-emerald-500">Live Ranks</span>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100" alt="Driver" className="h-8 w-8 rounded-xl object-cover" />
+                      <div>
+                        <p className="font-black text-slate-900 dark:text-white">Ramesh Kumar</p>
+                        <span className="text-[10px] text-slate-400 font-semibold">250 Orders Completed</span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg font-black text-[10px]">
+                      ⭐ 4.9
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Driver" className="h-8 w-8 rounded-xl object-cover" />
+                      <div>
+                        <p className="font-black text-slate-900 dark:text-white">Karthik M</p>
+                        <span className="text-[10px] text-slate-400 font-semibold">210 Orders Completed</span>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg font-black text-[10px]">
+                      ⭐ 4.8
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Drivers Approval Queue */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
                 <h3 className="font-extrabold text-slate-800 dark:text-slate-200">Pending Driver Approvals ({pendingDrivers.length})</h3>

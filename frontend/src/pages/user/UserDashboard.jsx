@@ -7,9 +7,9 @@ import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
 import { CardSkeleton, ChartSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
-import EcoCertificateModal from '../../components/EcoCertificateModal';
-import GoogleRouteMap from '../../components/GoogleRouteMap';
-import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward } from 'react-icons/fa';
+import AIWasteScannerModal from '../../components/AIWasteScannerModal';
+import DriverChatModal from '../../components/DriverChatModal';
+import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt } from 'react-icons/fa';
 
 const UserDashboard = () => {
   const { user, updateUserPoints } = useAuth();
@@ -23,6 +23,8 @@ const UserDashboard = () => {
   const [monthlyRecycleKg, setMonthlyRecycleKg] = useState(25);
   const [showCertModal, setShowCertModal] = useState(false);
   const [selectedQrPickup, setSelectedQrPickup] = useState(null);
+  const [showAiScanner, setShowAiScanner] = useState(false);
+  const [showDriverChat, setShowDriverChat] = useState(false);
 
   const [coinPopup, setCoinPopup] = useState(null);
 
@@ -201,6 +203,55 @@ const UserDashboard = () => {
                   <span>View Official Eco Certificate</span>
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Quick Actions Row */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-5 rounded-3xl shadow-sm space-y-3">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Quick Actions</span>
+            <div className="grid grid-cols-4 gap-3 text-center">
+              <button
+                onClick={() => window.location.href = '/schedule-pickup'}
+                className="flex flex-col items-center space-y-2 p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition-all hover:scale-105"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-lg shadow">
+                  <FaCalendarCheck />
+                </div>
+                <span className="text-xs font-extrabold">Book Pickup</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (activePickup) setTrackingDriver(activePickup);
+                  else addToast('No active pickup found for live tracking', 'info', 'Live Tracking');
+                }}
+                className="flex flex-col items-center space-y-2 p-3 rounded-2xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/20 transition-all hover:scale-105"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-teal-500 text-white flex items-center justify-center text-lg shadow">
+                  <FaRoute />
+                </div>
+                <span className="text-xs font-extrabold">Live Tracking</span>
+              </button>
+
+              <button
+                onClick={() => setShowAiScanner(true)}
+                className="flex flex-col items-center space-y-2 p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 transition-all hover:scale-105"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-cyan-500 text-white flex items-center justify-center text-lg shadow">
+                  <FaCamera />
+                </div>
+                <span className="text-xs font-extrabold">Scan Waste</span>
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/redeem'}
+                className="flex flex-col items-center space-y-2 p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 transition-all hover:scale-105"
+              >
+                <div className="h-10 w-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow">
+                  <FaGift />
+                </div>
+                <span className="text-xs font-extrabold">Wallet</span>
+              </button>
             </div>
           </div>
 
@@ -734,6 +785,22 @@ const UserDashboard = () => {
               </div>
             </div>
           )}
+
+          {/* AI Scanner Modal */}
+          <AIWasteScannerModal 
+            isOpen={showAiScanner} 
+            onClose={() => setShowAiScanner(false)} 
+            onSchedulePickup={(cat) => window.location.href = `/schedule-pickup?category=${cat}`}
+          />
+
+          {/* Citizen <-> Driver Live Chat Modal */}
+          <DriverChatModal
+            isOpen={showDriverChat}
+            onClose={() => setShowDriverChat(false)}
+            pickupId={activePickup?._id}
+            recipientName={activePickup?.driver?.user?.name || 'Driver Ramesh Kumar'}
+            recipientRole="driver"
+          />
 
         </main>
       </div>

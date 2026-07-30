@@ -11,6 +11,7 @@ import EcoCertificateModal from '../../components/EcoCertificateModal';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import DriverChatModal from '../../components/DriverChatModal';
+import LeaderboardWidget from '../../components/LeaderboardWidget';
 import { FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt } from 'react-icons/fa';
 
 const UserDashboard = () => {
@@ -656,6 +657,9 @@ const UserDashboard = () => {
             </div>
 
           </div>
+
+          {/* Community Eco Leaderboard Widget */}
+          <LeaderboardWidget />
 
           {/* Tracking Modal */}
           {trackingDriver && (

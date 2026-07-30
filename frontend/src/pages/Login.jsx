@@ -5,7 +5,7 @@ import { FaRecycle, FaEnvelope, FaLock, FaSignInAlt, FaInfoCircle } from 'react-
 import Navbar from '../components/Navbar';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { user, login, logout } = useAuth();
   const navigate = useNavigate();
   
   const [email, setEmail] = useState('');
@@ -51,6 +51,19 @@ const Login = () => {
       <div className="flex-1 flex items-center justify-center p-4 py-16">
         <div className="w-full max-w-[420px] bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
           
+          {user && (
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 rounded-2xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 font-semibold">
+              <span>Logged in as <strong>{user.name}</strong> ({user.role})</span>
+              <button 
+                type="button"
+                onClick={() => logout()}
+                className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black transition-colors"
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+
           <div className="text-center space-y-2">
             <div className="inline-flex h-12 w-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 items-center justify-center text-primary-500 mb-2">
               <FaRecycle className="h-6 w-6 animate-spin-slow" style={{ animationDuration: '10s' }} />

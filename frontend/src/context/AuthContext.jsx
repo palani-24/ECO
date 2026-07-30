@@ -12,19 +12,22 @@ export const AuthProvider = ({ children }) => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
+        setUser(null);
         setLoading(false);
         return;
       }
       try {
         const res = await api.get('/auth/profile');
-        if (res.data.success) {
+        if (res.data?.success && res.data?.data) {
           setUser(res.data.data);
         } else {
           localStorage.removeItem('token');
+          setUser(null);
         }
       } catch (err) {
         console.error('Session restore failed:', err);
         localStorage.removeItem('token');
+        setUser(null);
       } finally {
         setLoading(false);
       }

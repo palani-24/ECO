@@ -32,7 +32,7 @@ const Navbar = () => {
   };
 
   const getDashboardLink = () => {
-    if (!user) return '/';
+    if (!user) return '/login';
     if (user.role === 'admin') return '/admin';
     if (user.role === 'driver') return '/driver';
     return '/dashboard';

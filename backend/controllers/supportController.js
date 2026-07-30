@@ -124,7 +124,7 @@ export const replySupportMessage = async (req, res) => {
       user: supportMsg.user,
       title: '💬 Admin Replied to Your Support Ticket',
       message: `Admin Response to "${supportMsg.subject}": ${replyText.substring(0, 80)}...`,
-      type: 'system'
+      type: 'general'
     });
 
     // Broadcast socket event

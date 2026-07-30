@@ -5,7 +5,7 @@ import {
   getAdminSupportMessages, 
   replySupportMessage 
 } from '../controllers/supportController.js';
-import { protect, admin } from '../middleware/auth.js';
+import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.post('/send', protect, sendSupportMessage);
 router.get('/my-messages', protect, getUserSupportMessages);
 
 // Admin Routes
-router.get('/admin/all', protect, admin, getAdminSupportMessages);
-router.put('/admin/reply/:id', protect, admin, replySupportMessage);
+router.get('/admin/all', protect, authorize('admin'), getAdminSupportMessages);
+router.put('/admin/reply/:id', protect, authorize('admin'), replySupportMessage);
 
 export default router;

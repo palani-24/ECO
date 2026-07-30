@@ -30,17 +30,17 @@ const Login = () => {
     }
   };
 
-  // Pre-fill helper for local testing
+  // Pre-fill helper for testing
   const prefill = (role) => {
     if (role === 'admin') {
       setEmail('admin@ecoreward.com');
-      setPassword('admin123');
+      setPassword('EcoAdmin#2026!Pass');
     } else if (role === 'driver') {
       setEmail('driver@ecoreward.com');
-      setPassword('driver123');
+      setPassword('EcoDriver#2026!Pass');
     } else {
       setEmail('user@ecoreward.com');
-      setPassword('user123');
+      setPassword('EcoUser#2026!Pass');
     }
   };
 

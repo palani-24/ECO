@@ -135,7 +135,7 @@ const AdminSettings = () => {
                           type="number" 
                           value={basePoints} 
                           onChange={(e) => setBasePoints(parseInt(e.target.value) || 0)}
-                          className="w-full px-3 py-2.5 border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:outline-none"
+                          className="w-full px-3 py-2.5 border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:outline-none"
                         />
                       </div>
                       
@@ -144,7 +144,7 @@ const AdminSettings = () => {
                         <select 
                           value={systemMaintenance ? 'yes' : 'no'}
                           onChange={(e) => setSystemMaintenance(e.target.value === 'yes')}
-                          className="w-full px-3 py-2.5 border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:outline-none font-bold"
+                          className="w-full px-3 py-2.5 border border-slate-350 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:outline-none font-bold"
                         >
                           <option value="no">Active Operational</option>
                           <option value="yes">Under Maintenance</option>

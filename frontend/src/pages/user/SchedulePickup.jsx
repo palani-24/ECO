@@ -795,7 +795,7 @@ const SchedulePickup = () => {
                       value={driverNotes}
                       onChange={(e) => setDriverNotes(e.target.value)}
                       placeholder="e.g. Ring bell, leave bags at security gate..."
-                      className="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none"
+                      className="w-full px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs font-semibold focus:outline-none"
                     />
                   </div>
 
@@ -969,7 +969,7 @@ const SchedulePickup = () => {
                 placeholder="Search item (e.g., TetraPak, Water Bottle, Charger)..."
                 value={segregationQuery}
                 onChange={(e) => setSegregationQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
 

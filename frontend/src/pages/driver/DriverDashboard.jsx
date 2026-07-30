@@ -53,6 +53,12 @@ const DriverDashboard = () => {
         }
         return [updatedPickup, ...prev];
       });
+
+      if (updatedPickup.status === 'completed') {
+        addToast('Pickup Completed Successfully. Earnings Updated.', 'success', 'Earnings Updated');
+      } else if (updatedPickup.status === 'pending') {
+        addToast('🔔 New Nearby Pickup Request Dispatched!', 'info', 'New Job Available');
+      }
     }
   }, [realtimeData?.latestPickup]);
 

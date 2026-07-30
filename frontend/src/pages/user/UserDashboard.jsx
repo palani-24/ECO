@@ -34,8 +34,10 @@ const UserDashboard = () => {
 
   // Sync Real-Time Socket Pickup Updates
   useEffect(() => {
-    if (realtimeData?.latestPickup) {
-      const updatedPickup = realtimeData.latestPickup;
+    const handlePickupUpdated = (data) => {
+      const updatedPickup = data.latestPickup || data;
+      if (!updatedPickup || !_id) return;
+      
       setPickups(prev => {
         const index = prev.findIndex(p => p._id === updatedPickup._id);
         if (index !== -1) {
@@ -45,6 +47,17 @@ const UserDashboard = () => {
         }
         return [updatedPickup, ...prev];
       });
+
+      if (updatedPickup.status === 'completed') {
+        const pts = updatedPickup.pointsAwarded || 175;
+        addToast(`Pickup Completed Successfully! +${pts} Eco Points Added to Your Wallet.`, 'success', 'Pickup Completed');
+      } else if (updatedPickup.status === 'accepted') {
+        addToast(`Driver ${updatedPickup.driver?.user?.name || 'Karthik'} accepted your pickup request!`, 'info', 'Driver Assigned');
+      }
+    };
+
+    if (realtimeData?.latestPickup) {
+      handlePickupUpdated(realtimeData.latestPickup);
     }
   }, [realtimeData?.latestPickup]);
 

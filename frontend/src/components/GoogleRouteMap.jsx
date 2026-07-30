@@ -36,7 +36,12 @@ const defaultCenter = { lat: 13.0850, lng: 80.2100 }; // Anna Nagar / Koyambedu 
 
 // Helper for inland Chennai coordinates
 const getPickupCoords = (p, idx, basePos) => {
-  const addressStr = ((p.pickupAddress?.street || '') + ' ' + (p.pickupAddress?.city || '') + ' ' + (p.address || '')).toLowerCase();
+  if (!p) return basePos || defaultCenter;
+  const addressStr = (
+    typeof p.pickupAddress === 'string' 
+      ? p.pickupAddress 
+      : ((p.pickupAddress?.street || '') + ' ' + (p.pickupAddress?.city || '') + ' ' + (p.address || ''))
+  ).toLowerCase();
   
   if (addressStr.includes('anna nagar')) return { lat: 13.0850, lng: 80.2100 };
   if (addressStr.includes('adyar')) return { lat: 13.0067, lng: 80.2570 };

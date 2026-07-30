@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
-  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock
+  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock
 } from 'react-icons/fa';
 
 const Sidebar = () => {

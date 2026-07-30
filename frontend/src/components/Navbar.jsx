@@ -165,11 +165,11 @@ const Navbar = () => {
                     className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
                   >
                     <img 
-                      src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=10b981&color=fff`} 
+                      src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=10b981&color=fff`} 
                       alt="User Avatar" 
                       className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40"
                     />
-                    <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[90px]">{user.name}</span>
+                    <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[90px]">{user?.name || 'Driver'}</span>
                   </Link>
                 )}
 

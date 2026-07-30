@@ -72,13 +72,13 @@ const Sidebar = () => {
           {/* User Profile Quick Card */}
           <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
             <img 
-              src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=10b981&color=fff`} 
-              alt={user.name} 
+              src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Driver')}&background=10b981&color=fff`} 
+              alt={user?.name || 'User'} 
               className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30"
             />
             <div className="flex-1 min-w-0">
               <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1">
-                <span>{user.name}</span>
+                <span>{user?.name || 'Driver Console'}</span>
               </h4>
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                 <FaLeaf className="h-2.5 w-2.5" />

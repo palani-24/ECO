@@ -142,6 +142,14 @@ const AdminLogin = () => {
           </button>
         </form>
 
+        <button 
+          type="button" 
+          onClick={() => { setEmail('admin@ecoreward.com'); setPassword('1234'); addToast('Admin credentials filled (password: 1234)', 'info', 'Auto Filled'); }}
+          className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-extrabold text-[10px] rounded-xl border border-emerald-500/20 transition-all text-center"
+        >
+          🔑 1-Click Auto Fill Admin Credentials (1234)
+        </button>
+
         <div className="pt-3 border-t border-slate-800 text-center">
           <p className="text-[10px] text-slate-500 font-semibold flex items-center justify-center space-x-1">
             <FaBuilding className="text-emerald-500" />

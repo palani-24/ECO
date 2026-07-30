@@ -287,6 +287,27 @@ const Login = () => {
                 </button>
               </form>
 
+              {/* Sample Credentials Quick One-Click Card */}
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block text-center">Sample Testing Credentials (1-Click Fill)</span>
+                <div className="grid grid-cols-2 gap-2 text-[10px] font-black">
+                  <button 
+                    type="button" 
+                    onClick={() => { setEmailOrPhone('user@ecoreward.com'); setPassword('1234'); addToast('Customer credentials filled (password: 1234)', 'info', 'Auto Filled'); }}
+                    className="p-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20 transition-all text-center"
+                  >
+                    👤 Customer (1234)
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { setEmailOrPhone('driver@ecoreward.com'); setPassword('1234'); addToast('Driver credentials filled (password: 1234)', 'info', 'Auto Filled'); }}
+                    className="p-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 rounded-xl border border-sky-500/20 transition-all text-center"
+                  >
+                    🚛 Driver (1234)
+                  </button>
+                </div>
+              </div>
+
               {/* Footer */}
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-center space-y-2">
                 <p className="text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center justify-center space-x-2">

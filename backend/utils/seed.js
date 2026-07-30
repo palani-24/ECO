@@ -51,7 +51,7 @@ const seedDatabase = async () => {
     const adminUser = await User.create({
       name: 'System Admin',
       email: 'admin@ecoreward.com',
-      password: 'admin@1234',
+      password: '1234',
       role: 'admin',
       profileImage: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150'
     });
@@ -60,7 +60,7 @@ const seedDatabase = async () => {
     const normalUser = await User.create({
       name: 'Arjun Sharma',
       email: 'user@ecoreward.com',
-      password: 'EcoUser#2026!Pass',
+      password: '1234',
       role: 'user',
       points: 420,
       profileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
@@ -86,7 +86,7 @@ const seedDatabase = async () => {
     const driverUser = await User.create({
       name: 'Ramesh Kumar',
       email: 'driver@ecoreward.com',
-      password: 'EcoDriver#2026!Pass',
+      password: '1234',
       role: 'driver',
       profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150'
     });

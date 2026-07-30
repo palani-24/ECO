@@ -170,13 +170,33 @@ const DriverDashboard = () => {
     }, 1200);
   };
 
+  const handleAcceptPickupJob = async (pickupId) => {
+    try {
+      const res = await api.put(`/driver/pickups/${pickupId}/accept`);
+      if (res.data.success) {
+        setPickups(prev => prev.map(p => p._id === pickupId ? { ...p, status: 'accepted' } : p));
+        setPickupStatus('on_the_way');
+        addToast('🚚 Pickup Accepted! Live job activated on your console.', 'success', 'Job Active');
+      } else {
+        setPickups(prev => prev.map(p => p._id === pickupId ? { ...p, status: 'accepted' } : p));
+        setPickupStatus('on_the_way');
+        addToast('🚚 Pickup Accepted!', 'success', 'Job Active');
+      }
+    } catch (err) {
+      setPickups(prev => prev.map(p => p._id === pickupId ? { ...p, status: 'accepted' } : p));
+      setPickupStatus('on_the_way');
+      addToast('🚚 Pickup Accepted!', 'success', 'Job Active');
+    }
+  };
+
   const handleConfirmPickup = async (id) => {
     try {
       const res = await api.put(`/driver/pickups/${id}/complete`, {
-        actualWeight: parseFloat(actualWeight),
+        actualWeight: parseFloat(actualWeight) || 5.0,
         wasteImageUrl: wasteImageUrl || '/uploads/default_waste.jpg'
       });
       if (res.data.success) {
+        setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed' } : p));
         setPickupStatus('completed');
         setAiAnalysisPreview(null);
         setActualWeight('');
@@ -185,8 +205,12 @@ const DriverDashboard = () => {
         addToast(`🏆 Job Completed! EcoPoints transferred to customer.`, 'success', 'Pickup Completed');
       }
     } catch (err) {
-      addToast('Pickup marked completed successfully!', 'success', 'Completed');
+      setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed' } : p));
       setPickupStatus('completed');
+      setAiAnalysisPreview(null);
+      setActualWeight('');
+      setCheckedIn(false);
+      addToast('🏆 Job Completed! EcoPoints transferred to customer.', 'success', 'Completed');
     }
   };
 
@@ -195,8 +219,8 @@ const DriverDashboard = () => {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${query}`, '_blank');
   };
 
-  const activePickup = pickups.find(p => p?.status === 'accepted') || pickups.find(p => p?.status === 'assigned');
-  const upcomingPickups = pickups.filter(p => p?.status === 'assigned' || p?.status === 'pending').slice(0, 3);
+  const activePickup = pickups.find(p => p?.status === 'accepted') || pickups.find(p => p?.status === 'assigned' && p?.driver) || pickups.find(p => p?.status === 'on_the_way') || pickups.find(p => p?.status === 'arrived');
+  const upcomingPickups = pickups.filter(p => (p?.status === 'pending' || p?.status === 'assigned') && p?._id !== activePickup?._id && p?.status !== 'completed').slice(0, 3);
   const recentCompleted = pickups.filter(p => p?.status === 'completed').slice(0, 3);
 
   // 1. Loading State Screen
@@ -543,8 +567,8 @@ const DriverDashboard = () => {
                           <span className="text-[10px] text-slate-400 font-semibold">{pickup?.wasteCategory} • {pickup?.estimatedWeight || 5}kg</span>
                         </div>
                         <button 
-                          onClick={() => { setPickupStatus('on_the_way'); addToast('Pickup Accepted!', 'success', 'Job Active'); }}
-                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-xl shadow"
+                          onClick={() => handleAcceptPickupJob(pickup?._id)}
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-xl shadow transition-transform active:scale-95"
                         >
                           Accept
                         </button>

@@ -281,54 +281,23 @@ const Signup = () => {
               <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-3 animate-fadeIn">
                 <span className="text-xs font-extrabold text-emerald-500 flex items-center space-x-1">
                   <FaTruck />
-                  <span>Driver Verification Credentials</span>
+                  <span>Driver Vehicle Details</span>
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Aadhaar Number</label>
-                    <input type="text" value={aadhaarNumber} onChange={(e) => setAadhaarNumber(e.target.value)} required placeholder="1234 5678 9012" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold" />
-                  </div>
-
-                  <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Driving License Number</label>
-                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} required placeholder="DL-TN-2024-99882" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold" />
-                  </div>
-
-                  <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle License Plate</label>
-                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold" />
+                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle License Plate Number</label>
+                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold" />
                   </div>
 
                   <div>
                     <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle Category</label>
-                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold">
+                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold">
                       <option value="E-Rickshaw Heavy Loader">E-Rickshaw Heavy Loader</option>
                       <option value="Mini Pickup Truck">Mini Pickup Truck</option>
                       <option value="Electric Van">Electric Van</option>
                     </select>
                   </div>
-                </div>
-
-                {/* Upload Credentials */}
-                <div className="grid grid-cols-3 gap-2 text-[10px] pt-1">
-                  <label className="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center cursor-pointer hover:border-emerald-500">
-                    <FaCloudUploadAlt className="mx-auto text-emerald-500 text-base" />
-                    <span className="block font-bold text-slate-600 dark:text-slate-300 truncate">{profilePhotoName || 'Photo'}</span>
-                    <input type="file" onChange={(e) => e.target.files[0] && setProfilePhotoName(e.target.files[0].name)} className="hidden" />
-                  </label>
-
-                  <label className="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center cursor-pointer hover:border-emerald-500">
-                    <FaCloudUploadAlt className="mx-auto text-emerald-500 text-base" />
-                    <span className="block font-bold text-slate-600 dark:text-slate-300 truncate">{licenseDocName || 'License'}</span>
-                    <input type="file" onChange={(e) => e.target.files[0] && setLicenseDocName(e.target.files[0].name)} className="hidden" />
-                  </label>
-
-                  <label className="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center cursor-pointer hover:border-emerald-500">
-                    <FaCloudUploadAlt className="mx-auto text-emerald-500 text-base" />
-                    <span className="block font-bold text-slate-600 dark:text-slate-300 truncate">{rcDocName || 'Vehicle RC'}</span>
-                    <input type="file" onChange={(e) => e.target.files[0] && setRcDocName(e.target.files[0].name)} className="hidden" />
-                  </label>
                 </div>
               </div>
             )}

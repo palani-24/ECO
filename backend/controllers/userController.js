@@ -139,13 +139,22 @@ export const schedulePickup = async (req, res) => {
       );
     }
 
-    // Real-Time WebSockets Broadcast
-    emitToUser(req.user._id, 'pickup:created', pickup);
-    emitToRole('admin', 'pickup:new', pickup);
-    emitToRole('drivers', 'pickup:new', pickup);
+    // Fully populate pickup object before returning & emitting via socket
+    const populatedPickup = await PickupRequest.findById(pickup._id)
+      .populate('user', 'name email profileImage')
+      .populate({
+        path: 'driver',
+        populate: { path: 'user', select: 'name email profileImage' }
+      });
 
-    res.status(201).json({ success: true, data: pickup });
+    // Real-Time WebSockets Broadcast
+    emitToUser(req.user._id, 'pickup:created', populatedPickup || pickup);
+    emitToRole('admin', 'pickup:new', populatedPickup || pickup);
+    emitToRole('drivers', 'pickup:new', populatedPickup || pickup);
+
+    res.status(201).json({ success: true, data: populatedPickup || pickup });
   } catch (error) {
+    console.error('[schedulePickup Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -154,6 +163,7 @@ export const schedulePickup = async (req, res) => {
 export const getMyPickups = async (req, res) => {
   try {
     const pickups = await PickupRequest.find({ user: req.user._id })
+      .populate('user', 'name email profileImage')
       .populate({
         path: 'driver',
         populate: { path: 'user', select: 'name email profileImage' }
@@ -162,6 +172,7 @@ export const getMyPickups = async (req, res) => {
 
     res.json({ success: true, data: pickups });
   } catch (error) {
+    console.error('[getMyPickups Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

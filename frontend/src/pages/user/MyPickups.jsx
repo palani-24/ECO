@@ -2,16 +2,35 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
+import { useSocket } from '../../context/SocketContext';
 import { useToast } from '../../context/ToastContext';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye } from 'react-icons/fa';
 
 const MyPickups = () => {
   const { addToast } = useToast();
+  const { realtimeData } = useSocket() || {};
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Real-Time Socket Updates Sync
+  useEffect(() => {
+    if (realtimeData?.latestPickup) {
+      const updatedPickup = realtimeData.latestPickup;
+      setPickups(prev => {
+        const index = prev.findIndex(p => p._id === updatedPickup._id);
+        if (index !== -1) {
+          const newPickups = [...prev];
+          newPickups[index] = { ...newPickups[index], ...updatedPickup };
+          return newPickups;
+        }
+        return [updatedPickup, ...prev];
+      });
+    }
+  }, [realtimeData?.latestPickup]);
 
   // In-App Chat Modal States
   const [chatPickup, setChatPickup] = useState(null);
@@ -66,9 +85,28 @@ const MyPickups = () => {
         <Sidebar />
 
         <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Pickup History</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Track and review all recycling requests scheduled on your account.</p>
+          <div className="flex justify-between items-center flex-wrap gap-4">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Pickup History</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Track and review all recycling requests scheduled on your account.</p>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex items-center space-x-1.5 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold">
+              {['all', 'active', 'completed'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setStatusFilter(tab)}
+                  className={`px-3 py-1.5 rounded-lg capitalize transition-all ${
+                    statusFilter === tab
+                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm font-extrabold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {tab === 'all' ? `All (${pickups.length})` : tab === 'active' ? `Active (${pickups.filter(p => p.status !== 'completed' && p.status !== 'cancelled').length})` : `Completed (${pickups.filter(p => p.status === 'completed').length})`}
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && (
@@ -95,7 +133,14 @@ const MyPickups = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40 text-xs text-slate-700 dark:text-slate-300">
-                      {pickups.map((p) => (
+                      {pickups
+                        .filter(p => {
+                          if (statusFilter === 'all') return true;
+                          if (statusFilter === 'active') return p.status === 'pending' || p.status === 'assigned' || p.status === 'accepted';
+                          if (statusFilter === 'completed') return p.status === 'completed';
+                          return true;
+                        })
+                        .map((p) => (
                         <tr key={p._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                           <td className="py-4 px-6 font-bold flex items-center space-x-2">
                             <FaRecycle className="text-emerald-500" />

@@ -425,16 +425,16 @@ const UserDashboard = () => {
 
                     {/* Driver details */}
                     <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/30 dark:border-slate-800/60 flex flex-col justify-between items-center text-center space-y-2">
-                      {activePickup.driver ? (
+                      {activePickup.driver && (typeof activePickup.driver === 'object') ? (
                         <>
                           <img 
-                            src={activePickup.driver.user.profileImage || 'https://ui-avatars.com/api/?name=Driver&background=059669&color=fff'} 
+                            src={activePickup.driver.user?.profileImage || 'https://ui-avatars.com/api/?name=Driver&background=059669&color=fff'} 
                             alt="Driver profile" 
                             className="h-12 w-12 rounded-full object-cover ring-2 ring-emerald-500/20"
                           />
                           <div>
-                            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{activePickup.driver.user.name}</h4>
-                            <p className="text-[10px] text-slate-400 font-bold">{activePickup.driver.vehicleType} ({activePickup.driver.vehicleNumber})</p>
+                            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{activePickup.driver.user?.name || 'Assigned Driver'}</h4>
+                            <p className="text-[10px] text-slate-400 font-bold">{activePickup.driver.vehicleType || 'Vehicle'} ({activePickup.driver.vehicleNumber || 'TN-ECO'})</p>
                           </div>
                       <div className="pt-2">
                         <button

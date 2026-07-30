@@ -181,7 +181,7 @@ const DriverDashboard = () => {
   };
 
   const activePickup = pickups.find(p => p.status === 'accepted');
-  const assignedPickups = pickups.filter(p => p.status === 'assigned');
+  const assignedPickups = pickups.filter(p => p.status === 'assigned' || p.status === 'pending');
   const completedPickups = pickups.filter(p => p.status === 'completed');
 
   return (
@@ -608,7 +608,7 @@ const DriverDashboard = () => {
                         <div key={p._id} className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs">
                           <div className="space-y-1">
                             <div className="flex items-center space-x-2">
-                              <span className="font-bold text-slate-800 dark:text-white text-sm">{p.user.name}</span>
+                              <span className="font-bold text-slate-800 dark:text-white text-sm">{p.user?.name || 'Customer'}</span>
                               <span className="px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[8px] bg-sky-50 text-sky-600 dark:bg-sky-950/20">{p.wasteCategory}</span>
                             </div>
                             <p className="text-slate-400 font-semibold">{p.pickupAddress.street}, {p.pickupAddress.city}</p>

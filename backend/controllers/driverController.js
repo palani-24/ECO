@@ -50,14 +50,22 @@ export const getAssignedPickups = async (req, res) => {
     }
 
     const pickups = await PickupRequest.find({
-      driver: driver._id,
-      status: { $in: ['assigned', 'accepted', 'completed'] }
+      $or: [
+        { driver: driver._id, status: { $in: ['assigned', 'accepted', 'completed'] } },
+        { status: 'pending' },
+        { status: 'assigned', driver: null }
+      ]
     })
     .populate('user', 'name email profileImage')
+    .populate({
+      path: 'driver',
+      populate: { path: 'user', select: 'name email profileImage' }
+    })
     .sort({ createdAt: -1 });
 
     res.json({ success: true, data: pickups });
   } catch (error) {
+    console.error('[getAssignedPickups Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -71,11 +79,12 @@ export const acceptPickup = async (req, res) => {
     const pickup = await PickupRequest.findById(req.params.id);
     if (!pickup) return res.status(404).json({ success: false, message: 'Pickup request not found' });
 
-    if (pickup.status !== 'assigned') {
+    if (pickup.status !== 'assigned' && pickup.status !== 'pending') {
       return res.status(400).json({ success: false, message: `Pickup status is '${pickup.status}', cannot accept.` });
     }
 
     pickup.status = 'accepted';
+    pickup.driver = driver._id;
     
     // Award points immediately upon acceptance if not already awarded
     let awardedPoints = 0;
@@ -107,6 +116,14 @@ export const acceptPickup = async (req, res) => {
     driver.status = 'busy';
     await driver.save();
 
+    // Populate for socket emit
+    const populatedPickup = await PickupRequest.findById(pickup._id)
+      .populate('user', 'name email profileImage')
+      .populate({
+        path: 'driver',
+        populate: { path: 'user', select: 'name email profileImage' }
+      });
+
     // Notify User with required exact message format
     await sendNotification(
       pickup.user,
@@ -116,11 +133,13 @@ export const acceptPickup = async (req, res) => {
     );
 
     // Socket Emit
-    emitToUser(pickup.user, 'pickup:updated', pickup);
-    emitToRole('admin', 'pickup:updated', pickup);
+    emitToUser(pickup.user, 'pickup:updated', populatedPickup || pickup);
+    emitToRole('admin', 'pickup:updated', populatedPickup || pickup);
+    emitToRole('drivers', 'pickup:updated', populatedPickup || pickup);
 
-    res.json({ success: true, data: pickup, pointsAwarded: awardedPoints });
+    res.json({ success: true, data: populatedPickup || pickup, pointsAwarded: awardedPoints });
   } catch (error) {
+    console.error('[acceptPickup Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -247,23 +266,32 @@ export const completePickup = async (req, res) => {
       'points_earned'
     );
 
+    // Populate for socket emit
+    const populatedPickup = await PickupRequest.findById(pickup._id)
+      .populate('user', 'name email profileImage')
+      .populate({
+        path: 'driver',
+        populate: { path: 'user', select: 'name email profileImage' }
+      });
+
     // Real-Time Socket Events
-    emitToUser(user._id, 'pickup:updated', pickup);
+    emitToUser(user._id, 'pickup:updated', populatedPickup || pickup);
     emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: aiReport.pointsAwarded });
-    emitToRole('admin', 'pickup:updated', pickup);
+    emitToRole('admin', 'pickup:updated', populatedPickup || pickup);
     emitToRole('admin', 'stats:updated', { completedPickupId: pickup._id, weight: aiReport.estimatedWeight });
-    emitToRole('drivers', 'pickup:updated', pickup);
+    emitToRole('drivers', 'pickup:updated', populatedPickup || pickup);
 
     res.json({
       success: true,
       message: 'Pickup processed and completed successfully',
       data: {
-        pickup,
+        pickup: populatedPickup || pickup,
         aiReport,
         receiptCode
       }
     });
   } catch (error) {
+    console.error('[completePickup Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -31,6 +31,14 @@ import DriverRoadHazards from './pages/driver/DriverRoadHazards';
 import DriverShifts from './pages/driver/DriverShifts';
 import DriverEquipment from './pages/driver/DriverEquipment';
 import DriverSettings from './pages/driver/DriverSettings';
+import DriverDocuments from './pages/driver/DriverDocuments';
+import DriverRewards from './pages/driver/DriverRewards';
+import DriverNotifications from './pages/driver/DriverNotifications';
+import DriverNavigationPage from './pages/driver/DriverNavigationPage';
+import DriverSecurity from './pages/driver/DriverSecurity';
+import DriverSupport from './pages/driver/DriverSupport';
+import DriverProfilePage from './pages/driver/DriverProfilePage';
+import DriverVehiclePage from './pages/driver/DriverVehiclePage';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -136,6 +144,70 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['driver']}>
                   <DriverSettings />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/vehicle" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverVehiclePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/documents" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverDocuments />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/rewards" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverRewards />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/notifications" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverNotifications />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/navigation" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverNavigationPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/profile" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/security" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverSecurity />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/support" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverSupport />
                 </ProtectedRoute>
               } 
             />

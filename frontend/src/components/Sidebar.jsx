@@ -20,23 +20,15 @@ const Sidebar = () => {
 
   const userLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
-    { path: '/my-pickups', label: 'My Pickups', icon: FaHistory },
     { path: '/schedule-pickup', label: 'Schedule Pickup', icon: FaCalendarAlt },
+    { path: '/my-pickups', label: 'My Pickups', icon: FaHistory },
     { path: '/redeem', label: 'Redeem Rewards', icon: FaGift },
-    { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
-    { path: '/challenges', label: 'Eco Challenges', icon: FaUsers },
     { path: '/profile', label: 'Profile Settings', icon: FaUser },
   ];
 
   const driverLinks = [
     { path: '/driver', label: 'Driver Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
-    { path: '/driver/gate-pass', label: 'Unloading Gate-Pass', icon: FaQrcode },
-    { path: '/driver/quality-audit', label: 'Quality Audit Tool', icon: FaClipboardList },
-    { path: '/driver/battery-telematics', label: 'EV Battery & Swaps', icon: FaBolt },
-    { path: '/driver/road-hazards', label: 'Road Hazard Reporter', icon: FaExclamationTriangle },
-    { path: '/driver/shifts', label: 'Shift Roster & Leaves', icon: FaCalendarAlt },
-    { path: '/driver/equipment', label: 'Safety Gear Locker', icon: FaShieldAlt },
     { path: '/driver/earnings', label: 'Earnings & Profile', icon: FaDollarSign },
   ];
 

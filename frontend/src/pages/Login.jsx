@@ -43,19 +43,22 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen bg-slate-950 flex flex-col transition-colors duration-300 overflow-hidden">
-      {/* High-Quality Eco Background Video & Glassmorphic Backdrop */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* High-Quality Eco Background Video, Unsplash Fallback & Ambient Aura Glows */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-slate-950 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover scale-105 filter brightness-75 contrast-105 blur-[1px]"
+          className="w-full h-full object-cover scale-105 filter brightness-70 contrast-110 blur-[1px]"
           poster="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1920&q=80"
         >
           <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/75 to-emerald-950/90 backdrop-blur-[3px]" />
+        {/* Electric Green & Cyan Glow Auras */}
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl animate-pulse pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/25 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/80 to-emerald-950/90 backdrop-blur-[3px]" />
       </div>
 
       <div className="relative z-10">

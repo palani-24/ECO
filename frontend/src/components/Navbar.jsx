@@ -9,8 +9,9 @@ const Navbar = () => {
   const { isConnected } = useSocket() || {};
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' || 
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return true;
   });
   const [isOpen, setIsOpen] = useState(false);
 

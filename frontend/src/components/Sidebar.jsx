@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
-  FaQrcode, FaDollarSign, FaTrophy, FaBolt, FaExclamationTriangle, FaShieldAlt
+  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -18,23 +18,26 @@ const Sidebar = () => {
 
   if (!user) return null;
 
-  const userLinks = [
+  const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
-    { path: '/schedule-pickup', label: 'Schedule Pickup', icon: FaCalendarAlt },
-    { path: '/my-pickups', label: 'My Pickups', icon: FaHistory },
-    { path: '/redeem', label: 'Redeem Rewards', icon: FaGift },
+    { path: '/profile', label: 'My Profile', icon: FaUser },
+    { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
+    { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
+    { path: '/my-pickups', label: 'Active Requests', icon: FaClipboardList, badge: '2' },
+    { path: '/my-pickups?tab=history', label: 'Pickup History', icon: FaHistory },
+    { path: '/redeem', label: 'Rewards & Vouchers', icon: FaGift },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
-    { path: '/profile', label: 'Profile Settings', icon: FaUser },
+    { path: '/profile?tab=support', label: 'Help & Support', icon: FaQuestionCircle },
   ];
 
   const driverLinks = [
     { path: '/driver', label: 'Driver Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
-    { path: '/driver/earnings', label: 'Earnings & Profile', icon: FaDollarSign },
+    { path: '/driver/earnings', label: 'Earnings & Profile', icon: FaCoins },
   ];
 
   const adminLinks = [
-    { path: '/admin', label: 'Admin Overview', icon: FaChartLine },
+    { path: '/admin', label: 'Dashboard Overview', icon: FaChartLine },
     { path: '/admin/users', label: 'Manage Users', icon: FaUsers },
     { path: '/admin/drivers', label: 'Manage Drivers', icon: FaTruck },
     { path: '/admin/pickups', label: 'Pickup Requests', icon: FaClipboardList },
@@ -45,93 +48,102 @@ const Sidebar = () => {
   const getLinks = () => {
     if (user.role === 'admin') return adminLinks;
     if (user.role === 'driver') return driverLinks;
-    return userLinks;
+    return customerLinks;
   };
 
   const links = getLinks();
 
   return (
     <>
-      {/* Desktop Sidebar (hidden on mobile) */}
-      <aside className="hidden md:flex w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 md:min-h-[calc(100vh-4rem)] flex-col justify-between py-6 transition-colors duration-300">
-        <div className="px-4 space-y-7">
-          {/* User Card */}
-          <div className="flex items-center space-x-3 pb-6 border-b border-slate-200 dark:border-slate-800">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 md:min-h-[calc(100vh-4rem)] flex-col justify-between py-5 px-4 transition-colors duration-300">
+        <div className="space-y-6">
+          
+          {/* User Profile Quick Card */}
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
             <img 
               src={user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=10b981&color=fff`} 
               alt={user.name} 
-              className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/20"
+              className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30"
             />
-            <div className="overflow-hidden">
-              <h4 className="font-semibold text-slate-800 dark:text-slate-200 truncate text-sm">{user.name}</h4>
-              <span className="text-xs text-slate-500 dark:text-slate-400 capitalize">{user.role} Account</span>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1">
+                <span>{user.name}</span>
+              </h4>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
+                <FaLeaf className="h-2.5 w-2.5" />
+                <span>Eco Warrior</span>
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg block border border-emerald-500/20">
+                {user.points || 0} pts
+              </span>
             </div>
           </div>
 
-          {/* Sidebar Nav */}
-          <nav className="space-y-1.5">
-            {links.map((link) => {
+          {/* Navigation Links */}
+          <nav className="space-y-1">
+            <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-2">
+              Main Menu
+            </span>
+            {links.map((link, idx) => {
               const Icon = link.icon;
               return (
                 <NavLink
-                  key={link.path}
+                  key={idx}
                   to={link.path}
-                  end={link.path === '/dashboard' || link.path === '/driver' || link.path === '/admin'}
-                  className={({ isActive }) => 
-                    `flex items-center space-x-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-primary-50 dark:bg-primary-950/20 text-primary-600 dark:text-primary-400' 
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
+                  className={({ isActive }) =>
+                    `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
+                      isActive
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
                     }`
                   }
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{link.label}</span>
+                  <div className="flex items-center space-x-3">
+                    <Icon className="h-4 w-4 flex-shrink-0" />
+                    <span>{link.label}</span>
+                  </div>
+                  {link.badge && (
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black shadow-sm">
+                      {link.badge}
+                    </span>
+                  )}
                 </NavLink>
               );
             })}
           </nav>
         </div>
 
-        {/* Logout */}
-        <div className="px-4 mt-6">
-          <button 
+        {/* Bottom Logout Button */}
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+          <button
             onClick={handleLogout}
-            className="flex items-center space-x-3 w-full px-4 py-3 rounded-xl font-semibold text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all duration-200"
+            className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-black transition-all border border-rose-200/50 dark:border-rose-800/50"
           >
             <FaSignOutAlt className="h-4 w-4" />
-            <span>Logout</span>
+            <span>Logout Account</span>
           </button>
         </div>
       </aside>
 
-      {/* Mobile Bottom Tab Navigation (visible on mobile only) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-250/60 dark:border-slate-800/80 flex justify-around items-center py-2.5 px-2 shadow-lg shadow-black/10 transition-colors duration-300">
-        {links.slice(0, 5).map((link) => { // limit to top 5 icons for neat space
+      {/* Mobile Bottom Navigation Bar (Matching Mockup Mobile View) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-2 flex justify-around items-center shadow-lg">
+        {links.slice(0, 5).map((link, idx) => {
           const Icon = link.icon;
-          let label = link.label;
-          if (label === 'Dashboard' || label === 'Driver Dashboard' || label === 'Admin Overview') label = 'Home';
-          if (label === 'Schedule Pickup') label = 'Schedule';
-          if (label === 'Redeem Rewards') label = 'Redeem';
-          if (label === 'Profile Settings' || label === 'Earnings & Profile') label = 'Profile';
-          if (label === 'My Pickups' || label === 'Assigned Pickups') label = 'Pickups';
-          if (label === 'Leaderboard') label = 'Ranks';
-
           return (
             <NavLink
-              key={link.path}
+              key={idx}
               to={link.path}
-              end={link.path === '/dashboard' || link.path === '/driver' || link.path === '/admin'}
-              className={({ isActive }) => 
-                `flex flex-col items-center space-y-1 transition-all duration-200 ${
-                  isActive 
-                    ? 'text-primary-600 dark:text-primary-400 font-extrabold scale-110' 
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+              className={({ isActive }) =>
+                `flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
+                  isActive ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
                 }`
               }
             >
-              <Icon className="h-4.5 w-4.5" />
-              <span className="text-[9px] font-bold tracking-tight">{label}</span>
+              <Icon className="h-5 w-5" />
+              <span className="text-[10px]">{link.label.split(' ')[0]}</span>
             </NavLink>
           );
         })}

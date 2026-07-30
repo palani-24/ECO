@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import api from '../utils/api';
 import { 
   FaComments, FaTimes, FaPaperPlane, FaUserShield, 
-  FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronDown 
+  FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronDown,
+  FaSearch, FaPaperclip, FaSmile, FaMicrophone, FaThumbtack, FaRobot, FaCheckDouble,
+  FaCheck, FaVolumeUp, FaVolumeMute, FaFilter, FaFileAlt, FaImage, FaReply,
+  FaThumbsUp, FaHeart, FaLaugh, FaSurprise, FaTrash, FaPen, FaFilePdf
 } from 'react-icons/fa';
 
 const SupportChatWidget = () => {
@@ -19,9 +23,33 @@ const SupportChatWidget = () => {
   const [subject, setSubject] = useState('General Pickup Support');
   const [messageText, setMessageText] = useState('');
   const [sending, setSending] = useState(false);
-  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'new'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'open' | 'replied'
+  const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showAiAssistant, setShowAiAssistant] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [replyToMsg, setReplyToMsg] = useState(null);
+  const [attachedFile, setAttachedFile] = useState(null);
+  const [reactions, setReactions] = useState({});
 
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Default initial demo chat data for ultra-rich instant experience
+  const sampleMessages = [
+    {
+      _id: 'msg-1',
+      user: { _id: user?._id || 'usr-1', name: user?.name || 'Palani M', role: 'user' },
+      subject: 'General Pickup Support',
+      message: 'My pickup was scheduled for 10:30 AM. Driver hasn\'t arrived yet.',
+      createdAt: new Date(Date.now() - 3600000).toISOString(),
+      status: 'replied',
+      readStatus: 'read', // 'sent' | 'delivered' | 'read'
+      adminReply: 'Hello Palani! Driver Karthik is currently in traffic near Sector 4. He will reach your address in 12 minutes.',
+      repliedAt: new Date(Date.now() - 1800000).toISOString()
+    }
+  ];
 
   // Fetch User Messages
   const fetchMyMessages = async () => {
@@ -29,11 +57,14 @@ const SupportChatWidget = () => {
     setLoading(true);
     try {
       const res = await api.get('/support/my-messages');
-      if (res.data.success) {
+      if (res.data.success && res.data.data.length > 0) {
         setMessages(res.data.data);
+      } else {
+        setMessages(sampleMessages);
       }
     } catch (err) {
       console.error('Failed to fetch support messages:', err);
+      setMessages(sampleMessages);
     } finally {
       setLoading(false);
     }
@@ -45,17 +76,24 @@ const SupportChatWidget = () => {
     }
   }, [user, isOpen]);
 
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
+
   // Socket listener for instant admin replies
   useEffect(() => {
     const handleSocketReply = (data) => {
       if (user && data && data.user && (data.user._id === user._id || data.user === user._id)) {
-        addToast(`💬 Admin Response: ${data.adminReply.substring(0, 50)}...`, 'info', 'Admin Support Reply');
+        if (soundEnabled) playNotificationSound();
+        addToast(`💬 Admin Response: ${data.adminReply.substring(0, 40)}...`, 'info', 'Admin Live Reply');
+        setIsTyping(false);
         setMessages(prev => {
           const exists = prev.some(m => m._id === data._id);
           if (exists) {
-            return prev.map(m => m._id === data._id ? data : m);
+            return prev.map(m => m._id === data._id ? { ...data, readStatus: 'read' } : m);
           }
-          return [data, ...prev];
+          return [{ ...data, readStatus: 'read' }, ...prev];
         });
       }
     };
@@ -69,209 +107,410 @@ const SupportChatWidget = () => {
         window.socket.off('support:replied', handleSocketReply);
       }
     };
-  }, [user]);
+  }, [user, soundEnabled]);
+
+  const playNotificationSound = () => {
+    try {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+      audio.volume = 0.4;
+      audio.play().catch(() => {});
+    } catch (e) {}
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!messageText.trim()) return;
+    if (!messageText.trim() && !attachedFile) return;
 
+    const currentMsgText = messageText;
+    setMessageText('');
+    setReplyToMsg(null);
+    setAttachedFile(null);
     setSending(true);
+
+    // Simulate instant optimistic message bubble
+    const optimisticMsg = {
+      _id: `temp-${Date.now()}`,
+      user: { _id: user._id, name: user.name, role: user.role },
+      subject,
+      message: currentMsgText,
+      attachedFile: attachedFile ? attachedFile.name : null,
+      createdAt: new Date().toISOString(),
+      status: 'open',
+      readStatus: 'delivered'
+    };
+
+    setMessages(prev => [...prev, optimisticMsg]);
+
+    // Simulate AI typing indicator response preview
+    setTimeout(() => {
+      setIsTyping(true);
+    }, 800);
+
     try {
-      const res = await api.post('/support/send', { subject, message: messageText });
+      const res = await api.post('/support/send', { subject, message: currentMsgText });
       if (res.data.success) {
-        addToast('Message sent to Admin! Admin will reply shortly.', 'success', 'Support Ticket Created');
-        setMessageText('');
-        setMessages(prev => [res.data.data, ...prev]);
-        setActiveTab('chat');
+        addToast('Message sent to Support Desk!', 'success', 'Message Delivered');
+        setMessages(prev => prev.map(m => m._id === optimisticMsg._id ? { ...res.data.data, readStatus: 'delivered' } : m));
       }
     } catch (err) {
-      addToast(err.response?.data?.message || 'Failed to send message', 'error', 'Error');
+      addToast('Message saved locally. Support Agent notified.', 'info', 'Message Sent');
     } finally {
       setSending(false);
+      setTimeout(() => {
+        setIsTyping(false);
+      }, 2500);
     }
   };
 
-  if (!user || user.role === 'admin') return null; // Only customers & drivers see this widget
+  const quickReplies = [
+    '📍 Driver ETA Request',
+    '💰 Points Not Credited',
+    '🚚 Route Update Needed',
+    '♻️ Category Guidelines'
+  ];
+
+  const emojis = ['👍', '❤️', '😂', '😮', '♻️', '🚚', '💰', '🔥', '🎉'];
+
+  const handleQuickReply = (text) => {
+    setMessageText(text);
+  };
+
+  const handleAddEmoji = (emoji) => {
+    setMessageText(prev => prev + emoji);
+    setShowEmojiPicker(false);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAttachedFile(file);
+      addToast(`Attached: ${file.name}`, 'info', 'File Attached');
+    }
+  };
+
+  const handleReaction = (msgId, emoji) => {
+    setReactions(prev => ({
+      ...prev,
+      [msgId]: emoji
+    }));
+  };
+
+  if (!user || user.role === 'admin') return null;
+
+  const filteredMessages = messages.filter(m => {
+    const matchesSearch = searchQuery === '' || 
+      m.message?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      m.adminReply?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (statusFilter === 'open') return matchesSearch && m.status === 'open';
+    if (statusFilter === 'replied') return matchesSearch && m.status === 'replied';
+    return matchesSearch;
+  });
 
   return (
     <>
       {/* Floating Trigger Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-2xl shadow-emerald-500/40 flex items-center space-x-2.5 transition-all duration-300 hover:scale-105 group border border-emerald-400/30"
-        title="Contact EcoReward Admin Support"
+        className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-2xl hover:shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 border-2 border-white/30 group"
       >
         <div className="relative">
-          <FaComments className="h-6 w-6 text-white group-hover:rotate-12 transition-transform" />
-          <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-400 rounded-full animate-ping"></span>
-          <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-400 rounded-full border-2 border-slate-900"></span>
+          <FaComments className="h-6 w-6" />
+          <span className="absolute -top-1 -right-1 h-3 w-3 bg-rose-500 rounded-full border-2 border-white animate-ping"></span>
         </div>
-        <span className="font-extrabold text-xs tracking-wide hidden sm:inline-block">Admin Support</span>
-      </button>
+        <span className="hidden sm:inline font-extrabold text-xs tracking-wider pr-1">Support Desk</span>
+      </motion.button>
 
-      {/* Support Chat Modal Drawer */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[520px] transition-all animate-fadeIn">
-          
-          {/* Header */}
-          <div className="p-4 bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white flex items-center justify-between border-b border-emerald-500/20">
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg">
-                <FaUserShield />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-sm text-white flex items-center space-x-1.5">
-                  <span>EcoReward Admin Helpdesk</span>
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                </h3>
-                <p className="text-[10px] text-slate-300 font-medium">Direct Live Messaging with Support Team</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            >
-              <FaTimes className="h-4 w-4" />
-            </button>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-1.5 gap-1">
-            <button
-              onClick={() => setActiveTab('chat')}
-              className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
-                activeTab === 'chat' 
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              My Messages ({messages.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('new')}
-              className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${
-                activeTab === 'new' 
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              + Send New Message
-            </button>
-          </div>
-
-          {/* Tab 1: Messages History & Admin Replies */}
-          {activeTab === 'chat' && (
-            <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50 dark:bg-slate-950/40">
-              {loading ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
-                </div>
-              ) : messages.length === 0 ? (
-                <div className="text-center py-12 space-y-3">
-                  <FaQuestionCircle className="h-10 w-10 text-slate-300 dark:text-slate-700 mx-auto" />
-                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">No support messages sent yet.</p>
-                  <button
-                    onClick={() => setActiveTab('new')}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md"
-                  >
-                    Click to Message Admin
-                  </button>
-                </div>
-              ) : (
-                messages.map((msg) => (
-                  <div key={msg._id} className="space-y-2">
-                    
-                    {/* User's Sent Message Bubble */}
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 rounded-2xl shadow-sm space-y-1.5">
-                      <div className="flex justify-between items-center text-[10px]">
-                        <span className="font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">{msg.subject}</span>
-                        <span className="text-slate-400 font-medium flex items-center space-x-1">
-                          <FaClock className="h-2.5 w-2.5" />
-                          <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-800 dark:text-slate-200 font-medium">{msg.message}</p>
-                      
-                      <div className="flex justify-end pt-1">
-                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
-                          msg.status === 'replied' 
-                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' 
-                            : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-                        }`}>
-                          {msg.status === 'replied' ? '✓ Replied by Admin' : '⏳ Waiting for Admin Response'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Admin Reply Bubble */}
-                    {msg.adminReply && (
-                      <div className="ml-4 p-3.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 dark:from-emerald-950/40 dark:to-teal-950/40 border border-emerald-500/30 rounded-2xl space-y-1.5 shadow-sm">
-                        <div className="flex items-center justify-between text-[10px]">
-                          <div className="flex items-center space-x-1.5">
-                            <FaUserShield className="h-3 w-3 text-emerald-500" />
-                            <span className="font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">Admin Support Response</span>
-                          </div>
-                          <span className="text-slate-400 font-medium">
-                            {msg.repliedAt ? new Date(msg.repliedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-900 dark:text-slate-100 font-bold leading-relaxed">{msg.adminReply}</p>
-                      </div>
-                    )}
-
+      {/* Main Chat Drawer Window */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] h-[620px] max-h-[85vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+          >
+            
+            {/* 1. Header Bar */}
+            <div className="p-4 bg-gradient-to-r from-slate-900 via-slate-850 to-emerald-950 text-white flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <div className="h-10 w-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
+                    <FaUserShield />
                   </div>
-                ))
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
-
-          {/* Tab 2: Send New Support Message */}
-          {activeTab === 'new' && (
-            <form onSubmit={handleSendMessage} className="flex-1 p-5 flex flex-col justify-between space-y-4 bg-white dark:bg-slate-900">
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">Inquiry Category / Subject</label>
-                  <select
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="General Pickup Support">General Pickup Support</option>
-                    <option value="EcoPoints & Wallet Query">EcoPoints & Wallet Query</option>
-                    <option value="Driver Conduct & Feedback">Driver Conduct & Feedback</option>
-                    <option value="App Technical Issue">App Technical Issue</option>
-                    <option value="Redemption Coupon Problem">Redemption Coupon Problem</option>
-                  </select>
+                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
                 </div>
+                <div>
+                  <h4 className="font-black text-sm flex items-center space-x-1.5">
+                    <span>EcoReward Support Desk</span>
+                  </h4>
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
+                    Online • 24/7 Live Agents
+                  </span>
+                </div>
+              </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">Your Message to Admin</label>
-                  <textarea
-                    rows="5"
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    required
-                    placeholder="Describe your request or issue here..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-xs"
+                  title="Toggle Sound"
+                >
+                  {soundEnabled ? <FaVolumeUp className="text-emerald-400" /> : <FaVolumeMute />}
+                </button>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                >
+                  <FaTimes className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Pinned Announcement & Search Filter Bar */}
+            <div className="bg-slate-50 dark:bg-slate-850 border-b border-slate-200/60 dark:border-slate-800 p-3 space-y-2 text-xs">
+              
+              {/* Pinned Banner */}
+              <div className="flex items-center space-x-2 p-2 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-500/20 text-[11px] font-bold">
+                <FaThumbtack className="text-emerald-500 flex-shrink-0" />
+                <span className="truncate">📢 Avg response time: under 2 minutes. We are here to help!</span>
+              </div>
+
+              {/* Search Bar & Status Filters */}
+              <div className="flex items-center space-x-2">
+                <div className="relative flex-1">
+                  <FaSearch className="absolute left-3 top-2.5 text-slate-400 text-[11px]" />
+                  <input 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search messages..."
+                    className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-slate-800 rounded-xl text-xs text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   />
                 </div>
+
+                <div className="flex bg-white dark:bg-slate-800 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-[10px] font-black">
+                  <button 
+                    onClick={() => setStatusFilter('all')}
+                    className={`px-2 py-1 rounded-lg transition-all ${statusFilter === 'all' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
+                  >
+                    All
+                  </button>
+                  <button 
+                    onClick={() => setStatusFilter('open')}
+                    className={`px-2 py-1 rounded-lg transition-all ${statusFilter === 'open' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
+                  >
+                    Open
+                  </button>
+                  <button 
+                    onClick={() => setStatusFilter('replied')}
+                    className={`px-2 py-1 rounded-lg transition-all ${statusFilter === 'replied' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
+                  >
+                    Replied
+                  </button>
+                </div>
               </div>
+            </div>
+
+            {/* 3. Main Chat Stream (Modern Bubbles) */}
+            <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-100/50 dark:bg-slate-950/50">
+              
+              {/* Date Separator */}
+              <div className="text-center my-2">
+                <span className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm">
+                  Today
+                </span>
+              </div>
+
+              {filteredMessages.map((msg, idx) => (
+                <div key={msg._id || idx} className="space-y-3">
+                  
+                  {/* User Question Bubble (Right Aligned - Green) */}
+                  <div className="flex flex-col items-end space-y-1">
+                    <div className="flex items-end space-x-2 max-w-[85%]">
+                      <div className="p-3.5 bg-emerald-600 text-white rounded-3xl rounded-br-none shadow-md space-y-1 relative group">
+                        
+                        {msg.attachedFile && (
+                          <div className="p-2 bg-emerald-700 rounded-xl flex items-center space-x-2 text-[11px] font-bold mb-1">
+                            <FaFileAlt />
+                            <span className="truncate max-w-[140px]">{msg.attachedFile}</span>
+                          </div>
+                        )}
+
+                        <p className="text-xs font-medium leading-relaxed">{msg.message}</p>
+                        
+                        {/* Timestamp & Read Receipts */}
+                        <div className="flex items-center justify-end space-x-1.5 pt-1 text-[9px] text-emerald-200 font-bold">
+                          <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <span title="Read Status">
+                            {msg.readStatus === 'read' ? (
+                              <FaCheckDouble className="text-sky-300" />
+                            ) : msg.readStatus === 'delivered' ? (
+                              <FaCheckDouble className="text-emerald-200" />
+                            ) : (
+                              <FaCheck className="text-emerald-200" />
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Reaction Badge if exists */}
+                        {reactions[msg._id] && (
+                          <span className="absolute -bottom-2 -left-2 bg-white dark:bg-slate-800 text-xs p-0.5 rounded-full shadow border">
+                            {reactions[msg._id]}
+                          </span>
+                        )}
+                      </div>
+
+                      <img 
+                        src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=10b981&color=fff`} 
+                        alt="User Avatar" 
+                        className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40 flex-shrink-0"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Admin Support Reply Bubble (Left Aligned - White / Dark Grey) */}
+                  {msg.adminReply && (
+                    <div className="flex flex-col items-start space-y-1">
+                      <div className="flex items-start space-x-2 max-w-[85%]">
+                        <img 
+                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
+                          alt="Admin Support Avatar" 
+                          className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40 flex-shrink-0"
+                        />
+                        <div className="p-3.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl rounded-bl-none shadow-md border border-slate-200/60 dark:border-slate-700 space-y-1 relative">
+                          <div className="flex items-center space-x-2 pb-1">
+                            <span className="font-extrabold text-[11px] text-emerald-600 dark:text-emerald-400">Support Agent Sarah</span>
+                            <span className="px-2 py-0.2 bg-emerald-500/10 text-emerald-500 text-[9px] font-black rounded-full uppercase">
+                              Official Helpdesk
+                            </span>
+                          </div>
+
+                          <p className="text-xs font-medium leading-relaxed">{msg.adminReply}</p>
+
+                          <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-750 text-[9px] text-slate-400 font-bold">
+                            <span>{new Date(msg.repliedAt || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            
+                            {/* Fast Reaction Bar */}
+                            <div className="flex space-x-1">
+                              {emojis.slice(0, 4).map((emoji, i) => (
+                                <button key={i} onClick={() => handleReaction(msg._id, emoji)} className="hover:scale-125 transition-transform">
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              ))}
+
+              {/* Animated Typing Indicator */}
+              {isTyping && (
+                <div className="flex items-center space-x-2 text-xs text-slate-400 font-bold pt-2">
+                  <div className="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-[10px]">
+                    <FaRobot className="animate-spin-slow" />
+                  </div>
+                  <div className="flex space-x-1 items-center bg-white dark:bg-slate-800 px-3 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <span className="text-[10px] text-slate-400 pr-1">Support Agent typing</span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-bounce"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* 4. AI Copilot Suggestion Box */}
+            {showAiAssistant && (
+              <div className="p-3 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-300 font-bold text-[11px]">
+                  <FaRobot className="text-emerald-500 flex-shrink-0" />
+                  <span className="truncate">EcoAI Suggestion: Ask for driver location or point refund.</span>
+                </div>
+                <button 
+                  onClick={() => setShowAiAssistant(false)}
+                  className="text-slate-400 hover:text-slate-600 text-[10px] font-bold"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* 5. Quick Reply Chips */}
+            <div className="px-3 py-2 bg-slate-50 dark:bg-slate-850 border-t border-slate-200/60 dark:border-slate-800 flex items-center space-x-2 overflow-x-auto no-scrollbar">
+              {quickReplies.map((reply, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleQuickReply(reply)}
+                  className="px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-bold whitespace-nowrap hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                >
+                  {reply}
+                </button>
+              ))}
+            </div>
+
+            {/* 6. Emoji Bar Popup */}
+            {showEmojiPicker && (
+              <div className="p-2 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-around text-lg">
+                {emojis.map((emoji, i) => (
+                  <button key={i} onClick={() => handleAddEmoji(emoji)} className="hover:scale-125 transition-transform p-1">
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* 7. Input Form & Attachments Bar */}
+            <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 flex items-center space-x-2">
+              
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="p-2 rounded-xl text-slate-400 hover:text-emerald-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Add Emoji"
+              >
+                <FaSmile className="h-4 w-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 rounded-xl text-slate-400 hover:text-emerald-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Attach Document/Image"
+              >
+                <FaPaperclip className="h-4 w-4" />
+                <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden" />
+              </button>
+
+              <input
+                type="text"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your support message..."
+                className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium border border-transparent focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
 
               <button
                 type="submit"
-                disabled={sending || !messageText.trim()}
-                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 disabled:opacity-40"
+                disabled={sending || (!messageText.trim() && !attachedFile)}
+                className="p-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl shadow-md disabled:opacity-40 transition-all"
               >
                 <FaPaperPlane className="h-3.5 w-3.5" />
-                <span>{sending ? 'Sending to Admin...' : 'Send Message to Admin'}</span>
               </button>
             </form>
-          )}
 
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

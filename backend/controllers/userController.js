@@ -349,12 +349,49 @@ export const markNotificationRead = async (req, res) => {
 // Get User Leaderboard
 export const getLeaderboard = async (req, res) => {
   try {
-    const leaderboard = await User.find({ role: 'user' })
+    const topUsers = await User.find({ role: 'user' })
       .select('name points profileImage')
       .sort({ points: -1 })
-      .limit(10);
-    res.json({ success: true, data: leaderboard });
+      .limit(10)
+      .lean();
+
+    // Aggregate completed pickup weights per user
+    const userIds = topUsers.map(u => u._id);
+    const weightAgg = await PickupRequest.aggregate([
+      { $match: { user: { $in: userIds }, status: 'completed' } },
+      { $group: { _id: '$user', totalWeight: { $sum: { $ifNull: ['$actualWeight', '$estimatedWeight'] } } } }
+    ]);
+
+    const weightMap = {};
+    weightAgg.forEach(w => { weightMap[w._id.toString()] = w.totalWeight; });
+
+    const formattedLeaderboard = topUsers.map((u, index) => {
+      const pts = u.points || 0;
+      let tier = 'Green Warrior';
+      let badge = '🎖️ Rising Star';
+
+      if (index === 0) { tier = 'Recycling Champion'; badge = '🏆 Gold Recycler'; }
+      else if (index === 1) { tier = 'Eco Hero'; badge = '🥇 Silver Recycler'; }
+      else if (index === 2) { tier = 'Planet Saver'; badge = '🥈 Bronze Recycler'; }
+      else if (pts > 300) { tier = 'Green Warrior'; badge = '🌿 Eco Leader'; }
+      else { tier = 'Eco Scout'; badge = '🌱 Green Scout'; }
+
+      return {
+        _id: u._id,
+        rank: index + 1,
+        name: u.name,
+        avatar: u.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=10b981&color=fff`,
+        points: pts,
+        recycledKg: parseFloat((weightMap[u._id.toString()] || (pts * 0.15)).toFixed(1)),
+        tier,
+        badge,
+        isCurrentUser: req.user?._id.toString() === u._id.toString()
+      };
+    });
+
+    res.json({ success: true, data: formattedLeaderboard });
   } catch (error) {
+    console.error('[getLeaderboard Error]:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

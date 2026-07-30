@@ -34,16 +34,11 @@ const Sidebar = () => {
     { path: '/driver', label: 'Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
     { path: '/driver/pickups?tab=history', label: 'Pickup History', icon: FaHistory },
-    { path: '/driver/vehicle', label: 'Vehicle', icon: FaTruck },
-    { path: '/driver/documents', label: 'Documents', icon: FaLeaf },
-    { path: '/driver/earnings', label: 'Earnings', icon: FaCoins },
-    { path: '/driver/rewards', label: 'Rewards', icon: FaTrophy },
+    { path: '/driver/earnings', label: 'Earnings & Incentives', icon: FaCoins },
     { path: '/driver/notifications', label: 'Notifications', icon: FaBell },
-    { path: '/driver/navigation', label: 'Navigation', icon: FaClock },
     { path: '/driver/profile', label: 'Profile', icon: FaUser },
     { path: '/driver/security', label: 'Security', icon: FaLock },
     { path: '/driver/settings', label: 'Settings', icon: FaCogs },
-    { path: '/driver/support', label: 'Help & Support', icon: FaQuestionCircle },
   ];
 
   const adminLinks = [

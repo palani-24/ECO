@@ -45,11 +45,28 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-300">
-      <Navbar />
+    <div className="relative min-h-screen bg-slate-950 flex flex-col transition-colors duration-300 overflow-hidden">
+      {/* High-Quality Eco Background Video & Glassmorphic Backdrop */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover scale-105 filter brightness-75 contrast-105 blur-[1px]"
+          poster="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1920&q=80"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/75 to-emerald-950/90 backdrop-blur-[3px]" />
+      </div>
 
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-[400px] bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
+      <div className="relative z-10">
+        <Navbar />
+      </div>
+
+      <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-12">
+        <div className="w-full max-w-[420px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800/80 p-8 rounded-3xl shadow-2xl shadow-emerald-950/40 space-y-6">
           
           <div className="text-center space-y-2">
             <div className="inline-flex h-12 w-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 items-center justify-center text-primary-500 mb-2">

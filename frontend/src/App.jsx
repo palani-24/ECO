@@ -38,6 +38,7 @@ import AdminDrivers from './pages/admin/AdminDrivers';
 import AdminPickups from './pages/admin/AdminPickups';
 import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminSettings from './pages/admin/AdminSettings';
+import SupportChatWidget from './components/SupportChatWidget';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
       <ToastProvider>
         <AuthProvider>
           <SocketProvider>
+            <SupportChatWidget />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />

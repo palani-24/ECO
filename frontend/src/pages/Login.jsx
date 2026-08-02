@@ -313,10 +313,10 @@ const Login = () => {
                   <span>Don't have an account?</span>
                   <Link 
                     to="/signup" 
-                    className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black rounded-xl border border-emerald-500/30 transition-all hover:scale-105 inline-flex items-center space-x-1"
+                    className="px-3.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 font-black rounded-full border border-emerald-500/30 transition-all hover:scale-105 shadow-sm inline-flex items-center space-x-1.5"
                   >
                     <span>Register Now</span>
-                    <FaUserPlus className="h-3 w-3" />
+                    <FaUserPlus className="h-3 w-3 text-emerald-500 group-hover:text-white" />
                   </Link>
                 </p>
               </div>

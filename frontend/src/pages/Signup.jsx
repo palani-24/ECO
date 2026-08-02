@@ -343,10 +343,14 @@ const Signup = () => {
 
           {/* Footer Call to Action */}
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center">
-            <p className="text-xs font-extrabold text-slate-700 dark:text-slate-300">
-              Already have an account?{' '}
-              <Link to="/login" className="text-emerald-600 dark:text-emerald-400 font-black hover:underline">
-                Sign In Instead
+            <p className="text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center justify-center space-x-2">
+              <span>Already have an account?</span>
+              <Link 
+                to="/login" 
+                className="px-3.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 font-black rounded-full border border-emerald-500/30 transition-all hover:scale-105 shadow-sm inline-flex items-center space-x-1.5"
+              >
+                <span>Sign In Instead</span>
+                <FaSignInAlt className="h-3 w-3" />
               </Link>
             </p>
           </div>

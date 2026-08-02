@@ -6,14 +6,14 @@ import { useSocket } from '../../context/SocketContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
-import { CardSkeleton } from '../../components/LoadingSkeleton';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import DriverChatModal from '../../components/DriverChatModal';
 import { 
   FaToggleOn, FaToggleOff, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, 
   FaRobot, FaExclamationTriangle, FaCheckCircle, FaComments, FaPhoneAlt, 
   FaCoins, FaBell, FaCheckDouble, FaTimesCircle, FaMapMarkerAlt, 
-  FaLocationArrow, FaCompass, FaExclamationCircle, FaArrowRight, FaImage, FaTimes, FaSpinner, FaRedo
+  FaLocationArrow, FaCompass, FaExclamationCircle, FaArrowRight, FaImage, 
+  FaTimes, FaSpinner, FaRedo, FaBatteryThreeQuarters, FaGasPump, FaLeaf, FaShieldAlt
 } from 'react-icons/fa';
 
 const DriverDashboard = () => {
@@ -27,12 +27,11 @@ const DriverDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCitizenChat, setShowCitizenChat] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showSosModal, setShowSosModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
 
   // Active Collection Flow States
-  const [pickupStatus, setPickupStatus] = useState('on_the_way'); // 'assigned' | 'on_the_way' | 'arrived' | 'completed'
+  const [pickupStatus, setPickupStatus] = useState('on_the_way');
   const [actualWeight, setActualWeight] = useState('');
   const [wasteImageUrl, setWasteImageUrl] = useState('');
   const [inputOtp, setInputOtp] = useState('4829');
@@ -55,7 +54,7 @@ const DriverDashboard = () => {
       });
 
       if (updatedPickup.status === 'completed') {
-        addToast('Pickup Completed Successfully. Earnings Updated.', 'success', 'Earnings Updated');
+        addToast('Pickup Completed Successfully. Earnings & Points Updated.', 'success', 'Earnings Updated');
       } else if (updatedPickup.status === 'pending') {
         addToast('🔔 New Nearby Pickup Request Dispatched!', 'info', 'New Job Available');
       }
@@ -75,7 +74,6 @@ const DriverDashboard = () => {
       if (pickupRes.data.success) setPickups(pickupRes.data.data);
     } catch (err) {
       console.warn('API fetch warning, loading driver fallback data', err);
-      // Fallback state guarantees 100% white-screen crash prevention
       setDriverProfile({
         user: { name: user?.name || 'Ramesh Kumar', email: user?.email },
         status: 'active',
@@ -89,7 +87,7 @@ const DriverDashboard = () => {
           estimatedWeight: 5,
           pickupTimeSlot: '10:00 AM - 12:00 PM',
           status: 'assigned',
-          user: { name: 'Arjun Sharma' },
+          user: { name: 'Arjun Sharma', phone: '+91 98765 43210' },
           pickupAddress: { street: '12-A, Metro Heights', city: 'Anna Nagar, Chennai' }
         }
       ]);
@@ -221,9 +219,9 @@ const DriverDashboard = () => {
 
   const activePickup = pickups.find(p => p?.status === 'accepted') || pickups.find(p => p?.status === 'assigned' && p?.driver) || pickups.find(p => p?.status === 'on_the_way') || pickups.find(p => p?.status === 'arrived');
   const upcomingPickups = pickups.filter(p => (p?.status === 'pending' || p?.status === 'assigned') && p?._id !== activePickup?._id && p?.status !== 'completed').slice(0, 3);
-  const recentCompleted = pickups.filter(p => p?.status === 'completed').slice(0, 3);
+  const recentCompleted = pickups.filter(p => p?.status === 'completed');
 
-  // 1. Loading State Screen
+  // Loading Screen
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
@@ -239,7 +237,7 @@ const DriverDashboard = () => {
     );
   }
 
-  // 2. Error State Screen with Retry
+  // Error Screen
   if (error) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
@@ -272,26 +270,30 @@ const DriverDashboard = () => {
         {/* Main Driver Panel */}
         <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-8 space-y-5 overflow-hidden">
           
-          {/* Top Bar: Online Toggle, SOS & Notifications */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 rounded-3xl shadow-sm flex items-center justify-between gap-4">
+          {/* Top Header & Driver Status Bar */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             
-            <div className="flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-md">
                 <FaTruck />
               </div>
               <div>
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Driver Console</h3>
-                <span className="text-[10px] text-emerald-500 font-black uppercase tracking-wider block">
-                  {driverProfile?.status === 'active' ? '🟢 Active & Ready' : '🔴 Standby Offline'}
-                </span>
+                <h3 className="font-black text-slate-900 dark:text-white text-base sm:text-lg">Driver Console</h3>
+                <div className="flex items-center space-x-2 text-[11px]">
+                  <span className="text-emerald-500 font-black uppercase tracking-wider">
+                    {driverProfile?.status === 'active' ? '🟢 ONLINE & READY' : '🔴 STANDBY OFFLINE'}
+                  </span>
+                  <span className="text-slate-400 font-medium">• {driverProfile?.vehicleNumber || 'TN-38-ECO-9945'}</span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
               <button 
                 onClick={() => setShowSosModal(true)}
-                className="px-3.5 py-2.5 bg-rose-600 text-white font-extrabold rounded-2xl text-xs flex items-center space-x-1 shadow animate-pulse"
+                className="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl text-xs flex items-center space-x-1.5 shadow-md shadow-rose-600/20 animate-pulse"
               >
+                <FaExclamationTriangle className="h-3.5 w-3.5" />
                 <span>🚨 SOS</span>
               </button>
 
@@ -299,7 +301,7 @@ const DriverDashboard = () => {
                 onClick={toggleOnline}
                 className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-black text-xs transition-all shadow-sm ${
                   driverProfile?.status === 'active' || driverProfile?.status === 'busy'
-                    ? 'bg-emerald-500 text-white'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/20'
                     : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                 }`}
               >
@@ -318,14 +320,14 @@ const DriverDashboard = () => {
             </div>
           </div>
 
-          {/* Earnings & Pickups Today Summary Bar */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* EV Vehicle Performance & Earnings Metrics Bar */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
               <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg flex-shrink-0 border border-emerald-500/20">
                 <FaCoins />
               </div>
               <div>
-                <span className="text-xl font-black text-slate-900 dark:text-white block">₹1,250</span>
+                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white block">₹1,250</span>
                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Today's Earnings</span>
               </div>
             </div>
@@ -335,51 +337,72 @@ const DriverDashboard = () => {
                 <FaCheckCircle />
               </div>
               <div>
-                <span className="text-xl font-black text-slate-900 dark:text-white block">{recentCompleted.length || 8}</span>
+                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white block">{recentCompleted.length || 8}</span>
                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Completed Pickups</span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
+              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-lg flex-shrink-0 border border-teal-500/20">
+                <FaBatteryThreeQuarters />
+              </div>
+              <div>
+                <span className="text-lg sm:text-xl font-black text-emerald-500 block">85% Charge</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">EV Battery (45 km)</span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
+              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg flex-shrink-0 border border-amber-500/20">
+                <FaWeight />
+              </div>
+              <div>
+                <span className="text-lg sm:text-xl font-black text-amber-500 block">42.5 kg</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Collected Today</span>
               </div>
             </div>
           </div>
 
-          {/* Main Grid: Google Map & Focused Job Card */}
+          {/* Main Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
+            {/* Left 2 Columns: Live Map & Active Job Control */}
             <div className="lg:col-span-2 space-y-5">
               
-              {/* Google Route Map */}
+              {/* Google Route Map Card */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 rounded-3xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
-                    <FaLocationArrow className="text-emerald-500" />
+                    <FaLocationArrow className="text-emerald-500 animate-pulse" />
                     <span>Live GPS Collection Map</span>
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase">
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-black uppercase border border-emerald-500/20">
                     ETA 12 mins • 2.4 km
                   </span>
                 </div>
 
-                <div className="relative h-52 bg-slate-950 rounded-2xl overflow-hidden border border-emerald-500/30">
+                <div className="relative h-56 bg-slate-950 rounded-2xl overflow-hidden border border-emerald-500/30 shadow-inner">
                   <GoogleRouteMap 
                     pickups={activePickup ? [activePickup] : []} 
-                    height="208px" 
+                    height="224px" 
                     isDriver={true}
                   />
                 </div>
               </div>
 
-              {/* CURRENT ASSIGNED JOB CARD */}
+              {/* ACTIVE ASSIGNED JOB CARD */}
               {activePickup ? (
-                <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-5 rounded-3xl shadow-sm space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-5 sm:p-6 rounded-3xl shadow-sm space-y-4">
                   
-                  {/* Header */}
+                  {/* Job Header */}
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
                     <div>
-                      <h4 className="font-black text-slate-900 dark:text-white text-base">Current Assigned Job</h4>
-                      <span className="text-[10px] text-slate-400 font-bold">Slot: {activePickup.pickupTimeSlot || '10:00 AM - 12:00 PM'}</span>
+                      <h4 className="font-black text-slate-900 dark:text-white text-base sm:text-lg">Current Assigned Job</h4>
+                      <span className="text-[11px] text-slate-400 font-bold">Time Slot: {activePickup.pickupTimeSlot || '10:00 AM - 12:00 PM'}</span>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      <span className={`px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                         pickupStatus === 'completed' ? 'bg-emerald-500 text-white' :
                         pickupStatus === 'arrived' ? 'bg-sky-500 text-white animate-pulse' :
                         'bg-amber-500 text-white'
@@ -389,69 +412,69 @@ const DriverDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Address & Details */}
+                  {/* Customer Info & Material Category */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1">
-                      <span className="text-[9px] text-slate-400 font-black uppercase">Customer</span>
-                      <p className="font-extrabold text-slate-900 dark:text-white">{activePickup.user?.name || 'Arjun Sharma'}</p>
+                    <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
+                      <span className="text-[9px] text-slate-400 font-black uppercase block">Customer Name</span>
+                      <p className="font-extrabold text-slate-900 dark:text-white text-sm">{activePickup.user?.name || 'Arjun Sharma'}</p>
                     </div>
 
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1">
-                      <span className="text-[9px] text-slate-400 font-black uppercase">Material & Estimated Weight</span>
-                      <p className="font-extrabold text-emerald-600 dark:text-emerald-400">{activePickup.wasteCategory} (Est. {activePickup.estimatedWeight || 5}kg)</p>
+                    <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
+                      <span className="text-[9px] text-slate-400 font-black uppercase block">Material Category</span>
+                      <p className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">{activePickup.wasteCategory} (Est. {activePickup.estimatedWeight || 5}kg)</p>
                     </div>
 
-                    <div className="sm:col-span-2 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1">
-                      <span className="text-[9px] text-slate-400 font-black uppercase">Pickup Address</span>
-                      <p className="font-bold text-slate-900 dark:text-white">
-                        {formatAddress(activePickup.pickupAddress)}
+                    <div className="sm:col-span-2 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
+                      <span className="text-[9px] text-slate-400 font-black uppercase block">Pickup Address</span>
+                      <p className="font-bold text-slate-900 dark:text-white text-xs leading-relaxed">
+                        📍 {formatAddress(activePickup.pickupAddress)}
                       </p>
                     </div>
                   </div>
 
-                  {/* Action Bar */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
+                  {/* Action Bar: Turn-by-Turn GPS Navigation, Call & Chat */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs pt-1">
                     <button 
                       onClick={() => openGoogleMapsNavigation(formatAddress(activePickup.pickupAddress))}
-                      className="p-2.5 bg-sky-500 hover:bg-sky-600 text-white font-extrabold rounded-xl flex items-center justify-center space-x-1.5 shadow transition-transform active:scale-95"
+                      className="p-3 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-black rounded-2xl flex items-center justify-center space-x-1.5 shadow-md transition-transform active:scale-95"
                     >
-                      <FaCompass />
-                      <span>Navigate</span>
+                      <FaCompass className="h-4 w-4" />
+                      <span>Start GPS</span>
                     </button>
 
                     <a 
-                      href="tel:+919876543210"
-                      className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-emerald-500 font-bold rounded-xl flex items-center justify-center space-x-1.5 transition-colors text-center"
+                      href={`tel:${activePickup?.user?.phone || '+919876543210'}`}
+                      className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-emerald-500 font-extrabold rounded-2xl flex items-center justify-center space-x-1.5 transition-colors text-center border border-slate-200 dark:border-slate-700"
                     >
-                      <FaPhoneAlt />
-                      <span>Call</span>
+                      <FaPhoneAlt className="h-3.5 w-3.5" />
+                      <span>Call Customer</span>
                     </a>
 
                     <button 
                       onClick={() => setShowCitizenChat(true)}
-                      className="p-2.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-bold rounded-xl flex items-center justify-center space-x-1.5 border border-emerald-500/20"
+                      className="p-3 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-extrabold rounded-2xl flex items-center justify-center space-x-1.5 border border-emerald-500/20"
                     >
-                      <FaComments />
-                      <span>Chat</span>
+                      <FaComments className="h-3.5 w-3.5" />
+                      <span>Citizen Chat</span>
                     </button>
 
                     <button 
                       onClick={() => setShowReportModal(true)}
-                      className="p-2.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 font-bold rounded-xl flex items-center justify-center space-x-1.5 border border-rose-500/20 text-[11px]"
+                      className="p-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 font-extrabold rounded-2xl flex items-center justify-center space-x-1.5 border border-rose-500/20 text-[11px]"
                     >
-                      <FaExclamationCircle />
+                      <FaExclamationCircle className="h-3.5 w-3.5" />
                       <span>Report Issue</span>
                     </button>
                   </div>
 
-                  {/* Progress Checklist */}
+                  {/* Doorstep Verification & AI Inspection Flow */}
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3 text-xs">
                     {pickupStatus === 'assigned' && (
                       <button 
                         onClick={handleStartPickup}
-                        className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black rounded-2xl shadow-md flex items-center justify-center space-x-2 text-xs"
+                        className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black rounded-2xl shadow-md flex items-center justify-center space-x-2 text-xs"
                       >
-                        <FaTruck />
+                        <FaTruck className="h-4 w-4" />
                         <span>Start Pickup (On The Way)</span>
                       </button>
                     )}
@@ -463,12 +486,12 @@ const DriverDashboard = () => {
                         onChange={handleArrivedAtLocation} 
                         className="h-4.5 w-4.5 text-emerald-600 rounded focus:ring-emerald-500"
                       />
-                      <span className="font-black text-slate-900 dark:text-white">1. Arrived at Customer Address</span>
+                      <span className="font-black text-slate-900 dark:text-white text-xs">1. Doorstep Check-in (Arrived at Address)</span>
                     </label>
 
                     {checkedIn && (
-                      <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 animate-fadeIn">
-                        <span className="font-black text-slate-900 dark:text-white block">2. Collection Checklist & Verification</span>
+                      <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3.5 animate-fadeIn">
+                        <span className="font-black text-slate-900 dark:text-white block text-xs">2. Doorstep Verification & AI Material Inspection</span>
                         
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase flex items-center space-x-1">
@@ -479,20 +502,20 @@ const DriverDashboard = () => {
                             <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                             <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300 font-bold text-xs">
                               <FaImage className="text-emerald-500" />
-                              <span>{wasteImageUrl ? 'Photo Selected ✓' : 'Take or Upload Waste Photo'}</span>
+                              <span>{wasteImageUrl ? 'Waste Photo Uploaded ✓' : 'Take or Upload Waste Photo'}</span>
                             </div>
                           </label>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Enter Actual Weight (kg)</label>
+                            <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Enter Verified Weight (kg)</label>
                             <input 
                               type="number"
                               value={actualWeight}
                               onChange={(e) => setActualWeight(e.target.value)}
                               placeholder="e.g. 5.0"
-                              className="w-full px-3 py-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-xs"
+                              className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-xs"
                             />
                           </div>
 
@@ -500,6 +523,7 @@ const DriverDashboard = () => {
                             <div className="flex justify-between items-center mb-1">
                               <label className="text-[9px] font-black text-amber-500 uppercase">Handover OTP</label>
                               <button 
+                                type="button"
                                 onClick={() => setInputOtp('4829')}
                                 className="text-[8px] font-black text-emerald-500 hover:underline"
                               >
@@ -510,7 +534,7 @@ const DriverDashboard = () => {
                               type="text"
                               value={inputOtp}
                               onChange={(e) => setInputOtp(e.target.value)}
-                              className="w-full px-3 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold rounded-xl border border-amber-500/30 text-xs"
+                              className="w-full px-3 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold rounded-xl border border-amber-500/30 text-xs"
                             />
                           </div>
                         </div>
@@ -520,20 +544,30 @@ const DriverDashboard = () => {
                             type="button"
                             onClick={handleRunAiAnalysis}
                             disabled={isScanning}
-                            className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold text-xs rounded-xl shadow transition-colors flex items-center justify-center space-x-1.5"
+                            className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold text-xs rounded-xl shadow transition-colors flex items-center justify-center space-x-1.5"
                           >
-                            <FaRobot />
+                            <FaRobot className="h-4 w-4" />
                             <span>{isScanning ? 'AI Verifying Material...' : 'Run AI Inspection Scan'}</span>
                           </button>
                         ) : (
-                          <button
-                            type="button"
-                            onClick={() => handleConfirmPickup(activePickup._id)}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
-                          >
-                            <FaCheckCircle />
-                            <span>Complete Pickup (+{aiAnalysisPreview.pointsToAward} pts)</span>
-                          </button>
+                          <div className="space-y-3 pt-1">
+                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-1 text-xs">
+                              <div className="flex justify-between items-center font-bold text-emerald-600 dark:text-emerald-400">
+                                <span>Purity Grade: {aiAnalysisPreview.grade}</span>
+                                <span>{aiAnalysisPreview.purityScore}% Clean</span>
+                              </div>
+                              <span className="text-[10px] text-slate-400 block font-semibold">Points to Award: +{aiAnalysisPreview.pointsToAward} EcoPoints</span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => handleConfirmPickup(activePickup._id)}
+                              className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
+                            >
+                              <FaCheckCircle className="h-4 w-4" />
+                              <span>Complete Pickup & Credit Points (+{aiAnalysisPreview.pointsToAward} pts)</span>
+                            </button>
+                          </div>
                         )}
 
                       </div>
@@ -550,11 +584,13 @@ const DriverDashboard = () => {
 
             </div>
 
-            {/* Right Col: Next 3 Assigned Jobs */}
+            {/* Right Column: Assigned Jobs & Driver Performance Panel */}
             <div className="space-y-5">
+              
+              {/* Assigned Jobs Queue Card */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-5 rounded-3xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2 text-xs">
-                  <h4 className="font-extrabold text-slate-900 dark:text-white">Next 3 Assigned Jobs</h4>
+                  <h4 className="font-extrabold text-slate-900 dark:text-white">Assigned Jobs Queue</h4>
                   <span className="text-[10px] text-emerald-500 font-black">{upcomingPickups.length} queued</span>
                 </div>
 
@@ -568,7 +604,7 @@ const DriverDashboard = () => {
                         </div>
                         <button 
                           onClick={() => handleAcceptPickupJob(pickup?._id)}
-                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-xl shadow transition-transform active:scale-95"
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] rounded-xl shadow transition-transform active:scale-95"
                         >
                           Accept
                         </button>
@@ -576,10 +612,28 @@ const DriverDashboard = () => {
                     </div>
                   ))}
                   {upcomingPickups.length === 0 && (
-                    <p className="text-center text-[10px] text-slate-400 py-3 font-semibold">No pending jobs in queue.</p>
+                    <div className="p-4 text-center space-y-2">
+                      <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto text-lg">
+                        <FaShieldAlt />
+                      </div>
+                      <p className="text-xs font-black text-slate-800 dark:text-white">Queue Clear & Ready</p>
+                      <span className="text-[10px] text-slate-400 font-medium block">All assigned pickups completed for your area route.</span>
+                    </div>
                   )}
                 </div>
               </div>
+
+              {/* Fleet Performance & Safety Guidance Card */}
+              <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-5 rounded-3xl text-white space-y-3 shadow-sm">
+                <div className="flex items-center space-x-2 text-xs text-emerald-400 font-black">
+                  <FaLeaf />
+                  <span>Green Driver Rating: 4.9 ★</span>
+                </div>
+                <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                  Thank you for keeping our city clean. Always ensure safety gear & electronic weight scales are zero-calibrated before pickup.
+                </p>
+              </div>
+
             </div>
 
           </div>

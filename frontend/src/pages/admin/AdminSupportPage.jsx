@@ -8,7 +8,8 @@ import {
   FaComments, FaReply, FaPaperPlane, FaUser, FaTruck, FaClock, 
   FaCheckCircle, FaExclamationCircle, FaSearch, FaFilter, FaBolt,
   FaEnvelope, FaHistory, FaTag, FaSpinner, FaChevronRight, FaCheckDouble,
-  FaSmile, FaPaperclip, FaShieldAlt, FaCircle, FaPhoneAlt, FaCheck, FaRedo
+  FaSmile, FaPaperclip, FaShieldAlt, FaCircle, FaPhoneAlt, FaCheck, FaRedo,
+  FaArrowLeft
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 
@@ -18,6 +19,9 @@ const AdminSupportPage = () => {
   const [supportMessages, setSupportMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUserKey, setSelectedUserKey] = useState(null);
+
+  // Mobile View Switcher: 'list' | 'chat' (On mobile screens, toggle view like WhatsApp App)
+  const [mobileView, setMobileView] = useState('list');
 
   // Filter & Search States
   const [supportFilter, setSupportFilter] = useState('all'); // 'all' | 'pending' | 'replied'
@@ -290,11 +294,11 @@ const AdminSupportPage = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        {/* Main Live Support Messenger Panel */}
-        <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-8 space-y-5 overflow-hidden">
+        {/* Main Live Support Messenger Panel (Added padding for mobile bottom bar) */}
+        <main className="flex-1 p-3 sm:p-6 pb-32 md:pb-8 space-y-4 overflow-hidden">
           
-          {/* Header Bar */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/80 border border-emerald-500/20 p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Top Header Bar */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/80 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
               <h2 className="text-xl sm:text-2xl font-black text-white flex items-center justify-center sm:justify-start space-x-2">
                 <FaComments className="text-emerald-400" />
@@ -313,11 +317,13 @@ const AdminSupportPage = () => {
             </div>
           </div>
 
-          {/* 2-Column Chat Layout Container */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg flex flex-col lg:flex-row h-[650px] overflow-hidden">
+          {/* 2-Column Responsive Chat Container (Mobile View Toggler Active) */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg flex flex-col lg:flex-row h-[620px] overflow-hidden">
             
-            {/* Left Conversations Sidebar List (w-80 / w-96) - REAL USERS ONLY */}
-            <div className="w-full lg:w-96 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 flex flex-col bg-slate-50/50 dark:bg-slate-900/50">
+            {/* Left Conversations Sidebar List (Visible on desktop or when mobileView === 'list') */}
+            <div className={`w-full lg:w-96 border-b lg:border-b-0 lg:border-r border-slate-200/80 dark:border-slate-800 flex-col bg-slate-50/50 dark:bg-slate-900/50 ${
+              mobileView === 'chat' ? 'hidden lg:flex' : 'flex'
+            }`}>
               
               {/* Left Header: Search & Filters */}
               <div className="p-4 border-b border-slate-200/80 dark:border-slate-800 space-y-3">
@@ -374,6 +380,7 @@ const AdminSupportPage = () => {
                         onClick={() => {
                           setSelectedUserKey(conv.userKey);
                           setReplyText(latest.adminReply || '');
+                          setMobileView('chat'); // Seamlessly open chat view on mobile!
                         }}
                         className={`p-3.5 flex items-center space-x-3 cursor-pointer transition-all ${
                           isSelected 
@@ -437,23 +444,35 @@ const AdminSupportPage = () => {
 
             </div>
 
-            {/* Right Active Conversation Chat Thread Panel (Flex-1) */}
+            {/* Right Active Conversation Chat Thread Panel (Visible on desktop or when mobileView === 'chat') */}
             {activeConversation && activeTicket ? (
-              <div className="flex-1 flex flex-col bg-slate-100/40 dark:bg-slate-950/40 min-w-0">
+              <div className={`flex-1 flex-col bg-slate-100/40 dark:bg-slate-950/40 min-w-0 ${
+                mobileView === 'list' ? 'hidden lg:flex' : 'flex'
+              }`}>
                 
-                {/* Right Panel Header with Direct Call & Email Action Buttons */}
-                <div className="p-4 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-                  <div className="flex items-center space-x-3 min-w-0">
+                {/* Right Panel Header with Mobile Back Button & Direct Action Buttons */}
+                <div className="p-3.5 sm:p-4 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    
+                    {/* Mobile Back to Contacts Button */}
+                    <button
+                      onClick={() => setMobileView('list')}
+                      className="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
+                      title="Back to Conversations"
+                    >
+                      <FaArrowLeft className="h-4 w-4" />
+                    </button>
+
                     <img 
                       src={getAvatarUrl(activeConversation.user?.profileImage, activeConversation.user?.name || 'User')}
                       onError={(e) => handleAvatarError(e, activeConversation.user?.name || 'User')}
                       alt="Selected User"
-                      className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30 flex-shrink-0"
+                      className="h-10 w-10 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-emerald-500/30 shrink-0"
                     />
                     <div className="min-w-0">
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-black text-slate-900 dark:text-white text-sm truncate">{activeConversation.user?.name}</h3>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[9px] font-black uppercase border border-emerald-500/20 shrink-0">
+                      <div className="flex items-center space-x-1.5">
+                        <h3 className="font-black text-slate-900 dark:text-white text-xs sm:text-sm truncate">{activeConversation.user?.name}</h3>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[8px] sm:text-[9px] font-black uppercase border border-emerald-500/20 shrink-0">
                           {activeConversation.senderRole || 'USER'}
                         </span>
                       </div>
@@ -462,26 +481,26 @@ const AdminSupportPage = () => {
                   </div>
 
                   {/* Header Actions: Call, Email, Mark Resolved */}
-                  <div className="flex items-center space-x-2 shrink-0">
+                  <div className="flex items-center space-x-1.5 shrink-0">
                     <a 
                       href={`tel:${activeConversation.user?.phone || '+919876543210'}`}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700"
+                      className="px-2.5 sm:px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1 transition-colors border border-slate-200 dark:border-slate-700"
                     >
                       <FaPhoneAlt className="text-emerald-500 h-3 w-3" />
-                      <span>Call</span>
+                      <span className="hidden sm:inline">Call</span>
                     </a>
 
                     <a 
                       href={`mailto:${activeConversation.user?.email || 'user@ecoreward.com'}`}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700"
+                      className="px-2.5 sm:px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1 transition-colors border border-slate-200 dark:border-slate-700"
                     >
                       <FaEnvelope className="text-sky-500 h-3 w-3" />
-                      <span>Email</span>
+                      <span className="hidden sm:inline">Email</span>
                     </a>
 
                     <button 
                       onClick={() => handleToggleTicketStatus(activeTicket._id)}
-                      className={`px-3.5 py-1.5 rounded-xl font-black text-xs transition-all shadow-sm flex items-center space-x-1.5 ${
+                      className={`px-3 py-1.5 rounded-xl font-black text-xs transition-all shadow-sm flex items-center space-x-1 ${
                         activeTicket.status === 'replied' 
                           ? 'bg-emerald-600 text-white' 
                           : 'bg-amber-500 hover:bg-amber-600 text-white'
@@ -490,7 +509,7 @@ const AdminSupportPage = () => {
                       {activeTicket.status === 'replied' ? (
                         <>
                           <FaCheck className="h-3 w-3" />
-                          <span>✓ Resolved</span>
+                          <span>Resolved</span>
                         </>
                       ) : (
                         <>
@@ -503,7 +522,7 @@ const AdminSupportPage = () => {
                 </div>
 
                 {/* Scrollable Chat Message Thread for Active User */}
-                <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-5">
+                <div className="flex-1 p-3.5 sm:p-6 overflow-y-auto space-y-4">
                   
                   {activeConversation.messages.map((msgItem) => (
                     <div key={msgItem._id} className="space-y-3">
@@ -516,14 +535,14 @@ const AdminSupportPage = () => {
                       </div>
 
                       {/* Left Bubble: Incoming Customer Message */}
-                      <div className="flex items-start space-x-3 max-w-lg">
+                      <div className="flex items-start space-x-2.5 max-w-lg">
                         <img 
                           src={getAvatarUrl(activeConversation.user?.profileImage, activeConversation.user?.name || 'User')}
                           onError={(e) => handleAvatarError(e, activeConversation.user?.name || 'User')}
                           alt="User"
-                          className="h-8 w-8 rounded-full object-cover flex-shrink-0 mt-1"
+                          className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover flex-shrink-0 mt-1"
                         />
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1.5 text-xs text-slate-900 dark:text-white">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1.5 text-xs text-slate-900 dark:text-white">
                           <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800 pb-1 gap-4">
                             <span>{activeConversation.user?.name}</span>
                             <span>{new Date(msgItem.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -534,12 +553,12 @@ const AdminSupportPage = () => {
 
                       {/* Right Bubble: Outgoing Admin Reply */}
                       {msgItem.adminReply && (
-                        <div className="flex items-start justify-end space-x-3 max-w-lg ml-auto">
-                          <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 text-white p-4 rounded-2xl rounded-tr-none shadow-md space-y-1.5 text-xs">
+                        <div className="flex items-start justify-end space-x-2.5 max-w-lg ml-auto">
+                          <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-none shadow-md space-y-1.5 text-xs">
                             <div className="flex justify-between items-center text-[9px] text-emerald-100 font-bold border-b border-white/20 pb-1 gap-4">
                               <span className="flex items-center space-x-1">
                                 <FaShieldAlt className="h-2.5 w-2.5" />
-                                <span>EcoReward Support Desk</span>
+                                <span>EcoReward Support</span>
                               </span>
                               <span className="flex items-center space-x-1">
                                 <span>Delivered</span>
@@ -557,7 +576,7 @@ const AdminSupportPage = () => {
                 </div>
 
                 {/* Live Chat Input Footer */}
-                <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 space-y-3">
+                <div className="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
                   
                   {/* Canned Responses Chips */}
                   <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
@@ -567,9 +586,9 @@ const AdminSupportPage = () => {
                         key={idx}
                         type="button"
                         onClick={() => setReplyText(template)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors"
+                        className="px-2 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors"
                       >
-                        {template.substring(0, 30)}...
+                        {template.substring(0, 24)}...
                       </button>
                     ))}
                   </div>
@@ -580,15 +599,15 @@ const AdminSupportPage = () => {
                       rows="2"
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
-                      placeholder={`Write live support message to ${activeConversation.user?.name || 'Customer'}...`}
-                      className="flex-1 px-4 py-2.5 text-xs font-semibold rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder={`Write live support reply to ${activeConversation.user?.name || 'Customer'}...`}
+                      className="flex-1 px-3.5 py-2 text-xs font-semibold rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
 
                     <button
                       type="button"
                       onClick={() => handleSendReply(activeTicket._id)}
                       disabled={sendingReply || !replyText.trim()}
-                      className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-md flex items-center space-x-2 transition-transform active:scale-95 disabled:opacity-40"
+                      className="px-4 sm:px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-md flex items-center space-x-1.5 transition-transform active:scale-95 disabled:opacity-40 shrink-0"
                     >
                       <FaPaperPlane className="h-3.5 w-3.5" />
                       <span>{sendingReply ? 'Sending...' : 'Send'}</span>

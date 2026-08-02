@@ -10,6 +10,7 @@ import {
   FaShieldAlt, FaAward, FaHistory, FaCheckCircle, FaExclamationCircle, FaTimes
 } from 'react-icons/fa';
 import api from '../../utils/api';
+import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 
 const Profile = () => {
   const { user, updateProfile, addAddress, removeAddress, setDefaultAddress, logout } = useAuth();
@@ -208,7 +209,8 @@ const Profile = () => {
             <div className="flex items-center space-x-4 z-10">
               <div className="relative group">
                 <img 
-                  src={profileImage || user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`} 
+                  src={getAvatarUrl(profileImage || user?.profileImage, name)} 
+                  onError={(e) => handleAvatarError(e, name)}
                   alt="Profile" 
                   className="h-20 w-20 rounded-full object-cover ring-4 ring-white/30 shadow-md"
                 />

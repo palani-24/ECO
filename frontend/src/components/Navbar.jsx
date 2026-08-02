@@ -7,6 +7,7 @@ import {
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
   FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf 
 } from 'react-icons/fa';
+import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -165,7 +166,8 @@ const Navbar = () => {
                     className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
                   >
                     <img 
-                      src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=10b981&color=fff`} 
+                      src={getAvatarUrl(user, user?.name)} 
+                      onError={(e) => handleAvatarError(e, user?.name)}
                       alt="User Avatar" 
                       className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40"
                     />

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import api from '../utils/api';
+import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 import { 
   FaComments, FaTimes, FaPaperPlane, FaUserShield, 
   FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronDown,
@@ -365,7 +366,8 @@ const SupportChatWidget = () => {
                       </div>
 
                       <img 
-                        src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=10b981&color=fff`} 
+                        src={getAvatarUrl(user, user?.name)} 
+                        onError={(e) => handleAvatarError(e, user?.name)}
                         alt="User Avatar" 
                         className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40 flex-shrink-0"
                       />

@@ -6,6 +6,7 @@ import {
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
   FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock
 } from 'react-icons/fa';
+import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -67,7 +68,8 @@ const Sidebar = () => {
           {/* User Profile Quick Card */}
           <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
             <img 
-              src={user?.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Driver')}&background=10b981&color=fff`} 
+              src={getAvatarUrl(user, user?.name)} 
+              onError={(e) => handleAvatarError(e, user?.name)}
               alt={user?.name || 'User'} 
               className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30"
             />

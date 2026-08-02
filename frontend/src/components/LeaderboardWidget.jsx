@@ -3,6 +3,7 @@ import { FaTrophy, FaCrown, FaSyncAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import api from '../utils/api';
+import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const LeaderboardWidget = () => {
   const { user } = useAuth();
@@ -103,7 +104,12 @@ const LeaderboardWidget = () => {
             <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-[10px] font-black shadow">
               #2 Silver
             </span>
-            <img src={top3[1].avatar} alt="2nd" className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-300 mt-2" />
+            <img 
+              src={getAvatarUrl(top3[1].avatar, top3[1].name)} 
+              onError={(e) => handleAvatarError(e, top3[1].name)}
+              alt="2nd" 
+              className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-300 mt-2" 
+            />
             <div>
               <p className="font-extrabold text-slate-900 dark:text-white text-xs truncate max-w-[90px]">{top3[1].name}</p>
               <span className="text-[10px] font-black text-emerald-500">{top3[1].points} Pts</span>
@@ -116,7 +122,12 @@ const LeaderboardWidget = () => {
               <FaCrown className="h-3 w-3" />
               <span>#1 Gold</span>
             </span>
-            <img src={top3[0].avatar} alt="1st" className="h-14 w-14 rounded-full object-cover ring-4 ring-amber-400 mt-2 shadow-md" />
+            <img 
+              src={getAvatarUrl(top3[0].avatar, top3[0].name)} 
+              onError={(e) => handleAvatarError(e, top3[0].name)}
+              alt="1st" 
+              className="h-14 w-14 rounded-full object-cover ring-4 ring-amber-400 mt-2 shadow-md" 
+            />
             <div>
               <p className="font-black text-slate-900 dark:text-white text-xs truncate max-w-[100px]">{top3[0].name}</p>
               <span className="text-xs font-black text-amber-500">{top3[0].points} Pts</span>
@@ -128,7 +139,12 @@ const LeaderboardWidget = () => {
             <span className="absolute -top-2.5 px-2 py-0.5 rounded-full bg-amber-700 text-white text-[10px] font-black shadow">
               #3 Bronze
             </span>
-            <img src={top3[2].avatar} alt="3rd" className="h-12 w-12 rounded-full object-cover ring-2 ring-amber-700 mt-2" />
+            <img 
+              src={getAvatarUrl(top3[2].avatar, top3[2].name)} 
+              onError={(e) => handleAvatarError(e, top3[2].name)}
+              alt="3rd" 
+              className="h-12 w-12 rounded-full object-cover ring-2 ring-amber-700 mt-2" 
+            />
             <div>
               <p className="font-extrabold text-slate-900 dark:text-white text-xs truncate max-w-[90px]">{top3[2].name}</p>
               <span className="text-[10px] font-black text-emerald-500">{top3[2].points} Pts</span>
@@ -160,7 +176,12 @@ const LeaderboardWidget = () => {
                   {item.rank}
                 </span>
 
-                <img src={item.avatar} alt={item.name} className="h-9 w-9 rounded-xl object-cover" />
+                <img 
+                  src={getAvatarUrl(item.avatar, item.name)} 
+                  onError={(e) => handleAvatarError(e, item.name)}
+                  alt={item.name} 
+                  className="h-9 w-9 rounded-xl object-cover" 
+                />
 
                 <div>
                   <h4 className="font-black text-slate-900 dark:text-white text-xs flex items-center space-x-1.5">

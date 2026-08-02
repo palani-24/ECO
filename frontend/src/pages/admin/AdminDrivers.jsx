@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import api from '../../utils/api';
+import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaTruck, FaCheck, FaInfoCircle } from 'react-icons/fa';
 
@@ -78,8 +79,9 @@ const AdminDrivers = () => {
                       <tr key={d._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/25">
                         <td className="py-4 px-6 font-bold flex items-center space-x-3">
                           <img 
-                            src={d.user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.user.name)}&background=059669&color=fff`} 
-                            alt={d.user.name} 
+                            src={getAvatarUrl(d.user?.profileImage, d.user?.name)} 
+                            onError={(e) => handleAvatarError(e, d.user?.name)}
+                            alt={d.user?.name} 
                             className="h-8 w-8 rounded-full object-cover"
                           />
                           <span>{d.user.name}</span>

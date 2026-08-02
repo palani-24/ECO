@@ -17,6 +17,7 @@ import UserDashboard from './pages/user/UserDashboard';
 import SchedulePickup from './pages/user/SchedulePickup';
 import MyPickups from './pages/user/MyPickups';
 import RedeemRewards from './pages/user/RedeemRewards';
+import EcoStore from './pages/user/EcoStore';
 import Profile from './pages/user/Profile';
 import Leaderboard from './pages/user/Leaderboard';
 import CommunityChallenges from './pages/user/CommunityChallenges';
@@ -99,6 +100,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['user']}>
                     <RedeemRewards />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/store" 
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <EcoStore />
                   </ProtectedRoute>
                 } 
               />

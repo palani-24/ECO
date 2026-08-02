@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
-  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock, FaComments
+  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock, FaComments, FaStore
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -22,10 +22,11 @@ const Sidebar = () => {
 
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
+    { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
     { path: '/profile', label: 'My Profile', icon: FaUser },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
-    { path: '/my-pickups', label: 'Active Requests', icon: FaClipboardList, badge: '2' },
+    { path: '/my-pickups', label: 'Active Requests', icon: FaClipboardList },
     { path: '/my-pickups?tab=history', label: 'Pickup History', icon: FaHistory },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/profile?tab=support', label: 'Help & Support', icon: FaQuestionCircle },

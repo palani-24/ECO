@@ -664,30 +664,30 @@ const LandingPage = () => {
                 className="w-full h-full object-cover contrast-[1.05] brightness-[1.05] filter rounded-3xl"
               />
 
-              {/* Video Overlay Controls Bar */}
-              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent flex flex-wrap items-center justify-between gap-3 opacity-90 group-hover:opacity-100 transition-opacity">
-                <div className="flex items-center space-x-3">
+              {/* Video Overlay Controls Bar (100% Responsive for Mobile & Desktop) */}
+              <div className="absolute bottom-0 inset-x-0 p-2.5 sm:p-5 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent flex items-center justify-between gap-2 opacity-95 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center space-x-1.5 sm:space-x-3 max-w-full overflow-hidden">
                   {/* Play/Pause Button */}
                   <button 
                     onClick={togglePlay}
-                    className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/30"
+                    className="p-2 sm:p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all transform hover:scale-105 shadow-md shadow-emerald-500/30 flex-shrink-0"
                     title={isPlaying ? "Pause Video" : "Play Video"}
                   >
-                    {isPlaying ? <FaPause className="h-4 w-4" /> : <FaPlay className="h-4 w-4 ml-0.5" />}
+                    {isPlaying ? <FaPause className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <FaPlay className="h-3.5 w-3.5 sm:h-4 sm:w-4 ml-0.5" />}
                   </button>
 
                   {/* Mute/Unmute Button */}
                   <button 
                     onClick={toggleMute}
-                    className="p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white transition-all backdrop-blur border border-slate-700"
+                    className="p-2 sm:p-3 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white transition-all backdrop-blur border border-slate-700 flex-shrink-0"
                     title={isMuted ? "Unmute Sound" : "Mute Sound"}
                   >
-                    {isMuted || volume === 0 ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
+                    {isMuted || volume === 0 ? <FaVolumeMute className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" /> : <FaVolumeUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-400" />}
                   </button>
 
                   {/* Interactive Volume Slider */}
-                  <div className="flex items-center space-x-2 bg-slate-900/80 px-3 py-2 rounded-2xl border border-slate-800 backdrop-blur">
-                    <span className="text-[10px] font-black text-slate-300">
+                  <div className="flex items-center space-x-1.5 bg-slate-900/90 px-2 sm:px-3 py-1.5 sm:py-2 rounded-2xl border border-slate-800 backdrop-blur">
+                    <span className="text-[9px] sm:text-[10px] font-black text-slate-300">
                       {isMuted || volume === 0 ? '0%' : `${Math.round(volume * 100)}%`}
                     </span>
                     <input 
@@ -697,7 +697,7 @@ const LandingPage = () => {
                       step="0.05"
                       value={isMuted ? 0 : volume}
                       onChange={(e) => handleVolumeChange(Number(e.target.value))}
-                      className="w-20 sm:w-28 h-1.5 accent-emerald-400 cursor-pointer bg-slate-700 rounded-lg"
+                      className="w-14 sm:w-24 h-1.5 accent-emerald-400 cursor-pointer bg-slate-700 rounded-lg"
                       title="Adjust Video Volume & Sound Boost (up to 200%)"
                     />
                   </div>
@@ -705,20 +705,21 @@ const LandingPage = () => {
                   {/* High Volume Boost Preset Button */}
                   <button
                     onClick={() => handleVolumeChange(volume >= 1.5 ? 1.0 : 2.0)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all border ${
+                    className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-black transition-all border whitespace-nowrap flex-shrink-0 ${
                       volume > 1.0 
-                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20' 
+                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400 shadow-md shadow-amber-500/20' 
                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
                     }`}
                     title="Toggle 200% Audio Gain Boost"
                   >
-                    <span>{volume > 1.0 ? '🔥 200% Audio Boosted' : '🔊 Boost Sound'}</span>
+                    <span className="sm:hidden">{volume > 1.0 ? '🔥 200%' : '🔊 Boost'}</span>
+                    <span className="hidden sm:inline">{volume > 1.0 ? '🔥 200% Audio Boosted' : '🔊 Boost Sound'}</span>
                   </button>
                 </div>
 
-                <div className="hidden md:flex items-center space-x-2">
+                <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full">
-                    Zero Landfill Mission
+                    HD 1080p • 2.0x Gain
                   </span>
                 </div>
               </div>
@@ -776,7 +777,10 @@ const LandingPage = () => {
           {mockupFeatures.map((feat, idx) => {
             const Icon = feat.icon;
             return (
-              <div key={idx} className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800 space-y-4 hover:shadow-xl transition-all duration-300 group">
+              <div 
+                key={idx} 
+                className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-emerald-500/50 transition-all hover:shadow-xl hover:shadow-emerald-500/5 group space-y-3"
+              >
                 <div className={`h-12 w-12 rounded-2xl flex items-center justify-center text-xl border ${feat.color}`}>
                   <Icon />
                 </div>
@@ -802,11 +806,11 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {displayLeaderboard.map((item, idx) => (
               <div 
                 key={item._id || idx} 
-                className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border text-center space-y-4 shadow-sm relative overflow-hidden transition-transform hover:scale-105 ${
+                className={`p-4 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border text-center space-y-3 sm:space-y-4 shadow-sm relative overflow-hidden transition-transform hover:scale-105 ${
                   item.rank === 1 ? 'border-amber-400/80 ring-2 ring-amber-400/20' : 'border-slate-200 dark:border-slate-800'
                 }`}
               >
@@ -815,21 +819,21 @@ const LandingPage = () => {
                     src={getAvatarUrl(item.avatar || item.profileImage, item.name)} 
                     onError={(e) => handleAvatarError(e, item.name)}
                     alt={item.name} 
-                    className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-emerald-500/20" 
+                    className="h-16 w-16 sm:h-20 sm:w-20 rounded-full mx-auto object-cover ring-4 ring-emerald-500/20" 
                   />
                   {item.rank === 1 && (
-                    <span className="absolute -top-2 -right-2 p-1.5 rounded-full bg-amber-400 text-slate-950 shadow">
-                      <FaCrown className="h-4 w-4" />
+                    <span className="absolute -top-1.5 -right-1.5 p-1 sm:p-1.5 rounded-full bg-amber-400 text-slate-950 shadow">
+                      <FaCrown className="h-3 w-3 sm:h-4 sm:w-4" />
                     </span>
                   )}
                 </div>
                 <div>
-                  <h4 className="font-black text-slate-900 dark:text-white text-base truncate max-w-[200px] mx-auto">{item.name}</h4>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold block pt-0.5">{item.badge || '🏆 Gold Recycler'}</span>
+                  <h4 className="font-black text-slate-900 dark:text-white text-sm sm:text-base truncate max-w-[180px] sm:max-w-[200px] mx-auto">{item.name}</h4>
+                  <span className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-extrabold block pt-0.5">{item.badge || '🏆 Gold Recycler'}</span>
                 </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <span className="text-lg font-black text-amber-500">{item.points} EcoPoints</span>
-                  <span className="text-[10px] text-slate-400 font-bold block">{item.recycledKg || (item.points * 0.15).toFixed(1)} kg Recycled</span>
+                <div className="p-2.5 sm:p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  <span className="text-base sm:text-lg font-black text-amber-500 block">{item.points} EcoPoints</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold block">{item.recycledKg || (item.points * 0.15).toFixed(1)} kg Recycled</span>
                 </div>
               </div>
             ))}

@@ -14,11 +14,15 @@ export const getAvatarUrl = (userOrImage, name = 'User') => {
   }
 
   if (!image || typeof image !== 'string' || image.trim() === '') {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || 'User')}&background=10b981&color=fff`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || 'User')}&background=10b981&color=fff&bold=true`;
   }
 
   // If image URL is a relative backend path starting with /uploads
   if (image.startsWith('/uploads')) {
+    // If on Vercel deployment where local uploads folder doesn't exist, use crisp UI Avatar
+    if (typeof window !== 'undefined' && (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('netlify.app'))) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || 'User')}&background=10b981&color=fff&bold=true`;
+    }
     const backendHost = import.meta.env.VITE_API_URL
       ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')
       : 'http://localhost:5000';
@@ -34,6 +38,6 @@ export const getAvatarUrl = (userOrImage, name = 'User') => {
 export const handleAvatarError = (e, name = 'User') => {
   if (e && e.target) {
     e.target.onerror = null; // Prevent infinite loop if fallback fails
-    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=10b981&color=fff`;
+    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=10b981&color=fff&bold=true`;
   }
 };

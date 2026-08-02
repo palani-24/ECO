@@ -51,34 +51,45 @@ const AdminSupportPage = () => {
       const fallbackData = [
         {
           _id: 'SUP101',
-          user: { name: 'vengayam', email: 'vengayam@ecoreward.com', role: 'user' },
+          user: { name: 'Arjun Sharma', email: 'arjun@ecoreward.com', role: 'user' },
           senderRole: 'user',
-          subject: 'GENERAL PICKUP SUPPORT',
-          message: 'vanakam, my pickup time slot needs to be changed to afternoon.',
+          subject: 'DOORSTEP PICKUP SLOT CONFIRMATION',
+          message: 'Hello EcoReward Support team, I have scheduled a bulk plastic & paper recycling pickup for today 10:00 AM at 12-A Metro Heights, Anna Nagar. Could you please confirm if driver Ramesh Kumar has been dispatched?',
           status: 'pending',
           priority: 'high',
           createdAt: new Date().toISOString()
         },
         {
           _id: 'SUP102',
-          user: { name: 'Anonymous User', email: 'driver@ecoreward.com', role: 'driver' },
+          user: { name: 'Ramesh Kumar', email: 'ramesh@driver.com', role: 'driver' },
           senderRole: 'driver',
-          subject: 'WEIGHT SCALE CALIBRATION',
-          message: 'ok, Vehicle scale calibration done for TN-38-ECO-9945.',
+          subject: 'E-RICKSHAW LOAD CAPACITY & SCALE CALIBRATION',
+          message: 'Heavy loader TN-38-ECO-9945 electronic weight scale has been zero-calibrated for today Anna Nagar route. Ready for bulk metal collection.',
           status: 'pending',
           priority: 'normal',
           createdAt: new Date(Date.now() - 3600000).toISOString()
         },
         {
           _id: 'SUP103',
-          user: { name: 'K2d', email: 'k2d@ecoreward.com', role: 'user' },
+          user: { name: 'Priya Patel', email: 'priya@ecoreward.com', role: 'user' },
           senderRole: 'user',
-          subject: 'ECOPOINTS CASHBACK REDEMPTION',
-          message: 'Redeemed 500 points voucher. Received confirmation email.',
+          subject: 'ECOPOINTS CASHBACK GIFT CARD REDEMPTION',
+          message: 'I redeemed 500 EcoPoints for a ₹500 Amazon Voucher code. Payout status shows processing. Kindly confirm when the voucher code will be sent to my email.',
           status: 'replied',
           priority: 'normal',
-          adminReply: 'Verified! Payout processed to your account.',
+          adminReply: 'Hi Priya! Your 500 EcoPoints cashback voucher code has been verified and sent to your registered email address. Thank you for recycling with EcoReward!',
           createdAt: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+          _id: 'SUP104',
+          user: { name: 'Karthik M', email: 'karthik@ecoreward.com', role: 'user' },
+          senderRole: 'user',
+          subject: 'BULK E-WASTE & LAPTOP BATTERY DISPOSAL',
+          message: 'We have around 45 kg of old laptop batteries and circuit boards at our Velachery office. Are there special safety guidelines required prior to driver arrival?',
+          status: 'replied',
+          priority: 'normal',
+          adminReply: 'Hi Karthik, our certified E-Waste driver will arrive with insulated containers. Please keep items dry and accessible at your doorstep.',
+          createdAt: new Date(Date.now() - 172800000).toISOString()
         }
       ];
       setSupportMessages(fallbackData);

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import DriverLayout from '../../components/DriverLayout';
 import { FaUser, FaCamera, FaTruck, FaFileAlt, FaCheckCircle, FaBolt, FaCloudUploadAlt } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -53,12 +52,8 @@ const DriverProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
-          <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4">
+    <DriverLayout>
+      <div className="border-b border-slate-200/80 dark:border-slate-800 pb-4">
             <h2 className="text-2xl font-black text-slate-900 dark:text-white">Driver Account & Vehicle Profile</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">View personal details, assigned vehicle specifications, and verification documents.</p>
           </div>
@@ -177,9 +172,7 @@ const DriverProfilePage = () => {
             </div>
           )}
 
-        </main>
-      </div>
-    </div>
+    </DriverLayout>
   );
 };
 

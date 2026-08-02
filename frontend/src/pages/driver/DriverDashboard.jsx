@@ -198,15 +198,12 @@ const DriverDashboard = () => {
         setPickupStatus('completed');
         setAiAnalysisPreview(null);
         setActualWeight('');
+        setPickupStatus('completed');
         setCheckedIn(false);
-        fetchDriverData();
-        addToast(`🏆 Job Completed! EcoPoints transferred to customer.`, 'success', 'Pickup Completed');
+        addToast('🏆 OTP Verified & Pickup Completed Successfully!', 'success', 'Job Completed');
       }
     } catch (err) {
-      setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed' } : p));
       setPickupStatus('completed');
-      setAiAnalysisPreview(null);
-      setActualWeight('');
       setCheckedIn(false);
       addToast('🏆 Job Completed! EcoPoints transferred to customer.', 'success', 'Completed');
     }
@@ -224,53 +221,35 @@ const DriverDashboard = () => {
   // Loading Screen
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <Navbar />
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-          <Sidebar />
-          <main className="flex-1 p-6 md:p-8 space-y-6 flex flex-col items-center justify-center min-h-[60vh]">
-            <FaSpinner className="h-10 w-10 text-emerald-500 animate-spin" />
-            <p className="font-extrabold text-slate-800 dark:text-white text-sm">Loading Driver Console & Routes...</p>
-          </main>
+      <DriverLayout>
+        <div className="p-12 text-center">
+          <FaSpinner className="h-8 w-8 text-emerald-500 animate-spin mx-auto" />
+          <p className="text-xs font-bold text-slate-400 mt-2">Loading Driver Console...</p>
         </div>
-      </div>
+      </DriverLayout>
     );
   }
 
   // Error Screen
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <Navbar />
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-          <Sidebar />
-          <main className="flex-1 p-6 md:p-8 space-y-6">
-            <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-3xl text-center space-y-3">
-              <FaExclamationTriangle className="h-10 w-10 text-rose-500 mx-auto" />
-              <h3 className="font-black text-slate-900 dark:text-white text-base">Console Loading Error</h3>
-              <p className="text-xs text-slate-400 font-medium">{error}</p>
-              <button onClick={fetchDriverData} className="px-4 py-2 bg-emerald-600 text-white font-extrabold text-xs rounded-xl shadow flex items-center space-x-1 mx-auto">
-                <FaRedo />
-                <span>Retry Connection</span>
-              </button>
-            </div>
-          </main>
+      <DriverLayout>
+        <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-3xl text-center space-y-3">
+          <FaExclamationTriangle className="h-10 w-10 text-rose-500 mx-auto" />
+          <h3 className="font-black text-slate-900 dark:text-white text-base">Console Loading Error</h3>
+          <p className="text-xs text-slate-400 font-medium">{error}</p>
+          <button onClick={fetchDriverData} className="px-4 py-2 bg-emerald-600 text-white font-extrabold text-xs rounded-xl shadow flex items-center space-x-1 mx-auto">
+            <FaRedo />
+            <span>Retry Connection</span>
+          </button>
         </div>
-      </div>
+      </DriverLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        {/* Main Driver Panel */}
-        <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-8 space-y-5 overflow-hidden">
-          
-          {/* Top Header & Driver Status Bar */}
+    <DriverLayout>
+      {/* Top Header & Driver Status Bar */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             
             <div className="flex items-center space-x-3 w-full sm:w-auto">
@@ -688,9 +667,7 @@ const DriverDashboard = () => {
             recipientRole="user"
           />
 
-        </main>
-      </div>
-    </div>
+    </DriverLayout>
   );
 };
 

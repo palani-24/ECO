@@ -33,6 +33,8 @@ const Sidebar = () => {
   const driverLinks = [
     { path: '/driver', label: 'Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
+    { path: '/driver/gate-pass', label: 'Hub Gate Pass', icon: FaTicketAlt, badge: 'QR' },
+    { path: '/driver/battery-telematics', label: 'EV & Telematics', icon: FaLeaf },
     { path: '/driver/history', label: 'Pickup History', icon: FaHistory },
     { path: '/driver/earnings', label: 'Earnings & Incentives', icon: FaCoins },
     { path: '/driver/profile', label: 'Profile', icon: FaUser },

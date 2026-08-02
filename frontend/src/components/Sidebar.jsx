@@ -23,12 +23,11 @@ const Sidebar = () => {
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
     { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
-    { path: '/profile', label: 'My Profile', icon: FaUser },
+    { path: '/profile', label: 'My Profile & Support', icon: FaUser },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
     { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
-    { path: '/profile?tab=support', label: 'Help & Support', icon: FaQuestionCircle },
   ];
 
   const driverLinks = [

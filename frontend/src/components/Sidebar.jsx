@@ -34,12 +34,9 @@ const Sidebar = () => {
   const driverLinks = [
     { path: '/driver', label: 'Dashboard', icon: FaChartLine },
     { path: '/driver/pickups', label: 'Assigned Pickups', icon: FaTruck },
-    { path: '/driver/pickups?tab=history', label: 'Pickup History', icon: FaHistory },
+    { path: '/driver/history', label: 'Pickup History', icon: FaHistory },
     { path: '/driver/earnings', label: 'Earnings & Incentives', icon: FaCoins },
-    { path: '/driver/notifications', label: 'Notifications', icon: FaBell },
     { path: '/driver/profile', label: 'Profile', icon: FaUser },
-    { path: '/driver/security', label: 'Security', icon: FaLock },
-    { path: '/driver/settings', label: 'Settings', icon: FaCogs },
   ];
 
   const adminLinks = [

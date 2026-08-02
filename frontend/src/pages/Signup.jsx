@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { 
   FaRecycle, FaUser, FaEnvelope, FaLock, FaTruck, FaPhone, 
   FaCheckCircle, FaEye, FaEyeSlash, FaSpinner, FaLeaf, FaTimes, 
-  FaShieldAlt, FaClock 
+  FaShieldAlt, FaClock, FaSignInAlt
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 

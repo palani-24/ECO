@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -6,7 +6,8 @@ import {
   FaCheckCircle, FaChevronDown, FaChevronUp, FaMapMarkedAlt, 
   FaRegPaperPlane, FaUserShield, FaChartPie, FaLeaf,
   FaShareAlt, FaCopy, FaCheck, FaWhatsapp, FaTwitter, FaFacebook,
-  FaCalendarPlus, FaRoute, FaLightbulb, FaTruck, FaAward, FaTree
+  FaCalendarPlus, FaRoute, FaLightbulb, FaTruck, FaAward, FaTree,
+  FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -16,6 +17,30 @@ const LandingPage = () => {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  
+  // Video player state
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
+  const heroVideoRef = useRef(null);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText('https://eco-liart-eta.vercel.app');
@@ -141,7 +166,7 @@ const LandingPage = () => {
               </div>
             </motion.div>
 
-            {/* Right Graphic */}
+            {/* Right Graphic with MP4 Video */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -150,40 +175,52 @@ const LandingPage = () => {
             >
               <div className="relative w-full max-w-[460px] aspect-square rounded-full bg-gradient-to-tr from-emerald-400 to-cyan-300 dark:from-emerald-800 dark:to-cyan-800 opacity-20 blur-3xl absolute -top-4"></div>
               
-              <div className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800/80 p-8 rounded-3xl shadow-2xl w-full max-w-[440px] animate-float space-y-6">
+              <div className="relative bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800/80 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-[460px] space-y-5">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex items-center space-x-2">
                     <span className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span className="text-xs font-black text-slate-800 dark:text-slate-200">Neural AI Waste Scanner</span>
                   </div>
                   <span className="text-[10px] font-black uppercase text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                    Live Recognition
+                    Live Video Feed
                   </span>
                 </div>
                 
-                {/* Visual Scanner Simulation Card */}
-                <div className="relative h-48 bg-slate-950 rounded-2xl flex items-center justify-center overflow-hidden border border-emerald-500/30">
-                  <img 
-                    src="https://images.unsplash.com/photo-1523362628745-0c100150b504?w=600&auto=format&fit=crop&q=80" 
-                    alt="AI Waste detection PET bottle" 
-                    className="w-full h-full object-cover opacity-80"
+                {/* Live MP4 Video Box */}
+                <div className="relative h-56 bg-slate-950 rounded-2xl flex items-center justify-center overflow-hidden border border-emerald-500/40 shadow-inner group">
+                  <video 
+                    ref={heroVideoRef}
+                    src="/videos/eco-waste-management.mp4" 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                    <div className="bg-emerald-500/90 text-white font-extrabold text-xs px-3 py-1 rounded-full self-start flex items-center space-x-1.5 shadow">
-                      <FaCheckCircle className="h-3.5 w-3.5" />
-                      <span>Plastic PET Bottle • 98.4% Confidence</span>
+                  {/* AI Scan Overlay Grid */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 flex flex-col justify-between p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-1.5 bg-black/60 backdrop-blur px-2.5 py-1 rounded-lg border border-emerald-500/30 text-[10px] text-emerald-400 font-mono">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>AI RECOGNITION ACTIVE</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-emerald-500/90 backdrop-blur text-white font-extrabold text-xs px-3.5 py-1.5 rounded-xl self-start flex items-center space-x-2 shadow-lg">
+                      <FaCheckCircle className="h-4 w-4 text-emerald-200" />
+                      <span>Waste Management • Smart Recycling</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-[9px] text-slate-400 dark:text-slate-400 block uppercase font-black tracking-wider">Estimated Weight</span>
-                    <span className="text-base font-black text-slate-900 dark:text-white">0.5 kg • +15 Pts</span>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-400 block uppercase font-black tracking-wider">Classification</span>
+                    <span className="text-sm font-black text-slate-900 dark:text-white">Smart Recyclable</span>
                   </div>
                   <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-[9px] text-slate-400 dark:text-slate-400 block uppercase font-black tracking-wider">Recyclability Rating</span>
-                    <span className="text-base font-black text-emerald-600 dark:text-emerald-400">100% Recyclable</span>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-400 block uppercase font-black tracking-wider">Eco Impact</span>
+                    <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">100% Zero-Landfill</span>
                   </div>
                 </div>
               </div>
@@ -242,6 +279,108 @@ const LandingPage = () => {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Interactive Platform Video Showcase Section */}
+      <section id="video-tour" className="py-20 relative overflow-hidden bg-slate-900 text-white border-y border-slate-800">
+        {/* Glowing Background Orbs */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-10 right-1/4 w-96 h-96 rounded-full bg-teal-500/20 blur-3xl pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-black uppercase tracking-widest">
+              <FaVideo className="h-3.5 w-3.5" />
+              <span>Watch Eco In Action</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">Waste Management</span>
+            </h2>
+            <p className="text-slate-300 text-sm sm:text-base font-medium max-w-2xl mx-auto">
+              See how our AI recognition scanner, automated collection logistics, and instant rewards work together seamlessly to keep our environment pristine.
+            </p>
+          </div>
+
+          {/* Video Showcase Card */}
+          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-emerald-500/30 shadow-2xl shadow-emerald-900/40 bg-slate-950">
+            <div className="relative aspect-video w-full overflow-hidden group">
+              <video 
+                ref={videoRef}
+                src="/videos/eco-waste-management.mp4" 
+                autoPlay 
+                loop 
+                muted={isMuted} 
+                playsInline
+                className="w-full h-full object-cover"
+              />
+
+              {/* Video Overlay Controls Bar */}
+              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center space-x-3">
+                  <button 
+                    onClick={togglePlay}
+                    className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/30"
+                    title={isPlaying ? "Pause Video" : "Play Video"}
+                  >
+                    {isPlaying ? <FaPause className="h-4 w-4" /> : <FaPlay className="h-4 w-4 ml-0.5" />}
+                  </button>
+
+                  <button 
+                    onClick={toggleMute}
+                    className="p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white transition-all backdrop-blur border border-slate-700"
+                    title={isMuted ? "Unmute Sound" : "Mute Sound"}
+                  >
+                    {isMuted ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
+                  </button>
+
+                  <div className="hidden sm:flex items-center space-x-2 text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>HD 1080p • Eco Management Video</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                    Zero Landfill Mission
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Video Highlights Strip */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-800 border-t border-slate-800 bg-slate-900/90 text-xs">
+              <div className="p-4 flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <FaRobot className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-extrabold text-white">AI Detection</p>
+                  <p className="text-[11px] text-slate-400 font-medium">Automatic classification of waste</p>
+                </div>
+              </div>
+
+              <div className="p-4 flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                  <FaTruck className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-extrabold text-white">Smart Dispatch</p>
+                  <p className="text-[11px] text-slate-400 font-medium">Real-time driver assignment</p>
+                </div>
+              </div>
+
+              <div className="p-4 flex items-center space-x-3">
+                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <FaGift className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-extrabold text-white">Instant Points</p>
+                  <p className="text-[11px] text-slate-400 font-medium">Redeem points for eco-rewards</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
@@ -11,6 +11,7 @@ import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -18,6 +19,21 @@ const Sidebar = () => {
   };
 
   if (!user) return null;
+
+  const currentPathWithQuery = location.pathname + location.search;
+
+  const isLinkActive = (linkPath) => {
+    // Exact match for paths with query parameters (e.g. /driver/pickups?tab=history)
+    if (linkPath.includes('?')) {
+      return currentPathWithQuery === linkPath;
+    }
+    // Exact match for base dashboard routes (e.g. /dashboard or /driver or /admin)
+    if (linkPath === '/dashboard' || linkPath === '/driver' || linkPath === '/admin') {
+      return location.pathname === linkPath && (!location.search || location.search === '');
+    }
+    // For specific sub-routes (e.g. /driver/pickups), match pathname strictly when query param is not present
+    return location.pathname === linkPath && !location.search;
+  };
 
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
@@ -96,17 +112,16 @@ const Sidebar = () => {
             </span>
             {links.map((link, idx) => {
               const Icon = link.icon;
+              const active = isLinkActive(link.path);
               return (
-                <NavLink
+                <Link
                   key={idx}
                   to={link.path}
-                  className={({ isActive }) =>
-                    `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
-                      isActive
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
-                    }`
-                  }
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
+                    active
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
+                  }`}
                 >
                   <div className="flex items-center space-x-3">
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -117,7 +132,7 @@ const Sidebar = () => {
                       {link.badge}
                     </span>
                   )}
-                </NavLink>
+                </Link>
               );
             })}
           </nav>
@@ -135,23 +150,22 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* Mobile Bottom Navigation Bar (Matching Mockup Mobile View) */}
+      {/* Mobile Bottom Navigation Bar */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-2 flex justify-around items-center shadow-lg">
         {links.slice(0, 5).map((link, idx) => {
           const Icon = link.icon;
+          const active = isLinkActive(link.path);
           return (
-            <NavLink
+            <Link
               key={idx}
               to={link.path}
-              className={({ isActive }) =>
-                `flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
-                  isActive ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
-                }`
-              }
+              className={`flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
+                active ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
+              }`}
             >
               <Icon className="h-5 w-5" />
               <span className="text-[10px]">{link.label.split(' ')[0]}</span>
-            </NavLink>
+            </Link>
           );
         })}
       </div>

@@ -15,12 +15,36 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const LandingPage = () => {
-  // Video player state
+  // Video player & Audio Boost state
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(1.0); // 0.0 to 2.0 (200% Loudness)
   const videoRef = useRef(null);
+  const audioCtxRef = useRef(null);
+  const gainNodeRef = useRef(null);
+
+  const initAudioBoost = () => {
+    if (!audioCtxRef.current && videoRef.current) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const gain = ctx.createGain();
+        const src = ctx.createMediaElementSource(videoRef.current);
+        src.connect(gain);
+        gain.connect(ctx.destination);
+        audioCtxRef.current = ctx;
+        gainNodeRef.current = gain;
+      } catch (err) {
+        console.log('Web Audio Context note:', err);
+      }
+    }
+    if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume();
+    }
+  };
 
   const togglePlay = () => {
+    initAudioBoost();
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
@@ -31,10 +55,28 @@ const LandingPage = () => {
     }
   };
 
-  const toggleMute = () => {
+  const handleVolumeChange = (newVol) => {
+    initAudioBoost();
+    setVolume(newVol);
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      videoRef.current.volume = Math.min(newVol, 1.0);
+      videoRef.current.muted = newVol === 0;
+    }
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = newVol; // Amplifies sound up to 200%
+    }
+    setIsMuted(newVol === 0);
+  };
+
+  const toggleMute = () => {
+    initAudioBoost();
+    if (videoRef.current) {
+      const nextMuted = !isMuted;
+      videoRef.current.muted = nextMuted;
+      setIsMuted(nextMuted);
+      if (!nextMuted && volume === 0) {
+        handleVolumeChange(1.0);
+      }
     }
   };
 
@@ -573,8 +615,9 @@ const LandingPage = () => {
               />
 
               {/* Video Overlay Controls Bar */}
-              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent flex items-center justify-between opacity-90 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent flex flex-wrap items-center justify-between gap-3 opacity-90 group-hover:opacity-100 transition-opacity">
                 <div className="flex items-center space-x-3">
+                  {/* Play/Pause Button */}
                   <button 
                     onClick={togglePlay}
                     className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/30"
@@ -583,22 +626,48 @@ const LandingPage = () => {
                     {isPlaying ? <FaPause className="h-4 w-4" /> : <FaPlay className="h-4 w-4 ml-0.5" />}
                   </button>
 
+                  {/* Mute/Unmute Button */}
                   <button 
                     onClick={toggleMute}
                     className="p-3 rounded-full bg-slate-800/80 hover:bg-slate-700 text-white transition-all backdrop-blur border border-slate-700"
                     title={isMuted ? "Unmute Sound" : "Mute Sound"}
                   >
-                    {isMuted ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
+                    {isMuted || volume === 0 ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
                   </button>
 
-                  <div className="hidden sm:flex items-center space-x-2 text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>HD 1080p • Eco Management Video</span>
+                  {/* Interactive Volume Slider */}
+                  <div className="flex items-center space-x-2 bg-slate-900/80 px-3 py-2 rounded-2xl border border-slate-800 backdrop-blur">
+                    <span className="text-[10px] font-black text-slate-300">
+                      {isMuted || volume === 0 ? '0%' : `${Math.round(volume * 100)}%`}
+                    </span>
+                    <input 
+                      type="range"
+                      min="0"
+                      max="2.0"
+                      step="0.05"
+                      value={isMuted ? 0 : volume}
+                      onChange={(e) => handleVolumeChange(Number(e.target.value))}
+                      className="w-20 sm:w-28 h-1.5 accent-emerald-400 cursor-pointer bg-slate-700 rounded-lg"
+                      title="Adjust Video Volume & Sound Boost (up to 200%)"
+                    />
                   </div>
+
+                  {/* High Volume Boost Preset Button */}
+                  <button
+                    onClick={() => handleVolumeChange(volume >= 1.5 ? 1.0 : 2.0)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all border ${
+                      volume > 1.0 
+                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20' 
+                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                    }`}
+                    title="Toggle 200% Audio Gain Boost"
+                  >
+                    <span>{volume > 1.0 ? '🔥 200% Audio Boosted' : '🔊 Boost Sound'}</span>
+                  </button>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                <div className="hidden md:flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full">
                     Zero Landfill Mission
                   </span>
                 </div>

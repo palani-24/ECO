@@ -193,7 +193,13 @@ const Navbar = () => {
           {/* Mobile hamburger menu toggle */}
           <div className="md:hidden flex items-center space-x-1 ml-2">
             <button
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => {
+                if (user) {
+                  window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
+                } else {
+                  setIsOpen(!isOpen);
+                }
+              }}
               className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 focus:outline-none transition-colors"
             >
               {isOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}

@@ -8,7 +8,7 @@ import {
   FaComments, FaReply, FaPaperPlane, FaUser, FaTruck, FaClock, 
   FaCheckCircle, FaExclamationCircle, FaSearch, FaFilter, FaBolt,
   FaEnvelope, FaHistory, FaTag, FaSpinner, FaChevronRight, FaCheckDouble,
-  FaSmile, FaPaperclip, FaShieldAlt, FaCircle
+  FaSmile, FaPaperclip, FaShieldAlt, FaCircle, FaPhoneAlt, FaCheck, FaRedo
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 
@@ -41,9 +41,11 @@ const AdminSupportPage = () => {
     try {
       const res = await api.get('/support/admin/all');
       if (res.data.success) {
-        setSupportMessages(res.data.data);
-        if (res.data.data.length > 0 && !selectedTicketId) {
-          setSelectedTicketId(res.data.data[0]._id);
+        // Clean out noisy single-letter test messages
+        const cleanedData = res.data.data.filter(m => (m.message || '').trim().length > 3);
+        setSupportMessages(cleanedData);
+        if (cleanedData.length > 0 && !selectedTicketId) {
+          setSelectedTicketId(cleanedData[0]._id);
         }
       }
     } catch (err) {
@@ -51,7 +53,7 @@ const AdminSupportPage = () => {
       const fallbackData = [
         {
           _id: 'SUP101',
-          user: { name: 'Arjun Sharma', email: 'arjun@ecoreward.com', role: 'user' },
+          user: { name: 'Arjun Sharma', email: 'arjun@ecoreward.com', role: 'user', phone: '+91 98765 43210' },
           senderRole: 'user',
           subject: 'DOORSTEP PICKUP SLOT CONFIRMATION',
           message: 'Hello EcoReward Support team, I have scheduled a bulk plastic & paper recycling pickup for today 10:00 AM at 12-A Metro Heights, Anna Nagar. Could you please confirm if driver Ramesh Kumar has been dispatched?',
@@ -61,7 +63,7 @@ const AdminSupportPage = () => {
         },
         {
           _id: 'SUP102',
-          user: { name: 'Ramesh Kumar', email: 'ramesh@driver.com', role: 'driver' },
+          user: { name: 'Ramesh Kumar', email: 'ramesh@driver.com', role: 'driver', phone: '+91 98123 45678' },
           senderRole: 'driver',
           subject: 'E-RICKSHAW LOAD CAPACITY & SCALE CALIBRATION',
           message: 'Heavy loader TN-38-ECO-9945 electronic weight scale has been zero-calibrated for today Anna Nagar route. Ready for bulk metal collection.',
@@ -71,7 +73,7 @@ const AdminSupportPage = () => {
         },
         {
           _id: 'SUP103',
-          user: { name: 'Priya Patel', email: 'priya@ecoreward.com', role: 'user' },
+          user: { name: 'Priya Patel', email: 'priya@ecoreward.com', role: 'user', phone: '+91 98999 11223' },
           senderRole: 'user',
           subject: 'ECOPOINTS CASHBACK GIFT CARD REDEMPTION',
           message: 'I redeemed 500 EcoPoints for a ₹500 Amazon Voucher code. Payout status shows processing. Kindly confirm when the voucher code will be sent to my email.',
@@ -82,7 +84,7 @@ const AdminSupportPage = () => {
         },
         {
           _id: 'SUP104',
-          user: { name: 'Karthik M', email: 'karthik@ecoreward.com', role: 'user' },
+          user: { name: 'Karthik M', email: 'karthik@ecoreward.com', role: 'user', phone: '+91 98444 55667' },
           senderRole: 'user',
           subject: 'BULK E-WASTE & LAPTOP BATTERY DISPOSAL',
           message: 'We have around 45 kg of old laptop batteries and circuit boards at our Velachery office. Are there special safety guidelines required prior to driver arrival?',
@@ -142,6 +144,17 @@ const AdminSupportPage = () => {
     }
   };
 
+  const handleToggleTicketStatus = async (msgId) => {
+    try {
+      const current = supportMessages.find(m => m._id === msgId);
+      const newStatus = current?.status === 'replied' ? 'pending' : 'replied';
+      setSupportMessages(prev => prev.map(m => m._id === msgId ? { ...m, status: newStatus } : m));
+      addToast(newStatus === 'replied' ? '✓ Ticket marked as Resolved!' : '⏳ Ticket reopened for review', 'info', 'Status Updated');
+    } catch (e) {
+      addToast('Status Updated', 'info', 'Status Updated');
+    }
+  };
+
   const pendingCount = supportMessages.filter(m => m.status === 'pending').length;
   const repliedCount = supportMessages.filter(m => m.status === 'replied').length;
 
@@ -180,10 +193,10 @@ const AdminSupportPage = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <span className="px-3 py-1.5 bg-amber-500/10 text-amber-400 font-black text-xs rounded-2xl border border-amber-500/20">
+              <span className="px-3.5 py-1.5 bg-amber-500/10 text-amber-400 font-black text-xs rounded-2xl border border-amber-500/20">
                 {pendingCount} Pending
               </span>
-              <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 font-black text-xs rounded-2xl border border-emerald-500/20">
+              <span className="px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 font-black text-xs rounded-2xl border border-emerald-500/20">
                 {repliedCount} Resolved
               </span>
             </div>
@@ -314,8 +327,8 @@ const AdminSupportPage = () => {
             {selectedTicket ? (
               <div className="flex-1 flex flex-col bg-slate-100/40 dark:bg-slate-950/40">
                 
-                {/* Right Panel Header */}
-                <div className="p-4 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between shadow-sm">
+                {/* Right Panel Header with Direct Call & Email Action Buttons */}
+                <div className="p-4 bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-sm">
                   <div className="flex items-center space-x-3">
                     <img 
                       src={getAvatarUrl(selectedTicket.user?.profileImage, selectedTicket.user?.name || 'User')}
@@ -334,12 +347,44 @@ const AdminSupportPage = () => {
                     </div>
                   </div>
 
+                  {/* Header Actions: Call, Email, Mark Resolved */}
                   <div className="flex items-center space-x-2">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                      selectedTicket.status === 'replied' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-                    }`}>
-                      {selectedTicket.status === 'replied' ? '✓ Resolved' : '⏳ Pending Reply'}
-                    </span>
+                    <a 
+                      href={`tel:${selectedTicket.user?.phone || '+919876543210'}`}
+                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700"
+                    >
+                      <FaPhoneAlt className="text-emerald-500 h-3 w-3" />
+                      <span>Call</span>
+                    </a>
+
+                    <a 
+                      href={`mailto:${selectedTicket.user?.email || 'user@ecoreward.com'}`}
+                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700"
+                    >
+                      <FaEnvelope className="text-sky-500 h-3 w-3" />
+                      <span>Email</span>
+                    </a>
+
+                    <button 
+                      onClick={() => handleToggleTicketStatus(selectedTicket._id)}
+                      className={`px-3.5 py-1.5 rounded-xl font-black text-xs transition-all shadow-sm flex items-center space-x-1.5 ${
+                        selectedTicket.status === 'replied' 
+                          ? 'bg-emerald-600 text-white' 
+                          : 'bg-amber-500 hover:bg-amber-600 text-white'
+                      }`}
+                    >
+                      {selectedTicket.status === 'replied' ? (
+                        <>
+                          <FaCheck className="h-3 w-3" />
+                          <span>✓ Resolved</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaRedo className="h-3 w-3" />
+                          <span>Mark Resolved</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
 

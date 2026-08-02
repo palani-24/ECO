@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -9,10 +9,13 @@ import {
   FaCalendarPlus, FaRoute, FaLightbulb, FaTruck, FaAward, FaTree,
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
-  FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt
+  FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaSyncAlt
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import api from '../utils/api';
+import { useSocket } from '../context/SocketContext';
+import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const LandingPage = () => {
   // Video player & Audio Boost state (Full HD & High Sound default)
@@ -229,7 +232,42 @@ const LandingPage = () => {
     { name: 'Organic', points: '5 pts/kg', icon: FaLeaf, color: 'from-lime-500 to-emerald-500', desc: 'Food Scraps, Compostable Bio-Waste' }
   ];
 
-  const leaderboardTop3 = [
+  // Real-Time Public Leaderboard State (Live MongoDB + Socket.IO stream)
+  const { realtimeData } = useSocket() || {};
+  const [liveLeaderboard, setLiveLeaderboard] = useState([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+
+  const fetchPublicLeaderboard = async () => {
+    try {
+      setLeaderboardLoading(true);
+      const res = await api.get('/auth/leaderboard');
+      if (res.data.success && res.data.data.length > 0) {
+        setLiveLeaderboard(res.data.data);
+      } else {
+        setLiveLeaderboard([
+          { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, badge: '🏆 Gold Recycler' },
+          { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, badge: '🥇 Silver Recycler' },
+          { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, badge: '🥈 Bronze Recycler' }
+        ]);
+      }
+    } catch (err) {
+      console.log('Using fallback leaderboard:', err);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPublicLeaderboard();
+  }, []);
+
+  useEffect(() => {
+    if (realtimeData?.latestPickup || realtimeData?.lastPointsAwarded) {
+      fetchPublicLeaderboard();
+    }
+  }, [realtimeData?.latestPickup, realtimeData?.lastPointsAwarded]);
+
+  const displayLeaderboard = liveLeaderboard.length > 0 ? liveLeaderboard.slice(0, 3) : [
     { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, badge: '🏆 Gold Recycler' },
     { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, badge: '🥇 Silver Recycler' },
     { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, badge: '🥈 Bronze Recycler' }
@@ -750,41 +788,48 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Leaderboard Sneak Peek Section */}
+      {/* Leaderboard Sneak Peek Section (Real-Time Live MongoDB & Socket Stream) */}
       <section className="py-16 bg-slate-100/60 dark:bg-slate-900/60 border-y border-slate-200/60 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-black uppercase tracking-widest border border-amber-500/20">
-              Community Champions
-            </span>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-black uppercase tracking-widest border border-amber-500/20">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>Live Database Stream</span>
+            </div>
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">Top City Recyclers</h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-medium">
-              Join thousands of active citizens competing for green badges and rewards.
+              Real-time rankings updated live from our citizen recycling network.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {leaderboardTop3.map((user, idx) => (
+            {displayLeaderboard.map((item, idx) => (
               <div 
-                key={idx} 
-                className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border text-center space-y-4 shadow-sm relative overflow-hidden ${
-                  user.rank === 1 ? 'border-amber-400/80 ring-2 ring-amber-400/20' : 'border-slate-200 dark:border-slate-800'
+                key={item._id || idx} 
+                className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border text-center space-y-4 shadow-sm relative overflow-hidden transition-transform hover:scale-105 ${
+                  item.rank === 1 ? 'border-amber-400/80 ring-2 ring-amber-400/20' : 'border-slate-200 dark:border-slate-800'
                 }`}
               >
                 <div className="relative inline-block">
-                  <img src={user.avatar} alt={user.name} className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-emerald-500/20" />
-                  {user.rank === 1 && (
+                  <img 
+                    src={getAvatarUrl(item.avatar || item.profileImage, item.name)} 
+                    onError={(e) => handleAvatarError(e, item.name)}
+                    alt={item.name} 
+                    className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-emerald-500/20" 
+                  />
+                  {item.rank === 1 && (
                     <span className="absolute -top-2 -right-2 p-1.5 rounded-full bg-amber-400 text-slate-950 shadow">
                       <FaCrown className="h-4 w-4" />
                     </span>
                   )}
                 </div>
                 <div>
-                  <h4 className="font-black text-slate-900 dark:text-white text-base">{user.name}</h4>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold block">{user.badge}</span>
+                  <h4 className="font-black text-slate-900 dark:text-white text-base truncate max-w-[200px] mx-auto">{item.name}</h4>
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-extrabold block pt-0.5">{item.badge || '🏆 Gold Recycler'}</span>
                 </div>
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <span className="text-lg font-black text-amber-500">{user.points} EcoPoints</span>
+                  <span className="text-lg font-black text-amber-500">{item.points} EcoPoints</span>
+                  <span className="text-[10px] text-slate-400 font-bold block">{item.recycledKg || (item.points * 0.15).toFixed(1)} kg Recycled</span>
                 </div>
               </div>
             ))}

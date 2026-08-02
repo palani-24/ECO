@@ -346,4 +346,46 @@ export const uploadAvatarImage = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get Public Leaderboard for Landing Page
+ * @route   GET /api/auth/leaderboard
+ * @access  Public
+ */
+export const getPublicLeaderboard = async (req, res) => {
+  try {
+    const topUsers = await User.find({ role: 'user' })
+      .select('name points profileImage')
+      .sort({ points: -1 })
+      .limit(10)
+      .lean();
+
+    const formatted = topUsers.map((u, index) => {
+      const pts = u.points || 0;
+      let badge = '🎖️ Rising Star';
+      let tier = 'Green Warrior';
+
+      if (index === 0) { tier = 'Recycling Champion'; badge = '🏆 Gold Recycler'; }
+      else if (index === 1) { tier = 'Eco Hero'; badge = '🥇 Silver Recycler'; }
+      else if (index === 2) { tier = 'Planet Saver'; badge = '🥈 Bronze Recycler'; }
+      else if (pts > 300) { tier = 'Green Warrior'; badge = '🌿 Eco Leader'; }
+      else { tier = 'Eco Scout'; badge = '🌱 Green Scout'; }
+
+      return {
+        _id: u._id,
+        rank: index + 1,
+        name: u.name,
+        avatar: u.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=10b981&color=fff`,
+        points: pts,
+        recycledKg: parseFloat((pts * 0.15).toFixed(1)),
+        badge,
+        tier
+      };
+    });
+
+    res.json({ success: true, data: formatted });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 

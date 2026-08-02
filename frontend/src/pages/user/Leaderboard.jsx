@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import UserLayout from '../../components/UserLayout';
 import LeaderboardWidget from '../../components/LeaderboardWidget';
-import Footer from '../../components/Footer';
 import { FaTrophy, FaFire, FaBullseye, FaGift, FaCheckCircle, FaStar, FaAward } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
@@ -21,33 +19,17 @@ const Leaderboard = () => {
     },
     {
       id: 2,
-      title: 'Weekly Pickup Streak',
-      desc: 'Complete 2 scheduled waste pickups in 7 days.',
+      title: 'Zero E-Waste Week',
+      desc: 'Handover 1 old gadget or battery for safe recycling.',
       progress: 1,
-      target: 2,
-      reward: 100,
-      unit: 'pickups'
-    },
-    {
-      id: 3,
-      title: 'AI Scanner Master',
-      desc: 'Scan 3 items using the Neural AI Waste Scanner.',
-      progress: 3,
-      target: 3,
-      reward: 75,
-      unit: 'scans',
-      completed: true
+      target: 1,
+      reward: 250,
+      unit: 'item'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
+    <UserLayout>
           
           {/* Header Banner */}
           <div className="bg-gradient-to-r from-amber-500 via-emerald-600 to-teal-600 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
@@ -121,11 +103,7 @@ const Leaderboard = () => {
 
           </div>
 
-        </main>
-      </div>
-
-      <Footer />
-    </div>
+    </UserLayout>
   );
 };
 

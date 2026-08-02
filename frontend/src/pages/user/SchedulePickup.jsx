@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import UserLayout from '../../components/UserLayout';
 import AIWasteScanner from '../../components/AIWasteScanner';
 import api from '../../utils/api';
 import { 
@@ -241,13 +240,7 @@ const SchedulePickup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 space-y-6">
+    <UserLayout>
           
           {/* Header Banner */}
           <div className="relative overflow-hidden p-6 md:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white shadow-2xl border border-emerald-500/20">
@@ -937,8 +930,6 @@ const SchedulePickup = () => {
             )}
 
           </div>
-        </main>
-      </div>
 
       {/* Segregation Guide Modal */}
       {showSegregationModal && (
@@ -996,7 +987,7 @@ const SchedulePickup = () => {
           </div>
         </div>
       )}
-    </div>
+    </UserLayout>
   );
 };
 

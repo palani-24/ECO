@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import UserLayout from '../../components/UserLayout';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { FaTrophy, FaUsers, FaClock, FaCheckCircle, FaRecycle, FaTree } from 'react-icons/fa';
@@ -27,11 +26,11 @@ const CommunityChallenges = () => {
     }
   };
 
-  const handleJoin = async (id, title) => {
+  const handleJoin = async (id) => {
     try {
       const res = await api.post(`/user/challenges/${id}/join`);
       if (res.data.success) {
-        addToast(`Joined challenge "${title}" successfully!`, 'success', 'Challenge Joined');
+        addToast('Successfully joined challenge!', 'success');
         fetchChallenges();
       } else {
         addToast(res.data.message || 'Already joined.', 'info');
@@ -42,14 +41,8 @@ const CommunityChallenges = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
-          {/* Page Banner */}
+    <UserLayout>
+      {/* Page Banner */}
           <div className="bg-gradient-to-r from-emerald-600 to-teal-800 rounded-3xl p-6 md:p-8 text-white space-y-3 shadow-xl relative overflow-hidden">
             <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-60 h-60 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
             <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
@@ -120,9 +113,7 @@ const CommunityChallenges = () => {
               );
             })}
           </div>
-        </main>
-      </div>
-    </div>
+    </UserLayout>
   );
 };
 

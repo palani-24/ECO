@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
-import Footer from '../../components/Footer';
+import UserLayout from '../../components/UserLayout';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import API from '../../utils/api';
@@ -145,13 +143,7 @@ const EcoStore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans">
-      <Navbar />
-
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-x-0 md:space-x-6">
-        <Sidebar />
-
-        <main className="flex-1 space-y-6 pb-16 md:pb-6 overflow-hidden">
+    <UserLayout>
           
           {/* Hero Header Banner */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 text-white p-6 sm:p-8 shadow-xl shadow-emerald-600/10">
@@ -463,9 +455,6 @@ const EcoStore = () => {
             </div>
           )}
 
-        </main>
-      </div>
-
       {/* REDEEM CONFIRMATION MODAL */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
@@ -611,13 +600,10 @@ const EcoStore = () => {
                 </div>
               </form>
             )}
-
           </div>
         </div>
       )}
-
-      <Footer />
-    </div>
+    </UserLayout>
   );
 };
 

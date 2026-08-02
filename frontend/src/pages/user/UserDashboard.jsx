@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import UserLayout from '../../components/UserLayout';
 import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
@@ -36,7 +35,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const handlePickupUpdated = (data) => {
       const updatedPickup = data.latestPickup || data;
-      if (!updatedPickup || !_id) return;
+      if (!updatedPickup || !updatedPickup._id) return;
       
       setPickups(prev => {
         const index = prev.findIndex(p => p._id === updatedPickup._id);
@@ -131,15 +130,8 @@ const UserDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300 overflow-x-hidden">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        {/* Main Dashboard Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
-          
+    <UserLayout>
+        
           {/* Reduced Height Compact Welcome Card */}
           <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1 z-10">
@@ -383,9 +375,7 @@ const UserDashboard = () => {
             recipientRole="driver"
           />
 
-        </main>
-      </div>
-    </div>
+    </UserLayout>
   );
 };
 

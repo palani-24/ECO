@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+  }
+  
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply font-sans bg-[#f8fafc] text-[#0f172a] transition-colors duration-300 antialiased selection:bg-emerald-500 selection:text-white;
   }

@@ -61,7 +61,13 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <SupportChatWidget />
-            <Routes>
+            <React.Suspense fallback={
+              <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
+                <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
+              </div>
+            }>
+              <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
@@ -353,6 +359,7 @@ function App() {
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+        </React.Suspense>
         </SocketProvider>
       </AuthProvider>
     </ToastProvider>

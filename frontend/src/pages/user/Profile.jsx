@@ -83,33 +83,28 @@ const Profile = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    setLoading(true);
-    setProfileError('');
-    setProfileSuccess('');
-
-    try {
-      const res = await api.post('/auth/upload-avatar', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      if (res.data.success) {
-        const fullUrl = res.data.imageUrl.startsWith('http') ? res.data.imageUrl : `${api.defaults.baseURL.replace('/api', '')}${res.data.imageUrl}`;
-        setProfileImage(fullUrl);
-        await updateProfile({ profileImage: fullUrl });
-        setProfileSuccess('Profile picture uploaded successfully!');
-        setShowAvatarSelector(false);
-      }
-    } catch (err) {
-      setProfileError('Failed to upload profile picture.');
-    } finally {
-      setLoading(false);
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileError('Image size should be less than 5MB.');
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result);
+      setProfileSuccess('Photo selected! Click "Save Changes" below to save your profile picture.');
+      setShowAvatarSelector(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSelectPreset = (url) => {
+    setProfileImage(url);
+    setProfileSuccess('Preset avatar selected! Click "Save Changes" below to save your profile picture.');
+    setShowAvatarSelector(false);
   };
 
   const handleUpdatePersonal = async (e) => {
@@ -122,9 +117,9 @@ const Profile = () => {
       const payload = { name, phone, dob, profileImage };
       const res = await updateProfile(payload);
       if (res.success) {
-        setProfileSuccess('Personal details updated successfully!');
+        setProfileSuccess('Personal details & DP photo saved successfully across all devices!');
       } else {
-        setProfileError(res.message);
+        setProfileError(res.message || 'Failed to update profile');
       }
     } catch (err) {
       setProfileError('Failed to update profile');
@@ -257,19 +252,20 @@ const Profile = () => {
             >
               <div className="flex justify-between items-center text-xs font-bold">
                 <span className="text-slate-900 dark:text-white">Choose Avatar Preset or Upload Photo:</span>
-                <label className="cursor-pointer px-3 py-1 bg-emerald-600 text-white rounded-xl text-[10px] font-black">
+                <label className="cursor-pointer px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black shadow-sm transition-all">
                   Upload Photo
-                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                  <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </label>
               </div>
               <div className="flex space-x-3">
                 {presetAvatars.map((url, i) => (
                   <button 
                     key={i} 
-                    onClick={() => { setProfileImage(url); updateProfile({ profileImage: url }); setShowAvatarSelector(false); }}
+                    type="button"
+                    onClick={() => handleSelectPreset(url)}
                     className="hover:scale-110 transition-transform"
                   >
-                    <img src={url} alt="Preset" className="h-12 w-12 rounded-full border-2 border-emerald-500" />
+                    <img src={url} alt="Preset" className="h-12 w-12 rounded-full border-2 border-emerald-500 object-cover" />
                   </button>
                 ))}
               </div>

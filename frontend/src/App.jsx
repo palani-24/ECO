@@ -53,6 +53,7 @@ import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminSupportPage from './pages/admin/AdminSupportPage';
 import SupportChatWidget from './components/SupportChatWidget';
+import PWAInstallBanner from './components/PWAInstallBanner';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
         <AuthProvider>
           <SocketProvider>
             <SupportChatWidget />
+            <PWAInstallBanner />
             <React.Suspense fallback={
               <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
                 <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>

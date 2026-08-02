@@ -1,0 +1,19 @@
+{
+  "short_name": "EcoReward",
+  "name": "EcoReward - AI Smart Waste Management",
+  "description": "Recycle waste with AI camera scanner, schedule pickups, earn points, and redeem rewards.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#050c18",
+  "theme_color": "#10b981",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/"
+}

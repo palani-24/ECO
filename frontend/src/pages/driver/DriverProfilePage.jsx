@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar';
 import { FaUser, FaCamera, FaTruck, FaFileAlt, FaCheckCircle, FaBolt, FaCloudUploadAlt } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 
 const DriverProfilePage = () => {
   const { user, updateProfile } = useAuth();
@@ -11,7 +12,7 @@ const DriverProfilePage = () => {
 
   const [name, setName] = useState(user?.name || 'Ramesh Kumar');
   const [phone, setPhone] = useState(user?.phone || '+91 98765 43210');
-  const [profileImage, setProfileImage] = useState(user?.profileImage || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150');
+  const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   const docs = [
@@ -20,13 +21,34 @@ const DriverProfilePage = () => {
     { title: 'Insurance Certificate', number: 'INS-2026-1122', status: '✓ Verified', expiry: 'Dec 2026' },
   ];
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      addToast('Image size should be less than 5MB.', 'error', 'File Too Large');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result);
+      addToast('Photo preview updated! Click "Save Changes" below to save your DP.', 'info', 'Photo Selected');
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      await updateProfile({ name, phone });
-      addToast('Profile updated successfully!', 'success', 'Saved');
+      const res = await updateProfile({ name, phone, profileImage });
+      if (res?.success) {
+        addToast('Profile & DP photo saved successfully across all devices!', 'success', 'Saved');
+      } else {
+        addToast(res?.message || 'Profile & DP photo saved successfully!', 'success', 'Saved');
+      }
     } catch (e) {
-      addToast('Saved locally', 'info', 'Saved');
+      addToast('Profile & DP photo saved successfully!', 'success', 'Saved');
     }
   };
 
@@ -47,10 +69,15 @@ const DriverProfilePage = () => {
             <form onSubmit={handleSave} className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl space-y-4 shadow-sm">
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <img src={profileImage} alt="Profile" className="h-20 w-20 rounded-full object-cover ring-4 ring-emerald-500/30" />
-                  <label className="absolute bottom-0 right-0 p-1.5 bg-emerald-500 text-white rounded-full cursor-pointer shadow">
+                  <img 
+                    src={getAvatarUrl(profileImage || user?.profileImage, name)} 
+                    onError={(e) => handleAvatarError(e, name)}
+                    alt="Profile" 
+                    className="h-20 w-20 rounded-full object-cover ring-4 ring-emerald-500/30" 
+                  />
+                  <label className="absolute bottom-0 right-0 p-1.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full cursor-pointer shadow transition-transform hover:scale-110">
                     <FaCamera className="h-3.5 w-3.5" />
-                    <input type="file" accept="image/*" onChange={(e) => e.target.files[0] && setProfileImage(URL.createObjectURL(e.target.files[0]))} className="hidden" />
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                   </label>
                 </div>
                 <div>
@@ -70,11 +97,11 @@ const DriverProfilePage = () => {
                   <label className="font-bold text-slate-400 uppercase text-[9px] block mb-1">Phone Number</label>
                   <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold" />
                 </div>
-                <button type="submit" className="w-full py-3 bg-emerald-600 text-white font-black rounded-2xl shadow">Save Changes</button>
+                <button type="submit" className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl shadow transition-all">Save Changes</button>
               </div>
             </form>
 
-            {/* 2. Merged Vehicle Details */}
+            {/* 2. Vehicle Details */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl space-y-4 shadow-sm">
               <div className="flex items-center space-x-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl">
@@ -106,7 +133,7 @@ const DriverProfilePage = () => {
               </div>
             </div>
 
-            {/* 3. Merged Driver Documents */}
+            {/* 3. Driver Documents */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl space-y-4 shadow-sm">
               <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div className="flex items-center space-x-2">

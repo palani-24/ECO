@@ -7,7 +7,8 @@ import { useSocket } from '../../context/SocketContext';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
 import { 
   FaRecycle, FaUsers, FaTruck, FaClipboardCheck, 
-  FaCoins, FaCheck, FaTimes, FaTools, FaComments, FaReply, FaPaperPlane, FaUserShield 
+  FaCoins, FaCheck, FaTimes, FaTools, FaComments, FaReply, 
+  FaPaperPlane, FaUserShield, FaShieldAlt, FaChartLine, FaCheckCircle, FaExclamationTriangle 
 } from 'react-icons/fa';
 
 const AdminDashboard = () => {
@@ -156,15 +157,31 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <Sidebar />
 
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Admin Dashboard & Command Center</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Monitor global recycling metrics, user support inquiries, driver licenses, and system settings.</p>
+        <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
+          
+          {/* Header Banner */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 border border-emerald-500/20 p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
+                <span>Admin Command Center</span>
+                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold border border-emerald-500/30">
+                  ⚡ Live System Control
+                </span>
+              </h2>
+              <p className="text-xs text-slate-400 font-medium">Monitor global recycling operations, user support requests, driver licenses, and payout settings.</p>
+            </div>
+
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-mono text-xs font-bold">
+                Operational Status: 🟢 100% Online
+              </div>
+            </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl font-semibold border border-rose-250/20">
-              {error}
+            <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs rounded-2xl font-bold flex items-center space-x-2">
+              <FaExclamationTriangle className="h-4 w-4" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -173,69 +190,69 @@ const AdminDashboard = () => {
               <CardSkeleton /><CardSkeleton /><CardSkeleton /><CardSkeleton />
             </div>
           ) : (
-            /* Admin Metrics Cards */
+            /* Admin Metrics Stat Cards with HSL Tailored Glow */
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-5 rounded-2xl shadow-sm flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
-                  <FaUsers className="h-5 w-5" />
+              <div className="bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/30 p-5 rounded-3xl shadow-sm flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 text-xl border border-emerald-500/30">
+                  <FaUsers />
                 </div>
                 <div>
-                  <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-200">
+                  <span className="text-2xl font-black text-slate-900 dark:text-white block">
                     {analytics?.metrics?.totalUsers.toLocaleString()}
                   </span>
-                  <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Recycling Users</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-emerald-600 dark:text-emerald-400">Recycling Users</p>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-5 rounded-2xl shadow-sm flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-xl bg-primary-50 dark:bg-primary-950/40 text-primary-600 dark:text-primary-400 flex items-center justify-center flex-shrink-0">
-                  <FaTruck className="h-5 w-5" />
+              <div className="bg-gradient-to-br from-sky-500/10 via-blue-500/5 to-transparent border border-sky-500/30 p-5 rounded-3xl shadow-sm flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0 text-xl border border-sky-500/30">
+                  <FaTruck />
                 </div>
                 <div>
-                  <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-200">
+                  <span className="text-2xl font-black text-slate-900 dark:text-white block">
                     {analytics?.metrics?.totalDrivers.toLocaleString()}
                   </span>
-                  <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Registered Drivers</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-sky-600 dark:text-sky-400">Registered Drivers</p>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-5 rounded-2xl shadow-sm flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
-                  <FaClipboardCheck className="h-5 w-5" />
+              <div className="bg-gradient-to-br from-amber-500/10 via-yellow-500/5 to-transparent border border-amber-500/30 p-5 rounded-3xl shadow-sm flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 text-xl border border-amber-500/30">
+                  <FaClipboardCheck />
                 </div>
                 <div>
-                  <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-200">
+                  <span className="text-2xl font-black text-slate-900 dark:text-white block">
                     {analytics?.metrics?.totalPickups.toLocaleString()}
                   </span>
-                  <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Total Pickups</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-amber-600 dark:text-amber-400">Total Pickups</p>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-5 rounded-2xl shadow-sm flex items-center space-x-4">
-                <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0">
-                  <FaComments className="h-5 w-5 animate-pulse" />
+              <div className="bg-gradient-to-br from-rose-500/10 via-purple-500/5 to-transparent border border-rose-500/30 p-5 rounded-3xl shadow-sm flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0 text-xl border border-rose-500/30">
+                  <FaComments className="animate-pulse" />
                 </div>
                 <div>
-                  <span className="text-2xl font-extrabold text-slate-800 dark:text-slate-200">
-                    {pendingSupportCount} <span className="text-xs font-normal text-slate-400">/ {supportMessages.length}</span>
+                  <span className="text-2xl font-black text-slate-900 dark:text-white block">
+                    {pendingSupportCount} <span className="text-xs font-bold text-slate-400">/ {supportMessages.length}</span>
                   </span>
-                  <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Support Inquiries</p>
+                  <p className="text-[10px] uppercase font-black tracking-wider text-rose-600 dark:text-rose-400">Support Inquiries</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Admin main grid */}
+          {/* Admin Main Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* Left Cols - Waste chart, Driver approvals, & Live User Support Inbox */}
+            {/* Left 2 Columns: Live User Support Messages & Waste Analytics */}
             <div className="lg:col-span-2 space-y-6">
               
-              {/* ADMIN USER SUPPORT MESSAGES & REPLIES INBOX */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
+              {/* ADMIN USER SUPPORT MESSAGES & LIVE REPLIES INBOX */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg">
+                    <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl shadow-sm border border-emerald-500/20">
                       <FaComments />
                     </div>
                     <div>
@@ -244,10 +261,10 @@ const AdminDashboard = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                  <div className="flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl">
                     <button
                       onClick={() => setSupportFilter('all')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                         supportFilter === 'all' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-400'
                       }`}
                     >
@@ -255,7 +272,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                       onClick={() => setSupportFilter('pending')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                         supportFilter === 'pending' ? 'bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 shadow-sm' : 'text-slate-400'
                       }`}
                     >
@@ -263,7 +280,7 @@ const AdminDashboard = () => {
                     </button>
                     <button
                       onClick={() => setSupportFilter('replied')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
                         supportFilter === 'replied' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-400'
                       }`}
                     >
@@ -285,7 +302,7 @@ const AdminDashboard = () => {
                           <div>
                             <p className="font-extrabold text-slate-900 dark:text-white text-xs flex items-center space-x-2">
                               <span>{msg.user?.name || 'Anonymous User'}</span>
-                              <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-750 text-[9px] font-black uppercase text-slate-600 dark:text-slate-300">{msg.user?.role || msg.senderRole}</span>
+                              <span className="px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[9px] font-black uppercase text-slate-600 dark:text-slate-300">{msg.user?.role || msg.senderRole}</span>
                             </p>
                             <p className="text-[10px] text-slate-400 font-semibold">{msg.user?.email || 'N/A'}</p>
                           </div>
@@ -293,7 +310,7 @@ const AdminDashboard = () => {
 
                         <div className="text-right space-y-1">
                           <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                            msg.status === 'replied' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                            msg.status === 'replied' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
                           }`}>
                             {msg.status === 'replied' ? '✓ Replied' : '⏳ Pending Admin Reply'}
                           </span>
@@ -330,7 +347,7 @@ const AdminDashboard = () => {
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder={`Type reply message to ${msg.user?.name}...`}
-                            className="w-full px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 focus:outline-none"
+                            className="w-full px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none"
                           />
                           <div className="flex justify-end space-x-2">
                             <button
@@ -362,7 +379,7 @@ const AdminDashboard = () => {
                               setReplyingMsgId(msg._id);
                               setReplyText(msg.adminReply || '');
                             }}
-                            className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 font-extrabold text-xs rounded-xl transition-colors flex items-center space-x-1.5"
+                            className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-xs rounded-xl transition-colors flex items-center space-x-1.5"
                           >
                             <FaReply className="h-3 w-3 text-emerald-500" />
                             <span>{msg.adminReply ? 'Edit Reply' : 'Reply to User'}</span>
@@ -382,9 +399,9 @@ const AdminDashboard = () => {
               </div>
 
               {/* Waste Bar Chart */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
                 <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
-                  <FaRecycle className="text-emerald-500 animate-spin-slow" />
+                  <FaRecycle className="text-emerald-500" />
                   <span>Waste Collected by Category (kg)</span>
                 </h3>
                 
@@ -419,12 +436,12 @@ const AdminDashboard = () => {
 
             </div>
 
-            {/* Right Col - Settings & Pending Drivers */}
+            {/* Right Column: Top Drivers & Driver Approvals */}
             <div className="space-y-6">
               
               {/* Top Drivers Leaderboard Widget */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                   <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-2">
                     <FaTruck className="text-emerald-500" />
                     <span>Top Performing Drivers</span>
@@ -435,7 +452,7 @@ const AdminDashboard = () => {
                 <div className="space-y-3 text-xs">
                   <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100" alt="Driver" className="h-8 w-8 rounded-xl object-cover" />
+                      <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100" alt="Driver" className="h-9 w-9 rounded-xl object-cover" />
                       <div>
                         <p className="font-black text-slate-900 dark:text-white">Ramesh Kumar</p>
                         <span className="text-[10px] text-slate-400 font-semibold">250 Orders Completed</span>
@@ -448,7 +465,7 @@ const AdminDashboard = () => {
 
                   <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Driver" className="h-8 w-8 rounded-xl object-cover" />
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" alt="Driver" className="h-9 w-9 rounded-xl object-cover" />
                       <div>
                         <p className="font-black text-slate-900 dark:text-white">Karthik M</p>
                         <span className="text-[10px] text-slate-400 font-semibold">210 Orders Completed</span>
@@ -462,14 +479,14 @@ const AdminDashboard = () => {
               </div>
 
               {/* Drivers Approval Queue */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
-                <h3 className="font-extrabold text-slate-800 dark:text-slate-200">Pending Driver Approvals ({pendingDrivers.length})</h3>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">Driver Approvals ({pendingDrivers.length})</h3>
                 
                 <div className="space-y-3">
                   {pendingDrivers.map((driver) => (
                     <div key={driver._id} className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs">
                       <div>
-                        <p className="font-bold text-slate-850 dark:text-slate-250 text-sm">{driver.user.name}</p>
+                        <p className="font-bold text-slate-850 dark:text-slate-200 text-sm">{driver.user.name}</p>
                         <p className="text-slate-400 font-semibold">{driver.user.email}</p>
                         <span className="text-[10px] text-slate-400 block pt-1 font-semibold">{driver.vehicleType} • Code: {driver.vehicleNumber}</span>
                       </div>
@@ -483,26 +500,30 @@ const AdminDashboard = () => {
                     </div>
                   ))}
                   {pendingDrivers.length === 0 && (
-                    <p className="text-center text-xs text-slate-400 py-4">No driver registration files pending review.</p>
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-1">
+                      <FaCheckCircle className="h-6 w-6 text-emerald-500 mx-auto" />
+                      <p className="text-xs font-black text-slate-900 dark:text-white">All Drivers Verified & Active</p>
+                      <span className="text-[10px] text-slate-400 font-medium block">No pending driver registration files to review.</span>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Configuration panel */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
-                <h3 className="font-extrabold text-slate-850 dark:text-slate-200 flex items-center space-x-2">
-                  <FaTools className="text-primary-500" />
+              {/* System Settings Quick Configuration Panel */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-5">
+                <h3 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-2">
+                  <FaTools className="text-emerald-500" />
                   <span>Configure Settings</span>
                 </h3>
                 
                 <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-slate-400 font-bold uppercase tracking-wider block">Base Reward Points</label>
+                    <label className="text-slate-400 font-bold uppercase tracking-wider block text-[9px]">Base Reward Points</label>
                     <input 
                       type="number" 
                       value={basePoints} 
                       onChange={(e) => setBasePoints(parseInt(e.target.value) || 0)}
-                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:outline-none font-bold"
                     />
                   </div>
                   
@@ -511,14 +532,14 @@ const AdminDashboard = () => {
                       type="checkbox" 
                       checked={systemMaintenance} 
                       onChange={(e) => setSystemMaintenance(e.target.checked)}
-                      className="h-4.5 w-4.5 rounded border-slate-350 text-primary-500 focus:ring-emerald-500"
+                      className="h-4.5 w-4.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                     />
-                    <span className="font-semibold text-slate-600 dark:text-slate-300">Set System Maintenance Mode</span>
+                    <span className="font-semibold text-slate-600 dark:text-slate-300 text-xs">Set System Maintenance Mode</span>
                   </label>
 
                   <button 
                     type="submit" 
-                    className="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow"
+                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all shadow"
                   >
                     Save Configuration
                   </button>

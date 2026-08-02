@@ -26,8 +26,7 @@ const Sidebar = () => {
     { path: '/profile', label: 'My Profile', icon: FaUser },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
-    { path: '/my-pickups', label: 'Active Requests', icon: FaClipboardList },
-    { path: '/my-pickups?tab=history', label: 'Pickup History', icon: FaHistory },
+    { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/profile?tab=support', label: 'Help & Support', icon: FaQuestionCircle },
   ];

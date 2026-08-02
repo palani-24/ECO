@@ -87,8 +87,8 @@ const MyPickups = () => {
         <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="space-y-1">
-              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Pickup History</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Track and review all recycling requests scheduled on your account.</p>
+              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">My Pickups & History</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Track active recycling requests and review past completed history in one place.</p>
             </div>
 
             {/* Filter Tabs */}

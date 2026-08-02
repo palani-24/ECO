@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
@@ -20,21 +20,6 @@ const Sidebar = () => {
 
   if (!user) return null;
 
-  const currentPathWithQuery = location.pathname + location.search;
-
-  const isLinkActive = (linkPath) => {
-    // Exact match for paths with query parameters (e.g. /driver/pickups?tab=history)
-    if (linkPath.includes('?')) {
-      return currentPathWithQuery === linkPath;
-    }
-    // Exact match for base dashboard routes (e.g. /dashboard or /driver or /admin)
-    if (linkPath === '/dashboard' || linkPath === '/driver' || linkPath === '/admin') {
-      return location.pathname === linkPath && (!location.search || location.search === '');
-    }
-    // For specific sub-routes (e.g. /driver/pickups), match pathname strictly when query param is not present
-    return location.pathname === linkPath && !location.search;
-  };
-
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
     { path: '/profile', label: 'My Profile', icon: FaUser },
@@ -42,7 +27,6 @@ const Sidebar = () => {
     { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
     { path: '/my-pickups', label: 'Active Requests', icon: FaClipboardList, badge: '2' },
     { path: '/my-pickups?tab=history', label: 'Pickup History', icon: FaHistory },
-    { path: '/redeem', label: 'Rewards & Vouchers', icon: FaGift },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/profile?tab=support', label: 'Help & Support', icon: FaQuestionCircle },
   ];
@@ -74,6 +58,23 @@ const Sidebar = () => {
   };
 
   const links = getLinks();
+
+  // Strict Active Link Checker to prevent multiple items highlighting simultaneously
+  const isLinkActive = (linkPath) => {
+    const currentPath = location.pathname;
+    const currentSearch = location.search;
+    const fullCurrent = currentPath + currentSearch;
+
+    if (linkPath.includes('?')) {
+      return fullCurrent === linkPath;
+    }
+
+    if (currentSearch && currentSearch !== '?') {
+      return false; // If query param is present, non-query link should not be highlighted
+    }
+
+    return currentPath === linkPath;
+  };
 
   return (
     <>
@@ -114,14 +115,17 @@ const Sidebar = () => {
               const Icon = link.icon;
               const active = isLinkActive(link.path);
               return (
-                <Link
+                <NavLink
                   key={idx}
                   to={link.path}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
-                    active
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
-                  }`}
+                  end={link.path.indexOf('?') === -1}
+                  className={
+                    `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
+                      active
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
+                    }`
+                  }
                 >
                   <div className="flex items-center space-x-3">
                     <Icon className="h-4 w-4 flex-shrink-0" />
@@ -132,7 +136,7 @@ const Sidebar = () => {
                       {link.badge}
                     </span>
                   )}
-                </Link>
+                </NavLink>
               );
             })}
           </nav>
@@ -156,16 +160,19 @@ const Sidebar = () => {
           const Icon = link.icon;
           const active = isLinkActive(link.path);
           return (
-            <Link
+            <NavLink
               key={idx}
               to={link.path}
-              className={`flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
-                active ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
-              }`}
+              end={link.path.indexOf('?') === -1}
+              className={
+                `flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
+                  active ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
+                }`
+              }
             >
               <Icon className="h-5 w-5" />
               <span className="text-[10px]">{link.label.split(' ')[0]}</span>
-            </Link>
+            </NavLink>
           );
         })}
       </div>

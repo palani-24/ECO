@@ -15,15 +15,19 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const LandingPage = () => {
-  // Video player & Audio Boost state
+  // Video player & Audio Boost state (Full HD & High Sound default)
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(1.0); // 0.0 to 2.0 (200% Loudness)
+  const [volume, setVolume] = useState(1.5); // Default to 150% High Sound Boost
   const videoRef = useRef(null);
   const audioCtxRef = useRef(null);
   const gainNodeRef = useRef(null);
 
-  const initAudioBoost = () => {
+  const initAudioBoost = (targetVolume = volume) => {
+    if (videoRef.current) {
+      videoRef.current.volume = Math.min(targetVolume, 1.0);
+      videoRef.current.muted = false;
+    }
     if (!audioCtxRef.current && videoRef.current) {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -40,6 +44,9 @@ const LandingPage = () => {
     }
     if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
       audioCtxRef.current.resume();
+    }
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = targetVolume;
     }
   };
 
@@ -603,7 +610,10 @@ const LandingPage = () => {
 
           {/* Video Showcase Player */}
           <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-emerald-500/30 shadow-2xl shadow-emerald-900/40 bg-slate-950">
-            <div className="relative aspect-video w-full overflow-hidden group">
+            <div 
+              onClick={() => initAudioBoost(volume || 1.5)}
+              className="relative aspect-video w-full overflow-hidden group cursor-pointer"
+            >
               <video 
                 ref={videoRef}
                 src="/videos/eco-waste-management.mp4" 
@@ -611,7 +621,9 @@ const LandingPage = () => {
                 loop 
                 muted={isMuted} 
                 playsInline
-                className="w-full h-full object-cover"
+                preload="auto"
+                controlsList="nodownload"
+                className="w-full h-full object-cover contrast-[1.05] brightness-[1.05] filter rounded-3xl"
               />
 
               {/* Video Overlay Controls Bar */}

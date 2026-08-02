@@ -5,7 +5,8 @@ import { useToast } from '../context/ToastContext';
 import { 
   FaRecycle, FaUser, FaEnvelope, FaLock, FaTruck, FaPhone, 
   FaIdCard, FaCheckCircle, FaCloudUploadAlt, FaEye, FaEyeSlash, 
-  FaSpinner, FaLeaf, FaTimes, FaShieldAlt, FaClock 
+  FaSpinner, FaLeaf, FaTimes, FaShieldAlt, FaClock, FaGift,
+  FaBolt, FaCheck, FaGoogle, FaSmile
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 
@@ -26,32 +27,61 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(true);
 
+  // Avatar Selection
+  const avatars = [
+    { id: 'leaf', name: 'Leaf Warrior', url: 'https://ui-avatars.com/api/?name=Leaf+Warrior&background=10b981&color=fff' },
+    { id: 'bot', name: 'AI Recycler', url: 'https://ui-avatars.com/api/?name=AI+Bot&background=0d9488&color=fff' },
+    { id: 'spark', name: 'Eco Hero', url: 'https://ui-avatars.com/api/?name=Eco+Hero&background=0284c7&color=fff' },
+    { id: 'nature', name: 'Green Scout', url: 'https://ui-avatars.com/api/?name=Green+Scout&background=84cc16&color=fff' }
+  ];
+  const [selectedAvatar, setSelectedAvatar] = useState(avatars[0]);
+
   // Driver Fields
   const [aadhaarNumber, setAadhaarNumber] = useState('');
   const [licenseNumber, setLicenseNumber] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [vehicleType, setVehicleType] = useState('E-Rickshaw Heavy Loader');
-  const [profilePhotoName, setProfilePhotoName] = useState('');
-  const [licenseDocName, setLicenseDocName] = useState('');
-  const [rcDocName, setRcDocName] = useState('');
 
   // UI States
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPendingModal, setShowPendingModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
+  // Quick Demo Auto-Fill Handlers
+  const fillDemoUser = () => {
+    setRole('user');
+    setName('Arjun Sharma');
+    setPhone('+91 98765 43210');
+    setEmail(`user${Math.floor(Math.random() * 1000)}@ecoreward.com`);
+    setPassword('123456');
+    setConfirmPassword('123456');
+    addToast('Demo User credentials auto-filled!', 'info', 'Quick Demo');
+  };
+
+  const fillDemoDriver = () => {
+    setRole('driver');
+    setName('Rajesh Kumar');
+    setPhone('+91 98123 45678');
+    setEmail(`driver${Math.floor(Math.random() * 1000)}@ecoreward.com`);
+    setPassword('123456');
+    setConfirmPassword('123456');
+    setVehicleNumber('TN-38-ECO-9945');
+    setVehicleType('E-Rickshaw Heavy Loader');
+    setLicenseNumber('DL-IN-2026-9945');
+    addToast('Demo Driver credentials auto-filled!', 'info', 'Quick Demo');
+  };
 
   // Password Strength Meter
   const getPasswordStrength = (pass) => {
     if (!pass) return { score: 0, text: '', color: 'bg-slate-700' };
     let score = 0;
-    if (pass.length >= 8) score++;
-    if (/[A-Z]/.test(pass)) score++;
-    if (/[0-9]/.test(pass)) score++;
+    if (pass.length >= 6) score++;
+    if (/[A-Z]/.test(pass) || /[0-9]/.test(pass)) score++;
     if (/[^A-Za-z0-9]/.test(pass)) score++;
 
-    if (score <= 1) return { score: 25, text: 'Weak', color: 'bg-rose-500' };
-    if (score === 2) return { score: 50, text: 'Fair', color: 'bg-amber-500' };
-    if (score === 3) return { score: 75, text: 'Good', color: 'bg-sky-500' };
+    if (score <= 1) return { score: 33, text: 'Fair', color: 'bg-amber-500' };
+    if (score === 2) return { score: 66, text: 'Good', color: 'bg-sky-500' };
     return { score: 100, text: 'Strong', color: 'bg-emerald-500' };
   };
 
@@ -78,7 +108,8 @@ const Signup = () => {
       phone,
       email,
       password,
-      role
+      role,
+      profileImage: selectedAvatar.url
     };
 
     if (role === 'driver') {
@@ -113,22 +144,34 @@ const Signup = () => {
     }
   };
 
+  const handleGoogleSignup = () => {
+    fillDemoUser();
+    addToast('Simulating Google Sign-In with Demo Account', 'success', 'Google Signup');
+  };
+
   return (
     <div className="relative min-h-screen bg-slate-950 flex flex-col transition-colors duration-300 overflow-hidden font-sans">
       
-      {/* Ambient Eco Glow Background */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-slate-950 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center">
-        <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-teal-500/20 rounded-full blur-[120px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/85 to-emerald-950/90 backdrop-blur-[4px]" />
-      </div>
+      {/* Background MP4 Video Overlay (Muted Autoplay) */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline
+        preload="auto"
+        className="fixed inset-0 w-full h-full object-cover opacity-20 filter contrast-125 brightness-90 pointer-events-none z-0" 
+        src="/videos/eco-waste-management.mp4" 
+      />
+
+      {/* Ambient Glass Vignette Cover */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-slate-950/85 via-slate-950/80 to-emerald-950/90 backdrop-blur-[2px] pointer-events-none" />
 
       <div className="relative z-10">
         <Navbar />
       </div>
 
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8">
-        <div className="w-full max-w-[540px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 p-6 sm:p-9 rounded-3xl shadow-2xl shadow-emerald-950/50 space-y-6">
+        <div className="w-full max-w-[560px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 p-6 sm:p-9 rounded-3xl shadow-2xl shadow-emerald-950/50 space-y-6">
           
           {/* Header */}
           <div className="text-center space-y-2">
@@ -137,6 +180,38 @@ const Signup = () => {
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Join EcoReward & play your part in circular green recycling.</p>
+          </div>
+
+          {/* Welcome Bonus +50 EcoPoints Banner */}
+          <div className="p-3 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border border-emerald-500/30 rounded-2xl flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 shadow-sm">
+            <div className="flex items-center space-x-2">
+              <FaGift className="h-4 w-4 text-emerald-500" />
+              <span>FREE Welcome Bonus: <strong>+50 EcoPoints</strong></span>
+            </div>
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase">Instant</span>
+          </div>
+
+          {/* Quick Demo Fill Chips */}
+          <div className="flex items-center justify-between text-xs pt-1">
+            <span className="text-[10px] uppercase font-black tracking-wider text-slate-400">Quick Test Autofill:</span>
+            <div className="flex items-center space-x-2">
+              <button 
+                type="button" 
+                onClick={fillDemoUser}
+                className="px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 hover:bg-emerald-500 hover:text-white font-extrabold text-[10px] transition-all flex items-center space-x-1"
+              >
+                <FaBolt className="h-2.5 w-2.5" />
+                <span>⚡ Demo User</span>
+              </button>
+              <button 
+                type="button" 
+                onClick={fillDemoDriver}
+                className="px-2.5 py-1 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-500 hover:bg-teal-500 hover:text-white font-extrabold text-[10px] transition-all flex items-center space-x-1"
+              >
+                <FaTruck className="h-2.5 w-2.5" />
+                <span>🚚 Demo Driver</span>
+              </button>
+            </div>
           </div>
 
           {/* Role Selection Cards */}
@@ -166,6 +241,44 @@ const Signup = () => {
               <FaTruck />
               <span>Collection Driver</span>
             </button>
+          </div>
+
+          {/* Avatar Selector */}
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Choose Avatar Icon</label>
+            <div className="grid grid-cols-4 gap-2">
+              {avatars.map((av) => (
+                <button
+                  type="button"
+                  key={av.id}
+                  onClick={() => setSelectedAvatar(av)}
+                  className={`p-1.5 rounded-xl border flex items-center space-x-2 transition-all ${
+                    selectedAvatar.id === av.id 
+                      ? 'border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/30' 
+                      : 'border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <img src={av.url} alt={av.name} className="h-6 w-6 rounded-full" />
+                  <span className="text-[10px] font-bold text-slate-800 dark:text-slate-200 truncate">{av.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Google One-Click Signup */}
+          <button
+            type="button"
+            onClick={handleGoogleSignup}
+            className="w-full py-2.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-xs rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-center space-x-2 transition-colors shadow-sm"
+          >
+            <FaGoogle className="text-red-500" />
+            <span>Continue with Google Account</span>
+          </button>
+
+          <div className="relative flex py-1 items-center">
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+            <span className="flex-shrink mx-3 text-[10px] font-black text-slate-400 uppercase">or fill details below</span>
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
           </div>
 
           {/* Error Alert */}
@@ -311,7 +424,10 @@ const Signup = () => {
                 className="h-4 w-4 text-emerald-600 rounded focus:ring-emerald-500" 
               />
               <span className="text-slate-700 dark:text-slate-300 font-bold">
-                I agree to the <a href="#" className="text-emerald-500 hover:underline">Terms of Service</a> & <a href="#" className="text-emerald-500 hover:underline">Privacy Policy</a>
+                I agree to the{' '}
+                <button type="button" onClick={() => setShowTermsModal(true)} className="text-emerald-500 hover:underline">
+                  Terms of Service & Privacy Policy
+                </button>
               </span>
             </div>
 
@@ -347,6 +463,34 @@ const Signup = () => {
 
         </div>
       </div>
+
+      {/* Terms & Privacy Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-w-md w-full space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h4 className="font-black text-slate-900 dark:text-white text-sm flex items-center space-x-2">
+                <FaShieldAlt className="text-emerald-500" />
+                <span>Terms of Service & Privacy</span>
+              </h4>
+              <button onClick={() => setShowTermsModal(false)} className="text-slate-400 hover:text-white">
+                <FaTimes />
+              </button>
+            </div>
+            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 max-h-60 overflow-y-auto leading-relaxed">
+              <p>1. <strong>EcoPoints Policy</strong>: EcoPoints are awarded upon verification of collected recyclable waste materials by authorized drivers.</p>
+              <p>2. <strong>Data Privacy</strong>: Your personal data and address details are encrypted and strictly used for collection logistics only.</p>
+              <p>3. <strong>Zero Landfill Guarantee</strong>: EcoReward guarantees 100% circular processing for plastic, e-waste, metal, and organic scrap.</p>
+            </div>
+            <button 
+              onClick={() => setShowTermsModal(false)} 
+              className="w-full py-2.5 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow"
+            >
+              I Understand & Accept
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Driver Verification Pending Modal Banner */}
       {showPendingModal && (

@@ -90,11 +90,10 @@ const Login = () => {
           loop
           muted
           playsInline
-          className="w-full h-full object-cover scale-105 filter brightness-60 contrast-110 blur-[1px]"
-          poster="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1920&q=80"
-        >
-          <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4" />
-        </video>
+          preload="auto"
+          className="w-full h-full object-cover scale-105 filter brightness-75 contrast-110 opacity-30"
+          src="/videos/eco-waste-management.mp4"
+        />
         
         {/* Ambient Glows */}
         <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-emerald-500/25 rounded-full blur-[120px] animate-pulse pointer-events-none" />

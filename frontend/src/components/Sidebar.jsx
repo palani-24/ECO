@@ -176,7 +176,11 @@ const Sidebar = () => {
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center space-x-2">
-                <FaRecycle className="h-6 w-6 text-emerald-500" />
+                <img 
+                  src="/app-logo.png" 
+                  alt="EcoReward Logo" 
+                  className="h-7 w-7 rounded-lg object-cover ring-1 ring-emerald-500/30" 
+                />
                 <span className="font-black text-slate-900 dark:text-white text-sm">
                   {user.role === 'driver' ? 'Driver Menu' : 'Main Menu'}
                 </span>

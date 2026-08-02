@@ -70,7 +70,11 @@ const Navbar = () => {
             className="flex items-center space-x-2 flex-shrink-0" 
             onClick={() => setIsOpen(false)}
           >
-            <FaRecycle className="h-7 w-7 text-emerald-500 animate-spin-slow" style={{ animationDuration: '8s' }} />
+            <img 
+              src="/app-logo.png" 
+              alt="EcoReward Logo" 
+              className="h-8 w-8 rounded-xl object-cover shadow-sm ring-1 ring-emerald-500/30 hover:scale-105 transition-transform" 
+            />
             <span className="font-black text-base sm:text-lg tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-cyan-300">
               EcoReward
             </span>

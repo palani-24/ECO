@@ -77,9 +77,11 @@ const PWAInstallBanner = () => {
         <div className="flex items-center justify-between gap-3">
           
           <div className="flex items-center space-x-3 min-w-0">
-            <div className="h-10 w-10 bg-emerald-500 text-slate-950 rounded-2xl flex items-center justify-center font-black flex-shrink-0 shadow-md">
-              <FaRecycle className="h-6 w-6 animate-spin-slow" style={{ animationDuration: '10s' }} />
-            </div>
+            <img 
+              src="/app-logo.png" 
+              alt="EcoReward App Icon" 
+              className="h-10 w-10 rounded-2xl object-cover ring-2 ring-emerald-500/50 flex-shrink-0 shadow-md" 
+            />
             <div className="min-w-0">
               <h4 className="font-extrabold text-xs sm:text-sm text-white truncate flex items-center space-x-1">
                 <span>Install EcoReward App</span>

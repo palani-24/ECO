@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
-  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock
+  FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock, FaComments
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 

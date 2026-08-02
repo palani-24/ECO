@@ -50,6 +50,7 @@ import AdminDrivers from './pages/admin/AdminDrivers';
 import AdminPickups from './pages/admin/AdminPickups';
 import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminSupportPage from './pages/admin/AdminSupportPage';
 import SupportChatWidget from './components/SupportChatWidget';
 
 function App() {
@@ -302,6 +303,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <AdminPickups />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/support" 
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminSupportPage />
                 </ProtectedRoute>
               } 
             />

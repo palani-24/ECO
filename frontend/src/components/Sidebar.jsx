@@ -44,6 +44,7 @@ const Sidebar = () => {
     { path: '/admin/users', label: 'Manage Users', icon: FaUsers },
     { path: '/admin/drivers', label: 'Manage Drivers', icon: FaTruck },
     { path: '/admin/pickups', label: 'Pickup Requests', icon: FaClipboardList },
+    { path: '/admin/support', label: 'Support Desk', icon: FaComments, badge: '3' },
     { path: '/admin/coupons', label: 'Coupons Catalog', icon: FaTicketAlt },
     { path: '/admin/settings', label: 'System Settings', icon: FaCogs },
   ];

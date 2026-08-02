@@ -23,6 +23,8 @@ import CommunityChallenges from './pages/user/CommunityChallenges';
 
 // Driver Pages
 import DriverDashboard from './pages/driver/DriverDashboard';
+import DriverAssignedPickups from './pages/driver/DriverAssignedPickups';
+import DriverPickupHistory from './pages/driver/DriverPickupHistory';
 import DriverEarnings from './pages/driver/DriverEarnings';
 import DriverGatePass from './pages/driver/DriverGatePass';
 import DriverQualityAudit from './pages/driver/DriverQualityAudit';
@@ -129,7 +131,15 @@ function App() {
               path="/driver/pickups" 
               element={
                 <ProtectedRoute allowedRoles={['driver']}>
-                  <DriverDashboard />
+                  <DriverAssignedPickups />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/driver/history" 
+              element={
+                <ProtectedRoute allowedRoles={['driver']}>
+                  <DriverPickupHistory />
                 </ProtectedRoute>
               } 
             />

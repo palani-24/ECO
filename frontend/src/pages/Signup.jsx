@@ -78,14 +78,14 @@ const Signup = () => {
     };
 
     if (role === 'driver') {
-      if (!vehicleNumber || !vehicleType || !licenseNumber) {
-        setError('Please complete all required driver credential fields.');
+      if (!vehicleNumber || !vehicleType) {
+        setError('Please complete all required driver vehicle details.');
         setLoading(false);
         return;
       }
       payload.vehicleNumber = vehicleNumber;
       payload.vehicleType = vehicleType;
-      payload.licenseNumber = licenseNumber;
+      payload.licenseNumber = licenseNumber || `DL-${vehicleNumber.replace(/\s+/g, '-').toUpperCase()}`;
       payload.aadhaarNumber = aadhaarNumber;
     }
 
@@ -300,6 +300,11 @@ const Signup = () => {
                       <option value="Mini Pickup Truck">Mini Pickup Truck</option>
                       <option value="Electric Van">Electric Van</option>
                     </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Driving License Number (Optional)</label>
+                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="TN-41-2024-0012345" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold" />
                   </div>
                 </div>
               </div>

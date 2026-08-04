@@ -127,6 +127,11 @@ export const loginUser = async (req, res) => {
     if (user && isMatch) {
       let isApproved = true;
 
+      // Update permanent login metadata in database
+      user.lastLogin = new Date();
+      user.loginCount = (user.loginCount || 0) + 1;
+      await user.save();
+
       // If driver, check approval status
       if (user.role === 'driver') {
         const driver = await Driver.findOne({ user: user._id });
@@ -141,10 +146,14 @@ export const loginUser = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone || '',
           role: user.role,
           points: user.points,
           addresses: user.addresses,
           profileImage: user.profileImage || '',
+          lastLogin: user.lastLogin,
+          loginCount: user.loginCount,
+          createdAt: user.createdAt,
           token: generateToken(user._id),
           isApproved
         }

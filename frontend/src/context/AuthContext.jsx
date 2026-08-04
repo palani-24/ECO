@@ -4,14 +4,22 @@ import api from '../utils/api';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('eco_user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on load
+  // Check if user is logged in on load and sync fresh details
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
+        localStorage.removeItem('eco_user');
         setUser(null);
         setLoading(false);
         return;
@@ -19,15 +27,24 @@ export const AuthProvider = ({ children }) => {
       try {
         const res = await api.get('/auth/profile');
         if (res.data?.success && res.data?.data) {
-          setUser(res.data.data);
+          const freshData = res.data.data;
+          localStorage.setItem('eco_user', JSON.stringify(freshData));
+          setUser(freshData);
         } else {
           localStorage.removeItem('token');
+          localStorage.removeItem('eco_user');
           setUser(null);
         }
       } catch (err) {
         console.error('Session restore failed:', err);
-        localStorage.removeItem('token');
-        setUser(null);
+        // If network error, preserve cached localStorage user if token exists
+        if (!err.response) {
+          console.warn('Network issue: preserving offline user cache');
+        } else {
+          localStorage.removeItem('token');
+          localStorage.removeItem('eco_user');
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -43,6 +60,7 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         const { token, ...userData } = res.data.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('eco_user', JSON.stringify(userData));
         setUser(userData);
         return { success: true, user: userData };
       }
@@ -63,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         const { token, ...createdUser } = res.data.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('eco_user', JSON.stringify(createdUser));
         setUser(createdUser);
         return { success: true, user: createdUser };
       }
@@ -78,6 +97,7 @@ export const AuthProvider = ({ children }) => {
   // Logout
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('eco_user');
     setUser(null);
   };
 
@@ -87,6 +107,7 @@ export const AuthProvider = ({ children }) => {
       const endpoint = user.role === 'user' ? '/user/profile' : '/auth/profile'; // adjust for driver/admin update profile endpoints
       const res = await api.put(endpoint, profileData);
       if (res.data.success) {
+        localStorage.setItem('eco_user', JSON.stringify(res.data.data));
         setUser(res.data.data);
         return { success: true };
       }

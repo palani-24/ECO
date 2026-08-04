@@ -173,10 +173,9 @@ export const redeemStoreProduct = async (req, res) => {
     // Record Transaction
     await Transaction.create({
       user: userId,
-      type: 'debit',
-      points: totalPointsRequired,
-      description: `Redeemed ${quantity}x ${product.name} from Eco-Store`,
-      referenceId: storeOrder._id
+      pointsChange: -totalPointsRequired,
+      type: 'redeem',
+      description: `Redeemed ${quantity}x ${product.name} from Eco-Store`
     });
 
     // Send Notification
@@ -184,7 +183,7 @@ export const redeemStoreProduct = async (req, res) => {
       user: userId,
       title: '📦 Eco-Store Order Placed!',
       message: `Your order for "${product.name}" has been placed successfully! Tracking #: ${trackingNumber}`,
-      type: 'reward'
+      type: 'points_redeemed'
     });
 
     res.status(201).json({

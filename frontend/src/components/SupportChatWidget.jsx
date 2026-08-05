@@ -326,90 +326,134 @@ const SupportChatWidget = () => {
                 </span>
               </div>
 
-              {filteredMessages.map((msg, idx) => (
-                <div key={msg._id || idx} className="space-y-3">
-                  
-                  {/* USER QUESTION BUBBLE (Right Aligned - Green Glassmorphism) */}
-                  <div className="flex flex-col items-end space-y-1">
-                    <div className="flex items-end space-x-2 max-w-[88%]">
-                      <div className="p-3.5 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white rounded-3xl rounded-br-none shadow-lg border border-emerald-400/30 backdrop-blur-md space-y-1 relative group">
-                        
-                        {msg.attachedFile && (
-                          <div className="p-2 bg-emerald-700/80 rounded-xl flex items-center space-x-2 text-[11px] font-bold mb-1 border border-white/20">
-                            <FaFileAlt />
-                            <span className="truncate max-w-[140px]">{msg.attachedFile}</span>
-                          </div>
-                        )}
+              {/* Helper to flatten user and admin messages sequentially */}
+              {(() => {
+                const getWidgetFlattenedMessages = (list) => {
+                  if (!list || list.length === 0) return [];
+                  const bubbles = [];
+                  const sorted = [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-                        <p className="text-xs font-medium leading-relaxed">{msg.message}</p>
-                        
-                        {/* Timestamp & Read Status */}
-                        <div className="flex items-center justify-end space-x-1.5 pt-1 text-[9px] text-emerald-200 font-bold">
-                          <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          <span title="Read Status">
-                            {msg.readStatus === 'read' ? (
-                              <FaCheckDouble className="text-cyan-300" />
-                            ) : (
-                              <FaCheckDouble className="text-emerald-200" />
-                            )}
-                          </span>
-                        </div>
+                  sorted.forEach(msg => {
+                    if (msg.senderRole === 'admin') {
+                      bubbles.push({
+                        _id: msg._id,
+                        senderRole: 'admin',
+                        text: msg.message || msg.adminReply,
+                        createdAt: msg.createdAt,
+                        readStatus: 'read'
+                      });
+                    } else {
+                      bubbles.push({
+                        _id: msg._id,
+                        senderRole: msg.senderRole || 'user',
+                        text: msg.message,
+                        attachedFile: msg.attachedFile,
+                        createdAt: msg.createdAt,
+                        readStatus: msg.readStatus || 'delivered'
+                      });
 
-                        {/* Reaction Badge */}
-                        {reactions[msg._id] && (
-                          <span className="absolute -bottom-2 -left-2 bg-slate-900/90 text-xs p-0.5 rounded-full shadow border border-white/20">
-                            {reactions[msg._id]}
-                          </span>
-                        )}
-                      </div>
+                      if (msg.adminReply) {
+                        bubbles.push({
+                          _id: `${msg._id}-admin-reply`,
+                          senderRole: 'admin',
+                          text: msg.adminReply,
+                          createdAt: msg.repliedAt || msg.createdAt,
+                          readStatus: 'read'
+                        });
+                      }
+                    }
+                  });
 
-                      <img 
-                        src={getAvatarUrl(user, user?.name)} 
-                        onError={(e) => handleAvatarError(e, user?.name)}
-                        alt="User Avatar" 
-                        className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0"
-                      />
-                    </div>
-                  </div>
+                  return bubbles;
+                };
 
-                  {/* ADMIN RESPONSE BUBBLE (Left Aligned - Dark Glassmorphism directly below User question) */}
-                  {msg.adminReply && (
-                    <div className="flex flex-col items-start space-y-1">
-                      <div className="flex items-start space-x-2 max-w-[88%]">
-                        <img 
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
-                          alt="Admin Support Avatar" 
-                          className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0 mt-1"
-                        />
-                        <div className="p-3.5 bg-slate-800/85 text-slate-100 rounded-3xl rounded-bl-none shadow-lg border border-white/15 backdrop-blur-md space-y-1.5 relative">
-                          <div className="flex items-center space-x-2 pb-1 border-b border-white/10">
-                            <span className="font-extrabold text-[11px] text-emerald-400">Support Agent Sarah</span>
-                            <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black rounded-full uppercase">
-                              Official Helpdesk
-                            </span>
-                          </div>
+                return getWidgetFlattenedMessages(filteredMessages).map((msg, idx) => {
+                  const isAdmin = msg.senderRole === 'admin';
 
-                          <p className="text-xs font-medium leading-relaxed text-slate-100">{msg.adminReply}</p>
-
-                          <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[9px] text-slate-400 font-bold">
-                            <span>{new Date(msg.repliedAt || msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  if (!isAdmin) {
+                    return (
+                      /* USER QUESTION BUBBLE (Right Aligned - Green Glassmorphism) */
+                      <div key={msg._id || idx} className="flex flex-col items-end space-y-1 my-2">
+                        <div className="flex items-end space-x-2 max-w-[88%]">
+                          <div className="p-3.5 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white rounded-3xl rounded-br-none shadow-lg border border-emerald-400/30 backdrop-blur-md space-y-1 relative group">
                             
-                            {/* Fast Reaction Bar */}
-                            <div className="flex space-x-1">
-                              {emojis.slice(0, 4).map((emoji, i) => (
-                                <button key={i} onClick={() => handleReaction(msg._id, emoji)} className="hover:scale-125 transition-transform">
-                                  {emoji}
-                                </button>
-                              ))}
+                            {msg.attachedFile && (
+                              <div className="p-2 bg-emerald-700/80 rounded-xl flex items-center space-x-2 text-[11px] font-bold mb-1 border border-white/20">
+                                <FaFileAlt />
+                                <span className="truncate max-w-[140px]">{msg.attachedFile}</span>
+                              </div>
+                            )}
+
+                            <p className="text-xs font-medium leading-relaxed">{msg.text}</p>
+                            
+                            {/* Timestamp & Read Status */}
+                            <div className="flex items-center justify-end space-x-1.5 pt-1 text-[9px] text-emerald-200 font-bold">
+                              <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                              <span title="Read Status">
+                                {msg.readStatus === 'read' ? (
+                                  <FaCheckDouble className="text-cyan-300" />
+                                ) : (
+                                  <FaCheckDouble className="text-emerald-200" />
+                                )}
+                              </span>
+                            </div>
+
+                            {/* Reaction Badge */}
+                            {reactions[msg._id] && (
+                              <span className="absolute -bottom-2 -left-2 bg-slate-900/90 text-xs p-0.5 rounded-full shadow border border-white/20">
+                                {reactions[msg._id]}
+                              </span>
+                            )}
+                          </div>
+
+                          <img 
+                            src={getAvatarUrl(user, user?.name)} 
+                            onError={(e) => handleAvatarError(e, user?.name)}
+                            alt="User Avatar" 
+                            className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0"
+                          />
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      /* ADMIN RESPONSE BUBBLE (Left Aligned - Dark Glassmorphism) */
+                      <div key={msg._id || idx} className="flex flex-col items-start space-y-1 my-2">
+                        <div className="flex items-start space-x-2 max-w-[88%]">
+                          <img 
+                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
+                            alt="Admin Support Avatar" 
+                            className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0 mt-1"
+                          />
+                          <div className="p-3.5 bg-slate-800/85 text-slate-100 rounded-3xl rounded-bl-none shadow-lg border border-white/15 backdrop-blur-md space-y-1.5 relative">
+                            <div className="flex items-center space-x-2 pb-1 border-b border-white/10">
+                              <span className="font-extrabold text-[11px] text-emerald-400">Support Agent Sarah</span>
+                              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black rounded-full uppercase">
+                                Official Helpdesk
+                              </span>
+                            </div>
+
+                            <p className="text-xs font-medium leading-relaxed text-slate-100">{msg.text}</p>
+
+                            <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[9px] text-slate-400 font-bold">
+                              <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                              
+                              {/* Fast Reaction Bar */}
+                              <div className="flex space-x-1">
+                                {emojis.slice(0, 4).map((emoji, i) => (
+                                  <button key={i} onClick={() => handleReaction(msg._id, emoji)} className="hover:scale-125 transition-transform">
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-
-                </div>
-              ))}
+                    );
+                  }
+                });
+              })()}
 
               {/* Animated Typing Indicator */}
               {isTyping && (

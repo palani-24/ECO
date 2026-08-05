@@ -103,35 +103,51 @@ export const replySupportMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Reply text cannot be empty' });
     }
 
-    const supportMsg = await SupportMessage.findById(id);
-    if (!supportMsg) {
-      return res.status(404).json({ success: false, message: 'Support message not found' });
+    let supportMsg = await SupportMessage.findById(id);
+    let targetUserId = req.body.userId;
+    let targetSubject = 'Support Response';
+
+    if (supportMsg) {
+      targetUserId = supportMsg.user;
+      targetSubject = supportMsg.subject;
+      supportMsg.status = 'replied';
+      if (!supportMsg.adminReply) {
+        supportMsg.adminReply = replyText.trim();
+        supportMsg.repliedAt = new Date();
+        supportMsg.repliedBy = req.user._id;
+      }
+      await supportMsg.save();
     }
 
-    supportMsg.adminReply = replyText.trim();
-    supportMsg.repliedAt = new Date();
-    supportMsg.repliedBy = req.user._id;
-    supportMsg.status = 'replied';
+    // Create standalone admin message so it streams line-by-line as separate message bubbles
+    const newAdminMsg = await SupportMessage.create({
+      user: targetUserId || req.user._id,
+      senderRole: 'admin',
+      subject: targetSubject,
+      message: replyText.trim(),
+      status: 'replied',
+      repliedBy: req.user._id
+    });
 
-    await supportMsg.save();
-
-    const updatedMsg = await SupportMessage.findById(id)
+    const populatedMsg = await SupportMessage.findById(newAdminMsg._id)
       .populate('user', 'name email role profileImage')
       .populate('repliedBy', 'name email');
 
     // Create Notification for User
-    await Notification.create({
-      user: supportMsg.user,
-      title: '💬 Admin Replied to Your Support Ticket',
-      message: `Admin Response to "${supportMsg.subject}": ${replyText.substring(0, 80)}...`,
-      type: 'general'
-    });
+    if (targetUserId) {
+      await Notification.create({
+        user: targetUserId,
+        title: '💬 Admin Replied to Your Support Ticket',
+        message: `Admin Response: ${replyText.substring(0, 80)}...`,
+        type: 'general'
+      });
+    }
 
     // Broadcast socket event
     try {
       const io = getIO();
       if (io) {
-        io.emit('support:replied', updatedMsg);
+        io.emit('support:replied', populatedMsg);
       }
     } catch (sErr) {
       console.log('[Socket Emit Warning]:', sErr.message);
@@ -140,7 +156,7 @@ export const replySupportMessage = async (req, res) => {
     res.json({
       success: true,
       message: 'Reply sent to user successfully!',
-      data: updatedMsg
+      data: populatedMsg
     });
   } catch (error) {
     console.error('[replySupportMessage Error]:', error);

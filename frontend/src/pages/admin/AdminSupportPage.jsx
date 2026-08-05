@@ -234,27 +234,79 @@ const AdminSupportPage = () => {
     }
   }, [groupedConversations]);
 
-  const activeConversation = groupedConversations.find(c => c.userKey === selectedUserKey) || groupedConversations[0];
-  const activeTicket = activeConversation?.latestMessage;
+  const chatEndRef = useRef(null);
+
+  // Helper to convert user messages & admin replies into a line-by-line stream of chat bubbles
+  const getFlattenedMessages = (messagesList) => {
+    if (!messagesList || messagesList.length === 0) return [];
+    const bubbles = [];
+
+    // Sort chronologically (oldest first)
+    const sorted = [...messagesList].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    sorted.forEach(msg => {
+      if (msg.senderRole === 'admin') {
+        bubbles.push({
+          _id: msg._id,
+          senderRole: 'admin',
+          text: msg.message,
+          createdAt: msg.createdAt,
+          subject: msg.subject
+        });
+      } else {
+        bubbles.push({
+          _id: msg._id,
+          senderRole: msg.senderRole || 'user',
+          text: msg.message,
+          createdAt: msg.createdAt,
+          subject: msg.subject
+        });
+
+        // If legacy adminReply exists on this user ticket
+        if (msg.adminReply) {
+          bubbles.push({
+            _id: `${msg._id}-admin-reply`,
+            senderRole: 'admin',
+            text: msg.adminReply,
+            createdAt: msg.repliedAt || msg.createdAt,
+            subject: msg.subject
+          });
+        }
+      }
+    });
+
+    return bubbles;
+  };
 
   const handleSendReply = async (msgId) => {
-    if (!replyText.trim()) return;
+    if (!replyText.trim() || !activeConversation) return;
+    const currentReplyText = replyText.trim();
+    setReplyText(''); // Clear input text immediately so admin can type follow-up messages!
     setSendingReply(true);
+
+    const newAdminMsg = {
+      _id: `temp-${Date.now()}`,
+      user: activeConversation.user,
+      senderRole: 'admin',
+      subject: activeTicket?.subject || 'Support Response',
+      message: currentReplyText,
+      status: 'replied',
+      createdAt: new Date().toISOString()
+    };
+
+    // Append new admin message immediately to state
+    setSupportMessages(prev => [newAdminMsg, ...prev]);
+
     try {
-      const res = await api.put(`/support/admin/reply/${msgId}`, { replyText });
+      const res = await api.put(`/support/admin/reply/${msgId}`, { 
+        replyText: currentReplyText,
+        userId: activeConversation.user?._id
+      });
       if (res.data.success) {
         addToast('Reply delivered to user instantly!', 'success', 'Reply Delivered');
-        setSupportMessages(prev => prev.map(m => m._id === msgId ? { ...m, adminReply: replyText, status: 'replied' } : m));
-        setReplyText('');
-      } else {
-        setSupportMessages(prev => prev.map(m => m._id === msgId ? { ...m, adminReply: replyText, status: 'replied' } : m));
-        addToast('Reply delivered to user!', 'success', 'Reply Delivered');
-        setReplyText('');
       }
     } catch (err) {
-      setSupportMessages(prev => prev.map(m => m._id === msgId ? { ...m, adminReply: replyText, status: 'replied' } : m));
       addToast('Reply delivered to user!', 'success', 'Reply Delivered');
-      setReplyText('');
     } finally {
       setSendingReply(false);
     }
@@ -524,36 +576,22 @@ const AdminSupportPage = () => {
                 {/* Scrollable Chat Message Thread for Active User */}
                 <div className="flex-1 p-3.5 sm:p-6 overflow-y-auto space-y-4">
                   
-                  {activeConversation.messages.map((msgItem) => (
-                    <div key={msgItem._id} className="space-y-3">
-                      
-                      {/* Subject Badge Divider */}
-                      <div className="text-center my-2">
-                        <span className="px-3 py-1 bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-300/40 dark:border-slate-700">
-                          Subject: {msgItem.subject}
-                        </span>
-                      </div>
+                  {/* Subject Badge Divider */}
+                  {activeTicket?.subject && (
+                    <div className="text-center my-2">
+                      <span className="px-3 py-1 bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-300/40 dark:border-slate-700">
+                        Subject: {activeTicket.subject}
+                      </span>
+                    </div>
+                  )}
 
-                      {/* Left Bubble: Incoming Customer Message */}
-                      <div className="flex items-start space-x-2.5 max-w-lg">
-                        <img 
-                          src={getAvatarUrl(activeConversation.user?.profileImage, activeConversation.user?.name || 'User')}
-                          onError={(e) => handleAvatarError(e, activeConversation.user?.name || 'User')}
-                          alt="User"
-                          className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover flex-shrink-0 mt-1"
-                        />
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1.5 text-xs text-slate-900 dark:text-white">
-                          <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800 pb-1 gap-4">
-                            <span>{activeConversation.user?.name}</span>
-                            <span>{new Date(msgItem.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          </div>
-                          <p className="font-medium leading-relaxed">{msgItem.message}</p>
-                        </div>
-                      </div>
+                  {getFlattenedMessages(activeConversation.messages).map((bubble) => {
+                    const isAdmin = bubble.senderRole === 'admin';
 
-                      {/* Right Bubble: Outgoing Admin Reply */}
-                      {msgItem.adminReply && (
-                        <div className="flex items-start justify-end space-x-2.5 max-w-lg ml-auto">
+                    if (isAdmin) {
+                      return (
+                        /* Right Bubble: Outgoing Admin Message */
+                        <div key={bubble._id} className="flex items-start justify-end space-x-2.5 max-w-lg ml-auto">
                           <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-none shadow-md space-y-1.5 text-xs">
                             <div className="flex justify-between items-center text-[9px] text-emerald-100 font-bold border-b border-white/20 pb-1 gap-4">
                               <span className="flex items-center space-x-1">
@@ -561,18 +599,37 @@ const AdminSupportPage = () => {
                                 <span>EcoReward Support</span>
                               </span>
                               <span className="flex items-center space-x-1">
-                                <span>Delivered</span>
+                                <span>{new Date(bubble.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 <FaCheckDouble className="h-3 w-3 text-cyan-200" />
                               </span>
                             </div>
-                            <p className="font-bold leading-relaxed">{msgItem.adminReply}</p>
+                            <p className="font-bold leading-relaxed">{bubble.text}</p>
                           </div>
                         </div>
-                      )}
+                      );
+                    } else {
+                      return (
+                        /* Left Bubble: Incoming Customer Message */
+                        <div key={bubble._id} className="flex items-start space-x-2.5 max-w-lg">
+                          <img 
+                            src={getAvatarUrl(activeConversation.user?.profileImage, activeConversation.user?.name || 'User')}
+                            onError={(e) => handleAvatarError(e, activeConversation.user?.name || 'User')}
+                            alt="User"
+                            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover flex-shrink-0 mt-1"
+                          />
+                          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1.5 text-xs text-slate-900 dark:text-white">
+                            <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800 pb-1 gap-4">
+                              <span>{activeConversation.user?.name}</span>
+                              <span>{new Date(bubble.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <p className="font-medium leading-relaxed">{bubble.text}</p>
+                          </div>
+                        </div>
+                      );
+                    }
+                  })}
 
-                    </div>
-                  ))}
-
+                  <div ref={chatEndRef} />
                 </div>
 
                 {/* Live Chat Input Footer */}

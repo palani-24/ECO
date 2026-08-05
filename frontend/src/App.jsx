@@ -21,6 +21,7 @@ import EcoStore from './pages/user/EcoStore';
 import Profile from './pages/user/Profile';
 import Leaderboard from './pages/user/Leaderboard';
 import CommunityChallenges from './pages/user/CommunityChallenges';
+import ESGCorporatePortal from './pages/user/ESGCorporatePortal';
 
 // Driver Pages
 import DriverDashboard from './pages/driver/DriverDashboard';
@@ -108,6 +109,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['user']}>
                     <RedeemRewards />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/esg-portal" 
+                element={
+                  <ProtectedRoute allowedRoles={['user']}>
+                    <ESGCorporatePortal />
                   </ProtectedRoute>
                 } 
               />

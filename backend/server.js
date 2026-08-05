@@ -63,6 +63,7 @@ app.use('/api/driver', driverRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/store', storeRoutes);
+app.use('/api/advanced', advancedRoutes);
 
 // Root Healthcheck
 app.get('/', (req, res) => {

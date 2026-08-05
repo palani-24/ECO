@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import UserLayout from '../../components/UserLayout';
+import UPIPayoutModal from '../../components/UPIPayoutModal';
+import SmartKioskLocatorModal from '../../components/SmartKioskLocatorModal';
 import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
 import { 
   FaCoins, FaGift, FaTicketAlt, FaPaypal, FaCheckCircle, 
-  FaExclamationTriangle, FaMobileAlt, FaUniversity, FaAmazon, FaShoppingCart 
+  FaExclamationTriangle, FaMobileAlt, FaUniversity, FaAmazon, FaShoppingCart, FaMapMarkedAlt, FaExchangeAlt
 } from 'react-icons/fa';
 
 const RedeemRewards = () => {
@@ -15,6 +17,8 @@ const RedeemRewards = () => {
   const [coupons, setCoupons] = useState([]);
   const [redemptions, setRedemptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showUPIModal, setShowUPIModal] = useState(false);
+  const [showKioskModal, setShowKioskModal] = useState(false);
 
   // Forms
   const [cashbackEmail, setCashbackEmail] = useState('');
@@ -93,10 +97,28 @@ const RedeemRewards = () => {
               <p className="text-xs text-slate-500 dark:text-slate-400">Exchange your points for digital vouchers, cashback or product deals.</p>
             </div>
             
-            {/* Points Badge */}
-            <div className="flex items-center space-x-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250/20 text-emerald-700 dark:text-emerald-400 font-extrabold rounded-2xl">
-              <FaCoins className="h-5 w-5 animate-bounce" />
-              <span>{user?.points} Points</span>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowUPIModal(true)}
+                className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-md flex items-center space-x-1.5 transition-transform active:scale-95"
+              >
+                <FaExchangeAlt />
+                <span>Withdraw Cash (UPI)</span>
+              </button>
+
+              <button
+                onClick={() => setShowKioskModal(true)}
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-2xl flex items-center space-x-1.5 border border-slate-700 transition-colors"
+              >
+                <FaMapMarkedAlt className="text-emerald-400" />
+                <span>Smart Kiosks</span>
+              </button>
+
+              {/* Points Badge */}
+              <div className="flex items-center space-x-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250/20 text-emerald-700 dark:text-emerald-400 font-extrabold rounded-2xl">
+                <FaCoins className="h-5 w-5 animate-bounce" />
+                <span>{user?.points} Points</span>
+              </div>
             </div>
           </div>
 
@@ -374,6 +396,23 @@ const RedeemRewards = () => {
 
             </div>
           )}
+
+      {/* Instant UPI Cashout Payout Modal */}
+      <UPIPayoutModal
+        isOpen={showUPIModal}
+        onClose={() => setShowUPIModal(false)}
+        userPoints={user?.points || 0}
+        onPayoutSuccess={(newPoints) => {
+          updateUserPoints(newPoints);
+          fetchRewardsData();
+        }}
+      />
+
+      {/* Smart Kiosk Locator Modal */}
+      <SmartKioskLocatorModal
+        isOpen={showKioskModal}
+        onClose={() => setShowKioskModal(false)}
+      />
 
     </UserLayout>
   );

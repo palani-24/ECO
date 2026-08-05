@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import UserLayout from '../../components/UserLayout';
+import DriverLiveTrackingModal from '../../components/DriverLiveTrackingModal';
+import CarbonCertificateModal from '../../components/CarbonCertificateModal';
 import api from '../../utils/api';
 import { useSocket } from '../../context/SocketContext';
 import { useToast } from '../../context/ToastContext';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
-import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye } from 'react-icons/fa';
+import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye, FaTruck, FaMedal, FaCertificate } from 'react-icons/fa';
 
 const MyPickups = () => {
   const { addToast } = useToast();
@@ -14,6 +16,8 @@ const MyPickups = () => {
   const [error, setError] = useState('');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [trackingPickup, setTrackingPickup] = useState(null);
+  const [showCertModal, setShowCertModal] = useState(false);
 
   // Real-Time Socket Updates Sync
   useEffect(() => {
@@ -80,25 +84,38 @@ const MyPickups = () => {
     <UserLayout>
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="space-y-1">
-              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">My Pickups & History</h2>
+              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
+                <span>My Pickups & History</span>
+                <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full border border-emerald-500/20">LIVE REALTIME</span>
+              </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">Track active recycling requests and review past completed history in one place.</p>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center space-x-1.5 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold">
-              {['all', 'active', 'completed'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setStatusFilter(tab)}
-                  className={`px-3 py-1.5 rounded-lg capitalize transition-all ${
-                    statusFilter === tab
-                      ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm font-extrabold'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {tab === 'all' ? `All (${pickups.length})` : tab === 'active' ? `Active (${pickups.filter(p => p.status !== 'completed' && p.status !== 'cancelled').length})` : `Completed (${pickups.filter(p => p.status === 'completed').length})`}
-                </button>
-              ))}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowCertModal(true)}
+                className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-md flex items-center space-x-1.5 transition-transform active:scale-95"
+              >
+                <FaCertificate />
+                <span>Green Eco Certificate</span>
+              </button>
+
+              {/* Filter Tabs */}
+              <div className="flex items-center space-x-1.5 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold">
+                {['all', 'active', 'completed'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setStatusFilter(tab)}
+                    className={`px-3 py-1.5 rounded-lg capitalize transition-all ${
+                      statusFilter === tab
+                        ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm font-extrabold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {tab === 'all' ? `All (${pickups.length})` : tab === 'active' ? `Active (${pickups.filter(p => p.status !== 'completed' && p.status !== 'cancelled').length})` : `Completed (${pickups.filter(p => p.status === 'completed').length})`}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -160,6 +177,15 @@ const MyPickups = () => {
                           </td>
                           <td className="py-4 px-6">{getStatusBadge(p.status)}</td>
                           <td className="py-4 px-6 text-right flex items-center justify-end space-x-2">
+                            {p.status !== 'completed' && p.status !== 'cancelled' && (
+                              <button 
+                                onClick={() => setTrackingPickup(p)}
+                                className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 rounded-lg text-[10px] font-bold border border-amber-500/20 flex items-center space-x-1"
+                              >
+                                <FaTruck className="w-3 h-3 animate-bounce" />
+                                <span>Track Live GPS</span>
+                              </button>
+                            )}
                             {p.driver && p.status !== 'completed' && (
                               <button 
                                 onClick={() => setChatPickup(p)}
@@ -328,6 +354,19 @@ const MyPickups = () => {
               </div>
             </div>
           )}
+
+          {/* Driver Live GPS Tracking Modal */}
+          <DriverLiveTrackingModal 
+            pickup={trackingPickup} 
+            isOpen={!!trackingPickup} 
+            onClose={() => setTrackingPickup(null)} 
+          />
+
+          {/* Official Green Carbon Certificate Modal */}
+          <CarbonCertificateModal 
+            isOpen={showCertModal} 
+            onClose={() => setShowCertModal(false)} 
+          />
 
     </UserLayout>
   );

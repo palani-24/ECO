@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import UserLayout from '../../components/UserLayout';
 import AIWasteScanner from '../../components/AIWasteScanner';
+import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import api from '../../utils/api';
 import { 
   FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCheck, 
@@ -51,6 +52,22 @@ const SchedulePickup = () => {
       setEstimatedWeight(10);
       addToast('🎙️ Voice Command Detected: "10 kg plastic waste collection". Selected Plastic (10 kg)!', 'info', 'Voice Booking');
     }, 2000);
+  };
+
+  const handleApplyAiData = (scannedData) => {
+    if (scannedData.category) {
+      // Map category name to valid state if needed
+      const cat = scannedData.category.toLowerCase();
+      if (cat.includes('plastic')) setWasteCategory('Plastic');
+      else if (cat.includes('paper') || cat.includes('cardboard')) setWasteCategory('Paper');
+      else if (cat.includes('metal') || cat.includes('can')) setWasteCategory('Metal');
+      else if (cat.includes('e-waste') || cat.includes('electronic')) setWasteCategory('E-Waste');
+      else setWasteCategory('Plastic');
+    }
+    if (scannedData.estimatedWeight) {
+      setEstimatedWeight(scannedData.estimatedWeight);
+    }
+    addToast(`AI Data Filled: ${scannedData.category} (${scannedData.estimatedWeight} kg)!`, 'success', 'Form Auto-Filled');
   };
 
   const [itemCounts, setItemCounts] = useState({
@@ -286,6 +303,14 @@ const SchedulePickup = () => {
                 >
                   <FaBuilding className="h-3.5 w-3.5" />
                   <span>Bulk / NGO</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setShowAIScanner(true)}
+                  className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs flex items-center space-x-1.5 transition-all shadow-md border border-emerald-400/30"
+                >
+                  <FaMagic className="h-3.5 w-3.5 text-emerald-300 animate-pulse" />
+                  <span>AI Vision Scanner</span>
                 </button>
                 <button 
                   type="button"
@@ -987,6 +1012,13 @@ const SchedulePickup = () => {
           </div>
         </div>
       )}
+
+      {/* AI Vision Waste Scanner Modal */}
+      <AIWasteScannerModal 
+        isOpen={showAIScanner} 
+        onClose={() => setShowAIScanner(false)} 
+        onApplyScannedData={handleApplyAiData} 
+      />
     </UserLayout>
   );
 };

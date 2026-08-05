@@ -123,32 +123,25 @@ const Navbar = () => {
             </>
           ) : (
             
-            /* DASHBOARD HEADER LAYOUT (Mobile Optimized & Clean) */
-            <div className="flex-1 flex items-center justify-between ml-2 sm:ml-6 min-w-0">
-              
-              {/* Desktop Expanded Search Bar */}
-              <div className="hidden sm:relative sm:block w-44 md:w-60">
-                <FaSearch className="absolute left-3 top-2.5 text-slate-400 text-[11px]" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search... (Ctrl + K)"
-                  className="w-full pl-8 pr-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all border border-transparent dark:border-slate-700"
-                />
-              </div>
-
               {/* Header Right Action Controls */}
               <div className="flex items-center space-x-1.5 sm:space-x-2.5 ml-auto">
                 
-                {/* Mobile Search Toggle Button */}
-                <button
-                  onClick={() => setShowMobileSearch(!showMobileSearch)}
-                  className="sm:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors"
-                  aria-label="Search"
-                >
-                  <FaSearch className="h-3.5 w-3.5" />
-                </button>
+                {/* Language Switcher Selector */}
+                <div className="relative flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                  <button
+                    onClick={() => {
+                      const nextLang = lang === 'en' ? 'ta' : lang === 'ta' ? 'hi' : 'en';
+                      setLang(nextLang);
+                      const labels = { en: 'English', ta: 'தமிழ்', hi: 'हिंदी' };
+                      addToast(`🌐 Language switched to ${labels[nextLang]}!`, 'info', 'Language Updated');
+                    }}
+                    className="px-2 py-1 flex items-center space-x-1 hover:text-emerald-500 transition-colors text-[11px]"
+                    title="Switch Language (English / தமிழ் / हिंदी)"
+                  >
+                    <FaGlobe className="text-emerald-500 text-xs" />
+                    <span className="font-black uppercase">{lang}</span>
+                  </button>
+                </div>
 
                 {/* Notifications Bell */}
                 {user && (
@@ -218,26 +211,11 @@ const Navbar = () => {
           )}
 
         </div>
+      </nav>
 
-        {/* Expandable Mobile Search Bar */}
-        {!isLandingPage && showMobileSearch && (
-          <div className="sm:hidden px-2 pb-3 pt-1 border-t border-slate-100 dark:border-slate-800 animate-fadeIn">
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-3 text-slate-400 text-xs" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search catalog, pickups, orders..."
-                className="w-full pl-9 pr-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 border border-transparent dark:border-slate-700"
-                autoFocus
-              />
-            </div>
-          </div>
-        )}
-
-      </div>
-    </nav>
+      {/* Floating 24/7 EcoAI Virtual Assistant Widget */}
+      <EcoAIVirtualAssistant />
+    </>
   );
 };
 

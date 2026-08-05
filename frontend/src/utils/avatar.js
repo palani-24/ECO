@@ -13,8 +13,8 @@ export const getAvatarUrl = (userOrImage, name = 'User') => {
     if (userOrImage.name) displayName = userOrImage.name;
   }
 
-  if (!image || typeof image !== 'string' || image.trim() === '') {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName || 'User')}&background=10b981&color=fff&bold=true`;
+  if (!image || typeof image !== 'string' || image.trim() === '' || image.includes('unsplash.com')) {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName || 'User')}`;
   }
 
   // If image URL is a relative backend path starting with /uploads

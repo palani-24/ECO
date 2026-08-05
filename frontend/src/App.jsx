@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { SocketProvider } from './context/SocketContext';
+import { LanguageProvider } from './context/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Public Pages
@@ -61,16 +62,17 @@ function App() {
     <Router>
       <ToastProvider>
         <AuthProvider>
-          <SocketProvider>
-            <SupportChatWidget />
-            <PWAInstallBanner />
-            <React.Suspense fallback={
-              <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
-                <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
-              </div>
-            }>
-              <Routes>
+          <LanguageProvider>
+            <SocketProvider>
+              <SupportChatWidget />
+              <PWAInstallBanner />
+              <React.Suspense fallback={
+                <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
+                  <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
+                </div>
+              }>
+                <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
@@ -372,6 +374,7 @@ function App() {
           </Routes>
         </React.Suspense>
         </SocketProvider>
+        </LanguageProvider>
       </AuthProvider>
     </ToastProvider>
   </Router>

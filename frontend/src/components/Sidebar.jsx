@@ -57,13 +57,13 @@ const Sidebar = () => {
   ];
 
   const adminLinks = [
-    { path: '/admin', label: 'Dashboard Overview', icon: FaChartLine },
-    { path: '/admin/users', label: 'Manage Users', icon: FaUsers },
-    { path: '/admin/drivers', label: 'Manage Drivers', icon: FaTruck },
-    { path: '/admin/pickups', label: 'Pickup Requests', icon: FaClipboardList },
-    { path: '/admin/support', label: 'Support Desk', icon: FaComments, badge: '3' },
-    { path: '/admin/coupons', label: 'Coupons Catalog', icon: FaTicketAlt },
-    { path: '/admin/settings', label: 'System Settings', icon: FaCogs },
+    { path: '/admin', label: 'Dashboard', icon: FaChartLine },
+    { path: '/admin/users', label: 'Users', icon: FaUsers },
+    { path: '/admin/drivers', label: 'Drivers', icon: FaTruck },
+    { path: '/admin/pickups', label: 'Pickups', icon: FaClipboardList },
+    { path: '/admin/support', label: 'Support', icon: FaComments, badge: '3' },
+    { path: '/admin/coupons', label: 'Coupons', icon: FaTicketAlt },
+    { path: '/admin/settings', label: 'Settings', icon: FaCogs },
   ];
 
   const getLinks = () => {

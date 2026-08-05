@@ -3,7 +3,7 @@ import UPIPayout from '../models/UPIPayout.js';
 import KioskBin from '../models/KioskBin.js';
 import User from '../models/User.js';
 import PickupRequest from '../models/PickupRequest.js';
-import { protect } from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 

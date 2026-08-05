@@ -234,6 +234,9 @@ const AdminSupportPage = () => {
     }
   }, [groupedConversations]);
 
+  const activeConversation = groupedConversations.find(c => c.userKey === selectedUserKey) || groupedConversations[0];
+  const activeTicket = activeConversation?.latestMessage;
+
   const chatEndRef = useRef(null);
 
   // Helper to convert user messages & admin replies into a line-by-line stream of chat bubbles

@@ -16,6 +16,7 @@ import driverRoutes from './routes/driverRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import storeRoutes from './routes/storeRoutes.js';
+import advancedRoutes from './routes/advancedRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -5,9 +5,11 @@ import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import EcoAIVirtualAssistant from './EcoAIVirtualAssistant';
+import MobileQRScannerModal from './MobileQRScannerModal';
+import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
-  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe
+  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -27,6 +29,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showQRScanner, setShowQRScanner] = useState(false);
 
   // Toggle Dark Mode
   useEffect(() => {
@@ -162,10 +165,26 @@ const Navbar = () => {
                     </button>
                   </div>
 
+                  {/* Mobile Camera QR Scanner Trigger */}
+                  <button
+                    onClick={() => {
+                      triggerHaptic(40);
+                      setShowQRScanner(true);
+                    }}
+                    className="p-2 sm:px-2.5 sm:py-1.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 rounded-xl text-xs font-black border border-emerald-500/30 flex items-center space-x-1 transition-all"
+                    title="Scan QR Code"
+                  >
+                    <FaQrcode className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="hidden sm:inline">QR Scan</span>
+                  </button>
+
                   {/* Notifications Bell */}
                   {user && (
                     <button 
-                      onClick={() => addToast('You have 3 unread pickup notifications', 'info', 'Notifications')}
+                      onClick={() => {
+                        triggerHaptic(30);
+                        requestPushPermission(addToast);
+                      }}
                       className="p-2 sm:p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs relative transition-colors"
                       title="Notifications"
                     >
@@ -253,6 +272,15 @@ const Navbar = () => {
 
       {/* Floating 24/7 EcoAI Virtual Assistant Widget */}
       <EcoAIVirtualAssistant />
+
+      {/* Mobile Camera QR Scanner Modal */}
+      <MobileQRScannerModal
+        isOpen={showQRScanner}
+        onClose={() => setShowQRScanner(false)}
+        onScanSuccess={(data) => {
+          addToast(`📷 QR Code Scanned: ${data.code} (${data.location})`, 'success', 'QR Verified');
+        }}
+      />
     </>
   );
 };

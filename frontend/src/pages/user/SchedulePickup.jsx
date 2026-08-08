@@ -212,9 +212,33 @@ const SchedulePickup = () => {
     }
   };
 
+  const [multiItems, setMultiItems] = useState([
+    { category: 'Metal', estimatedWeight: 10.0 },
+    { category: 'Plastic', estimatedWeight: 5.0 },
+    { category: 'Paper', estimatedWeight: 3.34 }
+  ]);
+
+  const handleAddItem = (catName) => {
+    if (multiItems.some(i => i.category === catName)) return;
+    setMultiItems(prev => [...prev, { category: catName, estimatedWeight: 5.0 }]);
+  };
+
+  const handleUpdateItemWeight = (index, val) => {
+    const num = parseFloat(val);
+    setMultiItems(prev => prev.map((item, idx) => idx === index ? { ...item, estimatedWeight: isNaN(num) ? '' : num } : item));
+  };
+
+  const handleRemoveItem = (index) => {
+    if (multiItems.length <= 1) return;
+    setMultiItems(prev => prev.filter((_, idx) => idx !== index));
+  };
+
+  const totalCalculatedWeight = multiItems.reduce((acc, curr) => acc + (parseFloat(curr.estimatedWeight) || 0), 0);
+  const totalCalculatedPoints = multiItems.reduce((acc, curr) => acc + Math.round((parseFloat(curr.estimatedWeight) || 0) * 35), 0);
+
   const currentCategory = categories.find(c => c.name === wasteCategory);
-  const estimatedPoints = currentCategory ? currentCategory.rate * estimatedWeight : 0;
-  const estimatedCO2 = (estimatedWeight * 1.5).toFixed(1);
+  const estimatedPoints = totalCalculatedPoints || (currentCategory ? currentCategory.rate * estimatedWeight : 0);
+  const estimatedCO2 = ((totalCalculatedWeight || estimatedWeight) * 1.5).toFixed(1);
 
   const handleSubmit = async () => {
     setError('');
@@ -226,16 +250,18 @@ const SchedulePickup = () => {
       return;
     }
 
+    const finalWeight = totalCalculatedWeight || estimatedWeight;
     const maxWeightLimit = pickupType === 'bulk' ? 500 : 100;
-    if (estimatedWeight <= 0 || estimatedWeight > maxWeightLimit) {
+    if (finalWeight <= 0 || finalWeight > maxWeightLimit) {
       setError(`Estimated weight must be between 0.1 kg and ${maxWeightLimit} kg per request.`);
       setLoading(false);
       return;
     }
 
     const payload = {
-      wasteCategory,
-      estimatedWeight,
+      wasteCategory: multiItems.map(i => i.category).join(', ') || wasteCategory || 'Plastic',
+      items: multiItems,
+      estimatedWeight: finalWeight,
       pickupDate,
       pickupTimeSlot,
       pickupAddress: user.addresses[selectedAddressIndex],
@@ -248,6 +274,7 @@ const SchedulePickup = () => {
       const res = await api.post('/user/pickups', payload);
       setLoading(false);
       if (res.data.success) {
+        addToast(`🚚 Multi-Material Waste Pickup Scheduled! (${finalWeight} kg total • +${totalCalculatedPoints} EcoPoints est.)`, 'success', 'Pickup Order Dispatched');
         navigate('/my-pickups');
       }
     } catch (err) {
@@ -554,137 +581,89 @@ const SchedulePickup = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   
-                  {/* Weight Control Card */}
+                  {/* Multi-Material Itemized Breakdown Card */}
                   <div className="space-y-4 p-6 bg-slate-50/80 dark:bg-slate-850/60 rounded-3xl border border-slate-200/70 dark:border-slate-800">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center space-x-2">
-                        <FaSlidersH className="text-emerald-500" />
-                        <span>Estimated Quantity (kg)</span>
-                      </label>
-                      <button 
-                        type="button" 
-                        onClick={() => setShowCalculator(!showCalculator)} 
-                        className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center space-x-1"
-                      >
-                        <span>{showCalculator ? 'Hide Calculator' : '⚡ Quick Weight Calculator'}</span>
-                      </button>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-black text-emerald-700 dark:text-emerald-300 flex items-center space-x-1.5">
+                        <FaLeaf className="text-emerald-500" />
+                        <span>Multi-Material Line Items (Decimal Weight Support e.g. 3.34 kg)</span>
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-emerald-500">35 pts/kg</span>
                     </div>
 
-                    {/* Interactive Weight Slider */}
-                    <div className="space-y-3 pt-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                          {estimatedWeight} <span className="text-sm font-bold text-slate-400">kg</span>
-                        </span>
-                        <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs rounded-xl">
-                          ≈ {estimatedPoints} Points
-                        </span>
-                      </div>
+                    <div className="space-y-2">
+                      {multiItems.map((item, idx) => {
+                        const pts = Math.round((parseFloat(item.estimatedWeight) || 0) * 35);
+                        const cashVal = ((parseFloat(item.estimatedWeight) || 0) * 12.5).toFixed(1);
+                        return (
+                          <div key={idx} className="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-wrap items-center justify-between gap-2 shadow-sm">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs font-black text-slate-900 dark:text-white">{item.category}</span>
+                              <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                                +{pts} pts (₹{cashVal})
+                              </span>
+                            </div>
 
-                      <input 
-                        type="range"
-                        min="0.1"
-                        max={pickupType === 'bulk' ? 500 : 100}
-                        step="0.5"
-                        value={estimatedWeight}
-                        onChange={(e) => setEstimatedWeight(parseFloat(e.target.value))}
-                        className="w-full h-3 bg-slate-200 dark:bg-slate-750 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                      />
-
-                      <div className="flex justify-between text-[10px] font-bold text-slate-400">
-                        <span>0.1 kg</span>
-                        <span>{pickupType === 'bulk' ? '250 kg' : '50 kg'}</span>
-                        <span>{pickupType === 'bulk' ? '500 kg (Bulk Cap)' : '100 kg (Household Cap)'}</span>
-                      </div>
-
-                      {/* Weight Preset Quick Buttons */}
-                      <div className="flex items-center space-x-2 pt-2">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Presets:</span>
-                        {[2, 5, 10, 25, 50].map((preset) => (
-                          <button
-                            key={preset}
-                            type="button"
-                            onClick={() => setEstimatedWeight(preset)}
-                            className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
-                              estimatedWeight === preset 
-                                ? 'bg-emerald-600 text-white shadow-md' 
-                                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                            }`}
-                          >
-                            {preset} kg
-                          </button>
-                        ))}
-                      </div>
+                            <div className="flex items-center space-x-2">
+                              <input 
+                                type="number"
+                                step="0.01"
+                                min="0.1"
+                                value={item.estimatedWeight}
+                                onChange={(e) => handleUpdateItemWeight(idx, e.target.value)}
+                                placeholder="e.g. 3.34"
+                                className="w-24 px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs font-mono font-black text-slate-900 dark:text-white"
+                              />
+                              <span className="text-xs font-bold text-slate-400">kg</span>
+                              {multiItems.length > 1 && (
+                                <button 
+                                  type="button" 
+                                  onClick={() => handleRemoveItem(idx)}
+                                  className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                                  title="Remove Item"
+                                >
+                                  <FaTimes className="h-3 w-3" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {/* Calculator Dropdown */}
-                    {showCalculator && calculatorSpecs[wasteCategory] && (
-                      <div className="mt-3 p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-4 shadow-lg animate-fadeIn">
-                        <div className="flex justify-between items-center text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <span>{calculatorSpecs[wasteCategory].label}</span>
-                          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold">
-                            {calculatorSpecs[wasteCategory].weight} kg per {calculatorSpecs[wasteCategory].unit}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between space-x-2">
-                          <button 
-                            type="button"
-                            onClick={() => setItemCounts({ ...itemCounts, [wasteCategory]: Math.max(0, itemCounts[wasteCategory] - 5) })}
-                            className="h-9 w-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-xl text-xs"
-                          >-5</button>
-                          <button 
-                            type="button"
-                            onClick={() => setItemCounts({ ...itemCounts, [wasteCategory]: Math.max(0, itemCounts[wasteCategory] - 1) })}
-                            className="h-9 w-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-xl text-xs"
-                          >-1</button>
-                          <span className="flex-1 text-center font-extrabold text-slate-900 dark:text-white text-sm">
-                            {itemCounts[wasteCategory]} {calculatorSpecs[wasteCategory].unit}
-                          </span>
-                          <button 
-                            type="button"
-                            onClick={() => setItemCounts({ ...itemCounts, [wasteCategory]: itemCounts[wasteCategory] + 1 })}
-                            className="h-9 w-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-xl text-xs"
-                          >+1</button>
-                          <button 
-                            type="button"
-                            onClick={() => setItemCounts({ ...itemCounts, [wasteCategory]: itemCounts[wasteCategory] + 5 })}
-                            className="h-9 w-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-black rounded-xl text-xs"
-                          >+5</button>
-                        </div>
-                        
-                        <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-3">
-                          <span className="text-xs font-bold text-slate-500">Calculated: <strong className="text-slate-900 dark:text-white">{(itemCounts[wasteCategory] * calculatorSpecs[wasteCategory].weight).toFixed(1)} kg</strong></span>
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const calculated = Math.max(0.1, parseFloat((itemCounts[wasteCategory] * calculatorSpecs[wasteCategory].weight).toFixed(1)));
-                              setEstimatedWeight(calculated);
-                              setShowCalculator(false);
-                            }}
-                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md"
-                          >
-                            Apply Calculated Weight
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    {/* Add Extra Material Dropdown */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[10px] font-bold text-slate-400">Add Material:</span>
+                      {['Plastic', 'Paper', 'Metal', 'Glass', 'Organic', 'E-Waste'].map((catName) => (
+                        <button
+                          key={catName}
+                          type="button"
+                          onClick={() => handleAddItem(catName)}
+                          className="px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-[10px] font-black text-slate-700 dark:text-slate-300 hover:border-emerald-500 hover:text-emerald-500 transition-colors flex items-center space-x-1"
+                        >
+                          <FaPlus className="h-2 w-2 text-emerald-500" />
+                          <span>{catName}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex justify-between items-center text-xs font-black text-emerald-600 dark:text-emerald-400">
+                      <span>Total Estimated Weight: {totalCalculatedWeight} kg</span>
+                      <span>Est. Rewards: +{totalCalculatedPoints} EcoPoints</span>
+                    </div>
                   </div>
 
-                  {/* Date & Time Slot Card */}
-                  <div className="space-y-4 p-6 bg-slate-50/80 dark:bg-slate-850/60 rounded-3xl border border-slate-200/70 dark:border-slate-800 flex flex-col justify-between">
-                    
-                    {/* Date Input */}
+                  {/* Schedule Date & Time Slot Card */}
+                  <div className="space-y-4 p-6 bg-slate-50/80 dark:bg-slate-850/60 rounded-3xl border border-slate-200/70 dark:border-slate-800">
                     <div className="space-y-2">
                       <label className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center space-x-2">
                         <FaCalendarAlt className="text-emerald-500" />
-                        <span>Preferred Collection Date</span>
+                        <span>Pickup Date</span>
                       </label>
-                      <input
+                      <input 
                         type="date"
                         value={pickupDate}
                         onChange={(e) => setPickupDate(e.target.value)}
-                        required
                         min={new Date().toISOString().split('T')[0]}
                         className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
@@ -713,8 +692,8 @@ const SchedulePickup = () => {
                         ))}
                       </div>
                     </div>
-
                   </div>
+
                 </div>
 
                 {/* Location Address Selection */}

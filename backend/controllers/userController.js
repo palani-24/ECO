@@ -86,16 +86,40 @@ export const manageAddresses = async (req, res) => {
 
 // Schedule Waste Pickup
 export const schedulePickup = async (req, res) => {
-  const { wasteCategory, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress, notes, isRecurring, pickupType } = req.body;
+  const { wasteCategory, items, estimatedWeight, pickupDate, pickupTimeSlot, pickupAddress, notes, isRecurring, pickupType } = req.body;
 
   try {
-    if (!wasteCategory || !estimatedWeight || !pickupDate || !pickupTimeSlot || !pickupAddress) {
+    if ((!wasteCategory && (!items || items.length === 0)) || !pickupDate || !pickupTimeSlot || !pickupAddress) {
       return res.status(400).json({ success: false, message: 'All pickup details are required' });
+    }
+
+    // Process line items array if provided
+    let processedItems = [];
+    let weightNum = 0;
+    let categorySummary = wasteCategory || 'Plastic';
+
+    if (items && Array.isArray(items) && items.length > 0) {
+      processedItems = items.map(it => ({
+        category: it.category,
+        estimatedWeight: parseFloat(it.estimatedWeight || it.weight || 1.0),
+        ratePerKg: it.ratePerKg || 35,
+        pointsEarned: Math.round(parseFloat(it.estimatedWeight || it.weight || 1.0) * (it.ratePerKg || 35))
+      }));
+
+      weightNum = processedItems.reduce((acc, curr) => acc + curr.estimatedWeight, 0);
+      categorySummary = processedItems.map(it => `${it.category} (${it.estimatedWeight}kg)`).join(', ');
+    } else {
+      weightNum = parseFloat(estimatedWeight || 5);
+      processedItems = [{
+        category: wasteCategory || 'Plastic',
+        estimatedWeight: weightNum,
+        ratePerKg: 35,
+        pointsEarned: Math.round(weightNum * 35)
+      }];
     }
 
     // Weight Limit Validation (Max 100kg household, 500kg bulk)
     const maxLimit = pickupType === 'bulk' ? 500 : 100;
-    const weightNum = parseFloat(estimatedWeight);
     if (isNaN(weightNum) || weightNum <= 0 || weightNum > maxLimit) {
       return res.status(400).json({ 
         success: false, 
@@ -131,10 +155,11 @@ export const schedulePickup = async (req, res) => {
 
     const qrToken = `ECO-QR-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
 
-    // Create Pickup Request
+    // Create Pickup Request with Multi-Material Items Array
     const pickup = await PickupRequest.create({
       user: req.user._id,
-      wasteCategory,
+      wasteCategory: categorySummary,
+      items: processedItems,
       estimatedWeight: weightNum,
       pickupDate,
       pickupTimeSlot,

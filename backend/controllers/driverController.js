@@ -176,7 +176,7 @@ export const updateCoordinates = async (req, res) => {
 
 // Complete Pickup Workflow
 export const completePickup = async (req, res) => {
-  const { actualWeight, wasteImageUrl } = req.body;
+  const { actualWeight, wasteImageUrl, items: verifiedItems } = req.body;
   const pickupId = req.params.id;
 
   try {
@@ -190,14 +190,33 @@ export const completePickup = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Pickup must be accepted before completion' });
     }
 
-    const finalWeight = parseFloat(actualWeight) || pickup.estimatedWeight || 1.0;
     const finalImage = wasteImageUrl || '/uploads/default_waste.jpg';
+    let totalVerifiedWeight = 0;
+    let driverVerifiedPoints = 0;
 
-    // Calculate EcoPoints strictly based on Driver's Verified Actual Scale Weight (35 pts/kg)
-    const driverVerifiedPoints = Math.max(25, Math.round(finalWeight * 35));
+    // Process itemized verification if provided
+    if (verifiedItems && Array.isArray(verifiedItems) && verifiedItems.length > 0) {
+      pickup.items = verifiedItems.map(vit => {
+        const itemActual = parseFloat(vit.actualWeight || vit.estimatedWeight || 1.0);
+        const rate = vit.ratePerKg || 35;
+        const itemPoints = Math.round(itemActual * rate);
+        totalVerifiedWeight += itemActual;
+        driverVerifiedPoints += itemPoints;
+        return {
+          category: vit.category,
+          estimatedWeight: vit.estimatedWeight || itemActual,
+          actualWeight: itemActual,
+          pointsEarned: itemPoints,
+          ratePerKg: rate
+        };
+      });
+    } else {
+      totalVerifiedWeight = parseFloat(actualWeight) || pickup.estimatedWeight || 1.0;
+      driverVerifiedPoints = Math.max(25, Math.round(totalVerifiedWeight * 35));
+    }
 
     // 1. Execute AI Waste verification module
-    const aiReport = await analyzeWasteImage(finalImage, pickup.wasteCategory, finalWeight);
+    const aiReport = await analyzeWasteImage(finalImage, pickup.wasteCategory, totalVerifiedWeight);
 
     // 2. Award/Adjust Points to User Wallet in MongoDB based on Driver Verified Weight
     const user = await User.findById(pickup.user);
@@ -213,7 +232,7 @@ export const completePickup = async (req, res) => {
         user: user._id,
         pointsChange: driverVerifiedPoints,
         type: 'earn',
-        description: `Earned ${driverVerifiedPoints} EcoPoints for driver-verified ${finalWeight}kg of ${pickup.wasteCategory}`
+        description: `Earned ${driverVerifiedPoints} EcoPoints for driver-verified ${totalVerifiedWeight}kg recycling collection`
       });
 
       emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: driverVerifiedPoints });
@@ -229,7 +248,7 @@ export const completePickup = async (req, res) => {
           user: user._id,
           pointsChange: diffPoints,
           type: 'earn',
-          description: `Doorstep scale re-check adjustment for ${finalWeight}kg of ${pickup.wasteCategory}`
+          description: `Doorstep scale re-check adjustment for ${totalVerifiedWeight}kg collection`
         });
 
         emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: diffPoints });

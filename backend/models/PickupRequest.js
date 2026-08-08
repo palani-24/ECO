@@ -5,9 +5,17 @@ const pickupRequestSchema = new mongoose.Schema({
   driver: { type: mongoose.Schema.Types.ObjectId, ref: 'Driver' },
   wasteCategory: { 
     type: String, 
-    enum: ['Plastic', 'Paper', 'Metal', 'Glass', 'Organic', 'E-Waste'],
     required: true 
   },
+  items: [
+    {
+      category: { type: String, required: true },
+      estimatedWeight: { type: Number, required: true },
+      actualWeight: { type: Number },
+      pointsEarned: { type: Number, default: 0 },
+      ratePerKg: { type: Number, default: 35 }
+    }
+  ],
   estimatedWeight: { type: Number, required: true },
   actualWeight: { type: Number },
   pickupDate: { type: Date, required: true },

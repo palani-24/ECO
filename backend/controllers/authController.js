@@ -362,8 +362,8 @@ export const uploadAvatarImage = async (req, res) => {
  */
 export const getPublicLeaderboard = async (req, res) => {
   try {
-    const topUsers = await User.find({ role: 'user' })
-      .select('name points profileImage')
+    const topUsers = await User.find({})
+      .select('name points profileImage role')
       .sort({ points: -1 })
       .limit(10)
       .lean();
@@ -396,5 +396,6 @@ export const getPublicLeaderboard = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 

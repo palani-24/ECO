@@ -10,7 +10,7 @@ import {
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
-  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal
+  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal, FaUserPlus
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -457,7 +457,7 @@ const LandingPage = () => {
     }
   ];
 
-  // REAL MONGODB DATABASE LEADERBOARD STATE
+  // 100% STRICT REAL MONGODB DATABASE LEADERBOARD STATE (ZERO FAKE DATA)
   const { realtimeData } = useSocket() || {};
   const [liveLeaderboard, setLiveLeaderboard] = useState([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
@@ -467,25 +467,13 @@ const LandingPage = () => {
     try {
       setLeaderboardLoading(true);
       const res = await api.get('/auth/leaderboard');
-      if (res.data.success && res.data.data.length > 0) {
+      if (res.data.success && Array.isArray(res.data.data)) {
         setLiveLeaderboard(res.data.data);
       } else {
-        setLiveLeaderboard([
-          { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
-          { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
-          { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' },
-          { rank: 4, name: 'Arjun Sharma', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', points: 1420, recycledKg: 213.0, badge: '🌿 Eco Leader', tier: 'Green Warrior' },
-          { rank: 5, name: 'Karthik Raja', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', points: 1150, recycledKg: 172.5, badge: '🌱 Green Scout', tier: 'Eco Scout' }
-        ]);
+        setLiveLeaderboard([]);
       }
     } catch (err) {
-      setLiveLeaderboard([
-        { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
-        { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
-        { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' },
-        { rank: 4, name: 'Arjun Sharma', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', points: 1420, recycledKg: 213.0, badge: '🌿 Eco Leader', tier: 'Green Warrior' },
-        { rank: 5, name: 'Karthik Raja', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', points: 1150, recycledKg: 172.5, badge: '🌱 Green Scout', tier: 'Eco Scout' }
-      ]);
+      setLiveLeaderboard([]);
     } finally {
       setLeaderboardLoading(false);
     }
@@ -502,14 +490,10 @@ const LandingPage = () => {
   }, [realtimeData?.latestPickup, realtimeData?.lastPointsAwarded]);
 
   const filteredLeaderboard = liveLeaderboard.filter(user => 
-    user.name.toLowerCase().includes(leaderboardSearch.toLowerCase())
+    user.name?.toLowerCase().includes(leaderboardSearch.toLowerCase())
   );
 
-  const displayLeaderboard = liveLeaderboard.length >= 3 ? liveLeaderboard.slice(0, 3) : [
-    { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
-    { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
-    { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' }
-  ];
+  const displayPodiumUsers = liveLeaderboard.slice(0, 3);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#06121e] text-slate-100 transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white">
@@ -1198,7 +1182,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4-STEP PROCESS & REAL MONGODB LEADERBOARD HUB (UNIFIED CYBER SLATE #081728) */}
+      {/* 4-STEP PROCESS & 100% REAL MONGODB LEADERBOARD HUB (UNIFIED CYBER SLATE #081728) */}
       <section className="py-20 bg-[#081728] text-slate-100 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
@@ -1244,137 +1228,168 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* REAL MONGODB DATABASE LEADERBOARD HUB */}
+          {/* 100% REAL MONGODB DATABASE LEADERBOARD HUB (ZERO FAKE DATA) */}
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
               <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>Real MongoDB Live Database</span>
+                <span>Real MongoDB Database Sync</span>
               </div>
               <h2 className="text-3xl sm:text-5xl font-black text-white">Real Citizen Leaderboard</h2>
               <p className="text-slate-400 text-sm font-medium">
-                Live ranking stream updated directly from our citizen MongoDB recycling database.
+                Live citizen rankings fetched directly from your MongoDB database with zero fake mock entries.
               </p>
             </div>
 
-            {/* Top 3 Champions Podium */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-              {/* Rank 2 */}
-              <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
-                <img 
-                  src={getAvatarUrl(displayLeaderboard[1]?.avatar || displayLeaderboard[1]?.profileImage, displayLeaderboard[1]?.name)} 
-                  onError={(e) => handleAvatarError(e, displayLeaderboard[1]?.name)}
-                  alt="Rank 2" 
-                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
-                />
-                <div>
-                  <span className="text-xs font-mono font-bold text-slate-400">#2 SILVER RECYCLER</span>
-                  <h4 className="font-black text-white text-base">{displayLeaderboard[1]?.name}</h4>
-                </div>
-                <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                  <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[1]?.points} EcoPoints</span>
-                  <span className="text-[10px] font-mono text-slate-400 block">{displayLeaderboard[1]?.recycledKg || (displayLeaderboard[1]?.points * 0.15).toFixed(1)} kg Recycled</span>
-                </div>
-              </div>
-
-              {/* Rank 1 (Center Elevated) */}
-              <div className="p-8 rounded-3xl bg-[#091b2e] border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
-                  <FaCrown /> GOLD #1 CHAMPION
-                </span>
-                <img 
-                  src={getAvatarUrl(displayLeaderboard[0]?.avatar || displayLeaderboard[0]?.profileImage, displayLeaderboard[0]?.name)} 
-                  onError={(e) => handleAvatarError(e, displayLeaderboard[0]?.name)}
-                  alt="Rank 1" 
-                  className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
-                />
-                <div>
-                  <h4 className="font-black text-white text-xl">{displayLeaderboard[0]?.name}</h4>
-                  <span className="text-xs font-bold text-amber-400 block">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
-                </div>
-                <div className="p-4 bg-[#06121e] rounded-2xl border border-amber-500/30">
-                  <span className="text-2xl font-black text-amber-400 block">{displayLeaderboard[0]?.points} EcoPoints</span>
-                  <span className="text-xs font-mono font-bold text-slate-400 block pt-0.5">{displayLeaderboard[0]?.recycledKg || (displayLeaderboard[0]?.points * 0.15).toFixed(1)} kg Recycled</span>
-                </div>
-              </div>
-
-              {/* Rank 3 */}
-              <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
-                <img 
-                  src={getAvatarUrl(displayLeaderboard[2]?.avatar || displayLeaderboard[2]?.profileImage, displayLeaderboard[2]?.name)} 
-                  onError={(e) => handleAvatarError(e, displayLeaderboard[2]?.name)}
-                  alt="Rank 3" 
-                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
-                />
-                <div>
-                  <span className="text-xs font-mono font-bold text-slate-400">#3 BRONZE RECYCLER</span>
-                  <h4 className="font-black text-white text-base">{displayLeaderboard[2]?.name}</h4>
-                </div>
-                <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                  <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[2]?.points} EcoPoints</span>
-                  <span className="text-[10px] font-mono text-slate-400 block">{displayLeaderboard[2]?.recycledKg || (displayLeaderboard[2]?.points * 0.15).toFixed(1)} kg Recycled</span>
-                </div>
-              </div>
-            </div>
-
-            {/* REAL MONGODB TOP 10 RANKINGS TABLE */}
-            <div className="max-w-4xl mx-auto bg-[#091b2e] rounded-3xl border border-slate-800 shadow-xl overflow-hidden">
-              <div className="p-5 bg-[#06121e] border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center space-x-2">
-                  <FaMedal className="text-amber-400 h-5 w-5" />
-                  <h3 className="font-black text-white text-base">Top 10 Live Database Rankings</h3>
-                </div>
-
-                <div className="relative w-full sm:w-64">
-                  <FaSearch className="absolute left-3.5 top-3 text-slate-400 text-xs" />
-                  <input 
-                    type="text" 
-                    placeholder="Search recycler name..."
-                    value={leaderboardSearch}
-                    onChange={(e) => setLeaderboardSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#091b2e] border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-
-              <div className="divide-y divide-slate-800/60 overflow-x-auto">
-                {filteredLeaderboard.length > 0 ? (
-                  filteredLeaderboard.map((user, idx) => (
-                    <div 
-                      key={user._id || idx}
-                      className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#0c1f35] transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <span className={`w-7 text-center font-mono font-black text-sm ${
-                          user.rank === 1 ? 'text-amber-400 text-base' : user.rank === 2 ? 'text-slate-300' : user.rank === 3 ? 'text-amber-600' : 'text-slate-400'
-                        }`}>
-                          #{user.rank}
-                        </span>
-                        
+            {liveLeaderboard.length > 0 ? (
+              <>
+                {/* Top 3 Real Champions Podium */}
+                {displayPodiumUsers.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                    {/* Rank 2 Real User */}
+                    {displayPodiumUsers[1] && (
+                      <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
                         <img 
-                          src={getAvatarUrl(user.avatar || user.profileImage, user.name)}
-                          onError={(e) => handleAvatarError(e, user.name)}
-                          alt={user.name}
-                          className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/30"
+                          src={getAvatarUrl(displayPodiumUsers[1].avatar || displayPodiumUsers[1].profileImage, displayPodiumUsers[1].name)} 
+                          onError={(e) => handleAvatarError(e, displayPodiumUsers[1].name)}
+                          alt="Rank 2" 
+                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
                         />
-
                         <div>
-                          <h4 className="font-black text-white text-sm">{user.name}</h4>
-                          <span className="text-[10px] font-mono font-bold text-emerald-400">{user.badge || user.tier || '🌱 Green Scout'}</span>
+                          <span className="text-xs font-mono font-bold text-slate-400">#2 SILVER RECYCLER</span>
+                          <h4 className="font-black text-white text-base">{displayPodiumUsers[1].name}</h4>
+                        </div>
+                        <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
+                          <span className="text-lg font-black text-emerald-400 block">{displayPodiumUsers[1].points} EcoPoints</span>
+                          <span className="text-[10px] font-mono text-slate-400 block">{displayPodiumUsers[1].recycledKg || (displayPodiumUsers[1].points * 0.15).toFixed(1)} kg Recycled</span>
                         </div>
                       </div>
+                    )}
 
-                      <div className="text-right">
-                        <span className="font-black text-white text-sm block">{user.points} EcoPoints</span>
-                        <span className="text-[10px] font-mono text-slate-400 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
+                    {/* Rank 1 Real User (Center Elevated) */}
+                    {displayPodiumUsers[0] && (
+                      <div className="p-8 rounded-3xl bg-[#091b2e] border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
+                        <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
+                          <FaCrown /> GOLD #1 CHAMPION
+                        </span>
+                        <img 
+                          src={getAvatarUrl(displayPodiumUsers[0].avatar || displayPodiumUsers[0].profileImage, displayPodiumUsers[0].name)} 
+                          onError={(e) => handleAvatarError(e, displayPodiumUsers[0].name)}
+                          alt="Rank 1" 
+                          className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
+                        />
+                        <div>
+                          <h4 className="font-black text-white text-xl">{displayPodiumUsers[0].name}</h4>
+                          <span className="text-xs font-bold text-amber-400 block">{displayPodiumUsers[0].badge || '🏆 Gold Recycler'}</span>
+                        </div>
+                        <div className="p-4 bg-[#06121e] rounded-2xl border border-amber-500/30">
+                          <span className="text-2xl font-black text-amber-400 block">{displayPodiumUsers[0].points} EcoPoints</span>
+                          <span className="text-xs font-mono font-bold text-slate-400 block pt-0.5">{displayPodiumUsers[0].recycledKg || (displayPodiumUsers[0].points * 0.15).toFixed(1)} kg Recycled</span>
+                        </div>
                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="p-6 text-center text-xs text-slate-400 font-bold">No matching recyclers found.</p>
+                    )}
+
+                    {/* Rank 3 Real User */}
+                    {displayPodiumUsers[2] && (
+                      <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
+                        <img 
+                          src={getAvatarUrl(displayPodiumUsers[2].avatar || displayPodiumUsers[2].profileImage, displayPodiumUsers[2].name)} 
+                          onError={(e) => handleAvatarError(e, displayPodiumUsers[2].name)}
+                          alt="Rank 3" 
+                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
+                        />
+                        <div>
+                          <span className="text-xs font-mono font-bold text-slate-400">#3 BRONZE RECYCLER</span>
+                          <h4 className="font-black text-white text-base">{displayPodiumUsers[2].name}</h4>
+                        </div>
+                        <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
+                          <span className="text-lg font-black text-emerald-400 block">{displayPodiumUsers[2].points} EcoPoints</span>
+                          <span className="text-[10px] font-mono text-slate-400 block">{displayPodiumUsers[2].recycledKg || (displayPodiumUsers[2].points * 0.15).toFixed(1)} kg Recycled</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
+
+                {/* REAL MONGODB TOP 10 RANKINGS TABLE */}
+                <div className="max-w-4xl mx-auto bg-[#091b2e] rounded-3xl border border-slate-800 shadow-xl overflow-hidden">
+                  <div className="p-5 bg-[#06121e] border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center space-x-2">
+                      <FaMedal className="text-amber-400 h-5 w-5" />
+                      <h3 className="font-black text-white text-base">Real Registered Citizens ({liveLeaderboard.length})</h3>
+                    </div>
+
+                    <div className="relative w-full sm:w-64">
+                      <FaSearch className="absolute left-3.5 top-3 text-slate-400 text-xs" />
+                      <input 
+                        type="text" 
+                        placeholder="Search recycler name..."
+                        value={leaderboardSearch}
+                        onChange={(e) => setLeaderboardSearch(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#091b2e] border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="divide-y divide-slate-800/60 overflow-x-auto">
+                    {filteredLeaderboard.length > 0 ? (
+                      filteredLeaderboard.map((user, idx) => (
+                        <div 
+                          key={user._id || idx}
+                          className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#0c1f35] transition-colors"
+                        >
+                          <div className="flex items-center space-x-4">
+                            <span className={`w-7 text-center font-mono font-black text-sm ${
+                              user.rank === 1 ? 'text-amber-400 text-base' : user.rank === 2 ? 'text-slate-300' : user.rank === 3 ? 'text-amber-600' : 'text-slate-400'
+                            }`}>
+                              #{user.rank}
+                            </span>
+                            
+                            <img 
+                              src={getAvatarUrl(user.avatar || user.profileImage, user.name)}
+                              onError={(e) => handleAvatarError(e, user.name)}
+                              alt={user.name}
+                              className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/30"
+                            />
+
+                            <div>
+                              <h4 className="font-black text-white text-sm">{user.name}</h4>
+                              <span className="text-[10px] font-mono font-bold text-emerald-400">{user.badge || user.tier || '🌱 Green Scout'}</span>
+                            </div>
+                          </div>
+
+                          <div className="text-right">
+                            <span className="font-black text-white text-sm block">{user.points} EcoPoints</span>
+                            <span className="text-[10px] font-mono text-slate-400 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="p-6 text-center text-xs text-slate-400 font-bold">No matching recyclers found in database.</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* CLEAN ZERO-FAKE EMPTY STATE CARD */
+              <div className="max-w-xl mx-auto p-8 rounded-3xl bg-[#091b2e] border border-emerald-500/30 text-center space-y-4 shadow-2xl">
+                <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl border border-emerald-500/30 animate-pulse">
+                  <FaCrown />
+                </div>
+                <h3 className="text-2xl font-black text-white">No Database Recyclers Registered Yet</h3>
+                <p className="text-slate-300 text-xs font-medium max-w-md mx-auto leading-relaxed">
+                  Be the first citizen in our MongoDB database to register, recycle household waste, and claim the #1 spot on the leaderboard!
+                </p>
+                <Link 
+                  to="/signup"
+                  onClick={() => playSciFiSound('click')}
+                  className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all"
+                >
+                  <FaUserPlus />
+                  <span>Register Free Account & Top Leaderboard</span>
+                </Link>
               </div>
-            </div>
+            )}
 
           </div>
 

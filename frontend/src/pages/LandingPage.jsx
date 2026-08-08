@@ -577,10 +577,10 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* SECTION 1: HERO (CYBER DARK SLATE) */}
+      {/* HERO SECTION (SEAMLESS UNIFIED CYBER SLATE #06121e) */}
       <section 
         onMouseMove={handleMouseMove}
-        className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-gradient-to-b from-[#06121e] via-[#081728] to-[#06121e] border-b border-slate-800/80"
+        className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-[#06121e] border-b border-slate-800/80"
       >
         {/* Particle Canvas Background */}
         {isDesktop && (
@@ -756,22 +756,22 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 2: IMPACT COUNTERS (DUAL-TONE LIGHT BACKGROUND #f8fafc) */}
-      <section className="py-10 bg-[#f8fafc] text-slate-900 border-y border-slate-200/80 shadow-inner">
+      {/* IMPACT COUNTERS BAR (UNIFIED CYBER SLATE #081728) */}
+      <section className="py-10 bg-[#081728] text-slate-100 border-b border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {impactStats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-md flex items-center space-x-3.5 hover:border-emerald-500/50 transition-all">
-                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
+                <div key={i} className="p-5 rounded-2xl bg-[#091b2e] border border-slate-800 shadow-lg flex items-center space-x-3.5 hover:border-emerald-500/50 transition-all">
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
                     <Icon />
                   </div>
                   <div>
-                    <span className="text-xl sm:text-2xl font-black text-slate-900 block tracking-tight">
+                    <span className="text-xl sm:text-2xl font-black text-white block tracking-tight">
                       {stat.value}
                     </span>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{stat.label}</p>
                   </div>
                 </div>
               );
@@ -780,8 +780,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 3: CINEMATIC HARDWARE & PRODUCT SHOWCASE (CYBER DARK SLATE) */}
-      <section className="py-20 bg-[#081728] border-b border-slate-800">
+      {/* CINEMATIC HARDWARE SHOWCASE (UNIFIED CYBER SLATE #091b2e) */}
+      <section className="py-20 bg-[#06121e] border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -882,35 +882,35 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 4: BEFORE & AFTER & CALCULATOR (DUAL-TONE LIGHT BACKGROUND #ffffff) */}
-      <section className="py-20 bg-[#ffffff] text-slate-900 border-b border-slate-200/80">
+      {/* BEFORE & AFTER & CALCULATOR (UNIFIED CYBER SLATE #081728) */}
+      <section className="py-20 bg-[#081728] text-slate-100 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
           {/* Before & After Visualizer */}
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/20">
+              <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
                 Circular Impact Visualizer
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Before & After Eco Transformation</h2>
-              <p className="text-slate-600 text-sm font-medium">
+              <h2 className="text-3xl sm:text-5xl font-black text-white">Before & After Eco Transformation</h2>
+              <p className="text-slate-300 text-sm font-medium">
                 Drag the slider to visualize unsorted household waste transformed into pure recycled circular materials.
               </p>
             </div>
 
-            <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-slate-300 shadow-2xl select-none">
+            <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-emerald-500/40 shadow-2xl select-none bg-[#091b2e]">
               <img 
                 src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
                 alt="Clean Ecosystem After Recycling"
                 onError={() => handleImageError('after_img')}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
+              <div className="absolute top-4 right-4 bg-[#06121e]/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
                 AFTER: Clean Recycled Circular Materials
               </div>
 
               <div 
-                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-500 z-10 shadow-2xl"
+                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-400 z-10 shadow-2xl"
                 style={{ width: `${beforeAfterPos}%` }}
               >
                 <img 
@@ -920,7 +920,7 @@ const LandingPage = () => {
                   className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
                   style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
                 />
-                <div className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
+                <div className="absolute top-4 left-4 bg-[#06121e]/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
                   BEFORE: Raw Unsorted Waste
                 </div>
               </div>
@@ -943,9 +943,9 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Calculator */}
-          <div id="calculator" className="bg-slate-900 rounded-3xl p-6 sm:p-12 text-white border border-emerald-500/30 shadow-2xl space-y-10">
+          <div id="calculator" className="bg-[#091b2e] rounded-3xl p-6 sm:p-12 text-white border border-emerald-500/40 shadow-2xl space-y-10">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#06121e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
                 <FaCalculator className="h-3.5 w-3.5" />
                 <span>Interactive Eco Earnings & Impact Gauge</span>
               </div>
@@ -958,7 +958,7 @@ const LandingPage = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-6 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800">
+              <div className="lg:col-span-7 space-y-6 bg-[#06121e] p-6 sm:p-8 rounded-3xl border border-slate-800">
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold">
                     <span className="flex items-center space-x-2 text-emerald-400">
@@ -1032,7 +1032,7 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-slate-950 border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
+              <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#06121e] border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
                 <div className="relative w-40 h-40 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" className="text-slate-800 fill-none" />
@@ -1045,17 +1045,17 @@ const LandingPage = () => {
                 </div>
 
                 <div className="w-full space-y-3 text-center">
-                  <div className="p-3.5 rounded-2xl bg-slate-900 border border-emerald-500/30">
+                  <div className="p-3.5 rounded-2xl bg-[#091b2e] border border-emerald-500/30">
                     <span className="text-[10px] uppercase font-mono font-bold text-emerald-400 block">Est. Monthly Yield</span>
                     <span className="text-2xl font-black text-white">{totalPoints} EcoPoints</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2.5">
-                    <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                    <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
                       <span className="text-[9px] uppercase font-bold text-slate-400 block">Cash Cashback</span>
                       <span className="text-base font-black text-amber-400">₹{estimatedVoucherRs}</span>
                     </div>
-                    <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                    <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
                       <span className="text-[9px] uppercase font-bold text-slate-400 block">CO₂ Saved</span>
                       <span className="text-base font-black text-emerald-400">{co2SavedKg} kg</span>
                     </div>
@@ -1077,7 +1077,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 5: SMART INFRASTRUCTURE FEATURES (CYBER DARK SLATE) */}
+      {/* SMART INFRASTRUCTURE FEATURES (UNIFIED CYBER SLATE #06121e) */}
       <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
           <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
@@ -1110,7 +1110,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 6: CINEMATIC VIDEO SHOWCASE (DEEP CYBER SLATE #040c14) */}
+      {/* CINEMATIC VIDEO SHOWCASE (DEEP CYBER SLATE #040c14) */}
       <section id="video-tour" className="py-20 relative overflow-hidden bg-[#040c14] border-y border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
           <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -1198,26 +1198,26 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 7: 4-STEP PROCESS & REAL MONGODB LEADERBOARD HUB (DUAL-TONE LIGHT BACKGROUND #f8fafc) */}
-      <section className="py-20 bg-[#f8fafc] text-slate-900 border-b border-slate-200/80">
+      {/* 4-STEP PROCESS & REAL MONGODB LEADERBOARD HUB (UNIFIED CYBER SLATE #081728) */}
+      <section className="py-20 bg-[#081728] text-slate-100 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
           {/* 4-Step Process */}
           <div id="how-it-works" className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/20">
+              <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
                 User Journey
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Simple 4-Step Process</h2>
-              <p className="text-slate-600 text-sm font-medium">
+              <h2 className="text-3xl sm:text-5xl font-black text-white">Simple 4-Step Process</h2>
+              <p className="text-slate-400 text-sm font-medium">
                 From waste sorting to instant bank cashback in under 3 minutes.
               </p>
             </div>
 
             <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
               {isDesktop && (
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 z-0">
-                  <div className="w-16 h-1 bg-emerald-500 shadow-[0_0_15px_#10b981] rounded-full animate-beamMove"></div>
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0">
+                  <div className="w-16 h-1 bg-emerald-400 shadow-[0_0_15px_#34d399] rounded-full animate-beamMove"></div>
                 </div>
               )}
 
@@ -1229,15 +1229,15 @@ const LandingPage = () => {
               ].map((step, idx) => {
                 const Icon = step.icon;
                 return (
-                  <div key={idx} className="relative z-10 p-7 bg-white rounded-3xl border border-slate-200/80 text-center space-y-4 shadow-lg hover:border-emerald-500/50 transition-all gpu-layer">
-                    <div className="h-11 w-11 mx-auto rounded-full bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow-md">
+                  <div key={idx} className="relative z-10 p-7 bg-[#091b2e] rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl hover:border-emerald-500/50 transition-all gpu-layer">
+                    <div className="h-11 w-11 mx-auto rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-md">
                       {step.num}
                     </div>
-                    <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl border border-emerald-500/20">
+                    <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/20">
                       <Icon />
                     </div>
-                    <h4 className="font-black text-slate-900 text-base">{step.title}</h4>
-                    <p className="text-xs text-slate-500 font-medium leading-relaxed">{step.desc}</p>
+                    <h4 className="font-black text-white text-base">{step.title}</h4>
+                    <p className="text-xs text-slate-400 font-medium leading-relaxed">{step.desc}</p>
                   </div>
                 );
               })}
@@ -1247,12 +1247,12 @@ const LandingPage = () => {
           {/* REAL MONGODB DATABASE LEADERBOARD HUB */}
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
                 <span>Real MongoDB Live Database</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Real Citizen Leaderboard</h2>
-              <p className="text-slate-600 text-sm font-medium">
+              <h2 className="text-3xl sm:text-5xl font-black text-white">Real Citizen Leaderboard</h2>
+              <p className="text-slate-400 text-sm font-medium">
                 Live ranking stream updated directly from our citizen MongoDB recycling database.
               </p>
             </div>
@@ -1260,25 +1260,25 @@ const LandingPage = () => {
             {/* Top 3 Champions Podium */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
               {/* Rank 2 */}
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 text-center space-y-4 order-2 md:order-1 shadow-lg">
+              <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
                 <img 
                   src={getAvatarUrl(displayLeaderboard[1]?.avatar || displayLeaderboard[1]?.profileImage, displayLeaderboard[1]?.name)} 
                   onError={(e) => handleAvatarError(e, displayLeaderboard[1]?.name)}
                   alt="Rank 2" 
-                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-300" 
+                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
                 />
                 <div>
                   <span className="text-xs font-mono font-bold text-slate-400">#2 SILVER RECYCLER</span>
-                  <h4 className="font-black text-slate-900 text-base">{displayLeaderboard[1]?.name}</h4>
+                  <h4 className="font-black text-white text-base">{displayLeaderboard[1]?.name}</h4>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
-                  <span className="text-lg font-black text-emerald-600 block">{displayLeaderboard[1]?.points} EcoPoints</span>
-                  <span className="text-[10px] font-mono text-slate-500 block">{displayLeaderboard[1]?.recycledKg || (displayLeaderboard[1]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
+                  <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[1]?.points} EcoPoints</span>
+                  <span className="text-[10px] font-mono text-slate-400 block">{displayLeaderboard[1]?.recycledKg || (displayLeaderboard[1]?.points * 0.15).toFixed(1)} kg Recycled</span>
                 </div>
               </div>
 
               {/* Rank 1 (Center Elevated) */}
-              <div className="p-8 rounded-3xl bg-white border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
+              <div className="p-8 rounded-3xl bg-[#091b2e] border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
                 <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
                   <FaCrown /> GOLD #1 CHAMPION
                 </span>
@@ -1289,40 +1289,40 @@ const LandingPage = () => {
                   className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
                 />
                 <div>
-                  <h4 className="font-black text-slate-900 text-xl">{displayLeaderboard[0]?.name}</h4>
-                  <span className="text-xs font-bold text-amber-600 block">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
+                  <h4 className="font-black text-white text-xl">{displayLeaderboard[0]?.name}</h4>
+                  <span className="text-xs font-bold text-amber-400 block">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
                 </div>
-                <div className="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/30">
-                  <span className="text-2xl font-black text-amber-600 block">{displayLeaderboard[0]?.points} EcoPoints</span>
-                  <span className="text-xs font-mono font-bold text-slate-600 block pt-0.5">{displayLeaderboard[0]?.recycledKg || (displayLeaderboard[0]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                <div className="p-4 bg-[#06121e] rounded-2xl border border-amber-500/30">
+                  <span className="text-2xl font-black text-amber-400 block">{displayLeaderboard[0]?.points} EcoPoints</span>
+                  <span className="text-xs font-mono font-bold text-slate-400 block pt-0.5">{displayLeaderboard[0]?.recycledKg || (displayLeaderboard[0]?.points * 0.15).toFixed(1)} kg Recycled</span>
                 </div>
               </div>
 
               {/* Rank 3 */}
-              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 text-center space-y-4 order-3 md:order-3 shadow-lg">
+              <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
                 <img 
                   src={getAvatarUrl(displayLeaderboard[2]?.avatar || displayLeaderboard[2]?.profileImage, displayLeaderboard[2]?.name)} 
                   onError={(e) => handleAvatarError(e, displayLeaderboard[2]?.name)}
                   alt="Rank 3" 
-                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/30" 
+                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
                 />
                 <div>
                   <span className="text-xs font-mono font-bold text-slate-400">#3 BRONZE RECYCLER</span>
-                  <h4 className="font-black text-slate-900 text-base">{displayLeaderboard[2]?.name}</h4>
+                  <h4 className="font-black text-white text-base">{displayLeaderboard[2]?.name}</h4>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
-                  <span className="text-lg font-black text-emerald-600 block">{displayLeaderboard[2]?.points} EcoPoints</span>
-                  <span className="text-[10px] font-mono text-slate-500 block">{displayLeaderboard[2]?.recycledKg || (displayLeaderboard[2]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
+                  <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[2]?.points} EcoPoints</span>
+                  <span className="text-[10px] font-mono text-slate-400 block">{displayLeaderboard[2]?.recycledKg || (displayLeaderboard[2]?.points * 0.15).toFixed(1)} kg Recycled</span>
                 </div>
               </div>
             </div>
 
             {/* REAL MONGODB TOP 10 RANKINGS TABLE */}
-            <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden">
-              <div className="p-5 bg-slate-100/80 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="max-w-4xl mx-auto bg-[#091b2e] rounded-3xl border border-slate-800 shadow-xl overflow-hidden">
+              <div className="p-5 bg-[#06121e] border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center space-x-2">
-                  <FaMedal className="text-amber-500 h-5 w-5" />
-                  <h3 className="font-black text-slate-900 text-base">Top 10 Live Database Rankings</h3>
+                  <FaMedal className="text-amber-400 h-5 w-5" />
+                  <h3 className="font-black text-white text-base">Top 10 Live Database Rankings</h3>
                 </div>
 
                 <div className="relative w-full sm:w-64">
@@ -1332,21 +1332,21 @@ const LandingPage = () => {
                     placeholder="Search recycler name..."
                     value={leaderboardSearch}
                     onChange={(e) => setLeaderboardSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#091b2e] border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>
 
-              <div className="divide-y divide-slate-100 overflow-x-auto">
+              <div className="divide-y divide-slate-800/60 overflow-x-auto">
                 {filteredLeaderboard.length > 0 ? (
                   filteredLeaderboard.map((user, idx) => (
                     <div 
                       key={user._id || idx}
-                      className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors"
+                      className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#0c1f35] transition-colors"
                     >
                       <div className="flex items-center space-x-4">
                         <span className={`w-7 text-center font-mono font-black text-sm ${
-                          user.rank === 1 ? 'text-amber-500 text-base' : user.rank === 2 ? 'text-slate-400' : user.rank === 3 ? 'text-amber-700' : 'text-slate-500'
+                          user.rank === 1 ? 'text-amber-400 text-base' : user.rank === 2 ? 'text-slate-300' : user.rank === 3 ? 'text-amber-600' : 'text-slate-400'
                         }`}>
                           #{user.rank}
                         </span>
@@ -1359,14 +1359,14 @@ const LandingPage = () => {
                         />
 
                         <div>
-                          <h4 className="font-black text-slate-900 text-sm">{user.name}</h4>
-                          <span className="text-[10px] font-mono font-bold text-emerald-600">{user.badge || user.tier || '🌱 Green Scout'}</span>
+                          <h4 className="font-black text-white text-sm">{user.name}</h4>
+                          <span className="text-[10px] font-mono font-bold text-emerald-400">{user.badge || user.tier || '🌱 Green Scout'}</span>
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <span className="font-black text-slate-900 text-sm block">{user.points} EcoPoints</span>
-                        <span className="text-[10px] font-mono text-slate-500 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
+                        <span className="font-black text-white text-sm block">{user.points} EcoPoints</span>
+                        <span className="text-[10px] font-mono text-slate-400 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
                       </div>
                     </div>
                   ))
@@ -1381,7 +1381,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SECTION 8: FAQ & CTA BANNER & FOOTER (CYBER DARK SLATE) */}
+      {/* FAQ & CTA BANNER & FOOTER (UNIFIED CYBER DARK SLATE #06121e) */}
       <section className="py-20 max-w-4xl mx-auto px-4 w-full">
         <div className="text-center space-y-4 mb-10">
           <h2 className="text-3xl sm:text-4xl font-black text-white">Frequently Asked Questions</h2>

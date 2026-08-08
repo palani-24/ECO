@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { 
   FaRecycle, FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash, 
   FaGoogle, FaApple, FaShieldAlt, FaUserPlus, FaSpinner, FaLeaf, 
-  FaTruck, FaMapMarkerAlt, FaGlobeAmericas, FaKey, FaChevronRight, FaVolumeUp, FaVolumeMute, FaPlay, FaPause
+  FaTruck, FaMapMarkerAlt, FaGlobeAmericas, FaKey, FaChevronRight, FaVolumeUp, FaVolumeMute, FaPlay, FaPause, FaMagic
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 
@@ -89,6 +89,35 @@ const Login = () => {
     } catch (err) {
       setLoading(false);
       setError('Connection failed. Please check network and try again.');
+    }
+  };
+
+  // INSTANT 1-CLICK DEMO AUTO-LOGIN HANDLER
+  const handleInstantDemoLogin = async (roleType) => {
+    setLoading(true);
+    setError('');
+
+    const demoEmail = roleType === 'driver' ? 'demo.driver@ecoreward.com' : 'demo.user@ecoreward.com';
+    const demoPass = '123456';
+
+    setEmailOrPhone(demoEmail);
+    setPassword(demoPass);
+
+    try {
+      const res = await login(demoEmail, demoPass);
+      setLoading(false);
+
+      if (res.success) {
+        addToast(`⚡ Instant Demo ${roleType === 'driver' ? 'Driver' : 'User'} Login Successful!`, 'success', 'Welcome to EcoReward');
+        if (res.user.role === 'admin') navigate('/admin');
+        else if (res.user.role === 'driver') navigate('/driver');
+        else navigate('/dashboard');
+      } else {
+        setError(res.message || 'Demo login failed');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError('Demo login connection error. Please try again.');
     }
   };
 
@@ -189,13 +218,37 @@ const Login = () => {
           <div className="lg:col-span-6 flex justify-center">
             <div className="w-full max-w-[460px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-6 sm:p-9 rounded-3xl shadow-2xl space-y-6">
               
-              {/* Header */}
+              {/* Header with Official Logo */}
               <div className="text-center space-y-2">
-                <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 mb-1">
-                  <FaSignInAlt className="h-7 w-7" />
-                </div>
+                <img src="/app-logo.png" alt="EcoReward Emblem Logo" className="h-12 sm:h-14 w-auto mx-auto object-contain mb-1 drop-shadow-md" />
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Welcome Back</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Log in to manage your eco pickups and reward balance.</p>
+              </div>
+
+              {/* 1-Click Instant Demo Login Bar */}
+              <div className="p-2.5 bg-emerald-500/10 dark:bg-[#06121e] rounded-2xl border border-emerald-500/30 text-xs flex items-center justify-between gap-2 shadow-sm">
+                <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 pl-1">
+                  <FaMagic className="text-emerald-500" />
+                  <span>Instant 1-Click Demo:</span>
+                </span>
+                <div className="flex gap-2">
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('user')}
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[11px] shadow-md hover:scale-105 transition-all flex items-center space-x-1"
+                  >
+                    <span>Demo User</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('driver')}
+                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 font-black text-[11px] shadow-md hover:scale-105 transition-all flex items-center space-x-1"
+                  >
+                    <span>Demo Driver</span>
+                  </button>
+                </div>
               </div>
 
               {/* Error Alert */}

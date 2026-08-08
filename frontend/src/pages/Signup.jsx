@@ -178,106 +178,104 @@ const Signup = () => {
       </div>
 
       {/* Live Eco Network Ticker Bar */}
-      <div className="relative z-10 bg-emerald-500/10 border-b border-emerald-500/20 py-1.5 px-4 text-center">
-        <span className="text-xs font-mono font-bold text-emerald-400 tracking-wider">
+      <div className="relative z-10 bg-emerald-500/10 border-b border-emerald-500/20 py-1 px-4 text-center">
+        <span className="text-[11px] font-mono font-bold text-emerald-400 tracking-wider">
           ⚡ LIVE ECO NETWORK: 25,840 Citizens • 15.3K Pickups • 8.2 Tons CO₂ Saved
         </span>
       </div>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8">
-        <div className="w-full max-w-[520px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-6 sm:p-9 rounded-3xl shadow-2xl space-y-6">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-4 py-6">
+        <div className="w-full max-w-[460px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-4 sm:p-7 rounded-3xl shadow-2xl space-y-4">
           
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 mb-1">
-              <FaRecycle className="h-7 w-7 animate-spin-slow" style={{ animationDuration: '12s' }} />
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Join EcoReward & play your part in circular green recycling.</p>
+          {/* Header with Official Logo */}
+          <div className="text-center space-y-1.5">
+            <img src="/app-logo.png" alt="EcoReward Emblem Logo" className="h-11 sm:h-13 w-auto mx-auto object-contain mb-1 drop-shadow-md" />
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h2>
+            <p className="text-[11px] text-slate-500 dark:text-slate-300 font-medium">Join EcoReward & play your part in circular green recycling.</p>
           </div>
 
           {/* Role Selection Cards */}
-          <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200/80 dark:border-slate-800">
+          <div className="grid grid-cols-2 gap-2.5 p-1 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200/80 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setRole('user')}
-              className={`py-3 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-2 ${
+              className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-1.5 ${
                 role === 'user'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <FaLeaf />
+              <FaLeaf className="h-3.5 w-3.5" />
               <span>Recycling User</span>
             </button>
 
             <button
               type="button"
               onClick={() => setRole('driver')}
-              className={`py-3 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-2 ${
+              className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-1.5 ${
                 role === 'driver'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <FaTruck />
+              <FaTruck className="h-3.5 w-3.5" />
               <span>Collection Driver</span>
             </button>
           </div>
 
           {/* Dynamic Role Perk Banner */}
-          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-2 animate-fadeIn">
+          <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-2 animate-fadeIn">
             {role === 'user' ? (
               <>
-                <FaGift className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                <span>🎁 User Perk: Earn 15–50 EcoPoints/kg • Instant UPI Cashback • 3-Click Booking</span>
+                <FaGift className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                <span>🎁 User Perk: Earn 15–50 EcoPoints/kg • Instant UPI Cashback</span>
               </>
             ) : (
               <>
-                <FaRoute className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                <span>🚚 Driver Perk: Real-time GPS Dispatch • Smart Weight Scale Sync • Daily Fleet Payouts</span>
+                <FaRoute className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                <span>🚚 Driver Perk: GPS Dispatch • Scale Sync • Daily Fleet Payouts</span>
               </>
             )}
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="p-3.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-500/20 rounded-2xl animate-fadeIn">
+            <div className="p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-500/20 rounded-2xl animate-fadeIn">
               {error}
             </div>
           )}
 
           {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             
             {/* Full Name & Phone */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Full Name</label>
+                <label className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Full Name</label>
                 <div className="relative">
-                  <FaUser className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                  <FaUser className="absolute left-3 top-3 text-slate-400 h-3 w-3" />
                   <input 
                     type="text" 
                     value={name} 
                     onChange={(e) => setName(e.target.value)} 
                     required 
                     placeholder="Arjun Sharma" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile Number</label>
+                <label className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile Number</label>
                 <div className="relative">
-                  <FaPhone className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                  <FaPhone className="absolute left-3 top-3 text-slate-400 h-3 w-3" />
                   <input 
                     type="text" 
                     value={phone} 
                     onChange={(e) => setPhone(e.target.value)} 
                     required 
                     placeholder="+91 98765 43210" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
@@ -285,51 +283,51 @@ const Signup = () => {
 
             {/* Email Address */}
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email Address</label>
+              <label className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email Address</label>
               <div className="relative">
-                <FaEnvelope className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                <FaEnvelope className="absolute left-3 top-3 text-slate-400 h-3 w-3" />
                 <input 
                   type="email" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
                   placeholder="name@example.com" 
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                  className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                 />
               </div>
             </div>
 
             {/* Passwords & Strength Meter */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Password</label>
+                <label className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Password</label>
                 <div className="relative">
-                  <FaLock className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                  <FaLock className="absolute left-3 top-3 text-slate-400 h-3 w-3" />
                   <input 
                     type={showPassword ? 'text' : 'password'} 
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} 
                     required 
                     placeholder="••••••••" 
-                    className="w-full pl-9 pr-8 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-8 pr-7 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-slate-400">
-                    {showPassword ? <FaEyeSlash className="h-3.5 w-3.5" /> : <FaEye className="h-3.5 w-3.5" />}
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-3 text-slate-400">
+                    {showPassword ? <FaEyeSlash className="h-3 w-3" /> : <FaEye className="h-3 w-3" />}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Confirm Password</label>
+                <label className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Confirm Password</label>
                 <div className="relative">
-                  <FaLock className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                  <FaLock className="absolute left-3 top-3 text-slate-400 h-3 w-3" />
                   <input 
                     type={showPassword ? 'text' : 'password'} 
                     value={confirmPassword} 
                     onChange={(e) => setConfirmPassword(e.target.value)} 
                     required 
                     placeholder="••••••••" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
@@ -338,7 +336,7 @@ const Signup = () => {
             {/* Password Strength Indicator */}
             {password && (
               <div className="space-y-1">
-                <div className="flex justify-between items-center text-[10px] font-black">
+                <div className="flex justify-between items-center text-[9px] font-black">
                   <span className="text-slate-400">Password Strength:</span>
                   <span className={strength.color.replace('bg-', 'text-')}>{strength.text}</span>
                 </div>
@@ -350,21 +348,21 @@ const Signup = () => {
 
             {/* DRIVER SPECIFIC FIELDS */}
             {role === 'driver' && (
-              <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-3 animate-fadeIn">
+              <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2.5 animate-fadeIn">
                 <span className="text-xs font-extrabold text-emerald-500 flex items-center space-x-1">
                   <FaTruck />
                   <span>Driver Vehicle Details</span>
                 </span>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                   <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle License Plate Number</label>
-                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Vehicle License Plate Number</label>
+                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle Category</label>
-                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold">
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Vehicle Category</label>
+                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold">
                       <option value="E-Rickshaw Heavy Loader">E-Rickshaw Heavy Loader</option>
                       <option value="Mini Pickup Truck">Mini Pickup Truck</option>
                       <option value="Electric Cargo Van">Electric Cargo Van</option>
@@ -373,14 +371,14 @@ const Signup = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                   <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Driving License No.</label>
-                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="DL-TN38-2024-XXXX" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Driving License No.</label>
+                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="DL-TN38-2024-XXXX" className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
                   </div>
                   <div>
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Aadhaar Card No.</label>
-                    <input type="text" value={aadhaarNumber} onChange={(e) => setAadhaarNumber(e.target.value)} placeholder="1234 5678 9012" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Aadhaar Card No.</label>
+                    <input type="text" value={aadhaarNumber} onChange={(e) => setAadhaarNumber(e.target.value)} placeholder="1234 5678 9012" className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
                   </div>
                 </div>
               </div>
@@ -393,9 +391,9 @@ const Signup = () => {
                 id="terms" 
                 checked={acceptTerms} 
                 onChange={(e) => setAcceptTerms(e.target.checked)} 
-                className="h-4 w-4 rounded accent-emerald-500 cursor-pointer" 
+                className="h-3.5 w-3.5 rounded accent-emerald-500 cursor-pointer" 
               />
-              <label htmlFor="terms" className="text-[11px] font-bold text-slate-600 dark:text-slate-300 cursor-pointer">
+              <label htmlFor="terms" className="text-[10px] font-bold text-slate-600 dark:text-slate-300 cursor-pointer">
                 I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-emerald-500 underline font-extrabold">Terms of Service & Privacy Policy</button>
               </label>
             </div>
@@ -404,16 +402,16 @@ const Signup = () => {
             <button 
               type="submit" 
               disabled={loading} 
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2"
+              className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
-                  <FaSpinner className="animate-spin h-4 w-4" />
+                  <FaSpinner className="animate-spin h-3.5 w-3.5" />
                   <span>Creating Account...</span>
                 </>
               ) : (
                 <>
-                  <FaCheckCircle className="h-4 w-4" />
+                  <FaCheckCircle className="h-3.5 w-3.5" />
                   <span>Complete Registration</span>
                 </>
               )}
@@ -422,17 +420,17 @@ const Signup = () => {
           </form>
 
           {/* Prominent High-Visibility Sign In Card */}
-          <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80">
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+          <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80">
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-md">
               <div className="text-center sm:text-left">
-                <span className="text-xs font-black text-slate-900 dark:text-white block">Already registered with EcoReward?</span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-300 font-bold block pt-0.5">Access your dashboard, wallet points & pickup bookings</span>
+                <span className="text-[11px] font-black text-slate-900 dark:text-white block">Already registered with EcoReward?</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-300 font-bold block pt-0.5">Access your dashboard, wallet points & pickup bookings</span>
               </div>
               <Link 
                 to="/login" 
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center space-x-2 hover:scale-105 transition-all whitespace-nowrap"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[11px] shadow-lg flex items-center justify-center space-x-1.5 hover:scale-105 transition-all whitespace-nowrap"
               >
-                <FaSignInAlt className="h-3.5 w-3.5" />
+                <FaSignInAlt className="h-3 w-3" />
                 <span>Sign In Instead →</span>
               </Link>
             </div>

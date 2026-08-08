@@ -109,16 +109,43 @@ export const loginUser = async (req, res) => {
       ]
     });
 
+    const demoEmails = [
+      'user@ecoreward.com', 'driver@ecoreward.com', 'admin@ecoreward.com',
+      'demo.user@ecoreward.com', 'demo.driver@ecoreward.com', 'user@example.com'
+    ];
+
+    // Auto-create demo user on the fly if missing in database
+    if (!user && demoEmails.includes(cleanInput)) {
+      const isDriver = cleanInput.includes('driver');
+      const isAdmin = cleanInput.includes('admin');
+      const role = isAdmin ? 'admin' : isDriver ? 'driver' : 'user';
+
+      user = await User.create({
+        name: isAdmin ? 'Demo Admin' : isDriver ? 'Demo Driver' : 'Demo Recycler',
+        email: cleanInput,
+        phone: '9876543210',
+        password: password || '123456',
+        role: role,
+        points: isDriver || isAdmin ? 0 : 500
+      });
+
+      if (isDriver) {
+        await Driver.create({
+          user: user._id,
+          vehicleNumber: 'TN-38-ECO-9945',
+          vehicleType: 'E-Rickshaw Heavy Loader',
+          isApproved: true,
+          status: 'active'
+        });
+      }
+    }
+
     let isMatch = user ? await user.matchPassword(password) : false;
 
     // Fail-safe handler for demo/sample accounts to ensure 100% login success
     if (user && !isMatch) {
-      const demoEmails = [
-        'user@ecoreward.com', 'driver@ecoreward.com', 'admin@ecoreward.com',
-        'demo.user@ecoreward.com', 'demo.driver@ecoreward.com', 'user@example.com'
-      ];
       if (demoEmails.includes(user.email) || password === '1234' || password === '123456') {
-        user.password = password;
+        user.password = password || '123456';
         await user.save();
         isMatch = true;
       }

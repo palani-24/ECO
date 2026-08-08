@@ -12,6 +12,9 @@ import Coupon from '../models/Coupon.js';
 import Transaction from '../models/Transaction.js';
 import Notification from '../models/Notification.js';
 import AdminSettings from '../models/AdminSettings.js';
+import EcoProduct from '../models/EcoProduct.js';
+import KioskBin from '../models/KioskBin.js';
+import Challenge from '../models/Challenge.js';
 
 dotenv.config();
 
@@ -31,6 +34,9 @@ const seedDatabase = async () => {
     await Transaction.deleteMany({});
     await Notification.deleteMany({});
     await AdminSettings.deleteMany({});
+    await EcoProduct.deleteMany({});
+    await KioskBin.deleteMany({});
+    await Challenge.deleteMany({});
 
     console.log('Creating Admin Settings...');
     await AdminSettings.create({
@@ -45,6 +51,121 @@ const seedDatabase = async () => {
       basePoints: 5,
       systemMaintenance: false
     });
+
+    console.log('Creating Eco Products Catalog...');
+    await EcoProduct.create([
+      {
+        name: 'Upcycled Ocean Plastic Tote Bag',
+        description: 'Durable, waterproof everyday tote crafted from 100% recycled marine plastic bottles.',
+        pointsPrice: 350,
+        category: 'Recycled Gear',
+        image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=500',
+        stock: 45,
+        impactTag: '25 Plastic Bottles Saved',
+        rating: 4.9,
+        isFeatured: true
+      },
+      {
+        name: 'Plantable Seed Paper Notebook',
+        description: 'Eco-friendly hardcover notebook embedded with wildflower seeds. Plant pages when finished!',
+        pointsPrice: 180,
+        category: 'Eco Stationery',
+        image: 'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=500',
+        stock: 80,
+        impactTag: 'Zero-Waste Plantable',
+        rating: 4.8,
+        isFeatured: true
+      },
+      {
+        name: 'Bamboo & Stainless Steel Thermos (500ml)',
+        description: 'Double-wall insulated flask wrapped in natural bamboo. Keeps drinks hot for 12 hours.',
+        pointsPrice: 450,
+        category: 'Upcycled Home',
+        image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500',
+        stock: 30,
+        impactTag: 'Replaces 500 Single-Use Bottles',
+        rating: 5.0,
+        isFeatured: true
+      },
+      {
+        name: 'Plant 5 Native Trees Package',
+        description: 'Directly fund planting 5 native saplings in urban Tamil Nadu forest reserves with geo-tracking.',
+        pointsPrice: 300,
+        category: 'Tree Planting',
+        image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500',
+        stock: 999,
+        impactTag: '5 Trees Planted & Tracked',
+        rating: 4.9,
+        isFeatured: true
+      }
+    ]);
+
+    console.log('Creating Smart Kiosk Locations...');
+    await KioskBin.create([
+      {
+        name: 'Anna Nagar Metro Station Kiosk',
+        address: '2nd Avenue, Near Anna Nagar Tower Metro Exit A',
+        locality: 'Anna Nagar',
+        lat: 13.085,
+        lng: 80.2101,
+        capacityPercentage: 42,
+        binType: 'Multi-Recycle',
+        status: 'Active',
+        operatingHours: '24/7 Smart Access'
+      },
+      {
+        name: 'Adyar Bus Depot Smart Recycling Hub',
+        address: 'LB Road, Opposite Adyar Depot',
+        locality: 'Adyar',
+        lat: 13.0012,
+        lng: 80.2565,
+        capacityPercentage: 78,
+        binType: 'E-Waste',
+        status: 'Active',
+        operatingHours: '06:00 AM - 10:00 PM'
+      },
+      {
+        name: 'T. Nagar Ranganathan St Bin',
+        address: 'Usman Road Corner, T. Nagar',
+        locality: 'T. Nagar',
+        lat: 13.0418,
+        lng: 80.2341,
+        capacityPercentage: 91,
+        binType: 'Plastic & Can',
+        status: 'Full',
+        operatingHours: '24/7 Smart Access'
+      }
+    ]);
+
+    console.log('Creating Community Challenges...');
+    await Challenge.create([
+      {
+        title: 'Chennai Summer Plastic Cleanup Drive',
+        description: 'Collect and deposit over 5,000 kg of PET & HDPE plastic before month end for bonus rewards!',
+        category: 'Plastic',
+        targetWeight: 5000,
+        currentWeight: 3420,
+        bonusPoints: 500,
+        icon: '♻️',
+        location: 'Chennai Central Zone',
+        startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+        status: 'active'
+      },
+      {
+        title: 'E-Waste Recycling Blitz',
+        description: 'Safely recycle old electronics, circuit boards, and batteries to win green champion badges.',
+        category: 'E-Waste',
+        targetWeight: 1000,
+        currentWeight: 680,
+        bonusPoints: 750,
+        icon: '⚡',
+        location: 'Tamil Nadu State-wide',
+        startDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        endDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        status: 'active'
+      }
+    ]);
 
     console.log('Creating Users...');
     // 1. Admin
@@ -113,7 +234,7 @@ const seedDatabase = async () => {
       profileImage: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=150'
     });
 
-    const pendingDriver = await Driver.create({
+    await Driver.create({
       user: driverUserPending._id,
       isApproved: false,
       vehicleNumber: 'TN-02-BY-8812',
@@ -123,35 +244,34 @@ const seedDatabase = async () => {
     });
 
     console.log('Creating Coupons catalog...');
-    const coupon1 = await Coupon.create({
-      code: 'AMZN500',
-      title: '₹500 Amazon Gift Card',
-      description: 'Exchange 500 reward points for a ₹500 Amazon digital gift card code.',
-      discountAmount: 500,
-      pointsCost: 500,
-      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 days
-    });
-
-    const coupon2 = await Coupon.create({
-      code: 'ECOSTORE15',
-      title: '15% Off EcoStore Shop',
-      description: 'Get a 15% discount code on eco-friendly personal care items at EcoStore.com.',
-      discountAmount: 15,
-      pointsCost: 150,
-      expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
-    });
-
-    const coupon3 = await Coupon.create({
-      code: 'SWIGGY100',
-      title: '₹100 Swiggy Voucher',
-      description: 'Get ₹100 off your next food delivery order on Swiggy. No minimum order.',
-      discountAmount: 100,
-      pointsCost: 200,
-      expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    });
+    await Coupon.create([
+      {
+        code: 'AMZN500',
+        title: '₹500 Amazon Gift Card',
+        description: 'Exchange 500 reward points for a ₹500 Amazon digital gift card code.',
+        discountAmount: 500,
+        pointsCost: 500,
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      },
+      {
+        code: 'ECOSTORE15',
+        title: '15% Off EcoStore Shop',
+        description: 'Get a 15% discount code on eco-friendly personal care items at EcoStore.com.',
+        discountAmount: 15,
+        pointsCost: 150,
+        expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
+      },
+      {
+        code: 'SWIGGY100',
+        title: '₹100 Swiggy Voucher',
+        description: 'Get ₹100 off your next food delivery order on Swiggy. No minimum order.',
+        discountAmount: 100,
+        pointsCost: 200,
+        expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      }
+    ]);
 
     console.log('Creating Transactions & Notifications...');
-    // Initial user balance transactions
     await Transaction.create([
       { user: normalUser._id, pointsChange: 200, type: 'earn', description: 'Welcoming signup points bonus' },
       { user: normalUser._id, pointsChange: 150, type: 'earn', description: 'Recycled 15kg of plastic waste' },
@@ -165,7 +285,6 @@ const seedDatabase = async () => {
     ]);
 
     console.log('Creating Historical Pickup Requests & Waste Records...');
-    // Completed Request 1
     const p1 = await PickupRequest.create({
       user: normalUser._id,
       driver: approvedDriver._id,
@@ -196,7 +315,6 @@ const seedDatabase = async () => {
       processedAt: p1.completedAt
     });
 
-    // Completed Request 2
     const p2 = await PickupRequest.create({
       user: normalUser._id,
       driver: approvedDriver._id,
@@ -227,8 +345,6 @@ const seedDatabase = async () => {
       processedAt: p2.completedAt
     });
 
-    // Completed Request 3 (Paper, organic, glass history for admin stats)
-    // Create other users to represent total waste
     const otherUser = await User.create({
       name: 'Priya Patel',
       email: 'priya@example.com',
@@ -259,28 +375,6 @@ const seedDatabase = async () => {
       processedAt: p3.completedAt
     });
 
-    const p4 = await PickupRequest.create({
-      user: otherUser._id,
-      driver: approvedDriver._id,
-      wasteCategory: 'Glass',
-      estimatedWeight: 12,
-      actualWeight: 10,
-      pickupDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      pickupTimeSlot: '04:00 PM - 06:00 PM',
-      pickupAddress: { street: '12, MG Road', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600010' },
-      status: 'completed',
-      pointsAwarded: 60,
-      completedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000)
-    });
-
-    await WasteRecord.create({
-      pickupRequest: p4._id,
-      category: 'Glass',
-      weight: 10,
-      points: 60,
-      processedAt: p4.completedAt
-    });
-
     // Active Pending request for Arjun
     await PickupRequest.create({
       user: normalUser._id,
@@ -306,7 +400,7 @@ const seedDatabase = async () => {
       status: 'assigned'
     });
 
-    console.log('Database seeded successfully!');
+    console.log('✅ Database seeded successfully with All Catalogs, Users, Drivers & Pickups!');
     mongoose.connection.close();
   } catch (error) {
     console.error('Error seeding database:', error);
@@ -315,3 +409,4 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
+

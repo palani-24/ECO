@@ -102,7 +102,7 @@ const DriverLiveTrackingModal = ({ isOpen, onClose, pickup }) => {
 
             {/* Map Bottom Address Bar */}
             <div className="relative z-10 bg-slate-900/90 p-2 rounded-xl border border-slate-800 backdrop-blur-md text-[11px] text-slate-300 truncate">
-              📍 <strong className="text-white">Destination:</strong> {pickup.pickupAddress || '12-A Metro Heights, Anna Nagar, Chennai'}
+              📍 <strong className="text-white">Destination:</strong> {typeof pickup.pickupAddress === 'string' ? pickup.pickupAddress : (pickup.pickupAddress ? `${pickup.pickupAddress.street || ''}, ${pickup.pickupAddress.city || ''}` : '12-A Metro Heights, Anna Nagar, Chennai')}
             </div>
           </div>
 

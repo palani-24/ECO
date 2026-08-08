@@ -488,40 +488,81 @@ const DriverDashboard = () => {
                           </label>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-[9px] font-black text-emerald-500 uppercase block mb-1">Driver Scale Verified Weight (kg)</label>
-                            <input 
-                              type="number"
-                              value={actualWeight}
-                              onChange={(e) => setActualWeight(e.target.value)}
-                              placeholder={`User requested: ${activePickup.estimatedWeight || 5.0} kg`}
-                              className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/40 font-black text-emerald-600 dark:text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500"
-                            />
-                            <span className="text-[9px] text-slate-400 font-bold block pt-1">
-                              Verified Points: +{Math.round((parseFloat(actualWeight) || activePickup.estimatedWeight || 5.0) * 35)} EcoPoints
-                            </span>
-                          </div>
-
-                          <div>
-                            <div className="flex justify-between items-center mb-1">
-                              <label className="text-[9px] font-black text-amber-500 uppercase">Handover OTP</label>
-                              <button 
-                                type="button"
-                                onClick={() => setInputOtp('4829')}
-                                className="text-[8px] font-black text-emerald-500 hover:underline"
-                              >
-                                Auto-fill 4829
-                              </button>
+                        {activePickup?.items && activePickup.items.length > 0 ? (
+                          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-2 mb-3">
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wider text-[10px]">
+                                Itemized Doorstep Scale Re-Check ({activePickup.items.length} Materials)
+                              </span>
+                              <span className="text-[10px] font-mono font-bold text-emerald-500">35 pts/kg</span>
                             </div>
-                            <input 
-                              type="text"
-                              value={inputOtp}
-                              onChange={(e) => setInputOtp(e.target.value)}
-                              className="w-full px-3 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold rounded-xl border border-amber-500/30 text-xs"
-                            />
+
+                            <div className="space-y-2">
+                              {activePickup.items.map((it, idx) => {
+                                const itemWeightVal = parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0;
+                                const itemPts = Math.round(itemWeightVal * 35);
+                                return (
+                                  <div key={idx} className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-between gap-2 text-xs shadow-sm">
+                                    <div>
+                                      <span className="font-black text-slate-900 dark:text-white block">{it.category}</span>
+                                      <span className="text-[9px] font-bold text-slate-400">User requested: {it.estimatedWeight} kg</span>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
+                                      <input 
+                                        type="number"
+                                        step="0.01"
+                                        min="0.1"
+                                        value={itemWeights[idx] !== undefined ? itemWeights[idx] : (it.actualWeight || it.estimatedWeight)}
+                                        onChange={(e) => setItemWeights({ ...itemWeights, [idx]: e.target.value })}
+                                        className="w-20 px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-emerald-500/40 rounded-lg text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500"
+                                      />
+                                      <span className="text-xs font-bold text-slate-400">kg</span>
+                                      <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                        +{itemPts} pts
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[9px] font-black text-emerald-500 uppercase block mb-1">Driver Scale Verified Weight (kg)</label>
+                              <input 
+                                type="number"
+                                value={actualWeight}
+                                onChange={(e) => setActualWeight(e.target.value)}
+                                placeholder={`User requested: ${activePickup.estimatedWeight || 5.0} kg`}
+                                className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/40 font-black text-emerald-600 dark:text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500"
+                              />
+                              <span className="text-[9px] text-slate-400 font-bold block pt-1">
+                                Verified Points: +{Math.round((parseFloat(actualWeight) || activePickup.estimatedWeight || 5.0) * 35)} EcoPoints
+                              </span>
+                            </div>
+
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <label className="text-[9px] font-black text-amber-500 uppercase">Handover OTP</label>
+                                <button 
+                                  type="button"
+                                  onClick={() => setInputOtp('4829')}
+                                  className="text-[8px] font-black text-emerald-500 hover:underline"
+                                >
+                                  Auto-fill 4829
+                                </button>
+                              </div>
+                              <input 
+                                type="text"
+                                value={inputOtp}
+                                onChange={(e) => setInputOtp(e.target.value)}
+                                className="w-full px-3 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold rounded-xl border border-amber-500/30 text-xs"
+                              />
+                            </div>
+                          </div>
+                        )}
 
                         {!aiAnalysisPreview ? (
                           <button

@@ -38,6 +38,7 @@ const DriverDashboard = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [checkedIn, setCheckedIn] = useState(false);
   const [aiAnalysisPreview, setAiAnalysisPreview] = useState(null);
+  const [itemWeights, setItemWeights] = useState({});
 
   // Sync Real-Time Socket Pickups
   useEffect(() => {

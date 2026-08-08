@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
-import EcoAIVirtualAssistant from './EcoAIVirtualAssistant';
 import MobileQRScannerModal from './MobileQRScannerModal';
 import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
@@ -370,9 +369,6 @@ const Navbar = () => {
 
         </div>
       </nav>
-
-      {/* Floating 24/7 EcoAI Virtual Assistant Widget */}
-      <EcoAIVirtualAssistant />
 
       {/* Mobile Camera QR Scanner Modal */}
       <MobileQRScannerModal

@@ -21,6 +21,11 @@ import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 const LandingPage = () => {
   // Mobile vs Desktop Performance Engine
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+  const [imageErrors, setImageErrors] = useState({});
+
+  const handleImageError = (id) => {
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -80,11 +85,11 @@ const LandingPage = () => {
         osc.stop(now + 0.2);
       }
     } catch (e) {
-      // Audio fallback
+      // Fallback
     }
   }, [sfxEnabled]);
 
-  // Video Player & Sound Boost State
+  // Video Player State
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1.5);
@@ -564,7 +569,7 @@ const LandingPage = () => {
         onMouseMove={handleMouseMove}
         className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-gradient-to-b from-[#06121e] via-[#081728] to-[#06121e] border-b border-slate-800/80"
       >
-        {/* Particle Canvas Background (Desktop Only) */}
+        {/* Particle Canvas Background */}
         {isDesktop && (
           <canvas 
             ref={canvasRef} 
@@ -669,12 +674,21 @@ const LandingPage = () => {
                 </div>
 
                 {/* Simulated Camera Window */}
-                <div className="relative h-60 bg-[#040c14] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-inner group">
-                  <img 
-                    src={activeDemoItem.image} 
-                    alt={activeDemoItem.name}
-                    className={`w-full h-full object-cover transition-all duration-300 ${isScanning ? 'opacity-30 blur-sm' : 'opacity-85'}`}
-                  />
+                <div className="relative h-60 bg-[#040c14] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-inner group flex items-center justify-center">
+                  {imageErrors[activeDemoItem.id] ? (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] to-[#040c14] flex flex-col items-center justify-center p-4 text-center space-y-2">
+                      <FaRobot className="h-12 w-12 text-emerald-400 animate-bounce" />
+                      <span className="text-xs font-mono text-white font-bold">{activeDemoItem.name}</span>
+                      <span className="text-[10px] font-mono text-emerald-400">98.6% Neural AI Accuracy</span>
+                    </div>
+                  ) : (
+                    <img 
+                      src={activeDemoItem.image} 
+                      alt={activeDemoItem.name}
+                      onError={() => handleImageError(activeDemoItem.id)}
+                      className={`w-full h-full object-cover transition-all duration-300 ${isScanning ? 'opacity-30 blur-sm' : 'opacity-85'}`}
+                    />
+                  )}
 
                   {/* Scanning Animation Laser Line */}
                   <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 z-10">
@@ -740,7 +754,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* NEW SECTION: CINEMATIC HARDWARE & PRODUCT SHOWCASE */}
+      {/* CINEMATIC HARDWARE & PRODUCT SHOWCASE */}
       <section className="py-20 bg-[#081728] border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -780,22 +794,41 @@ const LandingPage = () => {
           {/* Active Product Showcase Display Card */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center p-8 sm:p-12 rounded-3xl bg-[#091b2e] border border-emerald-500/40 shadow-2xl glow-product-aura relative overflow-hidden">
             
-            {/* Product Image View (7 columns) */}
-            <div className="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-slate-700 shadow-inner group">
-              <img 
-                src={activeProduct.image} 
-                alt={activeProduct.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold">
+            {/* Product Image / 3D Vector HUD Container */}
+            <div className="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-emerald-500/30 bg-[#040c14] shadow-inner group flex items-center justify-center">
+              {imageErrors[activeProduct.id] ? (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] via-[#091b2e] to-[#040c14] flex flex-col items-center justify-center p-6 text-center space-y-4">
+                  <div className="relative">
+                    <div className="absolute -inset-4 rounded-full bg-emerald-500/20 blur-xl animate-pulse"></div>
+                    <div className="relative h-28 w-28 rounded-full border-2 border-dashed border-emerald-400 flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                      <div className="h-20 w-20 rounded-full border border-emerald-500/50 flex items-center justify-center">
+                        <img src="/app-logo.png" alt="Hardware Emblem" className="h-12 w-auto object-contain" />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-sm font-mono font-black text-white uppercase tracking-widest block">{activeProduct.title}</span>
+                    <span className="text-[10px] font-mono text-emerald-400 block pt-1">NEURAL TELEMATICS HUD ACTIVE • 99.8% SENSOR PURITY</span>
+                  </div>
+                </div>
+              ) : (
+                <img 
+                  src={activeProduct.image} 
+                  alt={activeProduct.title}
+                  onError={() => handleImageError(activeProduct.id)}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              )}
+
+              <div className="absolute top-4 left-4 bg-slate-950/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
                 {activeProduct.badge}
               </div>
-              <div className="absolute bottom-4 right-4 bg-slate-950/80 backdrop-blur px-3 py-1 rounded-lg border border-slate-700 text-[10px] font-mono text-slate-300">
+              <div className="absolute bottom-4 right-4 bg-slate-950/90 backdrop-blur px-3 py-1 rounded-lg border border-slate-700 text-[10px] font-mono text-slate-300 z-10">
                 360° HARDWARE HUD ACTIVE
               </div>
             </div>
 
-            {/* Product Specifications (5 columns) */}
+            {/* Product Specifications */}
             <div className="lg:col-span-5 space-y-6">
               <div>
                 <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest block">{activeProduct.subtitle}</span>
@@ -869,6 +902,7 @@ const LandingPage = () => {
           <img 
             src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
             alt="Clean Ecosystem After Recycling"
+            onError={() => handleImageError('after_img')}
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/30 text-xs font-mono text-emerald-400 font-bold z-10">
@@ -883,6 +917,7 @@ const LandingPage = () => {
             <img 
               src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80" 
               alt="Raw Unsorted Waste"
+              onError={() => handleImageError('before_img')}
               className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
               style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
             />

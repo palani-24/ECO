@@ -223,21 +223,6 @@ const Signup = () => {
             </button>
           </div>
 
-          {/* Dynamic Role Perk Banner */}
-          <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-2 animate-fadeIn">
-            {role === 'user' ? (
-              <>
-                <FaGift className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                <span>🎁 User Perk: Earn 15–50 EcoPoints/kg • Instant UPI Cashback</span>
-              </>
-            ) : (
-              <>
-                <FaRoute className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                <span>🚚 Driver Perk: GPS Dispatch • Scale Sync • Daily Fleet Payouts</span>
-              </>
-            )}
-          </div>
-
           {/* Error Alert */}
           {error && (
             <div className="p-3 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-500/20 rounded-2xl animate-fadeIn">

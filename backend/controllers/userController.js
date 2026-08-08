@@ -18,7 +18,12 @@ export const editProfile = async (req, res) => {
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
-    user.profileImage = req.body.profileImage || user.profileImage;
+
+    if (req.body.profileImage || req.body.avatar) {
+      const img = req.body.profileImage || req.body.avatar;
+      user.profileImage = img;
+      user.avatar = img;
+    }
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -34,7 +39,8 @@ export const editProfile = async (req, res) => {
         role: updatedUser.role,
         points: updatedUser.points,
         addresses: updatedUser.addresses,
-        profileImage: updatedUser.profileImage
+        profileImage: updatedUser.profileImage || updatedUser.avatar || '',
+        avatar: updatedUser.avatar || updatedUser.profileImage || ''
       }
     });
   } catch (error) {

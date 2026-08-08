@@ -46,8 +46,9 @@ app.use(cors({
 // Serve uploads folder for user DP / profile images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Body parser
-app.use(express.json());
+// Body parser with 50mb limit for profile image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Rate Limiting (Prevent abuse)
 const limiter = rateLimit({

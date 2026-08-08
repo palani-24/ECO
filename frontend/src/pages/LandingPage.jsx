@@ -10,7 +10,7 @@ import {
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
-  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaSlidersAlt, FaCheckDouble
+  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';

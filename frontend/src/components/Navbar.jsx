@@ -74,17 +74,18 @@ const Navbar = () => {
             {/* Logo */}
             <Link 
               to={user ? getDashboardLink() : '/'} 
-              className="flex items-center space-x-2 flex-shrink-0" 
+              className="flex items-center space-x-2.5 flex-shrink-0 group" 
               onClick={() => setIsOpen(false)}
             >
               <img 
                 src="/app-logo.png" 
-                alt="EcoReward Logo" 
-                className="h-8 w-8 rounded-xl object-cover shadow-sm ring-1 ring-emerald-500/30 hover:scale-105 transition-transform" 
+                alt="EcoReward Official Logo" 
+                className="h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain shadow-sm group-hover:scale-105 transition-transform" 
               />
-              <span className="font-black text-base sm:text-lg tracking-tight bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-cyan-300">
-                EcoReward
-              </span>
+              <div className="hidden xl:flex flex-col border-l border-slate-700/50 pl-2.5 ml-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 leading-none">EcoReward</span>
+                <span className="text-[8px] font-mono text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
+              </div>
             </Link>
 
             {/* LANDING PAGE NAVIGATION */}

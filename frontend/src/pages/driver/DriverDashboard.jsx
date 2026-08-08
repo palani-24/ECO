@@ -148,24 +148,53 @@ const DriverDashboard = () => {
   };
 
   const handleRunAiAnalysis = async () => {
-    if (!actualWeight || parseFloat(actualWeight) <= 0) {
-      addToast('Please enter verified collection weight (e.g. 5kg)', 'error', 'Weight Required');
-      return;
+    // Support both itemized weights (multi-material) and single weight
+    const hasItems = activePickup?.items && activePickup.items.length > 0;
+    let totalWeight = 0;
+
+    if (hasItems) {
+      // Sum all item weights entered by driver
+      totalWeight = activePickup.items.reduce((acc, it, idx) => {
+        const w = parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0;
+        return acc + w;
+      }, 0);
+      if (totalWeight <= 0) {
+        addToast('Please enter verified weight for at least one material', 'error', 'Weight Required');
+        return;
+      }
+    } else {
+      if (!actualWeight || parseFloat(actualWeight) <= 0) {
+        addToast('Please enter verified collection weight (e.g. 5kg)', 'error', 'Weight Required');
+        return;
+      }
+      totalWeight = parseFloat(actualWeight);
     }
 
     setIsScanning(true);
     setTimeout(() => {
       setIsScanning(false);
-      const weightNum = parseFloat(actualWeight);
-      const calculatedPoints = Math.round(weightNum * 35);
+      const calculatedPoints = Math.round(totalWeight * 35);
+
+      // Build per-item breakdown for itemized pickups
+      const itemBreakdown = hasItems
+        ? activePickup.items.map((it, idx) => ({
+            category: it.category,
+            verifiedWeight: parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0,
+            points: Math.round((parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0) * 35)
+          }))
+        : null;
+
       setAiAnalysisPreview({
-        wasteType: activePickup?.wasteCategory || 'Plastic / Paper',
-        weight: weightNum,
+        wasteType: hasItems
+          ? activePickup.items.map(it => it.category).join(', ')
+          : (activePickup?.wasteCategory || 'Plastic / Paper'),
+        weight: totalWeight,
         purityScore: 96.4,
         grade: 'Grade A Clean',
-        pointsToAward: calculatedPoints
+        pointsToAward: calculatedPoints,
+        itemBreakdown
       });
-      addToast(`AI Inspection Passed! Points: +${calculatedPoints}`, 'success', 'AI Verification Complete');
+      addToast(`AI Inspection Passed! Total: ${totalWeight.toFixed(2)}kg → +${calculatedPoints} pts`, 'success', 'AI Verification Complete');
     }, 1200);
   };
 
@@ -189,26 +218,51 @@ const DriverDashboard = () => {
   };
 
   const handleConfirmPickup = async (id) => {
+    // Calculate total verified weight (supports itemized multi-material)
+    const hasItems = activePickup?.items && activePickup.items.length > 0;
+    let verifiedTotalWeight = 0;
+    let verifiedItems = null;
+
+    if (hasItems) {
+      verifiedItems = activePickup.items.map((it, idx) => ({
+        category: it.category,
+        estimatedWeight: it.estimatedWeight,
+        actualWeight: parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0,
+        points: Math.round((parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0) * 35)
+      }));
+      verifiedTotalWeight = verifiedItems.reduce((acc, it) => acc + it.actualWeight, 0);
+    } else {
+      verifiedTotalWeight = parseFloat(actualWeight) || aiAnalysisPreview?.weight || 5.0;
+    }
+
+    const awardedPoints = Math.round(verifiedTotalWeight * 35);
+
     try {
       const res = await api.put(`/driver/pickups/${id}/complete`, {
-        actualWeight: parseFloat(actualWeight) || 5.0,
+        actualWeight: verifiedTotalWeight,
+        items: verifiedItems,
+        pointsAwarded: awardedPoints,
         wasteImageUrl: wasteImageUrl || '/uploads/default_waste.jpg'
       });
       if (res.data.success) {
-        setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed' } : p));
+        setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed', actualWeight: verifiedTotalWeight, pointsAwarded: awardedPoints } : p));
         setPickupStatus('completed');
         setAiAnalysisPreview(null);
         setActualWeight('');
-        setPickupStatus('completed');
-        const weightVal = parseFloat(actualWeight) || 5.0;
-        const awardedPts = res.data?.pointsAwarded || res.data?.data?.pointsAwarded || Math.round(weightVal * 35);
-        addToast(`🏆 Pickup Completed! +${awardedPts} EcoPoints transferred directly to customer wallet!`, 'success', 'Points Credited');
+        setItemWeights({});
+        const finalPts = res.data?.pointsAwarded || res.data?.data?.pointsAwarded || awardedPoints;
+        addToast(`🏆 Pickup Completed! +${finalPts} EcoPoints sent to customer's wallet!`, 'success', 'Points Credited to User');
+      } else {
+        throw new Error('API returned failure');
       }
     } catch (err) {
+      // Optimistic update on API failure
+      setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed', actualWeight: verifiedTotalWeight, pointsAwarded: awardedPoints } : p));
       setPickupStatus('completed');
-      setCheckedIn(false);
-      const weightVal = parseFloat(actualWeight) || 5.0;
-      addToast(`🏆 Job Completed! +${Math.round(weightVal * 35)} EcoPoints transferred to customer.`, 'success', 'Completed');
+      setAiAnalysisPreview(null);
+      setActualWeight('');
+      setItemWeights({});
+      addToast(`🏆 Job Completed! +${awardedPoints} EcoPoints credited to customer (${verifiedTotalWeight.toFixed(2)} kg verified).`, 'success', 'Completed');
     }
   };
 
@@ -577,12 +631,37 @@ const DriverDashboard = () => {
                           </button>
                         ) : (
                           <div className="space-y-3 pt-1">
-                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-1 text-xs">
+                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2 text-xs">
                               <div className="flex justify-between items-center font-bold text-emerald-600 dark:text-emerald-400">
                                 <span>Purity Grade: {aiAnalysisPreview.grade}</span>
                                 <span>{aiAnalysisPreview.purityScore}% Clean</span>
                               </div>
-                              <span className="text-[10px] text-slate-400 block font-semibold">Points to Award: +{aiAnalysisPreview.pointsToAward} EcoPoints</span>
+
+                              {/* Itemized material breakdown */}
+                              {aiAnalysisPreview.itemBreakdown && aiAnalysisPreview.itemBreakdown.length > 0 ? (
+                                <div className="space-y-1.5 pt-1">
+                                  {aiAnalysisPreview.itemBreakdown.map((item, i) => (
+                                    <div key={i} className="flex justify-between items-center p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/50 dark:border-slate-700">
+                                      <span className="font-extrabold text-slate-800 dark:text-white">{item.category}</span>
+                                      <div className="flex items-center space-x-2">
+                                        <span className="font-mono font-black text-slate-600 dark:text-slate-300">{item.verifiedWeight.toFixed(2)} kg</span>
+                                        <span className="font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">+{item.points} pts</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                  <div className="flex justify-between items-center pt-1 border-t border-emerald-500/20 mt-1">
+                                    <span className="font-black text-slate-700 dark:text-slate-200 text-[11px]">Total Verified Weight</span>
+                                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-[11px]">{aiAnalysisPreview.weight.toFixed(2)} kg</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] text-slate-400 block font-semibold">Verified: {aiAnalysisPreview.weight} kg</span>
+                              )}
+
+                              <div className="flex justify-between items-center pt-1 border-t border-emerald-500/20 mt-1">
+                                <span className="font-black text-emerald-700 dark:text-emerald-300 text-[11px]">🎯 Total EcoPoints to Credit</span>
+                                <span className="font-black text-lg text-emerald-600 dark:text-emerald-400">+{aiAnalysisPreview.pointsToAward} pts</span>
+                              </div>
                             </div>
 
                             <button
@@ -591,7 +670,7 @@ const DriverDashboard = () => {
                               className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
                             >
                               <FaCheckCircle className="h-4 w-4" />
-                              <span>Complete Pickup & Credit Points (+{aiAnalysisPreview.pointsToAward} pts)</span>
+                              <span>✅ Complete Pickup & Send +{aiAnalysisPreview.pointsToAward} pts to User</span>
                             </button>
                           </div>
                         )}

@@ -24,6 +24,17 @@ const seedDatabase = async () => {
     console.log(`Connecting to MongoDB at: ${connUri}`);
     await mongoose.connect(connUri);
 
+    const isForce = process.argv.includes('--force');
+    const existingUsers = await User.countDocuments();
+
+    if (existingUsers > 0 && !isForce) {
+      console.log(`ℹ️ Persistent Database Protection: Found ${existingUsers} existing registered users in MongoDB Atlas.`);
+      console.log('🔒 Existing real user data, EcoPoints, and Leaderboard histories are preserved permanently.');
+      console.log('💡 To reset and re-seed clean test data, run: npm run seed -- --force');
+      mongoose.connection.close();
+      return;
+    }
+
     console.log('Cleaning collections...');
     await User.deleteMany({});
     await Driver.deleteMany({});
@@ -345,36 +356,6 @@ const seedDatabase = async () => {
       processedAt: p2.completedAt
     });
 
-    const otherUser = await User.create({
-      name: 'Priya Patel',
-      email: 'priya@example.com',
-      password: 'user123',
-      role: 'user',
-      points: 50
-    });
-
-    const p3 = await PickupRequest.create({
-      user: otherUser._id,
-      driver: approvedDriver._id,
-      wasteCategory: 'Paper',
-      estimatedWeight: 20,
-      actualWeight: 20,
-      pickupDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      pickupTimeSlot: '10:00 AM - 12:00 PM',
-      pickupAddress: { street: '12, MG Road', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600010' },
-      status: 'completed',
-      pointsAwarded: 160,
-      completedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
-    });
-
-    await WasteRecord.create({
-      pickupRequest: p3._id,
-      category: 'Paper',
-      weight: 20,
-      points: 160,
-      processedAt: p3.completedAt
-    });
-
     // Active Pending request for Arjun
     await PickupRequest.create({
       user: normalUser._id,
@@ -400,7 +381,7 @@ const seedDatabase = async () => {
       status: 'assigned'
     });
 
-    console.log('✅ Database seeded successfully with All Catalogs, Users, Drivers & Pickups!');
+    console.log('✅ Database seeded successfully with Clean System Defaults!');
     mongoose.connection.close();
   } catch (error) {
     console.error('Error seeding database:', error);
@@ -409,4 +390,5 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
+
 

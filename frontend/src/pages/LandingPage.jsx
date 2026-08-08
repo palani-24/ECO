@@ -10,7 +10,7 @@ import {
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
-  FaExpand, FaCompress, FaVolumeDown, FaAtom, FaFingerprint, FaMagic, FaVolumeOff
+  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaSlidersAlt, FaCheckDouble
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -19,7 +19,18 @@ import { useSocket } from '../context/SocketContext';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const LandingPage = () => {
-  // Sound FX State & Web Audio Synthesizer Engine
+  // Mobile vs Desktop Detection for Performance Engine (Fixes Mobile Lag)
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Web Audio Synthesizer Engine
   const [sfxEnabled, setSfxEnabled] = useState(true);
   const audioCtxRef = useRef(null);
 
@@ -45,38 +56,38 @@ const LandingPage = () => {
       if (type === 'click') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.frequency.exponentialRampToValueAtTime(350, now + 0.04);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
         osc.start(now);
-        osc.stop(now + 0.05);
+        osc.stop(now + 0.04);
       } else if (type === 'scan') {
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.linearRampToValueAtTime(1200, now + 0.15);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.linearRampToValueAtTime(1000, now + 0.12);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
         osc.start(now);
-        osc.stop(now + 0.15);
+        osc.stop(now + 0.12);
       } else if (type === 'success') {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, now); // C5
-        osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-        osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.06);
+        osc.frequency.setValueAtTime(783.99, now + 0.12);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
         osc.start(now);
-        osc.stop(now + 0.25);
+        osc.stop(now + 0.2);
       }
     } catch (e) {
-      // Audio fallback silent
+      // Fallback
     }
   }, [sfxEnabled]);
 
   // Video Player & Sound Boost State
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(1.5); // Default to 150% High Sound Boost
+  const [volume, setVolume] = useState(1.5);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const videoRef = useRef(null);
   const modalVideoRef = useRef(null);
@@ -148,11 +159,13 @@ const LandingPage = () => {
     }
   };
 
-  // Interactive Particle Canvas Background Hook
+  // Interactive Particle Canvas (Runs ONLY on Desktop for Zero Mobile Lag)
   const canvasRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    if (!isDesktop) return; // Skip canvas loop completely on mobile to fix lag!
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -165,33 +178,30 @@ const LandingPage = () => {
     resize();
     window.addEventListener('resize', resize);
 
-    // Particle nodes
-    const particleCount = Math.min(Math.floor(window.innerWidth / 20), 60);
+    const particleCount = 45;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: Math.random() * 2 + 1,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      alpha: Math.random() * 0.5 + 0.2,
-      color: Math.random() > 0.4 ? '#10b981' : '#06b6d4'
+      radius: Math.random() * 1.8 + 1,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.4 + 0.2,
+      color: '#ffffff'
     }));
 
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw subtle mouse spotlight
       if (mousePos.x > 0 && mousePos.y > 0) {
-        const grad = ctx.createRadialGradient(mousePos.x, mousePos.y, 0, mousePos.x, mousePos.y, 250);
-        grad.addColorStop(0, 'rgba(16, 185, 129, 0.08)');
+        const grad = ctx.createRadialGradient(mousePos.x, mousePos.y, 0, mousePos.x, mousePos.y, 220);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0.06)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(mousePos.x, mousePos.y, 250, 0, Math.PI * 2);
+        ctx.arc(mousePos.x, mousePos.y, 220, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Draw particle nodes & connecting vector lines
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.x += p.vx;
@@ -206,15 +216,14 @@ const LandingPage = () => {
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // Connect nearby nodes
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            ctx.strokeStyle = '#10b981';
-            ctx.globalAlpha = (1 - dist / 100) * 0.15;
+          if (dist < 90) {
+            ctx.strokeStyle = '#ffffff';
+            ctx.globalAlpha = (1 - dist / 90) * 0.12;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -231,10 +240,10 @@ const LandingPage = () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mousePos]);
+  }, [mousePos, isDesktop]);
 
   const handleMouseMove = (e) => {
-    if (canvasRef.current) {
+    if (isDesktop && canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
       setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     }
@@ -251,7 +260,6 @@ const LandingPage = () => {
       points: 15,
       recyclable: '100% Recyclable',
       image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=600&auto=format&fit=crop&q=80',
-      badgeColor: 'bg-emerald-500'
     },
     {
       id: 'ewaste',
@@ -262,7 +270,6 @@ const LandingPage = () => {
       points: 105,
       recyclable: 'High Value Metal Recovery',
       image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
-      badgeColor: 'bg-indigo-500'
     },
     {
       id: 'metal',
@@ -273,7 +280,6 @@ const LandingPage = () => {
       points: 30,
       recyclable: 'Infinite Recyclability',
       image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=600&auto=format&fit=crop&q=80',
-      badgeColor: 'bg-amber-500'
     },
     {
       id: 'paper',
@@ -284,7 +290,6 @@ const LandingPage = () => {
       points: 25,
       recyclable: 'Eco Fiber Pulp',
       image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
-      badgeColor: 'bg-cyan-500'
     },
     {
       id: 'glass',
@@ -295,7 +300,6 @@ const LandingPage = () => {
       points: 18,
       recyclable: 'Pure Silicate Melt',
       image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop&q=80',
-      badgeColor: 'bg-teal-500'
     }
   ];
 
@@ -310,8 +314,11 @@ const LandingPage = () => {
       setActiveDemoItem(item);
       setIsScanning(false);
       playSciFiSound('success');
-    }, 350);
+    }, 300);
   };
+
+  // Interactive Before & After Waste Impact Slider State
+  const [beforeAfterPos, setBeforeAfterPos] = useState(50);
 
   // Interactive Calculator State
   const [plasticKg, setPlasticKg] = useState(8);
@@ -324,8 +331,9 @@ const LandingPage = () => {
   const co2SavedKg = ((plasticKg * 1.8) + (paperKg * 1.1) + (metalKg * 4.2) + (ewasteKg * 6.5)).toFixed(1);
   const monthlyGoalPercent = Math.min(Math.round((totalPoints / 1200) * 100), 100);
 
-  // 3D Parallax Mouse Tilt Handler for Feature Cards
+  // 3D Parallax Tilt Handler (Desktop Only)
   const handleCardMouseMove = (e) => {
+    if (!isDesktop) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
@@ -334,6 +342,7 @@ const LandingPage = () => {
   };
 
   const handleCardMouseLeave = (e) => {
+    if (!isDesktop) return;
     const card = e.currentTarget;
     card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
   };
@@ -365,49 +374,34 @@ const LandingPage = () => {
   const mockupFeatures = [
     {
       icon: FaCalendarPlus,
-      title: 'Schedule Doorstep Pickup',
+      title: 'Doorstep Pickup Booking',
       desc: 'Book hassle-free waste collection with 3 simple clicks and real-time slot scheduling.',
-      color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
     },
     {
       icon: FaRobot,
-      title: 'AI Neural Scanner HUD',
+      title: 'Neural AI Scanner HUD',
       desc: 'Scan recyclables with high-speed neural camera detection for instant purity & point calculation.',
-      color: 'bg-teal-500/10 text-teal-500 border-teal-500/20'
     },
     {
       icon: FaAward,
-      title: 'Instant Rewards & UPI',
+      title: 'Instant Cash & UPI Rewards',
       desc: 'Earn EcoPoints for sorted waste and instantly cash out to UPI, Amazon, or Eco store vouchers.',
-      color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20'
     },
     {
       icon: FaRoute,
-      title: 'Live Driver GPS Tracking',
+      title: 'Live Driver GPS Dispatch',
       desc: 'Track your assigned collector in real-time on interactive vector maps with estimated arrival times.',
-      color: 'bg-sky-500/10 text-sky-500 border-sky-500/20'
     },
     {
       icon: FaLeaf,
-      title: 'Community Leaderboards',
+      title: 'Citizen Leaderboards',
       desc: 'Compete in neighborhood recycling quests, earn rare eco-badges, and top the citizen leaderboard.',
-      color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20'
     },
     {
       icon: FaLightbulb,
-      title: 'Smart Waste Analytics',
+      title: 'Smart Carbon Analytics',
       desc: 'Track your personal carbon offset statistics, daily eco tips, and household landfill savings.',
-      color: 'bg-amber-500/10 text-amber-500 border-amber-500/20'
     }
-  ];
-
-  const categories = [
-    { name: 'Plastic', points: '15 pts/kg', icon: FaRecycle, color: 'from-emerald-500 to-teal-500', desc: 'PET Bottles, Containers, Hard Plastic' },
-    { name: 'E-Waste', points: '50 pts/kg', icon: FaDesktop, color: 'from-indigo-500 to-purple-500', desc: 'Laptops, Phones, PCBs, Batteries' },
-    { name: 'Metal', points: '25 pts/kg', icon: FaAward, color: 'from-amber-500 to-yellow-500', desc: 'Aluminum Cans, Steel, Copper, Wiring' },
-    { name: 'Paper', points: '10 pts/kg', icon: FaBox, color: 'from-cyan-500 to-blue-500', desc: 'Cardboard, Books, Newspapers, Cartons' },
-    { name: 'Glass', points: '8 pts/kg', icon: FaWineBottle, color: 'from-teal-500 to-emerald-600', desc: 'Glass Bottles, Jars, Clean Glassware' },
-    { name: 'Organic', points: '5 pts/kg', icon: FaLeaf, color: 'from-lime-500 to-emerald-500', desc: 'Food Scraps, Compostable Bio-Waste' }
   ];
 
   // Socket & Live Leaderboard State
@@ -452,24 +446,42 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#050507] text-white transition-colors duration-300 font-sans selection:bg-white selection:text-black">
       <Navbar />
 
-      {/* Dynamic Sound FX Floating Control Button */}
+      {/* Floating Audio SFX Toggle Button */}
       <button
         onClick={() => {
           const next = !sfxEnabled;
           setSfxEnabled(next);
           if (next) playSciFiSound('success');
         }}
-        className="fixed bottom-6 left-6 z-40 px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-emerald-500/30 text-emerald-400 text-xs font-black backdrop-blur-md shadow-2xl flex items-center space-x-2 hover:bg-slate-800 transition-all hover:scale-105"
+        className="fixed bottom-20 sm:bottom-6 left-6 z-40 px-3.5 py-2 rounded-2xl bg-zinc-900/90 border border-zinc-700 text-white text-xs font-mono font-bold backdrop-blur-md shadow-2xl flex items-center space-x-2 hover:bg-zinc-800 transition-all"
         title="Toggle Sci-Fi Audio FX Feedback"
       >
-        {sfxEnabled ? <FaVolumeUp className="h-4 w-4 text-emerald-400 animate-pulse" /> : <FaVolumeOff className="h-4 w-4 text-slate-500" />}
+        {sfxEnabled ? <FaVolumeUp className="h-4 w-4 text-white" /> : <FaVolumeOff className="h-4 w-4 text-zinc-500" />}
         <span className="hidden sm:inline">{sfxEnabled ? 'SFX Audio ON' : 'SFX Audio Muted'}</span>
       </button>
 
-      {/* Fullscreen Video Modal Showcase */}
+      {/* Mobile Fixed Quick-Action CTA Bar (Fixes Mobile Navigation & Lag) */}
+      <div className="fixed bottom-0 inset-x-0 sm:hidden z-40 bg-zinc-950/95 border-t border-zinc-800 p-3 flex justify-between gap-3 shadow-2xl">
+        <Link 
+          to="/signup"
+          onClick={() => playSciFiSound('click')}
+          className="flex-1 py-3 rounded-xl bg-white text-black text-center font-black text-xs shadow-lg flex items-center justify-center space-x-2"
+        >
+          <span>Get Started Free</span>
+          <FaArrowRight />
+        </Link>
+        <Link 
+          to="/login"
+          className="px-5 py-3 rounded-xl bg-zinc-900 text-white border border-zinc-800 text-center font-bold text-xs"
+        >
+          Login
+        </Link>
+      </div>
+
+      {/* Fullscreen Video Showcase Modal */}
       <AnimatePresence>
         {showVideoModal && (
           <motion.div 
@@ -478,10 +490,10 @@ const LandingPage = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8"
           >
-            <div className="relative w-full max-w-5xl bg-slate-950 rounded-3xl overflow-hidden border border-emerald-500/50 shadow-2xl">
+            <div className="relative w-full max-w-5xl bg-zinc-950 rounded-3xl overflow-hidden border border-zinc-700 shadow-2xl">
               <button 
                 onClick={() => setShowVideoModal(false)}
-                className="absolute top-4 right-4 z-20 h-10 w-10 rounded-full bg-slate-900/80 border border-slate-700 text-white font-bold flex items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all"
+                className="absolute top-4 right-4 z-20 h-10 w-10 rounded-full bg-zinc-900 border border-zinc-700 text-white font-bold flex items-center justify-center hover:bg-white hover:text-black transition-all"
               >
                 ✕
               </button>
@@ -499,56 +511,54 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION with Canvas Background & Neural Scanner HUD */}
+      {/* HERO SECTION - MONOCHROME BLACK & WHITE DESIGN */}
       <section 
         onMouseMove={handleMouseMove}
-        className="relative pt-8 pb-20 md:pt-16 md:pb-32 overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800/80"
+        className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-[#050507] border-b border-zinc-800/80"
       >
-        {/* Interactive Particle Node Canvas */}
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 pointer-events-none z-0"
-        />
-
-        {/* Ambient Glow Orbs */}
-        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none"></div>
+        {/* Desktop Particle Canvas Background (Runs ONLY on Desktop) */}
+        {isDesktop && (
+          <canvas 
+            ref={canvasRef} 
+            className="absolute inset-0 pointer-events-none z-0 opacity-40"
+          />
+        )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Left Hero Main Text & CTAs (7 columns on desktop) */}
+            {/* Left Hero Main Text & CTAs */}
             <motion.div 
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="lg:col-span-7 space-y-7 text-center lg:text-left"
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-7 space-y-6 text-center lg:text-left gpu-layer"
             >
-              {/* Futuristic Cyber Badge */}
-              <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black tracking-widest uppercase shadow-lg shadow-emerald-500/5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <FaAtom className="h-4 w-4 text-emerald-400" />
-                <span>AI-POWERED CIRCULAR PLANET PLATFORM v3.5</span>
+              {/* Minimal Monochrome Badge */}
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-700 text-white text-xs font-mono font-bold uppercase tracking-widest">
+                <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
+                <FaAtom className="h-3.5 w-3.5 text-zinc-300" />
+                <span>CIRCULAR ECO LOGISTICS v3.5</span>
               </div>
 
-              {/* Main Headline with Neon Glint */}
+              {/* High Contrast Monochrome Headline */}
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
-                AI-Driven <br />
-                <span className="animate-neonGlint">
-                  Eco Rewards Platform
+                AI-Powered <br />
+                <span className="animate-monochromeGlint">
+                  Zero Waste Platform
                 </span>
               </h1>
               
-              <p className="text-base sm:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+              <p className="text-sm sm:text-lg text-zinc-300 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
                 Transform household recyclables into instant cash & eco vouchers. Scan waste with neural camera recognition, schedule doorstep pickups, track drivers live, and help build a zero-landfill future!
               </p>
 
-              {/* CTA Buttons Grid */}
+              {/* High Contrast Monochrome Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <Link 
                   to="/signup" 
                   onClick={() => playSciFiSound('click')}
-                  className="w-full sm:w-auto px-8 py-4.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white hover:bg-zinc-200 text-black font-black shadow-2xl transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
                 >
                   <span>Get Started Free</span>
                   <FaArrowRight className="h-4 w-4" />
@@ -559,93 +569,87 @@ const LandingPage = () => {
                     playSciFiSound('click');
                     setShowVideoModal(true);
                   }}
-                  className="w-full sm:w-auto px-8 py-4.5 rounded-2xl bg-slate-900/90 text-white border border-slate-700 font-extrabold hover:bg-slate-800 transition-all flex items-center justify-center space-x-2 text-base shadow-sm backdrop-blur hover:border-emerald-500/50"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-zinc-900 text-white border border-zinc-700 font-bold hover:bg-zinc-800 transition-all flex items-center justify-center space-x-2 text-base shadow-sm"
                 >
-                  <FaVideo className="text-emerald-400 h-4 w-4" />
-                  <span>Watch Cinematic Trailer</span>
+                  <FaVideo className="text-zinc-400 h-4 w-4" />
+                  <span>Watch Trailer</span>
                 </button>
               </div>
 
               {/* Floating Quick Trust Badges */}
-              <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-400 font-bold">
-                <div className="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-4 w-4" />
-                  <span>100% Free Signup</span>
+              <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-zinc-400 font-medium">
+                <div className="flex items-center space-x-2 bg-zinc-900/90 px-3 py-1.5 rounded-xl border border-zinc-800">
+                  <FaCheckCircle className="text-white h-3.5 w-3.5" />
+                  <span>100% Free Account</span>
                 </div>
-                <div className="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-4 w-4" />
-                  <span>Instant Gift Cards & UPI</span>
+                <div className="flex items-center space-x-2 bg-zinc-900/90 px-3 py-1.5 rounded-xl border border-zinc-800">
+                  <FaCheckCircle className="text-white h-3.5 w-3.5" />
+                  <span>Instant UPI Cashback</span>
                 </div>
-                <div className="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-4 w-4" />
+                <div className="flex items-center space-x-2 bg-zinc-900/90 px-3 py-1.5 rounded-xl border border-zinc-800">
+                  <FaCheckCircle className="text-white h-3.5 w-3.5" />
                   <span>Zero Landfill Mission</span>
                 </div>
               </div>
             </motion.div>
 
-            {/* Right Interactive AI Waste Scanner HUD (5 columns on desktop) */}
+            {/* Right Interactive AI Waste Scanner HUD */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:col-span-5 flex justify-center relative"
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="lg:col-span-5 flex justify-center relative gpu-layer"
             >
-              <div className="relative w-full max-w-[480px] bg-slate-900/90 backdrop-blur-2xl border border-emerald-500/40 p-6 rounded-3xl shadow-2xl shadow-emerald-950/80 space-y-5">
+              <div className="relative w-full max-w-[480px] bg-zinc-950 border border-zinc-800 p-6 rounded-3xl shadow-2xl space-y-5">
                 
-                {/* HUD Header Bar */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                {/* HUD Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                   <div className="flex items-center space-x-2.5">
-                    <span className="h-3 w-3 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="text-xs font-black tracking-wider text-slate-100 uppercase flex items-center gap-1.5">
-                      <FaFingerprint className="text-emerald-400" />
-                      Neural AI Scanner HUD
+                    <span className="h-2.5 w-2.5 rounded-full bg-white animate-pulse"></span>
+                    <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
+                      <FaFingerprint className="text-zinc-400" />
+                      Neural Scanner HUD
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono uppercase font-black text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                  <span className="text-[10px] font-mono uppercase font-bold text-zinc-300 bg-zinc-900 px-2.5 py-1 rounded-full border border-zinc-700">
                     Live Demo
                   </span>
                 </div>
 
-                {/* Simulated Camera Scanner Window */}
-                <div className="relative h-64 bg-slate-950 rounded-2xl overflow-hidden border border-emerald-500/50 shadow-inner group">
-                  
-                  {/* Active Item Preview Image */}
+                {/* Simulated Camera Window */}
+                <div className="relative h-60 bg-black rounded-2xl overflow-hidden border border-zinc-800 shadow-inner group">
                   <img 
                     src={activeDemoItem.image} 
                     alt={activeDemoItem.name}
-                    className={`w-full h-full object-cover transition-all duration-500 ${isScanning ? 'opacity-30 blur-sm scale-105' : 'opacity-85 scale-100'}`}
+                    className={`w-full h-full object-cover transition-all duration-300 ${isScanning ? 'opacity-30 blur-sm' : 'opacity-85'}`}
                   />
 
                   {/* Scanning Animation Laser Line */}
                   <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 z-10">
-                    
-                    {/* Top Status HUD Badge */}
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-[10px] text-emerald-400 font-mono">
-                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <div className="flex items-center space-x-2 bg-black/90 px-3 py-1 rounded-xl border border-zinc-700 text-[10px] text-white font-mono">
+                        <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
                         <span>{isScanning ? 'SCANNING MATRICES...' : 'NEURAL RECOGNITION ACTIVE'}</span>
                       </div>
-                      <span className="bg-black/80 backdrop-blur-md text-[10px] text-amber-400 font-mono font-bold px-2.5 py-1 rounded-xl border border-amber-500/30">
+                      <span className="bg-black/90 text-[10px] text-zinc-300 font-mono font-bold px-2.5 py-1 rounded-xl border border-zinc-700">
                         {activeDemoItem.confidence}% Accuracy
                       </span>
                     </div>
 
-                    {/* Laser Sweeping Beam */}
-                    <div className="absolute inset-x-6 top-10 bottom-14 border-2 border-dashed border-emerald-400/80 rounded-2xl flex items-center justify-center pointer-events-none overflow-hidden">
-                      <div className="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_20px_#34d399] animate-laserSweep"></div>
+                    <div className="absolute inset-x-6 top-10 bottom-14 border border-dashed border-white/60 rounded-2xl flex items-center justify-center pointer-events-none overflow-hidden">
+                      <div className="w-full h-0.5 bg-white shadow-[0_0_15px_#ffffff] animate-laserSweep"></div>
                     </div>
 
-                    {/* Bottom Result Badge */}
-                    <div className="bg-gradient-to-r from-emerald-600 to-teal-600 backdrop-blur-md text-white font-black text-xs px-4 py-2.5 rounded-2xl self-start flex items-center space-x-2 shadow-lg border border-emerald-400/30">
-                      <FaCheckCircle className="h-4 w-4 text-emerald-200" />
+                    <div className="bg-zinc-900/90 text-white font-mono font-bold text-xs px-3.5 py-2 rounded-xl self-start flex items-center space-x-2 border border-zinc-700 shadow-lg">
+                      <FaCheckCircle className="h-3.5 w-3.5 text-zinc-300" />
                       <span>{activeDemoItem.name} • {activeDemoItem.category}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Sample Selector Buttons */}
+                {/* Sample Selector Tabs */}
                 <div className="space-y-2">
-                  <span className="text-[10px] uppercase font-mono font-black tracking-widest text-slate-400 block">
+                  <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-zinc-400 block">
                     Click item below to scan:
                   </span>
                   <div className="grid grid-cols-5 gap-1.5">
@@ -653,10 +657,10 @@ const LandingPage = () => {
                       <button
                         key={item.id}
                         onClick={() => handleSelectDemo(item)}
-                        className={`p-2 rounded-xl text-center text-[10px] font-black border transition-all ${
+                        className={`p-2 rounded-xl text-center text-[10px] font-mono font-bold border transition-all ${
                           activeDemoItem.id === item.id 
-                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-500/30 scale-105' 
-                            : 'bg-slate-950/80 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                            ? 'bg-white text-black border-white shadow-md scale-105 font-black' 
+                            : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800'
                         }`}
                       >
                         <span className="block truncate">{item.category}</span>
@@ -667,13 +671,13 @@ const LandingPage = () => {
 
                 {/* Calculated Points & Purity Stats */}
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800">
-                    <span className="text-[9px] text-slate-400 block uppercase font-bold">Est. Points Earned</span>
-                    <span className="text-sm font-black text-emerald-400">+{activeDemoItem.points} EcoPoints</span>
+                  <div className="p-3 bg-zinc-900/80 rounded-2xl border border-zinc-800">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-bold">Est. Points Earned</span>
+                    <span className="text-sm font-black text-white">+{activeDemoItem.points} EcoPoints</span>
                   </div>
-                  <div className="p-3 bg-slate-950/80 rounded-2xl border border-slate-800">
-                    <span className="text-[9px] text-slate-400 block uppercase font-bold">Purity Rating</span>
-                    <span className="text-xs font-black text-slate-100 truncate block">{activeDemoItem.recyclable}</span>
+                  <div className="p-3 bg-zinc-900/80 rounded-2xl border border-zinc-800">
+                    <span className="text-[9px] text-zinc-400 block uppercase font-bold">Purity Rating</span>
+                    <span className="text-xs font-bold text-zinc-200 truncate block">{activeDemoItem.recyclable}</span>
                   </div>
                 </div>
 
@@ -685,21 +689,21 @@ const LandingPage = () => {
       </section>
 
       {/* Live Impact Counters Bar */}
-      <section className="py-10 border-b border-slate-800/80 bg-slate-950">
+      <section className="py-8 border-b border-zinc-800/80 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {impactStats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className="p-6 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center space-x-4 hover:border-emerald-500/40 transition-colors">
-                  <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl flex-shrink-0 border border-emerald-500/30 shadow-inner">
+                <div key={i} className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 flex items-center space-x-3.5">
+                  <div className="h-12 w-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center text-xl flex-shrink-0 border border-zinc-700">
                     <Icon />
                   </div>
                   <div>
-                    <span className="text-2xl sm:text-3xl font-black text-white block tracking-tight">
+                    <span className="text-xl sm:text-2xl font-black text-white block tracking-tight">
                       {stat.value}
                     </span>
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{stat.label}</p>
                   </div>
                 </div>
               );
@@ -708,40 +712,93 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Interactive Eco-Earnings & SVG Target Progress Calculator */}
-      <section id="calculator" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-3xl p-8 sm:p-12 text-white border border-emerald-500/40 shadow-2xl space-y-12 relative overflow-hidden">
-          
-          {/* Background Decorative Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* NEW FEATURE: INTERACTIVE BEFORE & AFTER WASTE TRANSFORMATION SLIDER */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 text-white text-xs font-mono font-bold uppercase tracking-widest border border-zinc-700">
+            Circular Impact Visualizer
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black text-white">Before & After Eco Transformation</h2>
+          <p className="text-zinc-400 text-sm font-medium">
+            Drag the slider to visualize unsorted household waste transformed into pure recycled circular materials.
+          </p>
+        </div>
 
-          {/* Section Header */}
+        <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl select-none">
+          {/* Clean Recycled State (After) */}
+          <img 
+            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
+            alt="Clean Ecosystem After Recycling"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute top-4 right-4 bg-black/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-zinc-700 text-xs font-mono text-white font-bold z-10">
+            AFTER: Clean Recycled Circular Materials
+          </div>
+
+          {/* Raw Unsorted Landfill Waste (Before) */}
+          <div 
+            className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-white z-10 shadow-2xl"
+            style={{ width: `${beforeAfterPos}%` }}
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80" 
+              alt="Raw Unsorted Waste"
+              className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
+              style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
+            />
+            <div className="absolute top-4 left-4 bg-black/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-zinc-700 text-xs font-mono text-white font-bold">
+              BEFORE: Raw Unsorted Waste
+            </div>
+          </div>
+
+          {/* Slider Controls Handle */}
+          <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            value={beforeAfterPos} 
+            onChange={(e) => setBeforeAfterPos(Number(e.target.value))}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
+          />
+          <div 
+            className="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-2xl pointer-events-none z-20 border-2 border-black"
+            style={{ left: `calc(${beforeAfterPos}% - 20px)` }}
+          >
+            ↔
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Eco-Earnings & SVG Target Progress Calculator */}
+      <section id="calculator" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="bg-zinc-950 rounded-3xl p-6 sm:p-12 text-white border border-zinc-800 shadow-2xl space-y-10 relative overflow-hidden">
+          
           <div className="text-center max-w-3xl mx-auto space-y-3 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-black uppercase tracking-widest">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-700 text-white text-xs font-mono font-bold uppercase tracking-widest">
               <FaCalculator className="h-3.5 w-3.5" />
               <span>Interactive Eco Earnings & Impact Gauge</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-              Calculate Your <span className="text-emerald-400">Monthly Rewards</span>
+              Calculate Your Monthly Rewards
             </h2>
-            <p className="text-slate-300 text-sm font-medium">
-              Adjust household waste quantities below to instantly calculate point yield, cash value, and carbon offset!
+            <p className="text-zinc-400 text-sm font-medium">
+              Adjust household waste quantities below to calculate point yield, cash value, and carbon offset!
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             
-            {/* Sliders Grid (7 columns on desktop) */}
-            <div className="lg:col-span-7 space-y-6 bg-slate-950/80 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-inner">
+            {/* Sliders Grid */}
+            <div className="lg:col-span-7 space-y-6 bg-black p-6 sm:p-8 rounded-3xl border border-zinc-800">
               
               {/* Plastic Slider */}
-              <div className="space-y-2.5">
-                <div className="flex justify-between text-xs font-extrabold">
-                  <span className="flex items-center space-x-2 text-emerald-400">
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="flex items-center space-x-2 text-white">
                     <FaRecycle />
                     <span>PET Plastic Waste</span>
                   </span>
-                  <span className="font-mono text-white text-sm">{plasticKg} kg / month</span>
+                  <span className="font-mono text-zinc-300 text-sm">{plasticKg} kg / month</span>
                 </div>
                 <input 
                   type="range" min="0" max="30" value={plasticKg} 
@@ -749,18 +806,18 @@ const LandingPage = () => {
                     setPlasticKg(Number(e.target.value));
                     playSciFiSound('click');
                   }}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  className="w-full accent-white cursor-pointer h-2 bg-zinc-800 rounded-lg"
                 />
               </div>
 
               {/* Paper Slider */}
-              <div className="space-y-2.5">
-                <div className="flex justify-between text-xs font-extrabold">
-                  <span className="flex items-center space-x-2 text-cyan-400">
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="flex items-center space-x-2 text-white">
                     <FaBox />
                     <span>Paper & Cardboard Boxes</span>
                   </span>
-                  <span className="font-mono text-white text-sm">{paperKg} kg / month</span>
+                  <span className="font-mono text-zinc-300 text-sm">{paperKg} kg / month</span>
                 </div>
                 <input 
                   type="range" min="0" max="40" value={paperKg} 
@@ -768,18 +825,18 @@ const LandingPage = () => {
                     setPaperKg(Number(e.target.value));
                     playSciFiSound('click');
                   }}
-                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  className="w-full accent-white cursor-pointer h-2 bg-zinc-800 rounded-lg"
                 />
               </div>
 
               {/* Metal Slider */}
-              <div className="space-y-2.5">
-                <div className="flex justify-between text-xs font-extrabold">
-                  <span className="flex items-center space-x-2 text-amber-400">
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="flex items-center space-x-2 text-white">
                     <FaAward />
                     <span>Metal Cans & Scrap</span>
                   </span>
-                  <span className="font-mono text-white text-sm">{metalKg} kg / month</span>
+                  <span className="font-mono text-zinc-300 text-sm">{metalKg} kg / month</span>
                 </div>
                 <input 
                   type="range" min="0" max="20" value={metalKg} 
@@ -787,18 +844,18 @@ const LandingPage = () => {
                     setMetalKg(Number(e.target.value));
                     playSciFiSound('click');
                   }}
-                  className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  className="w-full accent-white cursor-pointer h-2 bg-zinc-800 rounded-lg"
                 />
               </div>
 
               {/* E-Waste Slider */}
-              <div className="space-y-2.5">
-                <div className="flex justify-between text-xs font-extrabold">
-                  <span className="flex items-center space-x-2 text-indigo-400">
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="flex items-center space-x-2 text-white">
                     <FaDesktop />
                     <span>E-Waste & Electronics</span>
                   </span>
-                  <span className="font-mono text-white text-sm">{ewasteKg} kg / month</span>
+                  <span className="font-mono text-zinc-300 text-sm">{ewasteKg} kg / month</span>
                 </div>
                 <input 
                   type="range" min="0" max="10" value={ewasteKg} 
@@ -806,52 +863,51 @@ const LandingPage = () => {
                     setEwasteKg(Number(e.target.value));
                     playSciFiSound('click');
                   }}
-                  className="w-full accent-indigo-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  className="w-full accent-white cursor-pointer h-2 bg-zinc-800 rounded-lg"
                 />
               </div>
 
             </div>
 
-            {/* Target Radial SVG Progress & Yield Summary Card (5 columns on desktop) */}
-            <div className="lg:col-span-5 p-8 rounded-3xl bg-slate-900 border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
+            {/* Target Radial SVG Progress Card */}
+            <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-black border border-zinc-800 space-y-6 flex flex-col items-center justify-between shadow-2xl">
               
-              {/* Radial SVG Gauge Meter */}
-              <div className="relative w-44 h-44 flex items-center justify-center">
+              <div className="relative w-40 h-40 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle 
                     cx="50" cy="50" r="40" 
-                    stroke="currentColor" strokeWidth="8" 
-                    className="text-slate-800 fill-none" 
+                    stroke="currentColor" strokeWidth="7" 
+                    className="text-zinc-800 fill-none" 
                   />
                   <circle 
                     cx="50" cy="50" r="40" 
-                    stroke="currentColor" strokeWidth="8" 
+                    stroke="currentColor" strokeWidth="7" 
                     strokeDasharray={251.2}
                     strokeDashoffset={251.2 - (251.2 * monthlyGoalPercent) / 100}
                     strokeLinecap="round"
-                    className="text-emerald-400 fill-none transition-all duration-700 ease-out" 
+                    className="text-white fill-none transition-all duration-500 ease-out" 
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                   <span className="text-3xl font-black text-white">{monthlyGoalPercent}%</span>
-                  <span className="text-[9px] uppercase font-black text-slate-400 tracking-wider">Goal Target</span>
+                  <span className="text-[9px] uppercase font-mono font-bold text-zinc-400">Target Goal</span>
                 </div>
               </div>
 
-              <div className="w-full space-y-4 text-center">
-                <div className="p-4 rounded-2xl bg-slate-950 border border-emerald-500/30">
-                  <span className="text-[10px] uppercase font-mono font-black text-emerald-400 tracking-wider block">Estimated Monthly Yield</span>
-                  <span className="text-3xl font-black text-white">{totalPoints} EcoPoints</span>
+              <div className="w-full space-y-3 text-center">
+                <div className="p-3.5 rounded-2xl bg-zinc-900 border border-zinc-800">
+                  <span className="text-[10px] uppercase font-mono font-bold text-zinc-400 block">Est. Monthly Yield</span>
+                  <span className="text-2xl font-black text-white">{totalPoints} EcoPoints</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                    <span className="text-[9px] uppercase font-black text-slate-400 block">Voucher Cash</span>
-                    <span className="text-lg font-black text-amber-400">₹{estimatedVoucherRs}</span>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-3 rounded-2xl bg-zinc-900 border border-zinc-800">
+                    <span className="text-[9px] uppercase font-bold text-zinc-400 block">Cash Cashback</span>
+                    <span className="text-base font-black text-white">₹{estimatedVoucherRs}</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                    <span className="text-[9px] uppercase font-black text-slate-400 block">CO₂ Saved</span>
-                    <span className="text-lg font-black text-emerald-400">{co2SavedKg} kg</span>
+                  <div className="p-3 rounded-2xl bg-zinc-900 border border-zinc-800">
+                    <span className="text-[9px] uppercase font-bold text-zinc-400 block">CO₂ Saved</span>
+                    <span className="text-base font-black text-white">{co2SavedKg} kg</span>
                   </div>
                 </div>
               </div>
@@ -859,9 +915,9 @@ const LandingPage = () => {
               <Link 
                 to="/signup"
                 onClick={() => playSciFiSound('click')}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
+                className="w-full py-3.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-black text-center shadow-lg flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
               >
-                <span>Start Earning Rewards Now</span>
+                <span>Start Earning Rewards</span>
                 <FaArrowRight />
               </Link>
 
@@ -871,19 +927,19 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 3D PARALLAX FEATURE CARDS GRID (Desktop Hover Tilt) */}
+      {/* 3D PARALLAX FEATURE CARDS GRID */}
       <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-black uppercase tracking-widest border border-emerald-500/20">
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 text-white text-xs font-mono font-bold uppercase tracking-widest border border-zinc-700">
             Platform Capabilities
           </span>
           <h2 className="text-3xl sm:text-5xl font-black text-white">Smart Eco Infrastructure</h2>
-          <p className="text-slate-400 text-sm font-medium">
-            Hover over the 3D cards below to explore our core smart recycling capabilities.
+          <p className="text-zinc-400 text-sm font-medium">
+            Minimalist black & white ecosystem designed for speed, security, and circular waste recycling.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-container">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 perspective-container">
           {mockupFeatures.map((feat, idx) => {
             const Icon = feat.icon;
             return (
@@ -891,38 +947,37 @@ const LandingPage = () => {
                 key={idx} 
                 onMouseMove={handleCardMouseMove}
                 onMouseLeave={handleCardMouseLeave}
-                className="tilt-card p-8 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all duration-200 shadow-xl space-y-4 group cursor-pointer"
+                className="tilt-card p-7 rounded-3xl bg-zinc-950 border border-zinc-800 hover:border-zinc-500 transition-all duration-150 shadow-xl space-y-4 group cursor-pointer gpu-layer"
               >
-                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center text-2xl border ${feat.color}`}>
+                <div className="h-12 w-12 rounded-2xl bg-zinc-900 text-white flex items-center justify-center text-xl border border-zinc-700">
                   <Icon />
                 </div>
-                <h3 className="text-xl font-black text-white group-hover:text-emerald-400 transition-colors">{feat.title}</h3>
-                <p className="text-xs text-slate-400 font-medium leading-relaxed">{feat.desc}</p>
+                <h3 className="text-lg font-black text-white group-hover:text-zinc-300 transition-colors">{feat.title}</h3>
+                <p className="text-xs text-zinc-400 font-medium leading-relaxed">{feat.desc}</p>
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* CINEMATIC VIDEO SHOWCASE SECTION */}
-      <section id="video-tour" className="py-24 relative overflow-hidden bg-slate-950 border-y border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
+      {/* CINEMATIC VIDEO SHOWCASE */}
+      <section id="video-tour" className="py-20 relative overflow-hidden bg-black border-y border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
           
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-xs font-black uppercase tracking-widest">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-700 text-white text-xs font-mono font-bold uppercase tracking-widest">
               <FaVideo className="h-3.5 w-3.5" />
               <span>Cinematic Platform Showcase</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              Experience the Future of <span className="animate-neonGlint">Waste Logistics</span>
+              Experience the Future of <span className="animate-monochromeGlint">Waste Logistics</span>
             </h2>
-            <p className="text-slate-300 text-sm sm:text-base font-medium">
-              Watch how our neural scanner, live driver dispatch, and instant rewards work in unison.
+            <p className="text-zinc-400 text-sm font-medium">
+              Watch how neural AI recognition, driver dispatch, and instant rewards work seamlessly.
             </p>
           </div>
 
-          {/* Player Container */}
-          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-emerald-500/40 shadow-2xl shadow-emerald-950/80 bg-slate-900">
+          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl bg-zinc-950">
             <div className="relative aspect-video w-full overflow-hidden group">
               <video 
                 ref={videoRef}
@@ -935,12 +990,12 @@ const LandingPage = () => {
                 className="w-full h-full object-cover rounded-3xl"
               />
 
-              {/* Video Player Controls Bar */}
-              <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent flex items-center justify-between gap-3 opacity-95 group-hover:opacity-100 transition-opacity">
+              {/* Controls Bar */}
+              <div className="absolute bottom-0 inset-x-0 p-4 bg-black/90 flex items-center justify-between gap-3 opacity-95 group-hover:opacity-100 transition-opacity">
                 <div className="flex items-center space-x-3">
                   <button 
                     onClick={togglePlay}
-                    className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all transform hover:scale-105 shadow-md flex-shrink-0"
+                    className="p-3 rounded-full bg-white hover:bg-zinc-200 text-black transition-all shadow-md flex-shrink-0"
                     title={isPlaying ? "Pause Video" : "Play Video"}
                   >
                     {isPlaying ? <FaPause className="h-4 w-4" /> : <FaPlay className="h-4 w-4 ml-0.5" />}
@@ -948,15 +1003,14 @@ const LandingPage = () => {
 
                   <button 
                     onClick={toggleMute}
-                    className="p-3 rounded-full bg-slate-800 text-white hover:bg-slate-700 transition-all border border-slate-700 flex-shrink-0"
+                    className="p-3 rounded-full bg-zinc-900 text-white border border-zinc-700 flex-shrink-0"
                     title={isMuted ? "Unmute Sound" : "Mute Sound"}
                   >
-                    {isMuted || volume === 0 ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
+                    {isMuted || volume === 0 ? <FaVolumeMute className="h-4 w-4 text-zinc-400" /> : <FaVolumeUp className="h-4 w-4 text-white" />}
                   </button>
 
-                  {/* Volume Slider */}
-                  <div className="flex items-center space-x-2 bg-slate-900/90 px-3 py-2 rounded-2xl border border-slate-800">
-                    <span className="text-[10px] font-mono font-black text-slate-300">
+                  <div className="flex items-center space-x-2 bg-zinc-900 px-3 py-2 rounded-2xl border border-zinc-800">
+                    <span className="text-[10px] font-mono font-bold text-zinc-300">
                       {isMuted || volume === 0 ? '0%' : `${Math.round(volume * 100)}%`}
                     </span>
                     <input 
@@ -966,16 +1020,16 @@ const LandingPage = () => {
                       step="0.05"
                       value={isMuted ? 0 : volume}
                       onChange={(e) => handleVolumeChange(Number(e.target.value))}
-                      className="w-20 sm:w-28 h-1.5 accent-emerald-400 cursor-pointer bg-slate-700 rounded-lg"
+                      className="w-20 sm:w-28 h-1.5 accent-white cursor-pointer bg-zinc-700 rounded-lg"
                     />
                   </div>
 
                   <button
                     onClick={() => handleVolumeChange(volume >= 1.5 ? 1.0 : 2.0)}
-                    className={`px-3 py-2 rounded-xl text-xs font-black transition-all border whitespace-nowrap ${
+                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${
                       volume > 1.0 
-                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400' 
-                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                        ? 'bg-white text-black border-white' 
+                        : 'bg-zinc-900 text-zinc-300 border-zinc-800'
                     }`}
                   >
                     {volume > 1.0 ? '🔥 200% Boosted' : '🔊 Boost Sound'}
@@ -984,7 +1038,7 @@ const LandingPage = () => {
 
                 <button 
                   onClick={() => setShowVideoModal(true)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-black border border-slate-700 transition-all flex items-center space-x-2"
+                  className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold border border-zinc-700 transition-all flex items-center space-x-2"
                 >
                   <FaExpand />
                   <span>Fullscreen</span>
@@ -996,25 +1050,25 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4-STEP HOW IT WORKS PROCESS WITH DESKTOP LIGHT BEAM */}
-      <section id="how-it-works" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="space-y-16">
+      {/* 4-STEP HOW IT WORKS PROCESS */}
+      <section id="how-it-works" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="space-y-14">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-black uppercase tracking-widest border border-emerald-500/20">
+            <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 text-white text-xs font-mono font-bold uppercase tracking-widest border border-zinc-700">
               User Journey
             </span>
             <h2 className="text-3xl sm:text-5xl font-black text-white">Simple 4-Step Process</h2>
-            <p className="text-slate-400 text-sm font-medium">
+            <p className="text-zinc-400 text-sm font-medium">
               From waste sorting to instant bank cashback in under 3 minutes.
             </p>
           </div>
 
           <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
-            
-            {/* Horizontal Traveling Beam (Visible on Desktop) */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0">
-              <div className="w-16 h-1 bg-emerald-400 shadow-[0_0_15px_#34d399] rounded-full animate-beamMove"></div>
-            </div>
+            {isDesktop && (
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-zinc-800 -translate-y-1/2 z-0">
+                <div className="w-16 h-1 bg-white shadow-[0_0_15px_#ffffff] rounded-full animate-beamMove"></div>
+              </div>
+            )}
 
             {[
               { num: '1', title: 'Schedule Pickup', desc: 'Select date & waste items on mobile or PC desktop.', icon: FaCalendarPlus },
@@ -1024,15 +1078,15 @@ const LandingPage = () => {
             ].map((step, idx) => {
               const Icon = step.icon;
               return (
-                <div key={idx} className="relative z-10 p-8 bg-slate-900 rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl hover:border-emerald-500/50 transition-all">
-                  <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-base shadow-lg shadow-emerald-500/20">
+                <div key={idx} className="relative z-10 p-7 bg-zinc-950 rounded-3xl border border-zinc-800 text-center space-y-4 shadow-xl hover:border-zinc-600 transition-all gpu-layer">
+                  <div className="h-11 w-11 mx-auto rounded-full bg-white text-black font-black flex items-center justify-center text-sm shadow-md">
                     {step.num}
                   </div>
-                  <div className="h-14 w-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl border border-emerald-500/20">
+                  <div className="h-12 w-12 mx-auto rounded-2xl bg-zinc-900 text-white flex items-center justify-center text-xl border border-zinc-700">
                     <Icon />
                   </div>
-                  <h4 className="font-black text-white text-lg">{step.title}</h4>
-                  <p className="text-xs text-slate-400 font-medium leading-relaxed">{step.desc}</p>
+                  <h4 className="font-black text-white text-base">{step.title}</h4>
+                  <p className="text-xs text-zinc-400 font-medium leading-relaxed">{step.desc}</p>
                 </div>
               );
             })}
@@ -1041,71 +1095,71 @@ const LandingPage = () => {
       </section>
 
       {/* 3D REAL-TIME LEADERBOARD PODIUM SECTION */}
-      <section className="py-20 bg-slate-900/60 border-y border-slate-800">
+      <section className="py-20 bg-black border-y border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center space-x-2 px-4 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-black uppercase tracking-widest border border-amber-500/20">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-zinc-900 text-white text-xs font-mono font-bold uppercase tracking-widest border border-zinc-700">
+              <span className="h-2 w-2 rounded-full bg-white animate-ping"></span>
               <span>Live Database Stream</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white">Top Citizen Recyclers</h2>
-            <p className="text-slate-400 text-sm font-medium">
+            <p className="text-zinc-400 text-sm font-medium">
               Real-time citizen leaderboard podium synchronized with MongoDB.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-            {/* Rank 2 (Left) */}
-            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
+            {/* Rank 2 */}
+            <div className="p-6 rounded-3xl bg-zinc-950 border border-zinc-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
               <img 
                 src={getAvatarUrl(displayLeaderboard[1]?.avatar || displayLeaderboard[1]?.profileImage, displayLeaderboard[1]?.name)} 
                 onError={(e) => handleAvatarError(e, displayLeaderboard[1]?.name)}
                 alt="Rank 2" 
-                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
+                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-zinc-700" 
               />
               <div>
-                <span className="text-xs font-mono font-bold text-slate-400">#2 Silver</span>
+                <span className="text-xs font-mono font-bold text-zinc-400">#2 Silver</span>
                 <h4 className="font-black text-white text-base">{displayLeaderboard[1]?.name}</h4>
               </div>
-              <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800">
-                <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[1]?.points} EcoPoints</span>
+              <div className="p-3 bg-black rounded-2xl border border-zinc-800">
+                <span className="text-lg font-black text-white block">{displayLeaderboard[1]?.points} EcoPoints</span>
               </div>
             </div>
 
-            {/* Rank 1 (Center - Elevated) */}
-            <div className="p-8 rounded-3xl bg-slate-900 border-2 border-amber-400/80 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-2">
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
+            {/* Rank 1 (Center Elevated) */}
+            <div className="p-8 rounded-3xl bg-zinc-950 border-2 border-white text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-2">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-white text-black text-xs font-black flex items-center gap-1 shadow">
                 <FaCrown /> GOLD #1
               </span>
               <img 
                 src={getAvatarUrl(displayLeaderboard[0]?.avatar || displayLeaderboard[0]?.profileImage, displayLeaderboard[0]?.name)} 
                 onError={(e) => handleAvatarError(e, displayLeaderboard[0]?.name)}
                 alt="Rank 1" 
-                className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
+                className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-white shadow-xl" 
               />
               <div>
                 <h4 className="font-black text-white text-xl">{displayLeaderboard[0]?.name}</h4>
-                <span className="text-xs font-black text-amber-400">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
+                <span className="text-xs font-bold text-zinc-300">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
               </div>
-              <div className="p-4 bg-slate-950 rounded-2xl border border-amber-500/30">
-                <span className="text-2xl font-black text-amber-400 block">{displayLeaderboard[0]?.points} EcoPoints</span>
+              <div className="p-4 bg-black rounded-2xl border border-zinc-700">
+                <span className="text-2xl font-black text-white block">{displayLeaderboard[0]?.points} EcoPoints</span>
               </div>
             </div>
 
-            {/* Rank 3 (Right) */}
-            <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
+            {/* Rank 3 */}
+            <div className="p-6 rounded-3xl bg-zinc-950 border border-zinc-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
               <img 
                 src={getAvatarUrl(displayLeaderboard[2]?.avatar || displayLeaderboard[2]?.profileImage, displayLeaderboard[2]?.name)} 
                 onError={(e) => handleAvatarError(e, displayLeaderboard[2]?.name)}
                 alt="Rank 3" 
-                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
+                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-zinc-800" 
               />
               <div>
-                <span className="text-xs font-mono font-bold text-slate-400">#3 Bronze</span>
+                <span className="text-xs font-mono font-bold text-zinc-400">#3 Bronze</span>
                 <h4 className="font-black text-white text-base">{displayLeaderboard[2]?.name}</h4>
               </div>
-              <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800">
-                <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[2]?.points} EcoPoints</span>
+              <div className="p-3 bg-black rounded-2xl border border-zinc-800">
+                <span className="text-lg font-black text-white block">{displayLeaderboard[2]?.points} EcoPoints</span>
               </div>
             </div>
 
@@ -1118,13 +1172,13 @@ const LandingPage = () => {
         <div className="text-center space-y-4 mb-10">
           <h2 className="text-3xl sm:text-4xl font-black text-white">Frequently Asked Questions</h2>
           <div className="relative max-w-md mx-auto">
-            <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs" />
+            <FaSearch className="absolute left-4 top-3.5 text-zinc-400 text-xs" />
             <input 
               type="text"
               placeholder="Search questions..."
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
         </div>
@@ -1132,46 +1186,46 @@ const LandingPage = () => {
         <div className="space-y-4">
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq, index) => (
-              <div key={index} className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-900 shadow-sm">
+              <div key={index} className="border border-zinc-800 rounded-2xl overflow-hidden bg-zinc-950 shadow-sm">
                 <button
                   onClick={() => {
                     setFaqOpen(faqOpen === index ? null : index);
                     playSciFiSound('click');
                   }}
-                  className="w-full p-5 text-left flex justify-between items-center font-bold text-sm text-white hover:text-emerald-400 transition-colors"
+                  className="w-full p-5 text-left flex justify-between items-center font-bold text-sm text-white hover:text-zinc-300 transition-colors"
                 >
                   <span>{faq.q}</span>
-                  {faqOpen === index ? <FaChevronUp className="text-emerald-400" /> : <FaChevronDown className="text-slate-500" />}
+                  {faqOpen === index ? <FaChevronUp className="text-white" /> : <FaChevronDown className="text-zinc-500" />}
                 </button>
                 {faqOpen === index && (
-                  <div className="px-5 pb-5 text-xs text-slate-300 leading-relaxed font-medium">
+                  <div className="px-5 pb-5 text-xs text-zinc-300 leading-relaxed font-medium">
                     {faq.a}
                   </div>
                 )}
               </div>
             ))
           ) : (
-            <p className="text-center text-xs text-slate-400 font-bold py-6">No matching questions found.</p>
+            <p className="text-center text-xs text-zinc-400 font-bold py-6">No matching questions found.</p>
           )}
         </div>
       </section>
 
       {/* FINAL CALL TO ACTION BANNER */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="relative rounded-3xl p-10 sm:p-14 overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12 sm:mb-0">
+        <div className="relative rounded-3xl p-10 sm:p-14 overflow-hidden bg-zinc-950 border border-zinc-800 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 text-center md:text-left z-10">
-            <span className="px-3 py-1 rounded-full bg-white/20 text-white text-[10px] font-black uppercase tracking-widest backdrop-blur">
+            <span className="px-3.5 py-1 rounded-full bg-zinc-900 text-white text-[10px] font-mono font-bold uppercase tracking-widest border border-zinc-700">
               Join 25,800+ Eco Citizens ♻️
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight">Recycle Today, Earn Tomorrow.</h2>
-            <p className="text-xs sm:text-sm text-emerald-100 max-w-xl font-medium">
+            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl font-medium">
               Start earning points and cash rewards while building a zero-landfill future.
             </p>
           </div>
           <Link 
             to="/signup" 
             onClick={() => playSciFiSound('click')}
-            className="z-10 px-8 py-4.5 bg-white text-slate-950 font-black text-sm rounded-2xl hover:bg-emerald-50 transition-all shadow-2xl hover:scale-105 flex items-center space-x-2 flex-shrink-0"
+            className="z-10 px-8 py-4 bg-white text-black font-black text-sm rounded-2xl hover:bg-zinc-200 transition-all shadow-2xl hover:scale-105 flex items-center space-x-2 flex-shrink-0"
           >
             <span>Create Free Account</span>
             <FaArrowRight />

@@ -91,7 +91,7 @@ export const acceptPickup = async (req, res) => {
     if (!pickup.isPointsAwarded) {
       const user = await User.findById(pickup.user);
       if (user) {
-        awardedPoints = Math.min(500, Math.round((pickup.estimatedWeight || 1) * 10));
+        awardedPoints = Math.max(25, Math.round((pickup.estimatedWeight || 1) * 35));
         user.points += awardedPoints;
         await user.save();
 

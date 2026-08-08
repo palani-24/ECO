@@ -103,6 +103,26 @@ export const schedulePickup = async (req, res) => {
       });
     }
 
+    // Daily Per-User Rate Limit Check (Max 1 active/completed pickup collection per user per calendar day)
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const todayPickupsCount = await PickupRequest.countDocuments({
+      user: req.user._id,
+      createdAt: { $gte: startOfDay, $lte: endOfDay },
+      status: { $in: ['pending', 'assigned', 'accepted', 'completed'] }
+    });
+
+    if (todayPickupsCount >= 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Daily pickup limit reached! To prevent abuse, each citizen is allowed max 1 pickup collection (up to 25kg) per day. Please try scheduling again tomorrow!'
+      });
+    }
+
     const qrToken = `ECO-QR-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
 
     // Create Pickup Request

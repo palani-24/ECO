@@ -190,50 +190,58 @@ export const completePickup = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Pickup must be accepted before completion' });
     }
 
-    const finalWeight = parseFloat(actualWeight) || pickup.estimatedWeight;
+    const finalWeight = parseFloat(actualWeight) || pickup.estimatedWeight || 1.0;
     const finalImage = wasteImageUrl || '/uploads/default_waste.jpg';
+
+    // Calculate EcoPoints strictly based on Driver's Verified Actual Scale Weight (35 pts/kg)
+    const driverVerifiedPoints = Math.max(25, Math.round(finalWeight * 35));
 
     // 1. Execute AI Waste verification module
     const aiReport = await analyzeWasteImage(finalImage, pickup.wasteCategory, finalWeight);
 
-    // 2. Award Points to User (only if not already awarded upon acceptance, or credit difference if higher)
+    // 2. Award/Adjust Points to User Wallet in MongoDB based on Driver Verified Weight
     const user = await User.findById(pickup.user);
     if (!user) return res.status(404).json({ success: false, message: 'Customer user not found' });
 
-    let additionalPoints = 0;
     if (!pickup.isPointsAwarded) {
-      additionalPoints = aiReport.pointsAwarded;
-      user.points += additionalPoints;
+      user.points += driverVerifiedPoints;
       await user.save();
-      pickup.pointsAwarded = aiReport.pointsAwarded;
+      pickup.pointsAwarded = driverVerifiedPoints;
       pickup.isPointsAwarded = true;
 
       await Transaction.create({
         user: user._id,
-        pointsChange: additionalPoints,
+        pointsChange: driverVerifiedPoints,
         type: 'earn',
-        description: `Earned points for recycling ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}`
+        description: `Earned ${driverVerifiedPoints} EcoPoints for driver-verified ${finalWeight}kg of ${pickup.wasteCategory}`
       });
-    } else if (aiReport.pointsAwarded > pickup.pointsAwarded) {
-      additionalPoints = aiReport.pointsAwarded - pickup.pointsAwarded;
-      user.points += additionalPoints;
-      await user.save();
-      pickup.pointsAwarded = aiReport.pointsAwarded;
 
-      await Transaction.create({
-        user: user._id,
-        pointsChange: additionalPoints,
-        type: 'earn',
-        description: `Quality bonus points for recycling ${aiReport.estimatedWeight}kg of ${aiReport.wasteType}`
-      });
+      emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: driverVerifiedPoints });
+    } else {
+      // Driver scale re-check adjustment (if actual weight differs from estimated weight)
+      const diffPoints = driverVerifiedPoints - (pickup.pointsAwarded || 0);
+      if (diffPoints !== 0) {
+        user.points = Math.max(0, user.points + diffPoints);
+        await user.save();
+        pickup.pointsAwarded = driverVerifiedPoints;
+
+        await Transaction.create({
+          user: user._id,
+          pointsChange: diffPoints,
+          type: 'earn',
+          description: `Doorstep scale re-check adjustment for ${finalWeight}kg of ${pickup.wasteCategory}`
+        });
+
+        emitToUser(user._id, 'points:updated', { points: user.points, addedPoints: diffPoints });
+      }
     }
 
     // 4. Create Waste Record
     await WasteRecord.create({
       pickupRequest: pickup._id,
-      category: aiReport.wasteType,
-      weight: aiReport.estimatedWeight,
-      points: aiReport.pointsAwarded
+      category: pickup.wasteCategory,
+      weight: finalWeight,
+      points: driverVerifiedPoints
     });
 
     // 5. Update Pickup details and set completed

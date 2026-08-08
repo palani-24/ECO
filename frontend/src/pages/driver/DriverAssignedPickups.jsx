@@ -265,9 +265,9 @@ const DriverAssignedPickups = () => {
                         <FaMapMarkerAlt className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
                         <span className="truncate">{addrStr}</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300 font-medium">
-                        <FaWeight className="text-teal-500 h-3.5 w-3.5 flex-shrink-0" />
-                        <span>Est. Weight: <strong>{pickup.estimatedWeight || 5} kg</strong></span>
+                      <div className="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-extrabold p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                        <FaWeight className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
+                        <span>User Requested: <strong>{pickup.estimatedWeight || 5} kg (+{Math.round((pickup.estimatedWeight || 5) * 35)} pts)</strong></span>
                       </div>
                     </div>
 

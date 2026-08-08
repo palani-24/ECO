@@ -398,9 +398,9 @@ const DriverDashboard = () => {
                       <p className="font-extrabold text-slate-900 dark:text-white text-sm">{activePickup.user?.name || 'Arjun Sharma'}</p>
                     </div>
 
-                    <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
-                      <span className="text-[9px] text-slate-400 font-black uppercase block">Material Category</span>
-                      <p className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">{activePickup.wasteCategory} (Est. {activePickup.estimatedWeight || 5}kg)</p>
+                    <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-1">
+                      <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-black uppercase block">User Requested Weight</span>
+                      <p className="font-black text-emerald-600 dark:text-emerald-400 text-sm">⚖️ {activePickup.estimatedWeight || 5.0} kg requested ({activePickup.wasteCategory})</p>
                     </div>
 
                     <div className="sm:col-span-2 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
@@ -470,12 +470,12 @@ const DriverDashboard = () => {
 
                     {checkedIn && (
                       <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3.5 animate-fadeIn">
-                        <span className="font-black text-slate-900 dark:text-white block text-xs">2. Doorstep Verification & AI Material Inspection</span>
+                        <span className="font-black text-slate-900 dark:text-white block text-xs">2. Doorstep Verification & Scale Re-Check</span>
                         
                         <div className="space-y-1">
                           <label className="text-[10px] font-black text-slate-400 uppercase flex items-center space-x-1">
                             <FaCamera className="text-emerald-500" />
-                            <span>Upload Waste Photo for AI Inspection</span>
+                            <span>Upload Waste Photo for Inspection</span>
                           </label>
                           <label className="flex items-center justify-center p-3 bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition-colors">
                             <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
@@ -488,14 +488,17 @@ const DriverDashboard = () => {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Enter Verified Weight (kg)</label>
+                            <label className="text-[9px] font-black text-emerald-500 uppercase block mb-1">Driver Scale Verified Weight (kg)</label>
                             <input 
                               type="number"
                               value={actualWeight}
                               onChange={(e) => setActualWeight(e.target.value)}
-                              placeholder="e.g. 5.0"
-                              className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-900 dark:text-white text-xs"
+                              placeholder={`User requested: ${activePickup.estimatedWeight || 5.0} kg`}
+                              className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/40 font-black text-emerald-600 dark:text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500"
                             />
+                            <span className="text-[9px] text-slate-400 font-bold block pt-1">
+                              Verified Points: +{Math.round((parseFloat(actualWeight) || activePickup.estimatedWeight || 5.0) * 35)} EcoPoints
+                            </span>
                           </div>
 
                           <div>

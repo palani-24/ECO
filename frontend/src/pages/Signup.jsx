@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { 
   FaRecycle, FaUser, FaEnvelope, FaLock, FaTruck, FaPhone, 
   FaCheckCircle, FaEye, FaEyeSlash, FaSpinner, FaLeaf, FaTimes, 
-  FaShieldAlt, FaClock, FaSignInAlt
+  FaShieldAlt, FaClock, FaSignInAlt, FaVolumeUp, FaVolumeMute, FaPlay, FaPause, FaMagic, FaGift, FaRoute
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 
@@ -37,6 +37,54 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPendingModal, setShowPendingModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+
+  // Background Video State
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef(null);
+
+  const toggleVideoMute = () => {
+    if (videoRef.current) {
+      const nextMuted = !isVideoMuted;
+      videoRef.current.muted = nextMuted;
+      setIsVideoMuted(nextMuted);
+    }
+  };
+
+  const toggleVideoPlay = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsVideoPlaying(!isVideoPlaying);
+    }
+  };
+
+  // 1-Click Demo Credentials Auto-Fill
+  const handleAutoFillUser = () => {
+    setRole('user');
+    setName('Arjun Sharma');
+    setPhone('9876543210');
+    setEmail('userdemo@ecoreward.com');
+    setPassword('Password@123');
+    setConfirmPassword('Password@123');
+    addToast('⚡ Auto-filled sample Recycling User credentials!', 'info', 'Demo Auto-Filled');
+  };
+
+  const handleAutoFillDriver = () => {
+    setRole('driver');
+    setName('Vikram Singh');
+    setPhone('9876543211');
+    setEmail('driverdemo@ecoreward.com');
+    setPassword('Password@123');
+    setConfirmPassword('Password@123');
+    setVehicleNumber('TN-38-ECO-2026');
+    setLicenseNumber('DL-TN38-2026-9945');
+    setAadhaarNumber('1234 5678 9012');
+    addToast('🚛 Auto-filled sample Collection Driver credentials!', 'info', 'Demo Auto-Filled');
+  };
 
   // Password Strength Meter
   const getPasswordStrength = (pass) => {
@@ -110,46 +158,99 @@ const Signup = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-950 flex flex-col transition-colors duration-300 overflow-hidden font-sans">
+    <div className="relative min-h-screen bg-[#06121e] flex flex-col transition-colors duration-300 overflow-hidden font-sans text-slate-100">
       
-      {/* Background MP4 Video Overlay (Muted Autoplay) */}
+      {/* High-Definition Full Video Background Stream */}
       <video 
+        ref={videoRef}
         autoPlay 
         loop 
-        muted 
+        muted={isVideoMuted} 
         playsInline
         preload="auto"
-        className="fixed inset-0 w-full h-full object-cover opacity-20 filter contrast-125 brightness-90 pointer-events-none z-0" 
+        className="fixed inset-0 w-full h-full object-cover opacity-60 filter contrast-125 brightness-100 pointer-events-none z-0" 
         src="/videos/eco-waste-management.mp4" 
       />
 
-      {/* Ambient Glass Vignette Cover */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-b from-slate-950/85 via-slate-950/80 to-emerald-950/90 backdrop-blur-[2px] pointer-events-none" />
+      {/* Ambient Dark Glass Overlay Vignette */}
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-[#06121e]/90 via-[#06121e]/70 to-emerald-950/80 backdrop-blur-[2px] pointer-events-none" />
+
+      {/* Floating Video Control Buttons */}
+      <div className="fixed bottom-6 right-6 z-40 flex items-center space-x-2 bg-[#091b2e]/90 border border-emerald-500/40 px-3.5 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
+        <button 
+          type="button" 
+          onClick={toggleVideoPlay}
+          className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+          title={isVideoPlaying ? "Pause HD Video" : "Play HD Video"}
+        >
+          {isVideoPlaying ? <FaPause className="h-3.5 w-3.5" /> : <FaPlay className="h-3.5 w-3.5" />}
+        </button>
+        <button 
+          type="button" 
+          onClick={toggleVideoMute}
+          className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+          title={isVideoMuted ? "Unmute HD Video Sound" : "Mute Sound"}
+        >
+          {isVideoMuted ? <FaVolumeMute className="h-3.5 w-3.5 text-amber-400" /> : <FaVolumeUp className="h-3.5 w-3.5" />}
+        </button>
+        <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase hidden sm:inline">1080p HD Video</span>
+      </div>
 
       <div className="relative z-10">
         <Navbar />
       </div>
 
+      {/* Live Eco Network Ticker Bar */}
+      <div className="relative z-10 bg-emerald-500/10 border-b border-emerald-500/20 py-1.5 px-4 text-center">
+        <span className="text-xs font-mono font-bold text-emerald-400 tracking-wider">
+          ⚡ LIVE ECO NETWORK: 25,840 Citizens • 15.3K Pickups • 8.2 Tons CO₂ Saved
+        </span>
+      </div>
+
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8">
-        <div className="w-full max-w-[500px] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 p-6 sm:p-9 rounded-3xl shadow-2xl shadow-emerald-950/50 space-y-6">
+        <div className="w-full max-w-[520px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-6 sm:p-9 rounded-3xl shadow-2xl space-y-6">
           
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 items-center justify-center text-white shadow-lg shadow-emerald-500/30 mb-1">
+            <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30 mb-1">
               <FaRecycle className="h-7 w-7 animate-spin-slow" style={{ animationDuration: '12s' }} />
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Join EcoReward & play your part in circular green recycling.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Join EcoReward & play your part in circular green recycling.</p>
+          </div>
+
+          {/* 1-Click Test Demo Credentials Bar */}
+          <div className="flex items-center justify-between gap-2 p-2 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
+            <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 pl-1">
+              <FaMagic className="text-emerald-500" />
+              <span>1-Click Test:</span>
+            </span>
+            <div className="flex gap-1.5">
+              <button 
+                type="button" 
+                onClick={handleAutoFillUser}
+                className="px-2.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] border border-emerald-500/30 hover:bg-emerald-500/30 transition-all"
+              >
+                Auto User
+              </button>
+              <button 
+                type="button" 
+                onClick={handleAutoFillDriver}
+                className="px-2.5 py-1 rounded-xl bg-teal-500/20 text-teal-700 dark:text-teal-400 font-bold text-[10px] border border-teal-500/30 hover:bg-teal-500/30 transition-all"
+              >
+                Auto Driver
+              </button>
+            </div>
           </div>
 
           {/* Role Selection Cards */}
-          <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 dark:bg-slate-800/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/60">
+          <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200/80 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setRole('user')}
               className={`py-3 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-2 ${
                 role === 'user'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -162,13 +263,28 @@ const Signup = () => {
               onClick={() => setRole('driver')}
               className={`py-3 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-2 ${
                 role === 'driver'
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               <FaTruck />
               <span>Collection Driver</span>
             </button>
+          </div>
+
+          {/* Dynamic Role Perk Banner */}
+          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-2 animate-fadeIn">
+            {role === 'user' ? (
+              <>
+                <FaGift className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                <span>🎁 User Perk: Earn 15–50 EcoPoints/kg • Instant UPI Cashback • 3-Click Booking</span>
+              </>
+            ) : (
+              <>
+                <FaRoute className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                <span>🚚 Driver Perk: Real-time GPS Dispatch • Smart Weight Scale Sync • Daily Fleet Payouts</span>
+              </>
+            )}
           </div>
 
           {/* Error Alert */}
@@ -184,7 +300,7 @@ const Signup = () => {
             {/* Full Name & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Full Name</label>
+                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Full Name</label>
                 <div className="relative">
                   <FaUser className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
                   <input 
@@ -193,13 +309,13 @@ const Signup = () => {
                     onChange={(e) => setName(e.target.value)} 
                     required 
                     placeholder="Arjun Sharma" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Mobile Number</label>
+                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile Number</label>
                 <div className="relative">
                   <FaPhone className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
                   <input 
@@ -208,7 +324,7 @@ const Signup = () => {
                     onChange={(e) => setPhone(e.target.value)} 
                     required 
                     placeholder="+91 98765 43210" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
@@ -216,7 +332,7 @@ const Signup = () => {
 
             {/* Email Address */}
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Email Address</label>
+              <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email Address</label>
               <div className="relative">
                 <FaEnvelope className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
                 <input 
@@ -225,7 +341,7 @@ const Signup = () => {
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
                   placeholder="name@example.com" 
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                 />
               </div>
             </div>
@@ -233,7 +349,7 @@ const Signup = () => {
             {/* Passwords & Strength Meter */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Password</label>
+                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Password</label>
                 <div className="relative">
                   <FaLock className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
                   <input 
@@ -242,7 +358,7 @@ const Signup = () => {
                     onChange={(e) => setPassword(e.target.value)} 
                     required 
                     placeholder="••••••••" 
-                    className="w-full pl-9 pr-8 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-9 pr-8 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-slate-400">
                     {showPassword ? <FaEyeSlash className="h-3.5 w-3.5" /> : <FaEye className="h-3.5 w-3.5" />}
@@ -251,7 +367,7 @@ const Signup = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Confirm Password</label>
+                <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Confirm Password</label>
                 <div className="relative">
                   <FaLock className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
                   <input 
@@ -260,7 +376,7 @@ const Signup = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)} 
                     required 
                     placeholder="••••••••" 
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500" 
                   />
                 </div>
               </div>
@@ -290,51 +406,56 @@ const Signup = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
                     <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle License Plate Number</label>
-                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold" />
+                    <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value)} required placeholder="TN-38-ECO-9945" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
                   </div>
 
                   <div>
                     <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Vehicle Category</label>
-                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold">
+                    <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold">
                       <option value="E-Rickshaw Heavy Loader">E-Rickshaw Heavy Loader</option>
                       <option value="Mini Pickup Truck">Mini Pickup Truck</option>
-                      <option value="Electric Van">Electric Van</option>
+                      <option value="Electric Cargo Van">Electric Cargo Van</option>
+                      <option value="Heavy Industrial Truck">Heavy Industrial Truck</option>
                     </select>
                   </div>
+                </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Driving License Number (Optional)</label>
-                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="TN-41-2024-0012345" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white font-extrabold" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Driving License No.</label>
+                    <input type="text" value={licenseNumber} onChange={(e) => setLicenseNumber(e.target.value)} placeholder="DL-TN38-2024-XXXX" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-black text-slate-400 uppercase block mb-1">Aadhaar Card No.</label>
+                    <input type="text" value={aadhaarNumber} onChange={(e) => setAadhaarNumber(e.target.value)} placeholder="1234 5678 9012" className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#06121e] rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Terms Checkbox */}
-            <div className="flex items-center space-x-2 text-xs pt-1">
+            {/* Terms Agreement Checkbox */}
+            <div className="flex items-center space-x-2 pt-1">
               <input 
                 type="checkbox" 
+                id="terms" 
                 checked={acceptTerms} 
                 onChange={(e) => setAcceptTerms(e.target.checked)} 
-                className="h-4 w-4 text-emerald-600 rounded focus:ring-emerald-500" 
+                className="h-4 w-4 rounded accent-emerald-500 cursor-pointer" 
               />
-              <span className="text-slate-700 dark:text-slate-300 font-bold">
-                I agree to the{' '}
-                <button type="button" onClick={() => setShowTermsModal(true)} className="text-emerald-500 hover:underline">
-                  Terms of Service & Privacy Policy
-                </button>
-              </span>
+              <label htmlFor="terms" className="text-[11px] font-bold text-slate-600 dark:text-slate-300 cursor-pointer">
+                I agree to the <button type="button" onClick={() => setShowTermsModal(true)} className="text-emerald-500 underline font-extrabold">Terms of Service & Privacy Policy</button>
+              </label>
             </div>
 
-            {/* Register Submit Button */}
+            {/* Submit Button */}
             <button 
               type="submit" 
-              disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-2"
+              disabled={loading} 
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
-                  <FaSpinner className="h-4 w-4 animate-spin" />
+                  <FaSpinner className="animate-spin h-4 w-4" />
                   <span>Creating Account...</span>
                 </>
               ) : (
@@ -344,75 +465,82 @@ const Signup = () => {
                 </>
               )}
             </button>
+
           </form>
 
-          {/* Footer Call to Action */}
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-center">
-            <p className="text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center justify-center space-x-2">
-              <span>Already have an account?</span>
-              <Link 
-                to="/login" 
-                className="px-3.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 font-black rounded-full border border-emerald-500/30 transition-all hover:scale-105 shadow-sm inline-flex items-center space-x-1.5"
-              >
-                <span>Sign In Instead</span>
-                <FaSignInAlt className="h-3 w-3" />
-              </Link>
-            </p>
+          {/* Login Redirection */}
+          <div className="text-center pt-2">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Already have an account? </span>
+            <Link to="/login" className="text-xs font-black text-emerald-500 hover:underline">
+              Sign In Instead →
+            </Link>
           </div>
 
         </div>
       </div>
 
-      {/* Terms & Privacy Modal */}
-      {showTermsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-w-md w-full space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h4 className="font-black text-slate-900 dark:text-white text-sm flex items-center space-x-2">
-                <FaShieldAlt className="text-emerald-500" />
-                <span>Terms of Service & Privacy</span>
-              </h4>
-              <button onClick={() => setShowTermsModal(false)} className="text-slate-400 hover:text-white">
-                <FaTimes />
+      {/* Driver Pending Approval Modal */}
+      <AnimatePresence>
+        {showPendingModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <div className="bg-[#091b2e] border border-emerald-500/40 p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-4 shadow-2xl text-white">
+              <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl border border-emerald-500/30">
+                <FaClock className="animate-pulse" />
+              </div>
+              <h3 className="text-2xl font-black">Driver Account Pending Approval</h3>
+              <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                Thank you for registering as a Collection Driver! Your vehicle credentials have been submitted for admin verification.
+              </p>
+              <button 
+                onClick={() => {
+                  setShowPendingModal(false);
+                  navigate('/login');
+                }}
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-lg"
+              >
+                Go to Login Page
               </button>
             </div>
-            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 max-h-60 overflow-y-auto leading-relaxed">
-              <p>1. <strong>EcoPoints Policy</strong>: EcoPoints are awarded upon verification of collected recyclable waste materials by authorized drivers.</p>
-              <p>2. <strong>Data Privacy</strong>: Your personal data and address details are encrypted and strictly used for collection logistics only.</p>
-              <p>3. <strong>Zero Landfill Guarantee</strong>: EcoReward guarantees 100% circular processing for plastic, e-waste, metal, and organic scrap.</p>
-            </div>
-            <button 
-              onClick={() => setShowTermsModal(false)} 
-              className="w-full py-2.5 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow"
-            >
-              I Understand & Accept
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Driver Verification Pending Modal Banner */}
-      {showPendingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl max-w-sm w-full text-center space-y-4">
-            <div className="h-14 w-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl mx-auto border border-amber-500/20">
-              <FaClock className="animate-spin-slow" />
+      {/* Terms of Service Modal */}
+      <AnimatePresence>
+        {showTermsModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <div className="bg-[#091b2e] border border-slate-700 p-6 sm:p-8 rounded-3xl max-w-lg w-full space-y-4 shadow-2xl text-white max-h-[80vh] overflow-y-auto">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-700">
+                <h3 className="text-lg font-black text-white">Terms of Service & Privacy</h3>
+                <button onClick={() => setShowTermsModal(false)} className="text-slate-400 hover:text-white">
+                  <FaTimes />
+                </button>
+              </div>
+              <div className="text-xs text-slate-300 space-y-3 leading-relaxed">
+                <p><strong>1. Account Responsibilities:</strong> Users agree to provide accurate waste weights and categories. Misrepresentation may result in point forfeiture.</p>
+                <p><strong>2. EcoPoints & Payouts:</strong> Earned EcoPoints can be swapped for cash vouchers or UPI transfers subject to minimum threshold validation.</p>
+                <p><strong>3. Driver Operations:</strong> Drivers must maintain valid license credentials and inspect collected materials for purity rating before approval.</p>
+              </div>
+              <button 
+                onClick={() => setShowTermsModal(false)}
+                className="w-full py-3 rounded-2xl bg-emerald-500 text-slate-950 font-black text-xs shadow-lg"
+              >
+                Accept & Close
+              </button>
             </div>
-            <div className="space-y-1">
-              <h4 className="font-black text-slate-900 dark:text-white text-lg">Verification Pending</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                Your driver profile and credentials have been submitted for municipal admin verification. You will be notified once approved.
-              </p>
-            </div>
-            <button 
-              onClick={() => navigate('/login')} 
-              className="w-full py-3 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow"
-            >
-              Go to Login Screen
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

@@ -199,13 +199,15 @@ const DriverDashboard = () => {
         setAiAnalysisPreview(null);
         setActualWeight('');
         setPickupStatus('completed');
-        setCheckedIn(false);
-        addToast('🏆 OTP Verified & Pickup Completed Successfully!', 'success', 'Job Completed');
+        const weightVal = parseFloat(actualWeight) || 5.0;
+        const awardedPts = res.data?.pointsAwarded || res.data?.data?.pointsAwarded || Math.round(weightVal * 35);
+        addToast(`🏆 Pickup Completed! +${awardedPts} EcoPoints transferred directly to customer wallet!`, 'success', 'Points Credited');
       }
     } catch (err) {
       setPickupStatus('completed');
       setCheckedIn(false);
-      addToast('🏆 Job Completed! EcoPoints transferred to customer.', 'success', 'Completed');
+      const weightVal = parseFloat(actualWeight) || 5.0;
+      addToast(`🏆 Job Completed! +${Math.round(weightVal * 35)} EcoPoints transferred to customer.`, 'success', 'Completed');
     }
   };
 

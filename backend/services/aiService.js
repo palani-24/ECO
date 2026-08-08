@@ -174,8 +174,8 @@ export const analyzeWasteImage = async (imagePath, claimedCategory, claimedWeigh
   if (qualityScore >= 92) qualityGrade = 'High';
   if (qualityScore < 82) qualityGrade = 'Low';
 
-  const rate = POINT_RATES[detectedCategory] || 10;
-  const pointsAwarded = Math.min(1000, Math.round(actualWeight * rate));
+  const rate = 35;
+  const pointsAwarded = Math.round(actualWeight * rate);
 
   const availableSubTypes = SUB_TYPES[detectedCategory] || [detectedCategory];
   const detectedMaterial = availableSubTypes[Math.floor(Math.random() * availableSubTypes.length)];

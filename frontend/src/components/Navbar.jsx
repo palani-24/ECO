@@ -9,7 +9,7 @@ import MobileQRScannerModal from './MobileQRScannerModal';
 import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
-  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode
+  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode, FaArrowRight
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -67,7 +67,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors duration-300">
+      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#06121e]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
@@ -83,8 +83,8 @@ const Navbar = () => {
                 className="h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain shadow-sm group-hover:scale-105 transition-transform" 
               />
               <div className="hidden xl:flex flex-col border-l border-slate-700/50 pl-2.5 ml-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 leading-none">EcoReward</span>
-                <span className="text-[8px] font-mono text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500 dark:text-emerald-400 leading-none">EcoReward</span>
+                <span className="text-[8px] font-mono text-slate-500 dark:text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
               </div>
             </Link>
 
@@ -92,41 +92,61 @@ const Navbar = () => {
             {isLandingPage ? (
               <>
                 <div className="hidden md:flex items-center space-x-6 text-xs font-extrabold">
-                  <Link to="/" className="text-slate-700 dark:text-slate-200 hover:text-emerald-500 transition-colors">Home</Link>
-                  <a href="#about" className="text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors">About</a>
-                  <a href="#features" className="text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors">Features</a>
-                  <a href="#how-it-works" className="text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors">How It Works</a>
-                  <a href="#contact" className="text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition-colors">Contact</a>
+                  <Link to="/" className="text-slate-800 dark:text-slate-200 hover:text-emerald-500 transition-colors">Home</Link>
+                  <a href="#about" className="text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition-colors">About</a>
+                  <a href="#features" className="text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition-colors">Features</a>
+                  <a href="#how-it-works" className="text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition-colors">How It Works</a>
+                  <a href="#contact" className="text-slate-700 dark:text-slate-300 hover:text-emerald-500 transition-colors">Contact</a>
                 </div>
 
                 <div className="hidden md:flex items-center space-x-3">
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors flex items-center space-x-1.5 text-xs font-bold"
+                    title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                   >
-                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4" />}
+                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
+                    <span className="text-[11px] font-mono">{darkMode ? 'Light' : 'Dark'}</span>
                   </button>
 
                   {user ? (
                     <Link 
                       to={getDashboardLink()} 
-                      className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs shadow transition-all"
+                      className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs shadow transition-all hover:scale-105"
                     >
-                      Go to Dashboard
+                      Dashboard
                     </Link>
                   ) : (
                     <div className="flex items-center space-x-2 text-xs font-extrabold">
-                      <Link to="/login" className="px-3 py-1.5 text-slate-700 dark:text-slate-200 hover:text-emerald-500 transition-colors">
+                      <Link to="/login" className="px-3.5 py-1.5 text-slate-800 dark:text-slate-200 hover:text-emerald-600 transition-colors">
                         Login
                       </Link>
                       <Link 
                         to="/signup" 
-                        className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold shadow transition-all"
+                        className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-extrabold shadow transition-all hover:scale-105"
                       >
                         Sign Up
                       </Link>
                     </div>
                   )}
+                </div>
+
+                {/* Mobile Header Controls */}
+                <div className="flex md:hidden items-center space-x-2">
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400"
+                    aria-label="Toggle Theme"
+                  >
+                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="p-2 rounded-xl bg-emerald-600 text-white font-bold"
+                    aria-label="Open Navigation Menu"
+                  >
+                    {isOpen ? <FaTimes className="h-4 w-4" /> : <FaBars className="h-4 w-4" />}
+                  </button>
                 </div>
               </>
             ) : (
@@ -250,6 +270,86 @@ const Navbar = () => {
             )}
 
           </div>
+
+          {/* MOBILE LANDING PAGE SLIDE-DOWN DRAWER MENU */}
+          {isLandingPage && isOpen && (
+            <div className="md:hidden py-4 border-t border-slate-200 dark:border-slate-800 space-y-3 px-2 bg-white dark:bg-[#06121e] animate-fadeIn">
+              <div className="flex flex-col space-y-2 text-sm font-extrabold">
+                <Link 
+                  to="/" 
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100"
+                >
+                  Home
+                </Link>
+                <a 
+                  href="#about" 
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                >
+                  About
+                </a>
+                <a 
+                  href="#features" 
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                >
+                  Features
+                </a>
+                <a 
+                  href="#how-it-works" 
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                >
+                  How It Works
+                </a>
+                <a 
+                  href="#contact" 
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                >
+                  Contact
+                </a>
+              </div>
+
+              <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                <button 
+                  onClick={() => setDarkMode(!darkMode)}
+                  className="flex-1 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs flex items-center justify-center space-x-2"
+                >
+                  {darkMode ? <FaSun className="text-amber-400 h-4 w-4" /> : <FaMoon className="text-slate-700 h-4 w-4" />}
+                  <span>{darkMode ? 'Light Theme' : 'Dark Theme'}</span>
+                </button>
+
+                {user ? (
+                  <Link 
+                    to={getDashboardLink()}
+                    onClick={() => setIsOpen(false)}
+                    className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 text-white text-center font-bold text-xs"
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <div className="flex items-center space-x-2 flex-1">
+                    <Link 
+                      to="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="flex-1 py-2 text-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-xs"
+                    >
+                      Login
+                    </Link>
+                    <Link 
+                      to="/signup"
+                      onClick={() => setIsOpen(false)}
+                      className="flex-1 py-2 text-center rounded-xl bg-emerald-600 text-white font-bold text-xs"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Expandable Mobile Search Bar */}
           {!isLandingPage && showMobileSearch && (

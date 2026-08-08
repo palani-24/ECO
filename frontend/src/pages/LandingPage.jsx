@@ -19,6 +19,22 @@ import { useSocket } from '../context/SocketContext';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const LandingPage = () => {
+  // DUAL THEME ENGINE (SYNCHRONIZED WITH NAVBAR SUN/MOON BUTTON)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   // Mobile vs Desktop Performance Engine
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
   const [imageErrors, setImageErrors] = useState({});
@@ -183,7 +199,7 @@ const LandingPage = () => {
     resize();
     window.addEventListener('resize', resize);
 
-    const particleCount = 50;
+    const particleCount = 40;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -199,7 +215,7 @@ const LandingPage = () => {
 
       if (mousePos.x > 0 && mousePos.y > 0) {
         const grad = ctx.createRadialGradient(mousePos.x, mousePos.y, 0, mousePos.x, mousePos.y, 240);
-        grad.addColorStop(0, 'rgba(0, 187, 167, 0.12)');
+        grad.addColorStop(0, isDarkMode ? 'rgba(0, 187, 167, 0.12)' : 'rgba(0, 187, 167, 0.08)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -245,7 +261,7 @@ const LandingPage = () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mousePos, isDesktop]);
+  }, [mousePos, isDesktop, isDarkMode]);
 
   const handleMouseMove = (e) => {
     if (isDesktop && canvasRef.current) {
@@ -496,7 +512,9 @@ const LandingPage = () => {
   const displayPodiumUsers = liveLeaderboard.slice(0, 3);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#06121e] text-slate-100 transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 font-sans selection:bg-emerald-500 selection:text-white ${
+      isDarkMode ? 'bg-[#06121e] text-slate-100' : 'bg-[#f8fafc] text-slate-900'
+    }`}>
       <Navbar />
 
       {/* Floating Audio SFX Toggle Button */}
@@ -506,26 +524,34 @@ const LandingPage = () => {
           setSfxEnabled(next);
           if (next) playSciFiSound('success');
         }}
-        className="fixed bottom-20 sm:bottom-6 left-6 z-40 px-3.5 py-2 rounded-2xl bg-[#091b2e]/90 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold backdrop-blur-md shadow-2xl flex items-center space-x-2 hover:bg-[#0c1f35] transition-all"
+        className={`fixed bottom-20 sm:bottom-6 left-6 z-40 px-3.5 py-2 rounded-2xl text-xs font-mono font-bold backdrop-blur-md shadow-2xl flex items-center space-x-2 transition-all ${
+          isDarkMode 
+            ? 'bg-[#091b2e]/90 border border-emerald-500/30 text-emerald-400 hover:bg-[#0c1f35]' 
+            : 'bg-white/90 border border-slate-200 text-emerald-600 hover:bg-slate-50'
+        }`}
         title="Toggle Sci-Fi Audio FX Feedback"
       >
-        {sfxEnabled ? <FaVolumeUp className="h-4 w-4 text-emerald-400 animate-pulse" /> : <FaVolumeOff className="h-4 w-4 text-slate-500" />}
+        {sfxEnabled ? <FaVolumeUp className="h-4 w-4 text-emerald-500 animate-pulse" /> : <FaVolumeOff className="h-4 w-4 text-slate-400" />}
         <span className="hidden sm:inline">{sfxEnabled ? 'SFX Audio ON' : 'SFX Audio Muted'}</span>
       </button>
 
       {/* Mobile Fixed Quick-Action CTA Bar */}
-      <div className="fixed bottom-0 inset-x-0 sm:hidden z-40 bg-[#06121e]/95 border-t border-slate-800 p-3 flex justify-between gap-3 shadow-2xl">
+      <div className={`fixed bottom-0 inset-x-0 sm:hidden z-40 p-3 flex justify-between gap-3 shadow-2xl border-t ${
+        isDarkMode ? 'bg-[#06121e]/95 border-slate-800' : 'bg-white/95 border-slate-200'
+      }`}>
         <Link 
           to="/signup"
           onClick={() => playSciFiSound('click')}
-          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 text-center font-black text-xs shadow-lg flex items-center justify-center space-x-2"
+          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center font-black text-xs shadow-lg flex items-center justify-center space-x-2"
         >
           <span>Get Started Free</span>
           <FaArrowRight />
         </Link>
         <Link 
           to="/login"
-          className="px-5 py-3 rounded-xl bg-[#091b2e] text-white border border-slate-700 text-center font-bold text-xs"
+          className={`px-5 py-3 rounded-xl border text-center font-bold text-xs ${
+            isDarkMode ? 'bg-[#091b2e] text-white border-slate-700' : 'bg-slate-100 text-slate-900 border-slate-200'
+          }`}
         >
           Login
         </Link>
@@ -538,12 +564,16 @@ const LandingPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8"
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8"
           >
-            <div className="relative w-full max-w-5xl bg-[#06121e] rounded-3xl overflow-hidden border border-emerald-500/50 shadow-2xl">
+            <div className={`relative w-full max-w-5xl rounded-3xl overflow-hidden border shadow-2xl ${
+              isDarkMode ? 'bg-[#06121e] border-emerald-500/40 text-white' : 'bg-white border-slate-200 text-slate-900'
+            }`}>
               <button 
                 onClick={() => setShowVideoModal(false)}
-                className="absolute top-4 right-4 z-20 h-10 w-10 rounded-full bg-[#091b2e] border border-slate-700 text-white font-bold flex items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all"
+                className={`absolute top-4 right-4 z-20 h-10 w-10 rounded-full font-bold flex items-center justify-center transition-all ${
+                  isDarkMode ? 'bg-[#091b2e] border border-slate-700 text-white hover:bg-emerald-500 hover:text-slate-950' : 'bg-slate-100 border border-slate-200 text-slate-900 hover:bg-emerald-500 hover:text-white'
+                }`}
               >
                 ✕
               </button>
@@ -561,10 +591,12 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION (SEAMLESS UNIFIED CYBER SLATE #06121e) */}
+      {/* HERO SECTION */}
       <section 
         onMouseMove={handleMouseMove}
-        className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-[#06121e] border-b border-slate-800/80"
+        className={`relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b ${
+          isDarkMode ? 'bg-[#06121e] border-slate-800/80' : 'bg-white border-slate-200/80'
+        }`}
       >
         {/* Particle Canvas Background */}
         {isDesktop && (
@@ -574,8 +606,8 @@ const LandingPage = () => {
           />
         )}
 
-        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl pointer-events-none"></div>
+        <div className={`absolute top-10 left-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${isDarkMode ? 'bg-emerald-500/10' : 'bg-emerald-500/5'}`}></div>
+        <div className={`absolute bottom-10 right-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${isDarkMode ? 'bg-teal-500/10' : 'bg-teal-500/5'}`}></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -586,20 +618,26 @@ const LandingPage = () => {
               transition={{ duration: 0.6 }}
               className="lg:col-span-7 space-y-6 text-center lg:text-left gpu-layer"
             >
-              <div className="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full bg-[#091b2e] border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest shadow-lg shadow-emerald-500/5">
+              <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-sm ${
+                isDarkMode ? 'bg-[#091b2e] border-emerald-500/30 text-emerald-400' : 'bg-slate-50 border-emerald-500/20 text-emerald-700'
+              }`}>
                 <img src="/app-logo.png" alt="EcoReward Emblem" className="h-5 w-auto object-contain" />
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
                 <span>CIRCULAR ECO LOGISTICS v4.0</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
+              <h1 className={`text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
                 AI-Powered <br />
-                <span className="animate-cyberEmeraldGlint">
+                <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent"}>
                   Zero Waste Platform
                 </span>
               </h1>
               
-              <p className="text-sm sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+              <p className={`text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-600'
+              }`}>
                 Transform household recyclables into instant cash & eco vouchers. Scan waste with neural camera recognition, schedule doorstep pickups, track drivers live, and help build a zero-landfill future!
               </p>
 
@@ -607,7 +645,7 @@ const LandingPage = () => {
                 <Link 
                   to="/signup" 
                   onClick={() => playSciFiSound('click')}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black shadow-xl shadow-emerald-500/25 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
                 >
                   <span>Get Started Free</span>
                   <FaArrowRight className="h-4 w-4" />
@@ -618,24 +656,28 @@ const LandingPage = () => {
                     playSciFiSound('click');
                     setShowVideoModal(true);
                   }}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#091b2e] text-white border border-slate-700 font-bold hover:bg-[#0c1f35] transition-all flex items-center justify-center space-x-2 text-base shadow-sm hover:border-emerald-500/40"
+                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl border font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-sm ${
+                    isDarkMode ? 'bg-[#091b2e] text-white border-slate-700 hover:bg-[#0c1f35]' : 'bg-slate-100 text-slate-900 border-slate-200 hover:bg-slate-200'
+                  }`}
                 >
-                  <FaVideo className="text-emerald-400 h-4 w-4" />
+                  <FaVideo className="text-emerald-500 h-4 w-4" />
                   <span>Watch Trailer</span>
                 </button>
               </div>
 
-              <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-400 font-medium">
-                <div className="flex items-center space-x-2 bg-[#091b2e]/90 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-3.5 w-3.5" />
+              <div className={`pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-medium ${
+                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+              }`}>
+                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span>100% Free Account</span>
                 </div>
-                <div className="flex items-center space-x-2 bg-[#091b2e]/90 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-3.5 w-3.5" />
+                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span>Instant UPI Cashback</span>
                 </div>
-                <div className="flex items-center space-x-2 bg-[#091b2e]/90 px-3 py-1.5 rounded-xl border border-slate-800">
-                  <FaCheckCircle className="text-emerald-400 h-3.5 w-3.5" />
+                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span>Zero Landfill Mission</span>
                 </div>
               </div>
@@ -648,24 +690,28 @@ const LandingPage = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-5 flex justify-center relative gpu-layer"
             >
-              <div className="relative w-full max-w-[480px] bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/40 p-6 rounded-3xl shadow-2xl shadow-emerald-950/60 space-y-5">
+              <div className={`relative w-full max-w-[480px] border p-6 rounded-3xl shadow-2xl space-y-5 ${
+                isDarkMode ? 'bg-[#091b2e]/95 border-emerald-500/40' : 'bg-white border-slate-200'
+              }`}>
                 
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className={`flex items-center justify-between pb-3 border-b ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
                   <div className="flex items-center space-x-2.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
-                      <FaFingerprint className="text-emerald-400" />
+                    <span className={`text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                      <FaFingerprint className="text-emerald-500" />
                       Neural Scanner HUD
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono uppercase font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">
+                  <span className={`text-[10px] font-mono uppercase font-bold px-2.5 py-1 rounded-full border ${
+                    isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-emerald-700 bg-emerald-500/10 border-emerald-500/20'
+                  }`}>
                     Live Demo
                   </span>
                 </div>
 
-                <div className="relative h-60 bg-[#040c14] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-inner group flex items-center justify-center">
+                <div className="relative h-60 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-inner group flex items-center justify-center">
                   {imageErrors[activeDemoItem.id] ? (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] to-[#040c14] flex flex-col items-center justify-center p-4 text-center space-y-2">
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col items-center justify-center p-4 text-center space-y-2">
                       <FaRobot className="h-12 w-12 text-emerald-400 animate-bounce" />
                       <span className="text-xs font-mono text-white font-bold">{activeDemoItem.name}</span>
                       <span className="text-[10px] font-mono text-emerald-400">98.6% Neural AI Accuracy</span>
@@ -702,7 +748,7 @@ const LandingPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 block">
+                  <span className={`text-[10px] uppercase font-mono font-bold tracking-widest block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                     Click item below to scan:
                   </span>
                   <div className="grid grid-cols-5 gap-1.5">
@@ -712,8 +758,8 @@ const LandingPage = () => {
                         onClick={() => handleSelectDemo(item)}
                         className={`p-2 rounded-xl text-center text-[10px] font-mono font-bold border transition-all ${
                           activeDemoItem.id === item.id 
-                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 border-emerald-400 shadow-md scale-105 font-black' 
-                            : 'bg-[#040c14] text-slate-300 border-slate-800 hover:bg-[#0c1f35]'
+                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 shadow-md scale-105 font-black' 
+                            : isDarkMode ? 'bg-[#040c14] text-slate-300 border-slate-800 hover:bg-[#0c1f35]' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
                         <span className="block truncate">{item.category}</span>
@@ -723,13 +769,13 @@ const LandingPage = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="p-3 bg-[#040c14] rounded-2xl border border-slate-800">
+                  <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                     <span className="text-[9px] text-slate-400 block uppercase font-bold">Est. Points Earned</span>
-                    <span className="text-sm font-black text-emerald-400">+{activeDemoItem.points} EcoPoints</span>
+                    <span className="text-sm font-black text-emerald-500">+{activeDemoItem.points} EcoPoints</span>
                   </div>
-                  <div className="p-3 bg-[#040c14] rounded-2xl border border-slate-800">
+                  <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                     <span className="text-[9px] text-slate-400 block uppercase font-bold">Purity Rating</span>
-                    <span className="text-xs font-bold text-slate-200 truncate block">{activeDemoItem.recyclable}</span>
+                    <span className={`text-xs font-bold truncate block ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{activeDemoItem.recyclable}</span>
                   </div>
                 </div>
 
@@ -740,22 +786,26 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* IMPACT COUNTERS BAR (UNIFIED CYBER SLATE #081728) */}
-      <section className="py-10 bg-[#081728] text-slate-100 border-b border-slate-800/80">
+      {/* IMPACT COUNTERS BAR */}
+      <section className={`py-10 border-b ${
+        isDarkMode ? 'bg-[#081728] text-slate-100 border-slate-800/80' : 'bg-[#f8fafc] text-slate-900 border-slate-200/80'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {impactStats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className="p-5 rounded-2xl bg-[#091b2e] border border-slate-800 shadow-lg flex items-center space-x-3.5 hover:border-emerald-500/50 transition-all">
-                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
+                <div key={i} className={`p-5 rounded-2xl border shadow-md flex items-center space-x-3.5 transition-all ${
+                  isDarkMode ? 'bg-[#091b2e] border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200/80 hover:border-emerald-500/50'
+                }`}>
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
                     <Icon />
                   </div>
                   <div>
-                    <span className="text-xl sm:text-2xl font-black text-white block tracking-tight">
+                    <span className={`text-xl sm:text-2xl font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                       {stat.value}
                     </span>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{stat.label}</p>
+                    <p className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{stat.label}</p>
                   </div>
                 </div>
               );
@@ -764,19 +814,21 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CINEMATIC HARDWARE SHOWCASE (UNIFIED CYBER SLATE #091b2e) */}
-      <section className="py-20 bg-[#06121e] border-b border-slate-800">
+      {/* CINEMATIC HARDWARE SHOWCASE */}
+      <section className={`py-20 border-b ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-white border-slate-200/80'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
-              <FaMicrochip className="h-4 w-4 text-emerald-400" />
+            <div className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+              isDarkMode ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700'
+            }`}>
+              <FaMicrochip className="h-4 w-4 text-emerald-500" />
               <span>Cinematic Eco Hardware Showcase</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-white">
-              EcoReward <span className="animate-cyberEmeraldGlint">Device Ecosystem</span>
+            <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+              EcoReward <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"}>Device Ecosystem</span>
             </h2>
-            <p className="text-slate-300 text-sm font-medium">
+            <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
               Explore our smart IoT hardware devices connecting citizens, collection drivers, and circular recycling factories.
             </p>
           </div>
@@ -791,8 +843,8 @@ const LandingPage = () => {
                 }}
                 className={`px-5 py-3 rounded-2xl font-black text-xs tracking-wide transition-all flex items-center space-x-2 border ${
                   activeProduct.id === dev.id
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 border-emerald-400 shadow-xl shadow-emerald-500/20 scale-105'
-                    : 'bg-[#091b2e] text-slate-300 border-slate-700 hover:bg-[#0c1f35]'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 shadow-xl scale-105'
+                    : isDarkMode ? 'bg-[#091b2e] text-slate-300 border-slate-700 hover:bg-[#0c1f35]' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                 }`}
               >
                 <span>{dev.title}</span>
@@ -800,11 +852,13 @@ const LandingPage = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center p-8 sm:p-12 rounded-3xl bg-[#091b2e] border border-emerald-500/40 shadow-2xl glow-product-aura relative overflow-hidden">
+          <div className={`grid grid-cols-1 lg:grid-cols-12 gap-10 items-center p-8 sm:p-12 rounded-3xl border shadow-2xl relative overflow-hidden ${
+            isDarkMode ? 'bg-[#091b2e] border-emerald-500/40 glow-product-aura' : 'bg-slate-50 border-slate-200'
+          }`}>
             
-            <div className="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-emerald-500/30 bg-[#040c14] shadow-inner group flex items-center justify-center">
+            <div className="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner group flex items-center justify-center">
               {imageErrors[activeProduct.id] ? (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] via-[#091b2e] to-[#040c14] flex flex-col items-center justify-center p-6 text-center space-y-4">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 flex flex-col items-center justify-center p-6 text-center space-y-4">
                   <div className="relative">
                     <div className="absolute -inset-4 rounded-full bg-emerald-500/20 blur-xl animate-pulse"></div>
                     <div className="relative h-28 w-28 rounded-full border-2 border-dashed border-emerald-400 flex items-center justify-center animate-[spin_10s_linear_infinite]">
@@ -837,16 +891,16 @@ const LandingPage = () => {
 
             <div className="lg:col-span-5 space-y-6">
               <div>
-                <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest block">{activeProduct.subtitle}</span>
-                <h3 className="text-2xl sm:text-3xl font-black text-white pt-1">{activeProduct.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed pt-3">{activeProduct.desc}</p>
+                <span className="text-xs font-mono font-bold text-emerald-500 uppercase tracking-widest block">{activeProduct.subtitle}</span>
+                <h3 className={`text-2xl sm:text-3xl font-black pt-1 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{activeProduct.title}</h3>
+                <p className={`text-xs sm:text-sm font-medium leading-relaxed pt-3 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>{activeProduct.desc}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                 {activeProduct.specs.map((sp, idx) => (
-                  <div key={idx} className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
+                  <div key={idx} className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
                     <span className="text-[9px] text-slate-400 block uppercase font-bold">{sp.label}</span>
-                    <span className="text-xs font-black text-white block pt-0.5">{sp.val}</span>
+                    <span className={`text-xs font-black block pt-0.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{sp.val}</span>
                   </div>
                 ))}
               </div>
@@ -854,7 +908,7 @@ const LandingPage = () => {
               <Link 
                 to="/signup"
                 onClick={() => playSciFiSound('click')}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
               >
                 <span>Connect Your Hardware Free</span>
                 <FaArrowRight />
@@ -866,35 +920,39 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* BEFORE & AFTER & CALCULATOR (UNIFIED CYBER SLATE #081728) */}
-      <section className="py-20 bg-[#081728] text-slate-100 border-b border-slate-800">
+      {/* BEFORE & AFTER & CALCULATOR */}
+      <section className={`py-20 border-b ${isDarkMode ? 'bg-[#081728] text-slate-100 border-slate-800' : 'bg-[#f8fafc] text-slate-900 border-slate-200/80'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
           {/* Before & After Visualizer */}
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
                 Circular Impact Visualizer
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white">Before & After Eco Transformation</h2>
-              <p className="text-slate-300 text-sm font-medium">
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Before & After Eco Transformation</h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 Drag the slider to visualize unsorted household waste transformed into pure recycled circular materials.
               </p>
             </div>
 
-            <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-emerald-500/40 shadow-2xl select-none bg-[#091b2e]">
+            <div className={`relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border shadow-2xl select-none ${
+              isDarkMode ? 'bg-[#091b2e] border-emerald-500/40' : 'bg-white border-slate-300'
+            }`}>
               <img 
                 src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
                 alt="Clean Ecosystem After Recycling"
                 onError={() => handleImageError('after_img')}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute top-4 right-4 bg-[#06121e]/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
+              <div className="absolute top-4 right-4 bg-slate-950/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
                 AFTER: Clean Recycled Circular Materials
               </div>
 
               <div 
-                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-400 z-10 shadow-2xl"
+                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-500 z-10 shadow-2xl"
                 style={{ width: `${beforeAfterPos}%` }}
               >
                 <img 
@@ -904,7 +962,7 @@ const LandingPage = () => {
                   className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
                   style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
                 />
-                <div className="absolute top-4 left-4 bg-[#06121e]/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
+                <div className="absolute top-4 left-4 bg-slate-950/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
                   BEFORE: Raw Unsorted Waste
                 </div>
               </div>
@@ -918,7 +976,7 @@ const LandingPage = () => {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
               />
               <div 
-                className="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center shadow-2xl pointer-events-none z-20 border-2 border-white"
+                className="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center shadow-2xl pointer-events-none z-20 border-2 border-white"
                 style={{ left: `calc(${beforeAfterPos}% - 20px)` }}
               >
                 ↔
@@ -927,29 +985,33 @@ const LandingPage = () => {
           </div>
 
           {/* Interactive Calculator */}
-          <div id="calculator" className="bg-[#091b2e] rounded-3xl p-6 sm:p-12 text-white border border-emerald-500/40 shadow-2xl space-y-10">
+          <div id="calculator" className={`rounded-3xl p-6 sm:p-12 border shadow-2xl space-y-10 ${
+            isDarkMode ? 'bg-[#091b2e] border-emerald-500/40 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#06121e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
-                <FaCalculator className="h-3.5 w-3.5" />
+              <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#06121e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
+                <FaCalculator className="h-3.5 w-3.5 text-emerald-500" />
                 <span>Interactive Eco Earnings & Impact Gauge</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+              <h2 className={`text-3xl sm:text-5xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                 Calculate Your Monthly Rewards
               </h2>
-              <p className="text-slate-300 text-sm font-medium">
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                 Adjust household waste quantities below to calculate point yield, cash value, and carbon offset!
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-6 bg-[#06121e] p-6 sm:p-8 rounded-3xl border border-slate-800">
+              <div className={`lg:col-span-7 space-y-6 p-6 sm:p-8 rounded-3xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="flex items-center space-x-2 text-emerald-400">
+                    <span className="flex items-center space-x-2 text-emerald-500">
                       <FaRecycle />
                       <span>PET Plastic Waste</span>
                     </span>
-                    <span className="font-mono text-white text-sm">{plasticKg} kg / month</span>
+                    <span className={`font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{plasticKg} kg / month</span>
                   </div>
                   <input 
                     type="range" min="0" max="30" value={plasticKg} 
@@ -957,17 +1019,17 @@ const LandingPage = () => {
                       setPlasticKg(Number(e.target.value));
                       playSciFiSound('click');
                     }}
-                    className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className={`w-full accent-emerald-500 cursor-pointer h-2 rounded-lg ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="flex items-center space-x-2 text-cyan-400">
+                    <span className="flex items-center space-x-2 text-teal-500">
                       <FaBox />
                       <span>Paper & Cardboard Boxes</span>
                     </span>
-                    <span className="font-mono text-white text-sm">{paperKg} kg / month</span>
+                    <span className={`font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{paperKg} kg / month</span>
                   </div>
                   <input 
                     type="range" min="0" max="40" value={paperKg} 
@@ -975,17 +1037,17 @@ const LandingPage = () => {
                       setPaperKg(Number(e.target.value));
                       playSciFiSound('click');
                     }}
-                    className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className={`w-full accent-teal-500 cursor-pointer h-2 rounded-lg ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="flex items-center space-x-2 text-amber-400">
+                    <span className="flex items-center space-x-2 text-amber-500">
                       <FaAward />
                       <span>Metal Cans & Scrap</span>
                     </span>
-                    <span className="font-mono text-white text-sm">{metalKg} kg / month</span>
+                    <span className={`font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{metalKg} kg / month</span>
                   </div>
                   <input 
                     type="range" min="0" max="20" value={metalKg} 
@@ -993,17 +1055,17 @@ const LandingPage = () => {
                       setMetalKg(Number(e.target.value));
                       playSciFiSound('click');
                     }}
-                    className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className={`w-full accent-amber-500 cursor-pointer h-2 rounded-lg ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="flex items-center space-x-2 text-indigo-400">
+                    <span className="flex items-center space-x-2 text-indigo-500">
                       <FaDesktop />
                       <span>E-Waste & Electronics</span>
                     </span>
-                    <span className="font-mono text-white text-sm">{ewasteKg} kg / month</span>
+                    <span className={`font-mono text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{ewasteKg} kg / month</span>
                   </div>
                   <input 
                     type="range" min="0" max="10" value={ewasteKg} 
@@ -1011,37 +1073,39 @@ const LandingPage = () => {
                       setEwasteKg(Number(e.target.value));
                       playSciFiSound('click');
                     }}
-                    className="w-full accent-indigo-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                    className={`w-full accent-indigo-500 cursor-pointer h-2 rounded-lg ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}
                   />
                 </div>
               </div>
 
-              <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#06121e] border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
+              <div className={`lg:col-span-5 p-6 sm:p-8 rounded-3xl border space-y-6 flex flex-col items-center justify-between shadow-2xl ${
+                isDarkMode ? 'bg-[#06121e] border-emerald-500/40' : 'bg-slate-50 border-slate-200'
+              }`}>
                 <div className="relative w-40 h-40 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" className="text-slate-800 fill-none" />
-                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" strokeDasharray={251.2} strokeDashoffset={251.2 - (251.2 * monthlyGoalPercent) / 100} strokeLinecap="round" className="text-emerald-400 fill-none transition-all duration-500 ease-out" />
+                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" className={isDarkMode ? "text-slate-800 fill-none" : "text-slate-200 fill-none"} />
+                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" strokeDasharray={251.2} strokeDashoffset={251.2 - (251.2 * monthlyGoalPercent) / 100} strokeLinecap="round" className="text-emerald-500 fill-none transition-all duration-500 ease-out" />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-3xl font-black text-white">{monthlyGoalPercent}%</span>
+                    <span className={`text-3xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{monthlyGoalPercent}%</span>
                     <span className="text-[9px] uppercase font-mono font-bold text-slate-400">Target Goal</span>
                   </div>
                 </div>
 
                 <div className="w-full space-y-3 text-center">
-                  <div className="p-3.5 rounded-2xl bg-[#091b2e] border border-emerald-500/30">
-                    <span className="text-[10px] uppercase font-mono font-bold text-emerald-400 block">Est. Monthly Yield</span>
-                    <span className="text-2xl font-black text-white">{totalPoints} EcoPoints</span>
+                  <div className={`p-3.5 rounded-2xl border ${isDarkMode ? 'bg-[#091b2e] border-emerald-500/30' : 'bg-white border-emerald-500/20 shadow-sm'}`}>
+                    <span className="text-[10px] uppercase font-mono font-bold text-emerald-500 block">Est. Monthly Yield</span>
+                    <span className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{totalPoints} EcoPoints</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2.5">
-                    <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
+                    <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
                       <span className="text-[9px] uppercase font-bold text-slate-400 block">Cash Cashback</span>
-                      <span className="text-base font-black text-amber-400">₹{estimatedVoucherRs}</span>
+                      <span className="text-base font-black text-amber-500">₹{estimatedVoucherRs}</span>
                     </div>
-                    <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
+                    <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
                       <span className="text-[9px] uppercase font-bold text-slate-400 block">CO₂ Saved</span>
-                      <span className="text-base font-black text-emerald-400">{co2SavedKg} kg</span>
+                      <span className="text-base font-black text-emerald-500">{co2SavedKg} kg</span>
                     </div>
                   </div>
                 </div>
@@ -1049,7 +1113,7 @@ const LandingPage = () => {
                 <Link 
                   to="/signup"
                   onClick={() => playSciFiSound('click')}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
                 >
                   <span>Start Earning Rewards</span>
                   <FaArrowRight />
@@ -1061,14 +1125,16 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* SMART INFRASTRUCTURE FEATURES (UNIFIED CYBER SLATE #06121e) */}
+      {/* SMART INFRASTRUCTURE FEATURES */}
       <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
+          <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+            isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-slate-100 text-emerald-700 border-slate-200'
+          }`}>
             Platform Capabilities
           </span>
-          <h2 className="text-3xl sm:text-5xl font-black text-white">Smart Eco Infrastructure</h2>
-          <p className="text-slate-400 text-sm font-medium">
+          <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Smart Eco Infrastructure</h2>
+          <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             Cyber ecosystem designed for speed, security, and circular waste recycling.
           </p>
         </div>
@@ -1081,36 +1147,42 @@ const LandingPage = () => {
                 key={idx} 
                 onMouseMove={handleCardMouseMove}
                 onMouseLeave={handleCardMouseLeave}
-                className="tilt-card p-7 rounded-3xl bg-[#091b2e] border border-slate-800 hover:border-emerald-500/60 transition-all duration-150 shadow-xl space-y-4 group cursor-pointer gpu-layer"
+                className={`tilt-card p-7 rounded-3xl border transition-all duration-150 shadow-xl space-y-4 group cursor-pointer gpu-layer ${
+                  isDarkMode ? 'bg-[#091b2e] border-slate-800 hover:border-emerald-500/60' : 'bg-white border-slate-200 hover:border-emerald-500/60 shadow-lg'
+                }`}
               >
-                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/20">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl border border-emerald-500/20">
                   <Icon />
                 </div>
-                <h3 className="text-lg font-black text-white group-hover:text-emerald-400 transition-colors">{feat.title}</h3>
-                <p className="text-xs text-slate-400 font-medium leading-relaxed">{feat.desc}</p>
+                <h3 className={`text-lg font-black group-hover:text-emerald-500 transition-colors ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{feat.title}</h3>
+                <p className={`text-xs font-medium leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{feat.desc}</p>
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* CINEMATIC VIDEO SHOWCASE (DEEP CYBER SLATE #040c14) */}
-      <section id="video-tour" className="py-20 relative overflow-hidden bg-[#040c14] border-y border-slate-800">
+      {/* CINEMATIC VIDEO SHOWCASE */}
+      <section id="video-tour" className={`py-20 relative overflow-hidden border-y ${
+        isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-white border-slate-200'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#091b2e] border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
-              <FaVideo className="h-3.5 w-3.5" />
+            <div className={`inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+              isDarkMode ? 'bg-[#091b2e] border-emerald-500/30 text-emerald-400' : 'bg-slate-100 border-slate-200 text-emerald-700'
+            }`}>
+              <FaVideo className="h-3.5 w-3.5 text-emerald-500" />
               <span>Cinematic Platform Showcase</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              Experience the Future of <span className="animate-cyberEmeraldGlint">Waste Logistics</span>
+            <h2 className={`text-3xl sm:text-5xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+              Experience the Future of <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"}>Waste Logistics</span>
             </h2>
-            <p className="text-slate-300 text-sm font-medium">
+            <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
               Watch how neural AI recognition, driver dispatch, and instant rewards work seamlessly.
             </p>
           </div>
 
-          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-emerald-500/40 shadow-2xl bg-[#091b2e]">
+          <div className="relative max-w-4xl mx-auto rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
             <div className="relative aspect-video w-full overflow-hidden group">
               <video 
                 ref={videoRef}
@@ -1127,7 +1199,7 @@ const LandingPage = () => {
                 <div className="flex items-center space-x-3">
                   <button 
                     onClick={togglePlay}
-                    className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md flex-shrink-0"
+                    className="p-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white transition-all shadow-md flex-shrink-0"
                     title={isPlaying ? "Pause Video" : "Play Video"}
                   >
                     {isPlaying ? <FaPause className="h-4 w-4" /> : <FaPlay className="h-4 w-4 ml-0.5" />}
@@ -1135,13 +1207,13 @@ const LandingPage = () => {
 
                   <button 
                     onClick={toggleMute}
-                    className="p-3 rounded-full bg-[#091b2e] text-white border border-slate-700 flex-shrink-0"
+                    className="p-3 rounded-full bg-slate-800 text-white border border-slate-700 flex-shrink-0"
                     title={isMuted ? "Unmute Sound" : "Mute Sound"}
                   >
                     {isMuted || volume === 0 ? <FaVolumeMute className="h-4 w-4 text-amber-400" /> : <FaVolumeUp className="h-4 w-4 text-emerald-400" />}
                   </button>
 
-                  <div className="flex items-center space-x-2 bg-[#06121e] px-3 py-2 rounded-2xl border border-slate-800">
+                  <div className="flex items-center space-x-2 bg-slate-900 px-3 py-2 rounded-2xl border border-slate-800">
                     <span className="text-[10px] font-mono font-bold text-slate-300">
                       {isMuted || volume === 0 ? '0%' : `${Math.round(volume * 100)}%`}
                     </span>
@@ -1160,8 +1232,8 @@ const LandingPage = () => {
                     onClick={() => handleVolumeChange(volume >= 1.5 ? 1.0 : 2.0)}
                     className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${
                       volume > 1.0 
-                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400' 
-                        : 'bg-[#091b2e] text-slate-300 border-slate-700'
+                        ? 'bg-gradient-to-r from-amber-500 to-emerald-500 text-white border-amber-400' 
+                        : 'bg-slate-800 text-slate-300 border-slate-700'
                     }`}
                   >
                     {volume > 1.0 ? '🔥 200% Boosted' : '🔊 Boost Sound'}
@@ -1170,7 +1242,7 @@ const LandingPage = () => {
 
                 <button 
                   onClick={() => setShowVideoModal(true)}
-                  className="px-4 py-2 rounded-xl bg-[#091b2e] hover:bg-[#0c1f35] text-emerald-400 text-xs font-bold border border-slate-700 transition-all flex items-center space-x-2"
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold border border-slate-700 transition-all flex items-center space-x-2"
                 >
                   <FaExpand />
                   <span>Fullscreen</span>
@@ -1182,26 +1254,28 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4-STEP PROCESS & 100% REAL MONGODB LEADERBOARD HUB (UNIFIED CYBER SLATE #081728) */}
-      <section className="py-20 bg-[#081728] text-slate-100 border-b border-slate-800">
+      {/* 4-STEP PROCESS & 100% REAL MONGODB LEADERBOARD HUB */}
+      <section className={`py-20 border-b ${isDarkMode ? 'bg-[#081728] text-slate-100 border-slate-800' : 'bg-[#f8fafc] text-slate-900 border-slate-200/80'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
           {/* 4-Step Process */}
           <div id="how-it-works" className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
                 User Journey
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black text-white">Simple 4-Step Process</h2>
-              <p className="text-slate-400 text-sm font-medium">
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Simple 4-Step Process</h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 From waste sorting to instant bank cashback in under 3 minutes.
               </p>
             </div>
 
             <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
               {isDesktop && (
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0">
-                  <div className="w-16 h-1 bg-emerald-400 shadow-[0_0_15px_#34d399] rounded-full animate-beamMove"></div>
+                <div className={`absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 z-0 ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                  <div className="w-16 h-1 bg-emerald-500 shadow-[0_0_15px_#10b981] rounded-full animate-beamMove"></div>
                 </div>
               )}
 
@@ -1213,30 +1287,34 @@ const LandingPage = () => {
               ].map((step, idx) => {
                 const Icon = step.icon;
                 return (
-                  <div key={idx} className="relative z-10 p-7 bg-[#091b2e] rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl hover:border-emerald-500/50 transition-all gpu-layer">
-                    <div className="h-11 w-11 mx-auto rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-md">
+                  <div key={idx} className={`relative z-10 p-7 rounded-3xl border text-center space-y-4 shadow-xl hover:border-emerald-500/50 transition-all gpu-layer ${
+                    isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200/80'
+                  }`}>
+                    <div className="h-11 w-11 mx-auto rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-sm shadow-md">
                       {step.num}
                     </div>
-                    <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/20">
+                    <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl border border-emerald-500/20">
                       <Icon />
                     </div>
-                    <h4 className="font-black text-white text-base">{step.title}</h4>
-                    <p className="text-xs text-slate-400 font-medium leading-relaxed">{step.desc}</p>
+                    <h4 className={`font-black text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{step.title}</h4>
+                    <p className={`text-xs font-medium leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{step.desc}</p>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* 100% REAL MONGODB DATABASE LEADERBOARD HUB (ZERO FAKE DATA) */}
+          {/* 100% REAL MONGODB DATABASE LEADERBOARD HUB */}
           <div className="space-y-12">
             <div className="text-center max-w-3xl mx-auto space-y-3">
-              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <div className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
                 <span>Real MongoDB Database Sync</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-black text-white">Real Citizen Leaderboard</h2>
-              <p className="text-slate-400 text-sm font-medium">
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Real Citizen Leaderboard</h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                 Live citizen rankings fetched directly from your MongoDB database with zero fake mock entries.
               </p>
             </div>
@@ -1248,27 +1326,31 @@ const LandingPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                     {/* Rank 2 Real User */}
                     {displayPodiumUsers[1] && (
-                      <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
+                      <div className={`p-6 rounded-3xl border text-center space-y-4 order-2 md:order-1 shadow-lg ${
+                        isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200/80'
+                      }`}>
                         <img 
                           src={getAvatarUrl(displayPodiumUsers[1].avatar || displayPodiumUsers[1].profileImage, displayPodiumUsers[1].name)} 
                           onError={(e) => handleAvatarError(e, displayPodiumUsers[1].name)}
                           alt="Rank 2" 
-                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
+                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-400" 
                         />
                         <div>
                           <span className="text-xs font-mono font-bold text-slate-400">#2 SILVER RECYCLER</span>
-                          <h4 className="font-black text-white text-base">{displayPodiumUsers[1].name}</h4>
+                          <h4 className={`font-black text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{displayPodiumUsers[1].name}</h4>
                         </div>
-                        <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                          <span className="text-lg font-black text-emerald-400 block">{displayPodiumUsers[1].points} EcoPoints</span>
-                          <span className="text-[10px] font-mono text-slate-400 block">{displayPodiumUsers[1].recycledKg || (displayPodiumUsers[1].points * 0.15).toFixed(1)} kg Recycled</span>
+                        <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                          <span className="text-lg font-black text-emerald-500 block">{displayPodiumUsers[1].points} EcoPoints</span>
+                          <span className="text-[10px] font-mono text-slate-500 block">{displayPodiumUsers[1].recycledKg || (displayPodiumUsers[1].points * 0.15).toFixed(1)} kg Recycled</span>
                         </div>
                       </div>
                     )}
 
                     {/* Rank 1 Real User (Center Elevated) */}
                     {displayPodiumUsers[0] && (
-                      <div className="p-8 rounded-3xl bg-[#091b2e] border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
+                      <div className={`p-8 rounded-3xl border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3 ${
+                        isDarkMode ? 'bg-[#091b2e]' : 'bg-white'
+                      }`}>
                         <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
                           <FaCrown /> GOLD #1 CHAMPION
                         </span>
@@ -1279,32 +1361,34 @@ const LandingPage = () => {
                           className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
                         />
                         <div>
-                          <h4 className="font-black text-white text-xl">{displayPodiumUsers[0].name}</h4>
-                          <span className="text-xs font-bold text-amber-400 block">{displayPodiumUsers[0].badge || '🏆 Gold Recycler'}</span>
+                          <h4 className={`font-black text-xl ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{displayPodiumUsers[0].name}</h4>
+                          <span className="text-xs font-bold text-amber-500 block">{displayPodiumUsers[0].badge || '🏆 Gold Recycler'}</span>
                         </div>
-                        <div className="p-4 bg-[#06121e] rounded-2xl border border-amber-500/30">
-                          <span className="text-2xl font-black text-amber-400 block">{displayPodiumUsers[0].points} EcoPoints</span>
-                          <span className="text-xs font-mono font-bold text-slate-400 block pt-0.5">{displayPodiumUsers[0].recycledKg || (displayPodiumUsers[0].points * 0.15).toFixed(1)} kg Recycled</span>
+                        <div className="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/30">
+                          <span className="text-2xl font-black text-amber-500 block">{displayPodiumUsers[0].points} EcoPoints</span>
+                          <span className="text-xs font-mono font-bold text-slate-500 block pt-0.5">{displayPodiumUsers[0].recycledKg || (displayPodiumUsers[0].points * 0.15).toFixed(1)} kg Recycled</span>
                         </div>
                       </div>
                     )}
 
                     {/* Rank 3 Real User */}
                     {displayPodiumUsers[2] && (
-                      <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
+                      <div className={`p-6 rounded-3xl border text-center space-y-4 order-3 md:order-3 shadow-lg ${
+                        isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200/80'
+                      }`}>
                         <img 
                           src={getAvatarUrl(displayPodiumUsers[2].avatar || displayPodiumUsers[2].profileImage, displayPodiumUsers[2].name)} 
                           onError={(e) => handleAvatarError(e, displayPodiumUsers[2].name)}
                           alt="Rank 3" 
-                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
+                          className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/40" 
                         />
                         <div>
                           <span className="text-xs font-mono font-bold text-slate-400">#3 BRONZE RECYCLER</span>
-                          <h4 className="font-black text-white text-base">{displayPodiumUsers[2].name}</h4>
+                          <h4 className={`font-black text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{displayPodiumUsers[2].name}</h4>
                         </div>
-                        <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                          <span className="text-lg font-black text-emerald-400 block">{displayPodiumUsers[2].points} EcoPoints</span>
-                          <span className="text-[10px] font-mono text-slate-400 block">{displayPodiumUsers[2].recycledKg || (displayPodiumUsers[2].points * 0.15).toFixed(1)} kg Recycled</span>
+                        <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                          <span className="text-lg font-black text-emerald-500 block">{displayPodiumUsers[2].points} EcoPoints</span>
+                          <span className="text-[10px] font-mono text-slate-500 block">{displayPodiumUsers[2].recycledKg || (displayPodiumUsers[2].points * 0.15).toFixed(1)} kg Recycled</span>
                         </div>
                       </div>
                     )}
@@ -1312,11 +1396,15 @@ const LandingPage = () => {
                 )}
 
                 {/* REAL MONGODB TOP 10 RANKINGS TABLE */}
-                <div className="max-w-4xl mx-auto bg-[#091b2e] rounded-3xl border border-slate-800 shadow-xl overflow-hidden">
-                  <div className="p-5 bg-[#06121e] border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className={`max-w-4xl mx-auto rounded-3xl border shadow-xl overflow-hidden ${
+                  isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200'
+                }`}>
+                  <div className={`p-5 border-b flex flex-col sm:flex-row items-center justify-between gap-4 ${
+                    isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-100 border-slate-200'
+                  }`}>
                     <div className="flex items-center space-x-2">
-                      <FaMedal className="text-amber-400 h-5 w-5" />
-                      <h3 className="font-black text-white text-base">Real Registered Citizens ({liveLeaderboard.length})</h3>
+                      <FaMedal className="text-amber-500 h-5 w-5" />
+                      <h3 className={`font-black text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Real Registered Citizens ({liveLeaderboard.length})</h3>
                     </div>
 
                     <div className="relative w-full sm:w-64">
@@ -1326,21 +1414,25 @@ const LandingPage = () => {
                         placeholder="Search recycler name..."
                         value={leaderboardSearch}
                         onChange={(e) => setLeaderboardSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#091b2e] border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full pl-9 pr-4 py-2 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 border ${
+                          isDarkMode ? 'bg-[#091b2e] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                        }`}
                       />
                     </div>
                   </div>
 
-                  <div className="divide-y divide-slate-800/60 overflow-x-auto">
+                  <div className={`divide-y overflow-x-auto ${isDarkMode ? 'divide-slate-800/60' : 'divide-slate-100'}`}>
                     {filteredLeaderboard.length > 0 ? (
                       filteredLeaderboard.map((user, idx) => (
                         <div 
                           key={user._id || idx}
-                          className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-[#0c1f35] transition-colors"
+                          className={`p-4 sm:px-6 flex items-center justify-between gap-4 transition-colors ${
+                            isDarkMode ? 'hover:bg-[#0c1f35]' : 'hover:bg-slate-50'
+                          }`}
                         >
                           <div className="flex items-center space-x-4">
                             <span className={`w-7 text-center font-mono font-black text-sm ${
-                              user.rank === 1 ? 'text-amber-400 text-base' : user.rank === 2 ? 'text-slate-300' : user.rank === 3 ? 'text-amber-600' : 'text-slate-400'
+                              user.rank === 1 ? 'text-amber-500 text-base' : user.rank === 2 ? 'text-slate-400' : user.rank === 3 ? 'text-amber-700' : 'text-slate-400'
                             }`}>
                               #{user.rank}
                             </span>
@@ -1353,13 +1445,13 @@ const LandingPage = () => {
                             />
 
                             <div>
-                              <h4 className="font-black text-white text-sm">{user.name}</h4>
-                              <span className="text-[10px] font-mono font-bold text-emerald-400">{user.badge || user.tier || '🌱 Green Scout'}</span>
+                              <h4 className={`font-black text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{user.name}</h4>
+                              <span className="text-[10px] font-mono font-bold text-emerald-500">{user.badge || user.tier || '🌱 Green Scout'}</span>
                             </div>
                           </div>
 
                           <div className="text-right">
-                            <span className="font-black text-white text-sm block">{user.points} EcoPoints</span>
+                            <span className={`font-black text-sm block ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{user.points} EcoPoints</span>
                             <span className="text-[10px] font-mono text-slate-400 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
                           </div>
                         </div>
@@ -1372,18 +1464,20 @@ const LandingPage = () => {
               </>
             ) : (
               /* CLEAN ZERO-FAKE EMPTY STATE CARD */
-              <div className="max-w-xl mx-auto p-8 rounded-3xl bg-[#091b2e] border border-emerald-500/30 text-center space-y-4 shadow-2xl">
-                <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl border border-emerald-500/30 animate-pulse">
+              <div className={`max-w-xl mx-auto p-8 rounded-3xl border text-center space-y-4 shadow-xl ${
+                isDarkMode ? 'bg-[#091b2e] border-emerald-500/30 text-white' : 'bg-white border-slate-200 text-slate-900'
+              }`}>
+                <div className="h-16 w-16 mx-auto rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl border border-emerald-500/20 animate-pulse">
                   <FaCrown />
                 </div>
-                <h3 className="text-2xl font-black text-white">No Database Recyclers Registered Yet</h3>
-                <p className="text-slate-300 text-xs font-medium max-w-md mx-auto leading-relaxed">
+                <h3 className="text-2xl font-black">No Database Recyclers Registered Yet</h3>
+                <p className={`text-xs font-medium max-w-md mx-auto leading-relaxed ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                   Be the first citizen in our MongoDB database to register, recycle household waste, and claim the #1 spot on the leaderboard!
                 </p>
                 <Link 
                   to="/signup"
                   onClick={() => playSciFiSound('click')}
-                  className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all"
+                  className="inline-flex items-center space-x-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-xs shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all"
                 >
                   <FaUserPlus />
                   <span>Register Free Account & Top Leaderboard</span>
@@ -1396,10 +1490,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FAQ & CTA BANNER & FOOTER (UNIFIED CYBER DARK SLATE #06121e) */}
+      {/* FAQ & CTA BANNER & FOOTER */}
       <section className="py-20 max-w-4xl mx-auto px-4 w-full">
         <div className="text-center space-y-4 mb-10">
-          <h2 className="text-3xl sm:text-4xl font-black text-white">Frequently Asked Questions</h2>
+          <h2 className={`text-3xl sm:text-4xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Frequently Asked Questions</h2>
           <div className="relative max-w-md mx-auto">
             <FaSearch className="absolute left-4 top-3.5 text-slate-400 text-xs" />
             <input 
@@ -1407,7 +1501,9 @@ const LandingPage = () => {
               placeholder="Search questions..."
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#091b2e] border border-slate-800 text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className={`w-full pl-10 pr-4 py-3 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 border ${
+                isDarkMode ? 'bg-[#091b2e] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+              }`}
             />
           </div>
         </div>
@@ -1415,19 +1511,25 @@ const LandingPage = () => {
         <div className="space-y-4">
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq, index) => (
-              <div key={index} className="border border-slate-800 rounded-2xl overflow-hidden bg-[#091b2e] shadow-sm">
+              <div key={index} className={`border rounded-2xl overflow-hidden shadow-sm ${
+                isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200'
+              }`}>
                 <button
                   onClick={() => {
                     setFaqOpen(faqOpen === index ? null : index);
                     playSciFiSound('click');
                   }}
-                  className="w-full p-5 text-left flex justify-between items-center font-bold text-sm text-white hover:text-emerald-400 transition-colors"
+                  className={`w-full p-5 text-left flex justify-between items-center font-bold text-sm transition-colors ${
+                    isDarkMode ? 'text-white hover:text-emerald-400' : 'text-slate-900 hover:text-emerald-600'
+                  }`}
                 >
                   <span>{faq.q}</span>
-                  {faqOpen === index ? <FaChevronUp className="text-emerald-400" /> : <FaChevronDown className="text-slate-500" />}
+                  {faqOpen === index ? <FaChevronUp className="text-emerald-500" /> : <FaChevronDown className="text-slate-400" />}
                 </button>
                 {faqOpen === index && (
-                  <div className="px-5 pb-5 text-xs text-slate-300 leading-relaxed font-medium">
+                  <div className={`px-5 pb-5 text-xs leading-relaxed font-medium ${
+                    isDarkMode ? 'text-slate-300' : 'text-slate-600'
+                  }`}>
                     {faq.a}
                   </div>
                 )}

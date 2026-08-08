@@ -240,6 +240,18 @@ html, body {
   box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.35);
 }
 
+/* Dual-Tone Light Section Utilities */
+.glass-light-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.06);
+}
+
+.dark .glass-light-card {
+  background: rgba(9, 27, 46, 0.95);
+  border: 1px solid rgba(0, 187, 167, 0.25);
+}
+
 /* GPU Hardware Acceleration for Smooth 60fps Mobile Performance */
 .gpu-layer {
   transform: translateZ(0);
@@ -256,6 +268,7 @@ html, body {
   transform-style: preserve-3d;
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
+
 
 
 

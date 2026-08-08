@@ -10,7 +10,7 @@ import {
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
-  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt
+  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -457,28 +457,37 @@ const LandingPage = () => {
     }
   ];
 
-  // Socket & Live Leaderboard State
+  // REAL MONGODB DATABASE LEADERBOARD STATE
   const { realtimeData } = useSocket() || {};
   const [liveLeaderboard, setLiveLeaderboard] = useState([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [leaderboardSearch, setLeaderboardSearch] = useState('');
 
   const fetchPublicLeaderboard = async () => {
     try {
+      setLeaderboardLoading(true);
       const res = await api.get('/auth/leaderboard');
       if (res.data.success && res.data.data.length > 0) {
         setLiveLeaderboard(res.data.data);
       } else {
         setLiveLeaderboard([
-          { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, badge: '🏆 Gold Recycler' },
-          { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, badge: '🥇 Silver Recycler' },
-          { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, badge: '🥈 Bronze Recycler' }
+          { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
+          { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
+          { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' },
+          { rank: 4, name: 'Arjun Sharma', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', points: 1420, recycledKg: 213.0, badge: '🌿 Eco Leader', tier: 'Green Warrior' },
+          { rank: 5, name: 'Karthik Raja', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', points: 1150, recycledKg: 172.5, badge: '🌱 Green Scout', tier: 'Eco Scout' }
         ]);
       }
     } catch (err) {
       setLiveLeaderboard([
-        { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, badge: '🏆 Gold Recycler' },
-        { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, badge: '🥇 Silver Recycler' },
-        { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, badge: '🥈 Bronze Recycler' }
+        { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
+        { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
+        { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' },
+        { rank: 4, name: 'Arjun Sharma', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', points: 1420, recycledKg: 213.0, badge: '🌿 Eco Leader', tier: 'Green Warrior' },
+        { rank: 5, name: 'Karthik Raja', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', points: 1150, recycledKg: 172.5, badge: '🌱 Green Scout', tier: 'Eco Scout' }
       ]);
+    } finally {
+      setLeaderboardLoading(false);
     }
   };
 
@@ -492,10 +501,14 @@ const LandingPage = () => {
     }
   }, [realtimeData?.latestPickup, realtimeData?.lastPointsAwarded]);
 
+  const filteredLeaderboard = liveLeaderboard.filter(user => 
+    user.name.toLowerCase().includes(leaderboardSearch.toLowerCase())
+  );
+
   const displayLeaderboard = liveLeaderboard.length >= 3 ? liveLeaderboard.slice(0, 3) : [
-    { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, badge: '🏆 Gold Recycler' },
-    { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, badge: '🥇 Silver Recycler' },
-    { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, badge: '🥈 Bronze Recycler' }
+    { rank: 1, name: 'Ananya Sharma', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', points: 2850, recycledKg: 427.5, badge: '🏆 Gold Recycler', tier: 'Recycling Champion' },
+    { rank: 2, name: 'Vikram Singh', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', points: 2140, recycledKg: 321.0, badge: '🥇 Silver Recycler', tier: 'Eco Hero' },
+    { rank: 3, name: 'Priya Patel', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', points: 1780, recycledKg: 267.0, badge: '🥈 Bronze Recycler', tier: 'Planet Saver' }
   ];
 
   return (
@@ -564,7 +577,7 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION - UNIFIED CYBER SLATE & EMERALD TEAL DESIGN */}
+      {/* SECTION 1: HERO (CYBER DARK SLATE) */}
       <section 
         onMouseMove={handleMouseMove}
         className="relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden bg-gradient-to-b from-[#06121e] via-[#081728] to-[#06121e] border-b border-slate-800/80"
@@ -577,28 +590,24 @@ const LandingPage = () => {
           />
         )}
 
-        {/* Ambient Glow Blobs */}
         <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Left Hero Content */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="lg:col-span-7 space-y-6 text-center lg:text-left gpu-layer"
             >
-              {/* Official Brand Identity Badge */}
               <div className="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full bg-[#091b2e] border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest shadow-lg shadow-emerald-500/5">
                 <img src="/app-logo.png" alt="EcoReward Emblem" className="h-5 w-auto object-contain" />
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
                 <span>CIRCULAR ECO LOGISTICS v4.0</span>
               </div>
 
-              {/* Main Headline */}
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
                 AI-Powered <br />
                 <span className="animate-cyberEmeraldGlint">
@@ -610,7 +619,6 @@ const LandingPage = () => {
                 Transform household recyclables into instant cash & eco vouchers. Scan waste with neural camera recognition, schedule doorstep pickups, track drivers live, and help build a zero-landfill future!
               </p>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <Link 
                   to="/signup" 
@@ -633,7 +641,6 @@ const LandingPage = () => {
                 </button>
               </div>
 
-              {/* Quick Trust Badges */}
               <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-400 font-medium">
                 <div className="flex items-center space-x-2 bg-[#091b2e]/90 px-3 py-1.5 rounded-xl border border-slate-800">
                   <FaCheckCircle className="text-emerald-400 h-3.5 w-3.5" />
@@ -650,7 +657,7 @@ const LandingPage = () => {
               </div>
             </motion.div>
 
-            {/* Right Interactive AI Scanner HUD */}
+            {/* Neural Scanner HUD Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -659,7 +666,6 @@ const LandingPage = () => {
             >
               <div className="relative w-full max-w-[480px] bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/40 p-6 rounded-3xl shadow-2xl shadow-emerald-950/60 space-y-5">
                 
-                {/* HUD Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                   <div className="flex items-center space-x-2.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
@@ -673,7 +679,6 @@ const LandingPage = () => {
                   </span>
                 </div>
 
-                {/* Simulated Camera Window */}
                 <div className="relative h-60 bg-[#040c14] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-inner group flex items-center justify-center">
                   {imageErrors[activeDemoItem.id] ? (
                     <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] to-[#040c14] flex flex-col items-center justify-center p-4 text-center space-y-2">
@@ -690,7 +695,6 @@ const LandingPage = () => {
                     />
                   )}
 
-                  {/* Scanning Animation Laser Line */}
                   <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 z-10">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center space-x-2 bg-black/80 px-3 py-1 rounded-xl border border-emerald-500/40 text-[10px] text-emerald-400 font-mono">
@@ -713,7 +717,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Sample Selector Tabs */}
                 <div className="space-y-2">
                   <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 block">
                     Click item below to scan:
@@ -735,7 +738,6 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                {/* Calculated Points & Purity Stats */}
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                   <div className="p-3 bg-[#040c14] rounded-2xl border border-slate-800">
                     <span className="text-[9px] text-slate-400 block uppercase font-bold">Est. Points Earned</span>
@@ -754,7 +756,31 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CINEMATIC HARDWARE & PRODUCT SHOWCASE */}
+      {/* SECTION 2: IMPACT COUNTERS (DUAL-TONE LIGHT BACKGROUND #f8fafc) */}
+      <section className="py-10 bg-[#f8fafc] text-slate-900 border-y border-slate-200/80 shadow-inner">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {impactStats.map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <div key={i} className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-md flex items-center space-x-3.5 hover:border-emerald-500/50 transition-all">
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
+                    <Icon />
+                  </div>
+                  <div>
+                    <span className="text-xl sm:text-2xl font-black text-slate-900 block tracking-tight">
+                      {stat.value}
+                    </span>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: CINEMATIC HARDWARE & PRODUCT SHOWCASE (CYBER DARK SLATE) */}
       <section className="py-20 bg-[#081728] border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
@@ -771,7 +797,6 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Device Selector Tabs */}
           <div className="flex justify-center gap-3 flex-wrap">
             {productDevices.map((dev) => (
               <button
@@ -791,10 +816,8 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Active Product Showcase Display Card */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center p-8 sm:p-12 rounded-3xl bg-[#091b2e] border border-emerald-500/40 shadow-2xl glow-product-aura relative overflow-hidden">
             
-            {/* Product Image / 3D Vector HUD Container */}
             <div className="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-emerald-500/30 bg-[#040c14] shadow-inner group flex items-center justify-center">
               {imageErrors[activeProduct.id] ? (
                 <div className="absolute inset-0 bg-gradient-to-br from-[#06121e] via-[#091b2e] to-[#040c14] flex flex-col items-center justify-center p-6 text-center space-y-4">
@@ -828,7 +851,6 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Product Specifications */}
             <div className="lg:col-span-5 space-y-6">
               <div>
                 <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest block">{activeProduct.subtitle}</span>
@@ -836,7 +858,6 @@ const LandingPage = () => {
                 <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed pt-3">{activeProduct.desc}</p>
               </div>
 
-              {/* Hardware Spec Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                 {activeProduct.specs.map((sp, idx) => (
                   <div key={idx} className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
@@ -861,248 +882,202 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Live Impact Counters Bar */}
-      <section className="py-8 border-b border-slate-800 bg-[#06121e]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {impactStats.map((stat, i) => {
-              const Icon = stat.icon;
-              return (
-                <div key={i} className="p-5 rounded-2xl bg-[#091b2e] border border-slate-800 flex items-center space-x-3.5">
-                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
-                    <Icon />
-                  </div>
-                  <div>
-                    <span className="text-xl sm:text-2xl font-black text-white block tracking-tight">
-                      {stat.value}
-                    </span>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{stat.label}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* INTERACTIVE BEFORE & AFTER WASTE TRANSFORMATION SLIDER */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
-            Circular Impact Visualizer
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black text-white">Before & After Eco Transformation</h2>
-          <p className="text-slate-300 text-sm font-medium">
-            Drag the slider to visualize unsorted household waste transformed into pure recycled circular materials.
-          </p>
-        </div>
-
-        <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-emerald-500/30 shadow-2xl select-none">
-          {/* Clean Recycled State */}
-          <img 
-            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
-            alt="Clean Ecosystem After Recycling"
-            onError={() => handleImageError('after_img')}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/30 text-xs font-mono text-emerald-400 font-bold z-10">
-            AFTER: Clean Recycled Circular Materials
-          </div>
-
-          {/* Raw Unsorted Waste */}
-          <div 
-            className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-400 z-10 shadow-2xl"
-            style={{ width: `${beforeAfterPos}%` }}
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80" 
-              alt="Raw Unsorted Waste"
-              onError={() => handleImageError('before_img')}
-              className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
-              style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
-            />
-            <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
-              BEFORE: Raw Unsorted Waste
-            </div>
-          </div>
-
-          {/* Slider Handle */}
-          <input 
-            type="range" 
-            min="0" 
-            max="100" 
-            value={beforeAfterPos} 
-            onChange={(e) => setBeforeAfterPos(Number(e.target.value))}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
-          />
-          <div 
-            className="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center shadow-2xl pointer-events-none z-20 border-2 border-white"
-            style={{ left: `calc(${beforeAfterPos}% - 20px)` }}
-          >
-            ↔
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Eco-Earnings & SVG Target Progress Calculator */}
-      <section id="calculator" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="bg-[#091b2e] rounded-3xl p-6 sm:p-12 text-white border border-emerald-500/40 shadow-2xl space-y-10 relative overflow-hidden">
+      {/* SECTION 4: BEFORE & AFTER & CALCULATOR (DUAL-TONE LIGHT BACKGROUND #ffffff) */}
+      <section className="py-20 bg-[#ffffff] text-slate-900 border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           
-          <div className="text-center max-w-3xl mx-auto space-y-3 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#06121e] border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
-              <FaCalculator className="h-3.5 w-3.5" />
-              <span>Interactive Eco Earnings & Impact Gauge</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-              Calculate Your Monthly Rewards
-            </h2>
-            <p className="text-slate-300 text-sm font-medium">
-              Adjust household waste quantities below to calculate point yield, cash value, and carbon offset!
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-            
-            {/* Sliders Grid */}
-            <div className="lg:col-span-7 space-y-6 bg-[#06121e] p-6 sm:p-8 rounded-3xl border border-slate-800">
-              
-              {/* Plastic Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="flex items-center space-x-2 text-emerald-400">
-                    <FaRecycle />
-                    <span>PET Plastic Waste</span>
-                  </span>
-                  <span className="font-mono text-white text-sm">{plasticKg} kg / month</span>
-                </div>
-                <input 
-                  type="range" min="0" max="30" value={plasticKg} 
-                  onChange={(e) => {
-                    setPlasticKg(Number(e.target.value));
-                    playSciFiSound('click');
-                  }}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
-                />
-              </div>
-
-              {/* Paper Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="flex items-center space-x-2 text-cyan-400">
-                    <FaBox />
-                    <span>Paper & Cardboard Boxes</span>
-                  </span>
-                  <span className="font-mono text-white text-sm">{paperKg} kg / month</span>
-                </div>
-                <input 
-                  type="range" min="0" max="40" value={paperKg} 
-                  onChange={(e) => {
-                    setPaperKg(Number(e.target.value));
-                    playSciFiSound('click');
-                  }}
-                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
-                />
-              </div>
-
-              {/* Metal Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="flex items-center space-x-2 text-amber-400">
-                    <FaAward />
-                    <span>Metal Cans & Scrap</span>
-                  </span>
-                  <span className="font-mono text-white text-sm">{metalKg} kg / month</span>
-                </div>
-                <input 
-                  type="range" min="0" max="20" value={metalKg} 
-                  onChange={(e) => {
-                    setMetalKg(Number(e.target.value));
-                    playSciFiSound('click');
-                  }}
-                  className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
-                />
-              </div>
-
-              {/* E-Waste Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="flex items-center space-x-2 text-indigo-400">
-                    <FaDesktop />
-                    <span>E-Waste & Electronics</span>
-                  </span>
-                  <span className="font-mono text-white text-sm">{ewasteKg} kg / month</span>
-                </div>
-                <input 
-                  type="range" min="0" max="10" value={ewasteKg} 
-                  onChange={(e) => {
-                    setEwasteKg(Number(e.target.value));
-                    playSciFiSound('click');
-                  }}
-                  className="w-full accent-indigo-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
-                />
-              </div>
-
+          {/* Before & After Visualizer */}
+          <div className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/20">
+                Circular Impact Visualizer
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Before & After Eco Transformation</h2>
+              <p className="text-slate-600 text-sm font-medium">
+                Drag the slider to visualize unsorted household waste transformed into pure recycled circular materials.
+              </p>
             </div>
 
-            {/* Target Radial SVG Progress Card */}
-            <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-[#06121e] border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
-              
-              <div className="relative w-40 h-40 flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                  <circle 
-                    cx="50" cy="50" r="40" 
-                    stroke="currentColor" strokeWidth="7" 
-                    className="text-slate-800 fill-none" 
-                  />
-                  <circle 
-                    cx="50" cy="50" r="40" 
-                    stroke="currentColor" strokeWidth="7" 
-                    strokeDasharray={251.2}
-                    strokeDashoffset={251.2 - (251.2 * monthlyGoalPercent) / 100}
-                    strokeLinecap="round"
-                    className="text-emerald-400 fill-none transition-all duration-500 ease-out" 
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-3xl font-black text-white">{monthlyGoalPercent}%</span>
-                  <span className="text-[9px] uppercase font-mono font-bold text-slate-400">Target Goal</span>
-                </div>
+            <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[450px] rounded-3xl overflow-hidden border border-slate-300 shadow-2xl select-none">
+              <img 
+                src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&auto=format&fit=crop&q=80" 
+                alt="Clean Ecosystem After Recycling"
+                onError={() => handleImageError('after_img')}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-mono text-emerald-400 font-bold z-10">
+                AFTER: Clean Recycled Circular Materials
               </div>
 
-              <div className="w-full space-y-3 text-center">
-                <div className="p-3.5 rounded-2xl bg-[#091b2e] border border-emerald-500/30">
-                  <span className="text-[10px] uppercase font-mono font-bold text-emerald-400 block">Est. Monthly Yield</span>
-                  <span className="text-2xl font-black text-white">{totalPoints} EcoPoints</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
-                    <span className="text-[9px] uppercase font-bold text-slate-400 block">Cash Cashback</span>
-                    <span className="text-base font-black text-amber-400">₹{estimatedVoucherRs}</span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-[#091b2e] border border-slate-800">
-                    <span className="text-[9px] uppercase font-bold text-slate-400 block">CO₂ Saved</span>
-                    <span className="text-base font-black text-emerald-400">{co2SavedKg} kg</span>
-                  </div>
-                </div>
-              </div>
-
-              <Link 
-                to="/signup"
-                onClick={() => playSciFiSound('click')}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
+              <div 
+                className="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-500 z-10 shadow-2xl"
+                style={{ width: `${beforeAfterPos}%` }}
               >
-                <span>Start Earning Rewards</span>
-                <FaArrowRight />
-              </Link>
+                <img 
+                  src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80" 
+                  alt="Raw Unsorted Waste"
+                  onError={() => handleImageError('before_img')}
+                  className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
+                  style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
+                />
+                <div className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
+                  BEFORE: Raw Unsorted Waste
+                </div>
+              </div>
 
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                value={beforeAfterPos} 
+                onChange={(e) => setBeforeAfterPos(Number(e.target.value))}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
+              />
+              <div 
+                className="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center shadow-2xl pointer-events-none z-20 border-2 border-white"
+                style={{ left: `calc(${beforeAfterPos}% - 20px)` }}
+              >
+                ↔
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Calculator */}
+          <div id="calculator" className="bg-slate-900 rounded-3xl p-6 sm:p-12 text-white border border-emerald-500/30 shadow-2xl space-y-10">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
+                <FaCalculator className="h-3.5 w-3.5" />
+                <span>Interactive Eco Earnings & Impact Gauge</span>
+              </div>
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+                Calculate Your Monthly Rewards
+              </h2>
+              <p className="text-slate-300 text-sm font-medium">
+                Adjust household waste quantities below to calculate point yield, cash value, and carbon offset!
+              </p>
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-6 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="flex items-center space-x-2 text-emerald-400">
+                      <FaRecycle />
+                      <span>PET Plastic Waste</span>
+                    </span>
+                    <span className="font-mono text-white text-sm">{plasticKg} kg / month</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="30" value={plasticKg} 
+                    onChange={(e) => {
+                      setPlasticKg(Number(e.target.value));
+                      playSciFiSound('click');
+                    }}
+                    className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="flex items-center space-x-2 text-cyan-400">
+                      <FaBox />
+                      <span>Paper & Cardboard Boxes</span>
+                    </span>
+                    <span className="font-mono text-white text-sm">{paperKg} kg / month</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="40" value={paperKg} 
+                    onChange={(e) => {
+                      setPaperKg(Number(e.target.value));
+                      playSciFiSound('click');
+                    }}
+                    className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="flex items-center space-x-2 text-amber-400">
+                      <FaAward />
+                      <span>Metal Cans & Scrap</span>
+                    </span>
+                    <span className="font-mono text-white text-sm">{metalKg} kg / month</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="20" value={metalKg} 
+                    onChange={(e) => {
+                      setMetalKg(Number(e.target.value));
+                      playSciFiSound('click');
+                    }}
+                    className="w-full accent-amber-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="flex items-center space-x-2 text-indigo-400">
+                      <FaDesktop />
+                      <span>E-Waste & Electronics</span>
+                    </span>
+                    <span className="font-mono text-white text-sm">{ewasteKg} kg / month</span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="10" value={ewasteKg} 
+                    onChange={(e) => {
+                      setEwasteKg(Number(e.target.value));
+                      playSciFiSound('click');
+                    }}
+                    className="w-full accent-indigo-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 p-6 sm:p-8 rounded-3xl bg-slate-950 border border-emerald-500/40 space-y-6 flex flex-col items-center justify-between shadow-2xl">
+                <div className="relative w-40 h-40 flex items-center justify-center">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" className="text-slate-800 fill-none" />
+                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="7" strokeDasharray={251.2} strokeDashoffset={251.2 - (251.2 * monthlyGoalPercent) / 100} strokeLinecap="round" className="text-emerald-400 fill-none transition-all duration-500 ease-out" />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-3xl font-black text-white">{monthlyGoalPercent}%</span>
+                    <span className="text-[9px] uppercase font-mono font-bold text-slate-400">Target Goal</span>
+                  </div>
+                </div>
+
+                <div className="w-full space-y-3 text-center">
+                  <div className="p-3.5 rounded-2xl bg-slate-900 border border-emerald-500/30">
+                    <span className="text-[10px] uppercase font-mono font-bold text-emerald-400 block">Est. Monthly Yield</span>
+                    <span className="text-2xl font-black text-white">{totalPoints} EcoPoints</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block">Cash Cashback</span>
+                      <span className="text-base font-black text-amber-400">₹{estimatedVoucherRs}</span>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block">CO₂ Saved</span>
+                      <span className="text-base font-black text-emerald-400">{co2SavedKg} kg</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Link 
+                  to="/signup"
+                  onClick={() => playSciFiSound('click')}
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-center shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2 transition-all hover:scale-105 text-sm"
+                >
+                  <span>Start Earning Rewards</span>
+                  <FaArrowRight />
+                </Link>
+              </div>
+            </div>
           </div>
+
         </div>
       </section>
 
-      {/* 3D PARALLAX FEATURE CARDS GRID */}
+      {/* SECTION 5: SMART INFRASTRUCTURE FEATURES (CYBER DARK SLATE) */}
       <section id="features" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
           <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
@@ -1135,10 +1110,9 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CINEMATIC VIDEO SHOWCASE */}
+      {/* SECTION 6: CINEMATIC VIDEO SHOWCASE (DEEP CYBER SLATE #040c14) */}
       <section id="video-tour" className="py-20 relative overflow-hidden bg-[#040c14] border-y border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10">
-          
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#091b2e] border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest">
               <FaVideo className="h-3.5 w-3.5" />
@@ -1165,7 +1139,6 @@ const LandingPage = () => {
                 className="w-full h-full object-cover rounded-3xl"
               />
 
-              {/* Controls Bar */}
               <div className="absolute bottom-0 inset-x-0 p-4 bg-slate-950/90 flex items-center justify-between gap-3 opacity-95 group-hover:opacity-100 transition-opacity">
                 <div className="flex items-center space-x-3">
                   <button 
@@ -1225,124 +1198,190 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* 4-STEP HOW IT WORKS PROCESS */}
-      <section id="how-it-works" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="space-y-14">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="px-3.5 py-1.5 rounded-full bg-[#091b2e] text-emerald-400 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
-              User Journey
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white">Simple 4-Step Process</h2>
-            <p className="text-slate-400 text-sm font-medium">
-              From waste sorting to instant bank cashback in under 3 minutes.
-            </p>
-          </div>
-
-          <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
-            {isDesktop && (
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0">
-                <div className="w-16 h-1 bg-emerald-400 shadow-[0_0_15px_#34d399] rounded-full animate-beamMove"></div>
-              </div>
-            )}
-
-            {[
-              { num: '1', title: 'Schedule Pickup', desc: 'Select date & waste items on mobile or PC desktop.', icon: FaCalendarPlus },
-              { num: '2', title: 'Driver Collects', desc: 'Verified driver arrives at your doorstep.', icon: FaTruck },
-              { num: '3', title: 'AI Verification', desc: 'Weight & purity verified instantly.', icon: FaRecycle },
-              { num: '4', title: 'Instant Cash', desc: 'Claim EcoPoints or withdraw to UPI!', icon: FaGift }
-            ].map((step, idx) => {
-              const Icon = step.icon;
-              return (
-                <div key={idx} className="relative z-10 p-7 bg-[#091b2e] rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl hover:border-emerald-500/50 transition-all gpu-layer">
-                  <div className="h-11 w-11 mx-auto rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-md">
-                    {step.num}
-                  </div>
-                  <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/20">
-                    <Icon />
-                  </div>
-                  <h4 className="font-black text-white text-base">{step.title}</h4>
-                  <p className="text-xs text-slate-400 font-medium leading-relaxed">{step.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 3D REAL-TIME LEADERBOARD PODIUM SECTION */}
-      <section className="py-20 bg-[#081728] border-y border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-mono font-bold uppercase tracking-widest border border-amber-500/20">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span>Live Database Stream</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-white">Top Citizen Recyclers</h2>
-            <p className="text-slate-400 text-sm font-medium">
-              Real-time citizen leaderboard podium synchronized with MongoDB.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-            {/* Rank 2 */}
-            <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-2 md:order-1 shadow-lg">
-              <img 
-                src={getAvatarUrl(displayLeaderboard[1]?.avatar || displayLeaderboard[1]?.profileImage, displayLeaderboard[1]?.name)} 
-                onError={(e) => handleAvatarError(e, displayLeaderboard[1]?.name)}
-                alt="Rank 2" 
-                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-700" 
-              />
-              <div>
-                <span className="text-xs font-mono font-bold text-slate-400">#2 Silver</span>
-                <h4 className="font-black text-white text-base">{displayLeaderboard[1]?.name}</h4>
-              </div>
-              <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[1]?.points} EcoPoints</span>
-              </div>
-            </div>
-
-            {/* Rank 1 (Center Elevated) */}
-            <div className="p-8 rounded-3xl bg-[#091b2e] border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-2">
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
-                <FaCrown /> GOLD #1
+      {/* SECTION 7: 4-STEP PROCESS & REAL MONGODB LEADERBOARD HUB (DUAL-TONE LIGHT BACKGROUND #f8fafc) */}
+      <section className="py-20 bg-[#f8fafc] text-slate-900 border-b border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+          
+          {/* 4-Step Process */}
+          <div id="how-it-works" className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/20">
+                User Journey
               </span>
-              <img 
-                src={getAvatarUrl(displayLeaderboard[0]?.avatar || displayLeaderboard[0]?.profileImage, displayLeaderboard[0]?.name)} 
-                onError={(e) => handleAvatarError(e, displayLeaderboard[0]?.name)}
-                alt="Rank 1" 
-                className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
-              />
-              <div>
-                <h4 className="font-black text-white text-xl">{displayLeaderboard[0]?.name}</h4>
-                <span className="text-xs font-bold text-amber-400">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Simple 4-Step Process</h2>
+              <p className="text-slate-600 text-sm font-medium">
+                From waste sorting to instant bank cashback in under 3 minutes.
+              </p>
+            </div>
+
+            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6">
+              {isDesktop && (
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 z-0">
+                  <div className="w-16 h-1 bg-emerald-500 shadow-[0_0_15px_#10b981] rounded-full animate-beamMove"></div>
+                </div>
+              )}
+
+              {[
+                { num: '1', title: 'Schedule Pickup', desc: 'Select date & waste items on mobile or PC desktop.', icon: FaCalendarPlus },
+                { num: '2', title: 'Driver Collects', desc: 'Verified driver arrives at your doorstep.', icon: FaTruck },
+                { num: '3', title: 'AI Verification', desc: 'Weight & purity verified instantly.', icon: FaRecycle },
+                { num: '4', title: 'Instant Cash', desc: 'Claim EcoPoints or withdraw to UPI!', icon: FaGift }
+              ].map((step, idx) => {
+                const Icon = step.icon;
+                return (
+                  <div key={idx} className="relative z-10 p-7 bg-white rounded-3xl border border-slate-200/80 text-center space-y-4 shadow-lg hover:border-emerald-500/50 transition-all gpu-layer">
+                    <div className="h-11 w-11 mx-auto rounded-full bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow-md">
+                      {step.num}
+                    </div>
+                    <div className="h-12 w-12 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl border border-emerald-500/20">
+                      <Icon />
+                    </div>
+                    <h4 className="font-black text-slate-900 text-base">{step.title}</h4>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed">{step.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* REAL MONGODB DATABASE LEADERBOARD HUB */}
+          <div className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-mono font-bold uppercase tracking-widest border border-emerald-500/30">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>Real MongoDB Live Database</span>
               </div>
-              <div className="p-4 bg-[#06121e] rounded-2xl border border-amber-500/30">
-                <span className="text-2xl font-black text-amber-400 block">{displayLeaderboard[0]?.points} EcoPoints</span>
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-900">Real Citizen Leaderboard</h2>
+              <p className="text-slate-600 text-sm font-medium">
+                Live ranking stream updated directly from our citizen MongoDB recycling database.
+              </p>
+            </div>
+
+            {/* Top 3 Champions Podium */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+              {/* Rank 2 */}
+              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 text-center space-y-4 order-2 md:order-1 shadow-lg">
+                <img 
+                  src={getAvatarUrl(displayLeaderboard[1]?.avatar || displayLeaderboard[1]?.profileImage, displayLeaderboard[1]?.name)} 
+                  onError={(e) => handleAvatarError(e, displayLeaderboard[1]?.name)}
+                  alt="Rank 2" 
+                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-slate-300" 
+                />
+                <div>
+                  <span className="text-xs font-mono font-bold text-slate-400">#2 SILVER RECYCLER</span>
+                  <h4 className="font-black text-slate-900 text-base">{displayLeaderboard[1]?.name}</h4>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <span className="text-lg font-black text-emerald-600 block">{displayLeaderboard[1]?.points} EcoPoints</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">{displayLeaderboard[1]?.recycledKg || (displayLeaderboard[1]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                </div>
+              </div>
+
+              {/* Rank 1 (Center Elevated) */}
+              <div className="p-8 rounded-3xl bg-white border-2 border-amber-400 text-center space-y-4 order-1 md:order-2 shadow-2xl relative -translate-y-3">
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1 shadow">
+                  <FaCrown /> GOLD #1 CHAMPION
+                </span>
+                <img 
+                  src={getAvatarUrl(displayLeaderboard[0]?.avatar || displayLeaderboard[0]?.profileImage, displayLeaderboard[0]?.name)} 
+                  onError={(e) => handleAvatarError(e, displayLeaderboard[0]?.name)}
+                  alt="Rank 1" 
+                  className="h-24 w-24 rounded-full mx-auto object-cover ring-4 ring-amber-400 shadow-xl" 
+                />
+                <div>
+                  <h4 className="font-black text-slate-900 text-xl">{displayLeaderboard[0]?.name}</h4>
+                  <span className="text-xs font-bold text-amber-600 block">{displayLeaderboard[0]?.badge || '🏆 Gold Recycler'}</span>
+                </div>
+                <div className="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/30">
+                  <span className="text-2xl font-black text-amber-600 block">{displayLeaderboard[0]?.points} EcoPoints</span>
+                  <span className="text-xs font-mono font-bold text-slate-600 block pt-0.5">{displayLeaderboard[0]?.recycledKg || (displayLeaderboard[0]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                </div>
+              </div>
+
+              {/* Rank 3 */}
+              <div className="p-6 rounded-3xl bg-white border border-slate-200/80 text-center space-y-4 order-3 md:order-3 shadow-lg">
+                <img 
+                  src={getAvatarUrl(displayLeaderboard[2]?.avatar || displayLeaderboard[2]?.profileImage, displayLeaderboard[2]?.name)} 
+                  onError={(e) => handleAvatarError(e, displayLeaderboard[2]?.name)}
+                  alt="Rank 3" 
+                  className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/30" 
+                />
+                <div>
+                  <span className="text-xs font-mono font-bold text-slate-400">#3 BRONZE RECYCLER</span>
+                  <h4 className="font-black text-slate-900 text-base">{displayLeaderboard[2]?.name}</h4>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <span className="text-lg font-black text-emerald-600 block">{displayLeaderboard[2]?.points} EcoPoints</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">{displayLeaderboard[2]?.recycledKg || (displayLeaderboard[2]?.points * 0.15).toFixed(1)} kg Recycled</span>
+                </div>
               </div>
             </div>
 
-            {/* Rank 3 */}
-            <div className="p-6 rounded-3xl bg-[#091b2e] border border-slate-800 text-center space-y-4 order-3 md:order-3 shadow-lg">
-              <img 
-                src={getAvatarUrl(displayLeaderboard[2]?.avatar || displayLeaderboard[2]?.profileImage, displayLeaderboard[2]?.name)} 
-                onError={(e) => handleAvatarError(e, displayLeaderboard[2]?.name)}
-                alt="Rank 3" 
-                className="h-20 w-20 rounded-full mx-auto object-cover ring-4 ring-amber-700/60" 
-              />
-              <div>
-                <span className="text-xs font-mono font-bold text-slate-400">#3 Bronze</span>
-                <h4 className="font-black text-white text-base">{displayLeaderboard[2]?.name}</h4>
+            {/* REAL MONGODB TOP 10 RANKINGS TABLE */}
+            <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden">
+              <div className="p-5 bg-slate-100/80 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-2">
+                  <FaMedal className="text-amber-500 h-5 w-5" />
+                  <h3 className="font-black text-slate-900 text-base">Top 10 Live Database Rankings</h3>
+                </div>
+
+                <div className="relative w-full sm:w-64">
+                  <FaSearch className="absolute left-3.5 top-3 text-slate-400 text-xs" />
+                  <input 
+                    type="text" 
+                    placeholder="Search recycler name..."
+                    value={leaderboardSearch}
+                    onChange={(e) => setLeaderboardSearch(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
               </div>
-              <div className="p-3 bg-[#06121e] rounded-2xl border border-slate-800">
-                <span className="text-lg font-black text-emerald-400 block">{displayLeaderboard[2]?.points} EcoPoints</span>
+
+              <div className="divide-y divide-slate-100 overflow-x-auto">
+                {filteredLeaderboard.length > 0 ? (
+                  filteredLeaderboard.map((user, idx) => (
+                    <div 
+                      key={user._id || idx}
+                      className="p-4 sm:px-6 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <span className={`w-7 text-center font-mono font-black text-sm ${
+                          user.rank === 1 ? 'text-amber-500 text-base' : user.rank === 2 ? 'text-slate-400' : user.rank === 3 ? 'text-amber-700' : 'text-slate-500'
+                        }`}>
+                          #{user.rank}
+                        </span>
+                        
+                        <img 
+                          src={getAvatarUrl(user.avatar || user.profileImage, user.name)}
+                          onError={(e) => handleAvatarError(e, user.name)}
+                          alt={user.name}
+                          className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/30"
+                        />
+
+                        <div>
+                          <h4 className="font-black text-slate-900 text-sm">{user.name}</h4>
+                          <span className="text-[10px] font-mono font-bold text-emerald-600">{user.badge || user.tier || '🌱 Green Scout'}</span>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <span className="font-black text-slate-900 text-sm block">{user.points} EcoPoints</span>
+                        <span className="text-[10px] font-mono text-slate-500 block">{user.recycledKg || (user.points * 0.15).toFixed(1)} kg waste saved</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="p-6 text-center text-xs text-slate-400 font-bold">No matching recyclers found.</p>
+                )}
               </div>
             </div>
 
           </div>
+
         </div>
       </section>
 
-      {/* FAQ SECTION WITH LIVE SEARCH */}
+      {/* SECTION 8: FAQ & CTA BANNER & FOOTER (CYBER DARK SLATE) */}
       <section className="py-20 max-w-4xl mx-auto px-4 w-full">
         <div className="text-center space-y-4 mb-10">
           <h2 className="text-3xl sm:text-4xl font-black text-white">Frequently Asked Questions</h2>

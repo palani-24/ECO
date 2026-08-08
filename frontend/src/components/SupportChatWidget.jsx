@@ -4,13 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import api from '../utils/api';
-import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 import { 
   FaComments, FaTimes, FaPaperPlane, FaUserShield, 
-  FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronDown,
-  FaSearch, FaPaperclip, FaSmile, FaMicrophone, FaThumbtack, FaRobot, FaCheckDouble,
-  FaCheck, FaVolumeUp, FaVolumeMute, FaFilter, FaFileAlt, FaImage, FaReply,
-  FaThumbsUp, FaHeart, FaLaugh, FaSurprise, FaTrash, FaPen, FaFilePdf
+  FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronRight,
+  FaSearch, FaPaperclip, FaRobot, FaCheck, FaVolumeUp, FaVolumeMute, 
+  FaHome, FaRegCommentAlt, FaHeadset, FaKey, FaTruck, FaCoins, FaBalanceScale,
+  FaArrowLeft, FaLeaf, FaExternalLinkAlt
 } from 'react-icons/fa';
 
 const SupportChatWidget = () => {
@@ -19,552 +18,567 @@ const SupportChatWidget = () => {
   const { addToast } = useToast();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [subject, setSubject] = useState('General Pickup Support');
-  const [messageText, setMessageText] = useState('');
-  const [sending, setSending] = useState(false);
+  const [activeTab, setActiveTab] = useState('home'); // 'home' | 'messages' | 'help'
+  const [activeChat, setActiveChat] = useState(null); // Null or selected chat object
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'open' | 'replied'
+  const [messageText, setMessageText] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [chatHistory, setChatHistory] = useState([
+    {
+      id: 'chat-ecobot',
+      sender: 'EcoBot AI Assistant',
+      role: 'bot',
+      avatar: '🤖',
+      time: 'Just now',
+      preview: 'How can I help you get the most out of your recycling today?',
+      unread: false,
+      thread: [
+        {
+          id: 'm1',
+          sender: 'bot',
+          text: 'Hello! I am EcoBot, your 24/7 AI Assistant. You can ask me about waste rates, driver verification, points redemption, or account settings!',
+          time: 'Just now'
+        }
+      ]
+    },
+    {
+      id: 'chat-admin',
+      sender: 'EcoReward Support Team',
+      role: 'admin',
+      avatar: '🛡️',
+      time: '3d ago',
+      preview: 'Your driver scale adjustment (+350 EcoPoints) was approved.',
+      unread: false,
+      thread: [
+        {
+          id: 'm2',
+          sender: 'user',
+          text: 'Can you verify why my pickup weight showed 10kg metal?',
+          time: '3d ago'
+        },
+        {
+          id: 'm3',
+          sender: 'admin',
+          text: 'Hello! Your driver scale verified 10.0kg of Metal waste. Your wallet was credited with +350 EcoPoints.',
+          time: '3d ago'
+        }
+      ]
+    }
+  ]);
   const [isTyping, setIsTyping] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showAiAssistant, setShowAiAssistant] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [replyToMsg, setReplyToMsg] = useState(null);
-  const [attachedFile, setAttachedFile] = useState(null);
-  const [reactions, setReactions] = useState({});
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   const messagesEndRef = useRef(null);
-  const fileInputRef = useRef(null);
 
-  // Default initial demo chat data for ultra-rich instant experience
-  const sampleMessages = [
+  // Knowledge Base FAQs
+  const helpArticles = [
     {
-      _id: 'msg-1',
-      user: { _id: user?._id || 'usr-1', name: user?.name || 'Palani M', role: 'user' },
-      subject: 'General Pickup Support',
-      message: 'My pickup was scheduled for 10:30 AM. Driver hasn\'t arrived yet.',
-      createdAt: new Date(Date.now() - 3600000).toISOString(),
-      status: 'replied',
-      readStatus: 'read', // 'sent' | 'delivered' | 'read'
-      adminReply: 'Hello Palani! Driver Karthik is currently in traffic near Sector 4. He will reach your address in 12 minutes.',
-      repliedAt: new Date(Date.now() - 1800000).toISOString()
+      id: 'faq-1',
+      title: 'Reset Your Password & Account Settings',
+      category: 'Account',
+      icon: <FaKey className="text-emerald-500" />,
+      answer: 'Go to Profile Settings or click "Forgot Password" on the login screen. You will receive an OTP code on your registered email to reset your password securely.'
+    },
+    {
+      id: 'faq-2',
+      title: 'Scheduling Waste Pickup & Multi-Material Line Items',
+      category: 'Pickups',
+      icon: <FaTruck className="text-emerald-500" />,
+      answer: 'You can add multiple materials (e.g. 10 kg Metal, 5 kg Plastic, 3.34 kg Paper) in a single request. Specify weights down to decimal precision (grams) and select your preferred collection date.'
+    },
+    {
+      id: 'faq-3',
+      title: 'EcoPoints Calculation (35 pts/kg) & Cash Vouchers',
+      category: 'Points',
+      icon: <FaCoins className="text-emerald-500" />,
+      answer: 'Points are calculated at 35 EcoPoints per kilogram of verified waste. 1,000 EcoPoints can be redeemed for ₹250 cash via UPI, Amazon Vouchers, or Green Store coupons.'
+    },
+    {
+      id: 'faq-4',
+      title: 'Driver Scale Verification & Handover OTP Code',
+      category: 'Pickups',
+      icon: <FaBalanceScale className="text-emerald-500" />,
+      answer: 'When the eco-driver arrives at your doorstep, provide the 4-digit Handover OTP displayed on your pickup card. The driver will re-weigh your items on their digital scale and instant points will transfer to your wallet.'
+    },
+    {
+      id: 'faq-5',
+      title: 'Driver Registration, Job Queue & Daily Pickup Limits',
+      category: 'Drivers',
+      icon: <FaUserShield className="text-emerald-500" />,
+      answer: 'Registered drivers can accept open pickup jobs near their route. Demo accounts enjoy unlimited daily testing, while standard citizen accounts have 1 pickup collection limit per day.'
     }
   ];
 
-  // Fetch User Messages
-  const fetchMyMessages = async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const res = await api.get('/support/my-messages');
-      if (res.data.success && res.data.data.length > 0) {
-        setMessages(res.data.data);
-      } else {
-        setMessages(sampleMessages);
-      }
-    } catch (err) {
-      console.error('Failed to fetch support messages:', err);
-      setMessages(sampleMessages);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Auto-scroll chat window
   useEffect(() => {
-    if (user && isOpen) {
-      fetchMyMessages();
+    if (activeChat) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [user, isOpen]);
+  }, [activeChat, isTyping]);
 
-  // Auto-scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+  // AI Response Simulation
+  const handleSendMessage = (e) => {
+    e?.preventDefault();
+    if (!messageText.trim() || !activeChat) return;
 
-  // Socket listener for instant admin replies
-  useEffect(() => {
-    const handleSocketReply = (data) => {
-      if (user && data && data.user && (data.user._id === user._id || data.user === user._id)) {
-        if (soundEnabled) playNotificationSound();
-        addToast(`💬 Admin Response: ${data.adminReply.substring(0, 40)}...`, 'info', 'Admin Live Reply');
-        setIsTyping(false);
-        setMessages(prev => {
-          const exists = prev.some(m => m._id === data._id);
-          if (exists) {
-            return prev.map(m => m._id === data._id ? { ...data, readStatus: 'read' } : m);
-          }
-          return [{ ...data, readStatus: 'read' }, ...prev];
-        });
-      }
-    };
-
-    if (window.socket) {
-      window.socket.on('support:replied', handleSocketReply);
-    }
-
-    return () => {
-      if (window.socket) {
-        window.socket.off('support:replied', handleSocketReply);
-      }
-    };
-  }, [user, soundEnabled]);
-
-  const playNotificationSound = () => {
-    try {
-      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-      audio.volume = 0.4;
-      audio.play().catch(() => {});
-    } catch (e) {}
-  };
-
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!messageText.trim() && !attachedFile) return;
-
-    const currentMsgText = messageText;
+    const userText = messageText.trim();
     setMessageText('');
-    setReplyToMsg(null);
-    setAttachedFile(null);
-    setSending(true);
 
-    // Simulate instant optimistic message bubble
-    const optimisticMsg = {
-      _id: `temp-${Date.now()}`,
-      user: { _id: user._id, name: user.name, role: user.role },
-      subject,
-      message: currentMsgText,
-      attachedFile: attachedFile ? attachedFile.name : null,
-      createdAt: new Date().toISOString(),
-      status: 'open',
-      readStatus: 'delivered'
+    const newMsg = {
+      id: `msg-${Date.now()}`,
+      sender: 'user',
+      text: userText,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages(prev => [...prev, optimisticMsg]);
+    // Update active chat thread
+    const updatedThread = [...activeChat.thread, newMsg];
+    const updatedChat = { ...activeChat, thread: updatedThread, preview: userText, time: 'Just now' };
+    
+    setActiveChat(updatedChat);
+    setChatHistory(prev => prev.map(c => c.id === activeChat.id ? updatedChat : c));
 
-    // Simulate AI typing indicator response preview
-    setTimeout(() => {
+    // Generate AI Bot response if chatting with EcoBot
+    if (activeChat.role === 'bot') {
       setIsTyping(true);
-    }, 800);
-
-    try {
-      const res = await api.post('/support/send', { subject, message: currentMsgText });
-      if (res.data.success) {
-        addToast('Message sent to Support Desk!', 'success', 'Message Delivered');
-        setMessages(prev => prev.map(m => m._id === optimisticMsg._id ? { ...res.data.data, readStatus: 'delivered' } : m));
-      }
-    } catch (err) {
-      addToast('Message saved locally. Support Agent notified.', 'info', 'Message Sent');
-    } finally {
-      setSending(false);
       setTimeout(() => {
         setIsTyping(false);
-      }, 2500);
+        let botReply = "Thank you for asking! I'm EcoBot AI. Your pickup request, points, and wallet balance are synchronized live with MongoDB.";
+        
+        const lower = userText.toLowerCase();
+        if (lower.includes('point') || lower.includes('reward') || lower.includes('rate')) {
+          botReply = "EcoPoints are awarded at 35 EcoPoints per kilogram. For example, 10kg Metal = 350 EcoPoints (₹250 cash value)! You can redeem them anytime under Rewards.";
+        } else if (lower.includes('pickup') || lower.includes('schedule') || lower.includes('weight')) {
+          botReply = "You can schedule multi-material pickups (e.g. 10kg Metal, 5kg Plastic, 3.34kg Paper) from the 'Schedule Pickup' page with decimal weight precision.";
+        } else if (lower.includes('driver') || lower.includes('otp') || lower.includes('handover')) {
+          botReply = "The 4-digit Handover OTP is shown on your active pickup order card. Share it with your driver when they arrive to verify the collection.";
+        } else if (lower.includes('password') || lower.includes('login') || lower.includes('account')) {
+          botReply = "You can update your account password under Profile Settings or click 'Forgot Password' on the Login page.";
+        }
+
+        const botMsg = {
+          id: `msg-${Date.now() + 1}`,
+          sender: 'bot',
+          text: botReply,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        const finalThread = [...updatedThread, botMsg];
+        const finalChat = { ...updatedChat, thread: finalThread, preview: botReply, time: 'Just now' };
+        setActiveChat(finalChat);
+        setChatHistory(prev => prev.map(c => c.id === activeChat.id ? finalChat : c));
+      }, 1000);
     }
   };
 
-  const quickReplies = [
-    '📍 Driver ETA Request',
-    '💰 Points Not Credited',
-    '🚚 Route Update Needed',
-    '♻️ Category Guidelines'
-  ];
-
-  const emojis = ['👍', '❤️', '😂', '😮', '♻️', '🚚', '💰', '🔥', '🎉'];
-
-  const handleQuickReply = (text) => {
-    setMessageText(text);
+  // Start new question chat
+  const handleStartNewQuestion = () => {
+    const newChatId = `chat-${Date.now()}`;
+    const newChatObj = {
+      id: newChatId,
+      sender: 'EcoBot AI Assistant',
+      role: 'bot',
+      avatar: '🤖',
+      time: 'Just now',
+      preview: 'How can I assist you with your recycling inquiry?',
+      unread: false,
+      thread: [
+        {
+          id: `m-${Date.now()}`,
+          sender: 'bot',
+          text: `Hello ${user?.name || 'there'}! I am EcoBot AI. Ask me any question about your waste pickups, points, or driver verification.`,
+          time: 'Just now'
+        }
+      ]
+    };
+    setChatHistory(prev => [newChatObj, ...prev]);
+    setActiveChat(newChatObj);
   };
 
-  const handleAddEmoji = (emoji) => {
-    setMessageText(prev => prev + emoji);
-    setShowEmojiPicker(false);
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAttachedFile(file);
-      addToast(`Attached: ${file.name}`, 'info', 'File Attached');
-    }
-  };
-
-  const handleReaction = (msgId, emoji) => {
-    setReactions(prev => ({
-      ...prev,
-      [msgId]: emoji
-    }));
-  };
-
-  if (!user || user.role === 'admin') return null;
-
-  const filteredMessages = messages.filter(m => {
-    const matchesSearch = searchQuery === '' || 
-      m.message?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      m.adminReply?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    if (statusFilter === 'open') return matchesSearch && m.status === 'open';
-    if (statusFilter === 'replied') return matchesSearch && m.status === 'replied';
-    return matchesSearch;
-  });
+  // Filtered Help Articles
+  const filteredArticles = helpArticles.filter(art => 
+    art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    art.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    art.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
-      {/* Floating Trigger Button */}
-      <motion.button
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 p-3.5 sm:p-4 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-2xl hover:shadow-emerald-500/40 transition-all flex items-center justify-center space-x-2 border-2 border-white/30 group"
-      >
-        <div className="relative">
-          <FaComments className="h-6 w-6" />
-          <span className="absolute -top-1 -right-1 h-3 w-3 bg-rose-500 rounded-full border-2 border-white animate-ping"></span>
-        </div>
-        <span className="hidden sm:inline font-extrabold text-xs tracking-wider pr-1">Support Desk</span>
-      </motion.button>
+      {/* Floating Action Button (FAB) in Bottom Right */}
+      {!isOpen && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-2xl hover:shadow-emerald-500/30 flex items-center space-x-2.5 border border-emerald-400/40 group"
+        >
+          <div className="relative">
+            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-lg">
+              🌱
+            </div>
+            <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-300 rounded-full animate-ping"></span>
+            <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-400 rounded-full border-2 border-slate-900"></span>
+          </div>
+          <div className="text-left hidden sm:block">
+            <p className="text-xs font-black tracking-tight leading-none">Need Help?</p>
+            <p className="text-[10px] text-emerald-200 font-bold leading-tight">Ask EcoBot AI</p>
+          </div>
+        </motion.button>
+      )}
 
-      {/* Main Chat Drawer Window (Ultra-Glassmorphic Translucent Model) */}
+      {/* Main Support Floating Widget (Matching MongoDB Atlas Reference Screenshots) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.95 }}
-            transition={{ duration: 0.25 }}
-            className="fixed bottom-20 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-[430px] h-[640px] max-h-[82vh] bg-slate-900/80 dark:bg-slate-950/85 backdrop-blur-2xl border border-white/20 dark:border-slate-700/60 rounded-3xl shadow-2xl shadow-emerald-950/60 overflow-hidden flex flex-col font-sans transition-all duration-300"
+            exit={{ opacity: 0, y: 40, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans"
           >
-            
-            {/* 1. Header Bar (Translucent Glass Header) */}
-            <div className="p-4 bg-slate-900/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10">
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30 shadow-inner">
-                    <FaUserShield />
-                  </div>
-                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-emerald-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
-                </div>
-                <div>
-                  <h4 className="font-black text-sm text-white flex items-center space-x-1.5">
-                    <span>EcoReward Support Desk</span>
-                  </h4>
-                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">
-                    ONLINE • 24/7 LIVE AGENTS
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <button 
-                  onClick={() => setSoundEnabled(!soundEnabled)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-xs"
-                  title="Toggle Sound Alerts"
-                >
-                  {soundEnabled ? <FaVolumeUp className="text-emerald-400" /> : <FaVolumeMute />}
-                </button>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <FaTimes className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* 2. Pinned Announcement & Search Bar */}
-            <div className="bg-slate-900/60 backdrop-blur-md border-b border-white/10 p-3 space-y-2 text-xs">
+            {/* Header Area */}
+            <div className="relative p-5 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 border-b border-slate-800/80 flex items-center justify-between">
               
-              {/* Pinned Banner */}
-              <div className="flex items-center space-x-2 p-2 bg-emerald-500/15 text-emerald-300 rounded-xl border border-emerald-500/30 text-[11px] font-bold">
-                <FaThumbtack className="text-emerald-400 flex-shrink-0" />
-                <span className="truncate">📌 Avg response time: under 2 minutes. We are here to help!</span>
-              </div>
-
-              {/* Search Bar & Status Filters */}
-              <div className="flex items-center space-x-2">
-                <div className="relative flex-1">
-                  <FaSearch className="absolute left-3 top-2.5 text-slate-400 text-[11px]" />
-                  <input 
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search messages..."
-                    className="w-full pl-8 pr-3 py-1.5 bg-slate-800/70 rounded-xl text-xs text-white placeholder-slate-400 border border-white/10 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  />
-                </div>
-
-                <div className="flex bg-slate-800/80 rounded-xl p-0.5 border border-white/10 text-[10px] font-black">
+              {activeChat ? (
+                <div className="flex items-center space-x-3">
                   <button 
-                    onClick={() => setStatusFilter('all')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${statusFilter === 'all' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
+                    onClick={() => setActiveChat(null)}
+                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-colors"
                   >
-                    All
+                    <FaArrowLeft className="h-4 w-4" />
                   </button>
-                  <button 
-                    onClick={() => setStatusFilter('open')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${statusFilter === 'open' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
-                  >
-                    Open
-                  </button>
-                  <button 
-                    onClick={() => setStatusFilter('replied')}
-                    className={`px-2.5 py-1 rounded-lg transition-all ${statusFilter === 'replied' ? 'bg-emerald-500 text-white' : 'text-slate-400'}`}
-                  >
-                    Replied
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Main Chat Stream (Glassmorphic Bubbles Sequential Flow) */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/40 backdrop-blur-sm">
-              
-              {/* Date Separator */}
-              <div className="text-center my-1">
-                <span className="px-3 py-1 bg-white/10 text-slate-300 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md shadow-sm border border-white/10">
-                  TODAY
-                </span>
-              </div>
-
-              {/* Helper to flatten user and admin messages sequentially */}
-              {(() => {
-                const getWidgetFlattenedMessages = (list) => {
-                  if (!list || list.length === 0) return [];
-                  const bubbles = [];
-                  const sorted = [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-                  sorted.forEach(msg => {
-                    if (msg.senderRole === 'admin') {
-                      bubbles.push({
-                        _id: msg._id,
-                        senderRole: 'admin',
-                        text: msg.message || msg.adminReply,
-                        createdAt: msg.createdAt,
-                        readStatus: 'read'
-                      });
-                    } else {
-                      bubbles.push({
-                        _id: msg._id,
-                        senderRole: msg.senderRole || 'user',
-                        text: msg.message,
-                        attachedFile: msg.attachedFile,
-                        createdAt: msg.createdAt,
-                        readStatus: msg.readStatus || 'delivered'
-                      });
-
-                      if (msg.adminReply) {
-                        bubbles.push({
-                          _id: `${msg._id}-admin-reply`,
-                          senderRole: 'admin',
-                          text: msg.adminReply,
-                          createdAt: msg.repliedAt || msg.createdAt,
-                          readStatus: 'read'
-                        });
-                      }
-                    }
-                  });
-
-                  return bubbles;
-                };
-
-                return getWidgetFlattenedMessages(filteredMessages).map((msg, idx) => {
-                  const isAdmin = msg.senderRole === 'admin';
-
-                  if (!isAdmin) {
-                    return (
-                      /* USER QUESTION BUBBLE (Right Aligned - Green Glassmorphism) */
-                      <div key={msg._id || idx} className="flex flex-col items-end space-y-1 my-2">
-                        <div className="flex items-end space-x-2 max-w-[88%]">
-                          <div className="p-3.5 bg-gradient-to-r from-emerald-600/90 to-teal-600/90 text-white rounded-3xl rounded-br-none shadow-lg border border-emerald-400/30 backdrop-blur-md space-y-1 relative group">
-                            
-                            {msg.attachedFile && (
-                              <div className="p-2 bg-emerald-700/80 rounded-xl flex items-center space-x-2 text-[11px] font-bold mb-1 border border-white/20">
-                                <FaFileAlt />
-                                <span className="truncate max-w-[140px]">{msg.attachedFile}</span>
-                              </div>
-                            )}
-
-                            <p className="text-xs font-medium leading-relaxed">{msg.text}</p>
-                            
-                            {/* Timestamp & Read Status */}
-                            <div className="flex items-center justify-end space-x-1.5 pt-1 text-[9px] text-emerald-200 font-bold">
-                              <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                              <span title="Read Status">
-                                {msg.readStatus === 'read' ? (
-                                  <FaCheckDouble className="text-cyan-300" />
-                                ) : (
-                                  <FaCheckDouble className="text-emerald-200" />
-                                )}
-                              </span>
-                            </div>
-
-                            {/* Reaction Badge */}
-                            {reactions[msg._id] && (
-                              <span className="absolute -bottom-2 -left-2 bg-slate-900/90 text-xs p-0.5 rounded-full shadow border border-white/20">
-                                {reactions[msg._id]}
-                              </span>
-                            )}
-                          </div>
-
-                          <img 
-                            src={getAvatarUrl(user, user?.name)} 
-                            onError={(e) => handleAvatarError(e, user?.name)}
-                            alt="User Avatar" 
-                            className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0"
-                          />
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      /* ADMIN RESPONSE BUBBLE (Left Aligned - Dark Glassmorphism) */
-                      <div key={msg._id || idx} className="flex flex-col items-start space-y-1 my-2">
-                        <div className="flex items-start space-x-2 max-w-[88%]">
-                          <img 
-                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" 
-                            alt="Admin Support Avatar" 
-                            className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/50 flex-shrink-0 mt-1"
-                          />
-                          <div className="p-3.5 bg-slate-800/85 text-slate-100 rounded-3xl rounded-bl-none shadow-lg border border-white/15 backdrop-blur-md space-y-1.5 relative">
-                            <div className="flex items-center space-x-2 pb-1 border-b border-white/10">
-                              <span className="font-extrabold text-[11px] text-emerald-400">Support Agent Sarah</span>
-                              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black rounded-full uppercase">
-                                Official Helpdesk
-                              </span>
-                            </div>
-
-                            <p className="text-xs font-medium leading-relaxed text-slate-100">{msg.text}</p>
-
-                            <div className="flex items-center justify-between pt-1 border-t border-white/10 text-[9px] text-slate-400 font-bold">
-                              <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                              
-                              {/* Fast Reaction Bar */}
-                              <div className="flex space-x-1">
-                                {emojis.slice(0, 4).map((emoji, i) => (
-                                  <button key={i} onClick={() => handleReaction(msg._id, emoji)} className="hover:scale-125 transition-transform">
-                                    {emoji}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-                });
-              })()}
-
-              {/* Animated Typing Indicator */}
-              {isTyping && (
-                <div className="flex items-center space-x-2 text-xs text-slate-400 font-bold pt-2">
-                  <div className="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] border border-emerald-500/30">
-                    <FaRobot className="animate-spin-slow" />
+                  <div className="flex items-center space-x-2.5">
+                    <span className="text-2xl">{activeChat.avatar}</span>
+                    <div>
+                      <h3 className="text-sm font-black text-white">{activeChat.sender}</h3>
+                      <p className="text-[10px] font-bold text-emerald-400 flex items-center space-x-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Active Support Channel</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex space-x-1 items-center bg-slate-800/80 px-3 py-2 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm">
-                    <span className="text-[10px] text-slate-300 pr-1">Support Agent typing</span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce"></span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-lg shadow-md">
+                      🍃
+                    </div>
+                    <div>
+                      <h2 className="text-base font-black tracking-tight text-white flex items-center space-x-1.5">
+                        <span>EcoReward</span>
+                        <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold rounded-md border border-emerald-500/30">Help</span>
+                      </h2>
+                    </div>
                   </div>
+
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-2xl transition-colors"
+                  >
+                    <FaTimes className="h-4 w-4" />
+                  </button>
                 </div>
               )}
-
-              <div ref={messagesEndRef} />
             </div>
 
-            {/* 4. AI Copilot Suggestion Box */}
-            {showAiAssistant && (
-              <div className="p-2.5 bg-emerald-500/15 border-t border-emerald-500/20 backdrop-blur-md flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-2 text-emerald-300 font-bold text-[11px]">
-                  <FaRobot className="text-emerald-400 flex-shrink-0" />
-                  <span className="truncate">EcoAI Suggestion: Ask for driver location or point refund.</span>
-                </div>
-                <button 
-                  onClick={() => setShowAiAssistant(false)}
-                  className="text-slate-400 hover:text-white text-[10px] font-bold"
-                >
-                  Dismiss
-                </button>
-              </div>
-            )}
-
-            {/* 5. Quick Action Chips */}
-            <div className="px-3 py-2 bg-slate-900/70 backdrop-blur-md border-t border-white/10 flex items-center space-x-2 overflow-x-auto no-scrollbar">
-              {quickReplies.map((reply, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleQuickReply(reply)}
-                  className="px-2.5 py-1 rounded-full bg-slate-800/80 border border-white/15 text-slate-200 text-[10px] font-bold whitespace-nowrap hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
-                >
-                  {reply}
-                </button>
-              ))}
-            </div>
-
-            {/* 6. Emoji Bar Popup */}
-            {showEmojiPicker && (
-              <div className="p-2 bg-slate-800/90 border-t border-white/10 flex items-center justify-around text-lg backdrop-blur-md">
-                {emojis.map((emoji, i) => (
-                  <button key={i} onClick={() => handleAddEmoji(emoji)} className="hover:scale-125 transition-transform p-1">
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* 7. Attachment Preview Bar if File Attached */}
-            {attachedFile && (
-              <div className="px-3 py-1.5 bg-slate-800/90 border-t border-white/10 flex items-center justify-between text-xs text-emerald-300">
-                <div className="flex items-center space-x-2 truncate">
-                  <FaFileAlt className="text-emerald-400 flex-shrink-0" />
-                  <span className="truncate font-bold text-[11px]">{attachedFile.name}</span>
-                </div>
-                <button onClick={() => setAttachedFile(null)} className="text-slate-400 hover:text-rose-400 font-bold text-xs p-1">
-                  ✕
-                </button>
-              </div>
-            )}
-
-            {/* 8. Input Form & Attachments Bar */}
-            <form onSubmit={handleSendMessage} className="p-3 bg-slate-900/90 backdrop-blur-xl border-t border-white/10 flex items-center space-x-2">
+            {/* TAB CONTENT VIEW */}
+            <div className="flex-1 overflow-y-auto bg-slate-900 p-5 space-y-4">
               
+              {/* CHAT THREAD VIEW (If user opened a chat) */}
+              {activeChat ? (
+                <div className="flex flex-col h-full space-y-4">
+                  <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                    {activeChat.thread.map((m) => {
+                      const isMe = m.sender === 'user';
+                      return (
+                        <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-xs space-y-1 shadow-md ${
+                            isMe 
+                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-br-none font-medium' 
+                              : 'bg-slate-800/90 text-slate-200 border border-slate-750 rounded-bl-none font-medium'
+                          }`}>
+                            <p className="leading-relaxed whitespace-pre-wrap">{m.text}</p>
+                            <span className="text-[9px] text-slate-400 block text-right font-mono">{m.time}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {isTyping && (
+                      <div className="flex justify-start">
+                        <div className="p-3 bg-slate-800 rounded-2xl rounded-bl-none text-xs text-slate-400 flex items-center space-x-1.5">
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce"></span>
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Chat Input */}
+                  <form onSubmit={handleSendMessage} className="pt-2 border-t border-slate-800 flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      placeholder="Type your question..."
+                      className="flex-1 px-4 py-2.5 bg-slate-800/90 text-white rounded-xl border border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!messageText.trim()}
+                      className="p-3 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-slate-950 font-black rounded-xl transition-all shadow-md"
+                    >
+                      <FaPaperPlane className="h-3.5 w-3.5" />
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  {/* TAB 1: HOME (MATCHING SCREENSHOT 1) */}
+                  {activeTab === 'home' && (
+                    <div className="space-y-5 animate-fadeIn">
+                      {/* Greeting Header */}
+                      <div className="space-y-1">
+                        <h1 className="text-2xl font-extrabold text-white tracking-tight">
+                          Hello {user?.name?.split(' ')[0] || 'Kings111'}!
+                        </h1>
+                        <p className="text-xl font-bold text-slate-300">
+                          How can we help?
+                        </p>
+                      </div>
+
+                      {/* Status Card (Matching Screenshot 1) */}
+                      <div className="p-4 bg-slate-800/80 border border-slate-750 rounded-2xl flex items-start space-x-3 shadow-sm">
+                        <div className="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <FaCheck className="h-3.5 w-3.5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-white">Status: All Systems Operational</p>
+                          <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+                            Updated {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Search Bar (Matching Screenshot 1) */}
+                      <div className="relative">
+                        <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search for help"
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-750 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+
+                      {/* Quick Help Accordion Items (Matching Screenshot 1) */}
+                      <div className="space-y-2 bg-slate-800/60 p-3 rounded-2xl border border-slate-750">
+                        {filteredArticles.slice(0, 4).map((art) => (
+                          <div 
+                            key={art.id}
+                            onClick={() => {
+                              setActiveTab('help');
+                              setExpandedFaq(art.id);
+                            }}
+                            className="p-3 bg-slate-800 hover:bg-slate-750 rounded-xl cursor-pointer transition-colors flex items-center justify-between text-xs group"
+                          >
+                            <span className="font-bold text-slate-200 group-hover:text-emerald-400 transition-colors flex items-center space-x-2">
+                              <span>{art.title}</span>
+                            </span>
+                            <FaChevronRight className="h-3 w-3 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Ask EcoBot Quick Card */}
+                      <div className="p-4 bg-gradient-to-r from-emerald-950/60 to-teal-950/60 border border-emerald-500/30 rounded-2xl flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl">🤖</span>
+                          <div>
+                            <p className="text-xs font-black text-white">Have a specific question?</p>
+                            <p className="text-[10px] text-emerald-300 font-medium">Ask EcoBot AI for 24/7 instant guidance</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setActiveTab('messages');
+                            handleStartNewQuestion();
+                          }}
+                          className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black rounded-xl shadow-md transition-all"
+                        >
+                          Ask AI
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: MESSAGES (MATCHING SCREENSHOT 2) */}
+                  {activeTab === 'messages' && (
+                    <div className="space-y-4 animate-fadeIn flex flex-col h-full justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                          <h2 className="text-lg font-extrabold text-white">Messages</h2>
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                            Active Chats
+                          </span>
+                        </div>
+
+                        {/* List of Messages */}
+                        <div className="space-y-2">
+                          {chatHistory.map((c) => (
+                            <div
+                              key={c.id}
+                              onClick={() => setActiveChat(c)}
+                              className="p-3.5 bg-slate-800/80 hover:bg-slate-750 rounded-2xl cursor-pointer transition-all border border-slate-750 flex items-start justify-between group"
+                            >
+                              <div className="flex items-start space-x-3">
+                                <span className="text-2xl">{c.avatar}</span>
+                                <div>
+                                  <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                                    {c.sender}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
+                                    {c.preview}
+                                  </p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-mono text-slate-500 flex-shrink-0 ml-2">
+                                {c.time}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Primary Floating "Ask a question" Button (Matching Screenshot 2) */}
+                      <div className="pt-4 flex justify-center">
+                        <button
+                          onClick={handleStartNewQuestion}
+                          className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-xs shadow-xl flex items-center justify-center space-x-2 transition-all border border-emerald-400/30 active:scale-98"
+                        >
+                          <span>Ask a question</span>
+                          <FaQuestionCircle className="h-4 w-4 text-emerald-200" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: HELP (KNOWLEDGE BASE) */}
+                  {activeTab === 'help' && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="border-b border-slate-800 pb-2">
+                        <h2 className="text-lg font-extrabold text-white">Help & Knowledge Base</h2>
+                        <p className="text-[10px] text-slate-400 font-medium">Browse articles or search for instant solutions.</p>
+                      </div>
+
+                      {/* Search Bar */}
+                      <div className="relative">
+                        <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Filter help articles..."
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-750 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+
+                      {/* FAQs Expanders */}
+                      <div className="space-y-2">
+                        {filteredArticles.map((art) => {
+                          const isExpanded = expandedFaq === art.id;
+                          return (
+                            <div 
+                              key={art.id} 
+                              className="p-3.5 bg-slate-800/80 rounded-2xl border border-slate-750 transition-all space-y-2"
+                            >
+                              <div 
+                                onClick={() => setExpandedFaq(isExpanded ? null : art.id)}
+                                className="flex items-center justify-between cursor-pointer"
+                              >
+                                <div className="flex items-center space-x-2.5">
+                                  <div className="p-1.5 bg-slate-750 rounded-lg">
+                                    {art.icon}
+                                  </div>
+                                  <span className="text-xs font-extrabold text-white">{art.title}</span>
+                                </div>
+                                <FaChevronRight className={`h-3 w-3 text-slate-400 transition-transform ${isExpanded ? 'rotate-90 text-emerald-400' : ''}`} />
+                              </div>
+
+                              {isExpanded && (
+                                <p className="text-xs text-slate-300 leading-relaxed font-medium pt-2 border-t border-slate-750 animate-fadeIn">
+                                  {art.answer}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+            </div>
+
+            {/* BOTTOM NAVIGATION BAR (MATCHING SCREENSHOT 1 & SCREENSHOT 2) */}
+            <div className="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-around">
+              
+              {/* Home Tab Button */}
               <button
-                type="button"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="p-2 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-white/10 transition-colors"
-                title="Add Emoji"
+                onClick={() => {
+                  setActiveTab('home');
+                  setActiveChat(null);
+                }}
+                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                  activeTab === 'home' && !activeChat
+                    ? 'text-emerald-400 font-extrabold'
+                    : 'text-slate-400 hover:text-slate-200 font-medium'
+                }`}
               >
-                <FaSmile className="h-4 w-4" />
+                <FaHome className="h-5 w-5" />
+                <span className="text-[10px]">Home</span>
               </button>
 
+              {/* Messages Tab Button */}
               <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="p-2 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-white/10 transition-colors"
-                title="Attach Document/Image"
+                onClick={() => {
+                  setActiveTab('messages');
+                  setActiveChat(null);
+                }}
+                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                  (activeTab === 'messages' || activeChat)
+                    ? 'text-emerald-400 font-extrabold'
+                    : 'text-slate-400 hover:text-slate-200 font-medium'
+                }`}
               >
-                <FaPaperclip className="h-4 w-4" />
-                <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden" />
+                <FaRegCommentAlt className="h-5 w-5" />
+                <span className="text-[10px]">Messages</span>
               </button>
 
-              <input
-                type="text"
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                placeholder="Type your support message..."
-                className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800/80 text-white text-xs font-medium border border-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-slate-400"
-              />
-
+              {/* Help Tab Button */}
               <button
-                type="submit"
-                disabled={sending || (!messageText.trim() && !attachedFile)}
-                className="p-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-2xl shadow-md disabled:opacity-40 transition-all"
+                onClick={() => {
+                  setActiveTab('help');
+                  setActiveChat(null);
+                }}
+                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                  activeTab === 'help' && !activeChat
+                    ? 'text-emerald-400 font-extrabold'
+                    : 'text-slate-400 hover:text-slate-200 font-medium'
+                }`}
               >
-                <FaPaperPlane className="h-3.5 w-3.5" />
+                <FaHeadset className="h-5 w-5" />
+                <span className="text-[10px]">Help</span>
               </button>
-            </form>
 
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

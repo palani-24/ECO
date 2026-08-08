@@ -178,3 +178,52 @@ html, body {
 .animate-progressLoad {
   animation: progressLoad 4s linear forwards;
 }
+
+/* Horizontal Traveling Energy Light Beam */
+@keyframes beamMove {
+  0% {
+    left: 0%;
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 95%;
+    opacity: 0.2;
+  }
+}
+
+.animate-beamMove {
+  animation: beamMove 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Neon Text Glint Animation */
+@keyframes neonGlint {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-neonGlint {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 25%, #38bdf8 50%, #34d399 75%, #10b981 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: neonGlint 6s linear infinite;
+}
+
+/* 3D Perspective utilities for Desktop Cards */
+.perspective-container {
+  perspective: 1000px;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+

@@ -576,14 +576,20 @@ const AdminSupportPage = () => {
                   </div>
                 </div>
 
-                {/* Scrollable Chat Message Thread for Active User */}
-                <div className="flex-1 p-3.5 sm:p-6 overflow-y-auto space-y-4">
+                {/* Scrollable WhatsApp Web Chat Message Thread for Active User */}
+                <div 
+                  className="flex-1 p-3.5 sm:p-6 overflow-y-auto space-y-4 bg-slate-50/60 dark:bg-[#0b141a]"
+                  style={{
+                    backgroundImage: `radial-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px)`,
+                    backgroundSize: '18px 18px'
+                  }}
+                >
                   
                   {/* Subject Badge Divider */}
                   {activeTicket?.subject && (
                     <div className="text-center my-2">
-                      <span className="px-3 py-1 bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-300/40 dark:border-slate-700">
-                        Subject: {activeTicket.subject}
+                      <span className="px-3 py-1 bg-slate-200/90 dark:bg-[#202c33] text-slate-700 dark:text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-wider border border-slate-300/40 dark:border-slate-700 shadow-sm">
+                        📌 Ticket: {activeTicket.subject}
                       </span>
                     </div>
                   )}
@@ -593,39 +599,39 @@ const AdminSupportPage = () => {
 
                     if (isAdmin) {
                       return (
-                        /* Right Bubble: Outgoing Admin Message */
-                        <div key={bubble._id} className="flex items-start justify-end space-x-2.5 max-w-lg ml-auto">
-                          <div className="bg-gradient-to-tr from-emerald-600 to-teal-600 text-white p-3.5 sm:p-4 rounded-2xl rounded-tr-none shadow-md space-y-1.5 text-xs">
-                            <div className="flex justify-between items-center text-[9px] text-emerald-100 font-bold border-b border-white/20 pb-1 gap-4">
+                        /* Right Bubble: Outgoing Admin Message (WhatsApp Emerald) */
+                        <div key={bubble._id} className="flex items-start justify-end space-x-2.5 max-w-md sm:max-w-lg ml-auto animate-fadeIn">
+                          <div className="bg-[#005c4b] text-emerald-50 p-3.5 sm:p-4 rounded-2xl rounded-tr-none shadow-md space-y-1 text-xs border border-emerald-500/20">
+                            <div className="flex justify-between items-center text-[9px] text-emerald-300 font-bold border-b border-emerald-400/20 pb-1 gap-4">
                               <span className="flex items-center space-x-1">
                                 <FaShieldAlt className="h-2.5 w-2.5" />
-                                <span>EcoReward Support</span>
+                                <span>EcoReward Admin Support</span>
                               </span>
-                              <span className="flex items-center space-x-1">
+                              <span className="flex items-center space-x-1 font-mono">
                                 <span>{new Date(bubble.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                <FaCheckDouble className="h-3 w-3 text-cyan-200" />
+                                <FaCheckDouble className="h-3 w-3 text-sky-400" />
                               </span>
                             </div>
-                            <p className="font-bold leading-relaxed">{bubble.text}</p>
+                            <p className="font-medium leading-relaxed whitespace-pre-wrap">{bubble.text}</p>
                           </div>
                         </div>
                       );
                     } else {
                       return (
-                        /* Left Bubble: Incoming Customer Message */
-                        <div key={bubble._id} className="flex items-start space-x-2.5 max-w-lg">
+                        /* Left Bubble: Incoming Customer Message (WhatsApp Dark Bubble) */
+                        <div key={bubble._id} className="flex items-start space-x-2.5 max-w-md sm:max-w-lg animate-fadeIn">
                           <img 
                             src={getAvatarUrl(activeConversation.user?.profileImage, activeConversation.user?.name || 'User')}
                             onError={(e) => handleAvatarError(e, activeConversation.user?.name || 'User')}
                             alt="User"
-                            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover flex-shrink-0 mt-1"
+                            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover flex-shrink-0 mt-1 ring-1 ring-slate-300 dark:ring-slate-700"
                           />
-                          <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1.5 text-xs text-slate-900 dark:text-white">
-                            <div className="flex justify-between items-center text-[9px] text-slate-400 font-bold border-b border-slate-100 dark:border-slate-800 pb-1 gap-4">
-                              <span>{activeConversation.user?.name}</span>
-                              <span>{new Date(bubble.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          <div className="bg-white dark:bg-[#202c33] border border-slate-200/80 dark:border-slate-700/80 p-3.5 sm:p-4 rounded-2xl rounded-tl-none shadow-sm space-y-1 text-xs text-slate-900 dark:text-slate-100">
+                            <div className="flex justify-between items-center text-[9px] text-slate-400 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-700 pb-1 gap-4">
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{activeConversation.user?.name}</span>
+                              <span className="font-mono">{new Date(bubble.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <p className="font-medium leading-relaxed">{bubble.text}</p>
+                            <p className="font-medium leading-relaxed whitespace-pre-wrap">{bubble.text}</p>
                           </div>
                         </div>
                       );
@@ -635,18 +641,18 @@ const AdminSupportPage = () => {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Live Chat Input Footer */}
-                <div className="p-3 sm:p-4 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                {/* Live Chat Input Footer (WhatsApp Web Style) */}
+                <div className="p-3 sm:p-4 bg-white dark:bg-[#202c33] border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
                   
                   {/* Canned Responses Chips */}
                   <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
-                    <span className="text-[9px] font-black text-slate-400 uppercase flex-shrink-0">Quick Reply:</span>
+                    <span className="text-[9px] font-black text-slate-400 uppercase flex-shrink-0">⚡ Quick:</span>
                     {cannedTemplates.map((template, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => setReplyText(template)}
-                        className="px-2 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors"
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors"
                       >
                         {template.substring(0, 24)}...
                       </button>
@@ -654,23 +660,33 @@ const AdminSupportPage = () => {
                   </div>
 
                   {/* Input Box */}
-                  <div className="flex items-center space-x-2">
-                    <textarea
-                      rows="2"
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder={`Write live support reply to ${activeConversation.user?.name || 'Customer'}...`}
-                      className="flex-1 px-3.5 py-2 text-xs font-semibold rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
+                  <div className="flex items-end space-x-2">
+                    <div className="flex-1 bg-slate-50 dark:bg-[#2a3942] border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-emerald-500 transition-all">
+                      <textarea
+                        rows="2"
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            if (replyText.trim() && !sendingReply) {
+                              handleSendReply(activeTicket._id);
+                            }
+                          }
+                        }}
+                        placeholder={`Type a message to ${activeConversation.user?.name || 'Customer'} (Press Enter to send)...`}
+                        className="w-full bg-transparent text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none resize-none"
+                      />
+                    </div>
 
                     <button
                       type="button"
                       onClick={() => handleSendReply(activeTicket._id)}
                       disabled={sendingReply || !replyText.trim()}
-                      className="px-4 sm:px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-2xl shadow-md flex items-center space-x-1.5 transition-transform active:scale-95 disabled:opacity-40 shrink-0"
+                      className="p-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-black text-xs rounded-2xl shadow-lg flex items-center justify-center transition-all active:scale-95 shrink-0 cursor-pointer"
+                      title="Send Message"
                     >
-                      <FaPaperPlane className="h-3.5 w-3.5" />
-                      <span>{sendingReply ? 'Sending...' : 'Send'}</span>
+                      <FaPaperPlane className="h-4 w-4" />
                     </button>
                   </div>
 

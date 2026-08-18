@@ -9,7 +9,7 @@ import {
   FaClock, FaCheckCircle, FaExclamationCircle, FaQuestionCircle, FaChevronRight,
   FaSearch, FaPaperclip, FaRobot, FaCheck, FaVolumeUp, FaVolumeMute, 
   FaHome, FaRegCommentAlt, FaHeadset, FaKey, FaTruck, FaCoins, FaBalanceScale,
-  FaArrowLeft, FaLeaf, FaExternalLinkAlt
+  FaArrowLeft, FaLeaf, FaExternalLinkAlt, FaCheckDouble, FaPhoneAlt, FaEnvelope
 } from 'react-icons/fa';
 
 const SupportChatWidget = () => {
@@ -19,53 +19,24 @@ const SupportChatWidget = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'messages' | 'help'
-  const [activeChat, setActiveChat] = useState(null); // Null or selected chat object
+  const [activeChat, setActiveChat] = useState(null); // 'admin' | 'bot' | null
   const [searchQuery, setSearchQuery] = useState('');
   const [messageText, setMessageText] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [chatHistory, setChatHistory] = useState([
+  const [sendingMessage, setSendingMessage] = useState(false);
+  const [liveMessages, setLiveMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [unreadAdminCount, setUnreadAdminCount] = useState(0);
+
+  // EcoBot AI Thread State
+  const [botMessages, setBotMessages] = useState([
     {
-      id: 'chat-ecobot',
-      sender: 'EcoBot AI Assistant',
-      role: 'bot',
-      avatar: '🤖',
-      time: 'Just now',
-      preview: 'How can I help you get the most out of your recycling today?',
-      unread: false,
-      thread: [
-        {
-          id: 'm1',
-          sender: 'bot',
-          text: 'Hello! I am EcoBot, your 24/7 AI Assistant. You can ask me about waste rates, driver verification, points redemption, or account settings!',
-          time: 'Just now'
-        }
-      ]
-    },
-    {
-      id: 'chat-admin',
-      sender: 'EcoReward Support Team',
-      role: 'admin',
-      avatar: '🛡️',
-      time: '3d ago',
-      preview: 'Your driver scale adjustment (+350 EcoPoints) was approved.',
-      unread: false,
-      thread: [
-        {
-          id: 'm2',
-          sender: 'user',
-          text: 'Can you verify why my pickup weight showed 10kg metal?',
-          time: '3d ago'
-        },
-        {
-          id: 'm3',
-          sender: 'admin',
-          text: 'Hello! Your driver scale verified 10.0kg of Metal waste. Your wallet was credited with +350 EcoPoints.',
-          time: '3d ago'
-        }
-      ]
+      id: 'bot-1',
+      sender: 'bot',
+      text: `Hello ${user?.name || 'Eco Warrior'}! 🌱 I am EcoBot, your 24/7 AI Assistant. Ask me about waste points rates, pickup verification, driver tracking, or account settings!`,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   const messagesEndRef = useRef(null);
@@ -91,7 +62,7 @@ const SupportChatWidget = () => {
       title: 'EcoPoints Calculation (35 pts/kg) & Cash Vouchers',
       category: 'Points',
       icon: <FaCoins className="text-emerald-500" />,
-      answer: 'Points are calculated at 35 EcoPoints per kilogram of verified waste. 1,000 EcoPoints can be redeemed for ₹250 cash via UPI, Amazon Vouchers, or Green Store coupons.'
+      answer: 'Points are calculated at dynamic rates (Metal 20, Plastic 10, Paper 8, E-Waste 15 pts/kg). 1,000 EcoPoints can be redeemed for ₹250 cash via UPI, Amazon Vouchers, or Green Store coupons.'
     },
     {
       id: 'faq-4',
@@ -109,90 +80,177 @@ const SupportChatWidget = () => {
     }
   ];
 
-  // Auto-scroll chat window
-  useEffect(() => {
-    if (activeChat) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Fetch real support messages from backend for current user
+  const fetchMySupportMessages = async () => {
+    if (!user) return;
+    try {
+      setLoadingMessages(true);
+      const res = await api.get('/support/my-messages');
+      if (res.data.success && Array.isArray(res.data.data)) {
+        setLiveMessages(res.data.data);
+      }
+    } catch (err) {
+      console.warn('Using local support thread fallback', err);
+    } finally {
+      setLoadingMessages(false);
     }
-  }, [activeChat, isTyping]);
+  };
 
-  // AI Response Simulation
-  const handleSendMessage = (e) => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchMySupportMessages();
+      setUnreadAdminCount(0);
+    }
+  }, [isOpen]);
+
+  // Real-time socket listener for Admin replies
+  useEffect(() => {
+    const handleAdminReply = (replyData) => {
+      const targetUserId = replyData.user?._id || replyData.user;
+      if (user && (targetUserId === user._id || replyData.senderRole === 'admin')) {
+        setLiveMessages(prev => [replyData, ...prev]);
+        if (!isOpen || activeChat !== 'admin') {
+          setUnreadAdminCount(c => c + 1);
+          addToast(`💬 Admin Response: "${replyData.message?.substring(0, 45)}..."`, 'info', 'New Support Message');
+        }
+      }
+    };
+
+    if (window.socket) {
+      window.socket.on('support:replied', handleAdminReply);
+    }
+
+    return () => {
+      if (window.socket) {
+        window.socket.off('support:replied', handleAdminReply);
+      }
+    };
+  }, [user, isOpen, activeChat]);
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [liveMessages, botMessages, isBotTyping, activeChat]);
+
+  // Handle Send Live Support Message to Admin
+  const handleSendToAdmin = async (e) => {
     e?.preventDefault();
-    if (!messageText.trim() || !activeChat) return;
+    if (!messageText.trim() || sendingMessage) return;
+
+    const currentText = messageText.trim();
+    setMessageText('');
+    setSendingMessage(true);
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = {
+      _id: tempId,
+      user: { _id: user?._id, name: user?.name, email: user?.email, role: user?.role },
+      senderRole: user?.role || 'user',
+      subject: 'Citizen Live Support Chat',
+      message: currentText,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+
+    setLiveMessages(prev => [optimisticMsg, ...prev]);
+
+    try {
+      const res = await api.post('/support/send', {
+        subject: 'Citizen Live Support Chat',
+        message: currentText
+      });
+      if (res.data.success) {
+        setLiveMessages(prev => prev.map(m => m._id === tempId ? res.data.data : m));
+        addToast('Message delivered to EcoReward Admin team!', 'success', 'Delivered');
+      }
+    } catch (err) {
+      console.warn('Message queued offline', err);
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  // Handle EcoBot AI Conversation
+  const handleSendToBot = (e) => {
+    e?.preventDefault();
+    if (!messageText.trim() || isBotTyping) return;
 
     const userText = messageText.trim();
     setMessageText('');
 
     const newMsg = {
-      id: `msg-${Date.now()}`,
+      id: `usr-${Date.now()}`,
       sender: 'user',
       text: userText,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    // Update active chat thread
-    const updatedThread = [...activeChat.thread, newMsg];
-    const updatedChat = { ...activeChat, thread: updatedThread, preview: userText, time: 'Just now' };
-    
-    setActiveChat(updatedChat);
-    setChatHistory(prev => prev.map(c => c.id === activeChat.id ? updatedChat : c));
+    setBotMessages(prev => [...prev, newMsg]);
+    setIsBotTyping(true);
 
-    // Generate AI Bot response if chatting with EcoBot
-    if (activeChat.role === 'bot') {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        let botReply = "Thank you for asking! I'm EcoBot AI. Your pickup request, points, and wallet balance are synchronized live with MongoDB.";
-        
-        const lower = userText.toLowerCase();
-        if (lower.includes('point') || lower.includes('reward') || lower.includes('rate')) {
-          botReply = "EcoPoints are awarded at 35 EcoPoints per kilogram. For example, 10kg Metal = 350 EcoPoints (₹250 cash value)! You can redeem them anytime under Rewards.";
-        } else if (lower.includes('pickup') || lower.includes('schedule') || lower.includes('weight')) {
-          botReply = "You can schedule multi-material pickups (e.g. 10kg Metal, 5kg Plastic, 3.34kg Paper) from the 'Schedule Pickup' page with decimal weight precision.";
-        } else if (lower.includes('driver') || lower.includes('otp') || lower.includes('handover')) {
-          botReply = "The 4-digit Handover OTP is shown on your active pickup order card. Share it with your driver when they arrive to verify the collection.";
-        } else if (lower.includes('password') || lower.includes('login') || lower.includes('account')) {
-          botReply = "You can update your account password under Profile Settings or click 'Forgot Password' on the Login page.";
-        }
+    setTimeout(() => {
+      setIsBotTyping(false);
+      let botReply = "I am EcoBot AI! Your pickups, wallet points, and driver assignments are synced live with our platform.";
+      const lower = userText.toLowerCase();
 
-        const botMsg = {
-          id: `msg-${Date.now() + 1}`,
+      if (lower.includes('point') || lower.includes('reward') || lower.includes('rate') || lower.includes('price')) {
+        botReply = "💰 Material Exchange Rates:\n• Metal: 20 pts/kg\n• Plastic: 10 pts/kg\n• Paper: 8 pts/kg\n• E-Waste: 15 pts/kg\n• Glass: 6 pts/kg\n• Organic: 4 pts/kg\n1,000 Points = ₹250 UPI/Amazon Cashback!";
+      } else if (lower.includes('pickup') || lower.includes('schedule') || lower.includes('weight')) {
+        botReply = "🚛 You can schedule doorstep pickup from the 'Schedule Pickup' tab. Our EV drivers arrive with digital scales to weigh and credit points instantly!";
+      } else if (lower.includes('driver') || lower.includes('otp') || lower.includes('handover')) {
+        botReply = "🔐 When your driver arrives, share the 4-digit Handover OTP shown on your active pickup order card to verify collection.";
+      } else if (lower.includes('admin') || lower.includes('human') || lower.includes('help')) {
+        botReply = "🛡️ You can switch to the 'EcoReward Support Team' chat to speak directly with our human support team!";
+      }
+
+      setBotMessages(prev => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
           sender: 'bot',
           text: botReply,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-
-        const finalThread = [...updatedThread, botMsg];
-        const finalChat = { ...updatedChat, thread: finalThread, preview: botReply, time: 'Just now' };
-        setActiveChat(finalChat);
-        setChatHistory(prev => prev.map(c => c.id === activeChat.id ? finalChat : c));
-      }, 1000);
-    }
+        }
+      ]);
+    }, 800);
   };
 
-  // Start new question chat
-  const handleStartNewQuestion = () => {
-    const newChatId = `chat-${Date.now()}`;
-    const newChatObj = {
-      id: newChatId,
-      sender: 'EcoBot AI Assistant',
-      role: 'bot',
-      avatar: '🤖',
-      time: 'Just now',
-      preview: 'How can I assist you with your recycling inquiry?',
-      unread: false,
-      thread: [
-        {
-          id: `m-${Date.now()}`,
-          sender: 'bot',
-          text: `Hello ${user?.name || 'there'}! I am EcoBot AI. Ask me any question about your waste pickups, points, or driver verification.`,
-          time: 'Just now'
+  // Convert raw support messages list into chronological bubbles
+  const getFlattenedLiveBubbles = () => {
+    const bubbles = [];
+    const sorted = [...liveMessages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    sorted.forEach(m => {
+      if (m.senderRole === 'admin') {
+        bubbles.push({
+          id: m._id,
+          sender: 'admin',
+          text: m.message,
+          time: new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: 'replied'
+        });
+      } else {
+        bubbles.push({
+          id: m._id,
+          sender: 'user',
+          text: m.message,
+          time: new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: m.status
+        });
+
+        if (m.adminReply) {
+          bubbles.push({
+            id: `${m._id}-reply`,
+            sender: 'admin',
+            text: m.adminReply,
+            time: new Date(m.repliedAt || m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            status: 'replied'
+          });
         }
-      ]
-    };
-    setChatHistory(prev => [newChatObj, ...prev]);
-    setActiveChat(newChatObj);
+      }
+    });
+
+    return bubbles;
   };
 
   // Filtered Help Articles
@@ -209,38 +267,42 @@ const SupportChatWidget = () => {
         <motion.button
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-2xl hover:shadow-emerald-500/30 flex items-center space-x-2.5 border border-emerald-400/40 group"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-2xl hover:shadow-emerald-500/30 flex items-center space-x-2.5 border border-emerald-400/40 group cursor-pointer"
         >
           <div className="relative">
             <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-lg">
-              🌱
+              💬
             </div>
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-300 rounded-full animate-ping"></span>
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-400 rounded-full border-2 border-slate-900"></span>
+            {unreadAdminCount > 0 ? (
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                {unreadAdminCount}
+              </span>
+            ) : (
+              <span className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-300 rounded-full animate-ping"></span>
+            )}
           </div>
           <div className="text-left hidden sm:block">
             <p className="text-xs font-black tracking-tight leading-none">Need Help?</p>
-            <p className="text-[10px] text-emerald-200 font-bold leading-tight">Ask EcoBot AI</p>
+            <p className="text-[10px] text-emerald-200 font-bold leading-tight">Live Support & EcoBot</p>
           </div>
         </motion.button>
       )}
 
-      {/* Main Support Floating Widget (Matching MongoDB Atlas Reference Screenshots) */}
+      {/* Main Support Floating Widget (WhatsApp Web Aesthetic) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans"
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[92vw] sm:w-[420px] h-[590px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans"
           >
             {/* Header Area */}
-            <div className="relative p-5 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900 border-b border-slate-800/80 flex items-center justify-between">
-              
+            <div className="relative p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
               {activeChat ? (
                 <div className="flex items-center space-x-3">
                   <button 
@@ -250,12 +312,14 @@ const SupportChatWidget = () => {
                     <FaArrowLeft className="h-4 w-4" />
                   </button>
                   <div className="flex items-center space-x-2.5">
-                    <span className="text-2xl">{activeChat.avatar}</span>
+                    <span className="text-2xl">{activeChat === 'admin' ? '🛡️' : '🤖'}</span>
                     <div>
-                      <h3 className="text-sm font-black text-white">{activeChat.sender}</h3>
+                      <h3 className="text-sm font-black text-white">
+                        {activeChat === 'admin' ? 'EcoReward Support Team' : 'EcoBot AI Assistant'}
+                      </h3>
                       <p className="text-[10px] font-bold text-emerald-400 flex items-center space-x-1">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Active Support Channel</span>
+                        <span>{activeChat === 'admin' ? 'Live Support Officer' : 'AI Assistant 24/7'}</span>
                       </p>
                     </div>
                   </div>
@@ -285,185 +349,319 @@ const SupportChatWidget = () => {
             </div>
 
             {/* TAB CONTENT VIEW */}
-            <div className="flex-1 overflow-y-auto bg-slate-900 p-5 space-y-4">
+            <div className="flex-1 overflow-hidden bg-slate-900 flex flex-col">
               
-              {/* CHAT THREAD VIEW (If user opened a chat) */}
-              {activeChat ? (
-                <div className="flex flex-col h-full space-y-4">
-                  <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                    {activeChat.thread.map((m) => {
-                      const isMe = m.sender === 'user';
+              {/* CHAT THREAD VIEW (If user opened a chat with Admin or EcoBot) */}
+              {activeChat === 'admin' ? (
+                <div className="flex-1 flex flex-col overflow-hidden bg-[#0b141a]">
+                  {/* WhatsApp Wallpaper Chat Stream */}
+                  <div 
+                    className="flex-1 p-4 overflow-y-auto space-y-3"
+                    style={{
+                      backgroundImage: `radial-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px)`,
+                      backgroundSize: '16px 16px'
+                    }}
+                  >
+                    <div className="text-center my-1">
+                      <span className="px-3 py-1 bg-slate-800/80 rounded-full text-[10px] font-bold text-slate-400 border border-slate-700">
+                        🔒 End-to-End Live Admin Support
+                      </span>
+                    </div>
+
+                    {loadingMessages ? (
+                      <div className="text-center py-8 text-xs text-slate-400">Loading conversation...</div>
+                    ) : getFlattenedLiveBubbles().length === 0 ? (
+                      <div className="text-center py-10 space-y-2">
+                        <div className="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-2xl">
+                          💬
+                        </div>
+                        <p className="text-xs font-bold text-slate-300">No support tickets yet</p>
+                        <p className="text-[11px] text-slate-500 max-w-xs mx-auto">
+                          Send a message below. Our admin team will receive and reply to your inquiry instantly!
+                        </p>
+                      </div>
+                    ) : (
+                      getFlattenedLiveBubbles().map((bubble) => {
+                        const isMe = bubble.sender === 'user';
+                        return (
+                          <div
+                            key={bubble.id}
+                            className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                          >
+                            <div
+                              className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-md relative text-xs ${
+                                isMe
+                                  ? 'bg-[#005c4b] text-emerald-50 rounded-br-none border border-emerald-500/20'
+                                  : 'bg-[#202c33] text-slate-100 rounded-bl-none border border-slate-700'
+                              }`}
+                            >
+                              <p className="font-bold text-[10px] mb-0.5 text-emerald-300">
+                                {isMe ? 'You' : '🛡️ EcoReward Admin'}
+                              </p>
+                              <p className="leading-relaxed whitespace-pre-wrap">{bubble.text}</p>
+                              <div className="flex items-center justify-end space-x-1 mt-1 text-[10px] text-slate-300">
+                                <span>{bubble.time}</span>
+                                {isMe && (
+                                  bubble.status === 'replied' ? (
+                                    <FaCheckDouble className="text-sky-400 h-2.5 w-2.5" />
+                                  ) : (
+                                    <FaCheck className="text-slate-400 h-2.5 w-2.5" />
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Input Bar */}
+                  <form onSubmit={handleSendToAdmin} className="p-2.5 bg-[#202c33] border-t border-slate-800 flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      placeholder="Type a message to Admin..."
+                      className="flex-1 px-4 py-2.5 bg-[#2a3942] border border-slate-700 rounded-full text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!messageText.trim() || sendingMessage}
+                      className="h-9 w-9 rounded-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white flex items-center justify-center transition-transform active:scale-95 shadow-md"
+                    >
+                      <FaPaperPlane className="h-3.5 w-3.5" />
+                    </button>
+                  </form>
+                </div>
+              ) : activeChat === 'bot' ? (
+                <div className="flex-1 flex flex-col overflow-hidden bg-[#0b141a]">
+                  <div 
+                    className="flex-1 p-4 overflow-y-auto space-y-3"
+                    style={{
+                      backgroundImage: `radial-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px)`,
+                      backgroundSize: '16px 16px'
+                    }}
+                  >
+                    {botMessages.map((msg) => {
+                      const isBot = msg.sender === 'bot';
                       return (
-                        <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[85%] p-3.5 rounded-2xl text-xs space-y-1 shadow-md ${
-                            isMe 
-                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-br-none font-medium' 
-                              : 'bg-slate-800/90 text-slate-200 border border-slate-750 rounded-bl-none font-medium'
-                          }`}>
-                            <p className="leading-relaxed whitespace-pre-wrap">{m.text}</p>
-                            <span className="text-[9px] text-slate-400 block text-right font-mono">{m.time}</span>
+                        <div
+                          key={msg.id}
+                          className={`flex ${isBot ? 'justify-start' : 'justify-end'}`}
+                        >
+                          <div
+                            className={`max-w-[84%] rounded-2xl px-3.5 py-2.5 shadow-md text-xs ${
+                              isBot
+                                ? 'bg-[#202c33] text-slate-100 rounded-bl-none border border-slate-700'
+                                : 'bg-[#005c4b] text-emerald-50 rounded-br-none border border-emerald-500/20'
+                            }`}
+                          >
+                            <p className="font-bold text-[10px] mb-0.5 text-emerald-300">
+                              {isBot ? '🤖 EcoBot AI' : 'You'}
+                            </p>
+                            <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                            <span className="block text-right text-[9px] text-slate-400 mt-1">
+                              {msg.time}
+                            </span>
                           </div>
                         </div>
                       );
                     })}
 
-                    {isTyping && (
+                    {isBotTyping && (
                       <div className="flex justify-start">
-                        <div className="p-3 bg-slate-800 rounded-2xl rounded-bl-none text-xs text-slate-400 flex items-center space-x-1.5">
-                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce"></span>
-                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        <div className="bg-[#202c33] rounded-2xl px-3.5 py-2 rounded-bl-none text-xs text-slate-400 flex items-center space-x-1.5 border border-slate-700">
+                          <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-bounce"></span>
+                          <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                          <span className="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                          <span className="text-[10px] text-slate-400 ml-1">EcoBot is typing...</span>
                         </div>
                       </div>
                     )}
                     <div ref={messagesEndRef} />
                   </div>
 
-                  {/* Chat Input */}
-                  <form onSubmit={handleSendMessage} className="pt-2 border-t border-slate-800 flex items-center space-x-2">
+                  <form onSubmit={handleSendToBot} className="p-2.5 bg-[#202c33] border-t border-slate-800 flex items-center space-x-2">
                     <input
                       type="text"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
-                      placeholder="Type your question..."
-                      className="flex-1 px-4 py-2.5 bg-slate-800/90 text-white rounded-xl border border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                      placeholder="Ask EcoBot anything..."
+                      className="flex-1 px-4 py-2.5 bg-[#2a3942] border border-slate-700 rounded-full text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />
                     <button
                       type="submit"
-                      disabled={!messageText.trim()}
-                      className="p-3 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-slate-950 font-black rounded-xl transition-all shadow-md"
+                      disabled={!messageText.trim() || isBotTyping}
+                      className="h-9 w-9 rounded-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white flex items-center justify-center transition-transform active:scale-95 shadow-md"
                     >
                       <FaPaperPlane className="h-3.5 w-3.5" />
                     </button>
                   </form>
                 </div>
               ) : (
-                <>
-                  {/* TAB 1: HOME (MATCHING SCREENSHOT 1) */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {/* TAB 1: HOME */}
                   {activeTab === 'home' && (
-                    <div className="space-y-5 animate-fadeIn">
-                      {/* Greeting Header */}
+                    <div className="space-y-4 animate-fadeIn">
                       <div className="space-y-1">
-                        <h1 className="text-2xl font-extrabold text-white tracking-tight">
-                          Hello {user?.name?.split(' ')[0] || 'Kings111'}!
+                        <h1 className="text-xl font-extrabold text-white tracking-tight">
+                          Hello {user?.name?.split(' ')[0] || 'Eco Warrior'}! 👋
                         </h1>
-                        <p className="text-xl font-bold text-slate-300">
-                          How can we help?
+                        <p className="text-sm font-medium text-slate-400">
+                          How can we support your recycling today?
                         </p>
                       </div>
 
-                      {/* Status Card (Matching Screenshot 1) */}
-                      <div className="p-4 bg-slate-800/80 border border-slate-750 rounded-2xl flex items-start space-x-3 shadow-sm">
+                      {/* Status Card */}
+                      <div className="p-3.5 bg-slate-800/80 border border-slate-700/80 rounded-2xl flex items-start space-x-3 shadow-sm">
                         <div className="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <FaCheck className="h-3.5 w-3.5" />
+                          <FaCheck className="h-3 w-3" />
                         </div>
                         <div>
-                          <p className="text-xs font-black text-white">Status: All Systems Operational</p>
+                          <p className="text-xs font-black text-white">Status: Fleet & Dispatch Operational</p>
                           <p className="text-[10px] text-slate-400 font-bold mt-0.5">
-                            Updated {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            Real-time socket sync connected
                           </p>
                         </div>
                       </div>
 
-                      {/* Search Bar (Matching Screenshot 1) */}
-                      <div className="relative">
-                        <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
-                        <input
-                          type="text"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Search for help"
-                          className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-750 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                      {/* Live Channels Cards */}
+                      <div className="space-y-2.5">
+                        {/* Live Admin Support Card */}
+                        <div 
+                          onClick={() => setActiveChat('admin')}
+                          className="p-3.5 bg-gradient-to-r from-emerald-950/80 to-slate-800 hover:from-emerald-900/90 hover:to-slate-750 border border-emerald-500/30 rounded-2xl cursor-pointer transition-all flex items-center justify-between group shadow-sm"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="h-10 w-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+                              🛡️
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                                  Live Admin Support
+                                </h4>
+                                {unreadAdminCount > 0 && (
+                                  <span className="px-1.5 py-0.2 bg-red-500 text-white rounded-full text-[9px] font-black animate-pulse">
+                                    {unreadAdminCount} NEW
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-400 font-medium">
+                                Direct messaging with support team
+                              </p>
+                            </div>
+                          </div>
+                          <FaChevronRight className="h-3 w-3 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                        </div>
+
+                        {/* EcoBot AI Assistant Card */}
+                        <div 
+                          onClick={() => setActiveChat('bot')}
+                          className="p-3.5 bg-slate-800/80 hover:bg-slate-750 border border-slate-700/80 rounded-2xl cursor-pointer transition-all flex items-center justify-between group shadow-sm"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="h-10 w-10 rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-xl">
+                              🤖
+                            </div>
+                            <div>
+                              <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                                EcoBot AI Assistant
+                              </h4>
+                              <p className="text-[11px] text-slate-400 font-medium">
+                                Instant rate & pickup calculation 24/7
+                              </p>
+                            </div>
+                          </div>
+                          <FaChevronRight className="h-3 w-3 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                        </div>
                       </div>
 
-                      {/* Quick Help Accordion Items (Matching Screenshot 1) */}
+                      {/* Quick FAQ Previews */}
                       <div className="space-y-2 bg-slate-800/60 p-3 rounded-2xl border border-slate-750">
-                        {filteredArticles.slice(0, 4).map((art) => (
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">Common Questions</p>
+                        {helpArticles.slice(0, 3).map((art) => (
                           <div 
                             key={art.id}
                             onClick={() => {
                               setActiveTab('help');
                               setExpandedFaq(art.id);
                             }}
-                            className="p-3 bg-slate-800 hover:bg-slate-750 rounded-xl cursor-pointer transition-colors flex items-center justify-between text-xs group"
+                            className="p-2.5 bg-slate-800 hover:bg-slate-750 rounded-xl cursor-pointer transition-colors flex items-center justify-between text-xs group"
                           >
-                            <span className="font-bold text-slate-200 group-hover:text-emerald-400 transition-colors flex items-center space-x-2">
-                              <span>{art.title}</span>
+                            <span className="font-bold text-slate-200 group-hover:text-emerald-400 transition-colors">
+                              {art.title}
                             </span>
-                            <FaChevronRight className="h-3 w-3 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                            <FaChevronRight className="h-3 w-3 text-slate-500 group-hover:text-emerald-400" />
                           </div>
                         ))}
-                      </div>
-
-                      {/* Ask EcoBot Quick Card */}
-                      <div className="p-4 bg-gradient-to-r from-emerald-950/60 to-teal-950/60 border border-emerald-500/30 rounded-2xl flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <span className="text-2xl">🤖</span>
-                          <div>
-                            <p className="text-xs font-black text-white">Have a specific question?</p>
-                            <p className="text-[10px] text-emerald-300 font-medium">Ask EcoBot AI for 24/7 instant guidance</p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setActiveTab('messages');
-                            handleStartNewQuestion();
-                          }}
-                          className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black rounded-xl shadow-md transition-all"
-                        >
-                          Ask AI
-                        </button>
                       </div>
                     </div>
                   )}
 
-                  {/* TAB 2: MESSAGES (MATCHING SCREENSHOT 2) */}
+                  {/* TAB 2: MESSAGES */}
                   {activeTab === 'messages' && (
-                    <div className="space-y-4 animate-fadeIn flex flex-col h-full justify-between">
-                      <div className="space-y-3">
+                    <div className="space-y-3 animate-fadeIn flex flex-col h-full justify-between">
+                      <div className="space-y-2.5">
                         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <h2 className="text-lg font-extrabold text-white">Messages</h2>
+                          <h2 className="text-sm font-extrabold text-white">Active Channels</h2>
                           <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            Active Chats
+                            Real-Time
                           </span>
                         </div>
 
-                        {/* List of Messages */}
-                        <div className="space-y-2">
-                          {chatHistory.map((c) => (
-                            <div
-                              key={c.id}
-                              onClick={() => setActiveChat(c)}
-                              className="p-3.5 bg-slate-800/80 hover:bg-slate-750 rounded-2xl cursor-pointer transition-all border border-slate-750 flex items-start justify-between group"
-                            >
-                              <div className="flex items-start space-x-3">
-                                <span className="text-2xl">{c.avatar}</span>
-                                <div>
-                                  <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
-                                    {c.sender}
-                                  </h4>
-                                  <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
-                                    {c.preview}
-                                  </p>
-                                </div>
-                              </div>
-                              <span className="text-[10px] font-mono text-slate-500 flex-shrink-0 ml-2">
-                                {c.time}
-                              </span>
+                        {/* Admin Channel Item */}
+                        <div
+                          onClick={() => setActiveChat('admin')}
+                          className="p-3.5 bg-slate-800/80 hover:bg-slate-750 rounded-2xl cursor-pointer transition-all border border-slate-750 flex items-start justify-between group"
+                        >
+                          <div className="flex items-start space-x-3">
+                            <span className="text-2xl">🛡️</span>
+                            <div>
+                              <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                                EcoReward Support Team
+                              </h4>
+                              <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
+                                {liveMessages[0]?.message || 'Start a conversation with admin support...'}
+                              </p>
                             </div>
-                          ))}
+                          </div>
+                          <span className="text-[10px] font-mono text-slate-500 flex-shrink-0 ml-2">
+                            {liveMessages[0] ? new Date(liveMessages[0].createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live'}
+                          </span>
+                        </div>
+
+                        {/* EcoBot Channel Item */}
+                        <div
+                          onClick={() => setActiveChat('bot')}
+                          className="p-3.5 bg-slate-800/80 hover:bg-slate-750 rounded-2xl cursor-pointer transition-all border border-slate-750 flex items-start justify-between group"
+                        >
+                          <div className="flex items-start space-x-3">
+                            <span className="text-2xl">🤖</span>
+                            <div>
+                              <h4 className="text-xs font-extrabold text-white group-hover:text-emerald-400 transition-colors">
+                                EcoBot AI Assistant
+                              </h4>
+                              <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
+                                {botMessages[botMessages.length - 1]?.text || 'Ask me about recycling & rates...'}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono text-slate-500 flex-shrink-0 ml-2">
+                            {botMessages[botMessages.length - 1]?.time || 'Now'}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Primary Floating "Ask a question" Button (Matching Screenshot 2) */}
                       <div className="pt-4 flex justify-center">
                         <button
-                          onClick={handleStartNewQuestion}
+                          onClick={() => setActiveChat('admin')}
                           className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-xs shadow-xl flex items-center justify-center space-x-2 transition-all border border-emerald-400/30 active:scale-98"
                         >
-                          <span>Ask a question</span>
-                          <FaQuestionCircle className="h-4 w-4 text-emerald-200" />
+                          <span>Message Support Team</span>
+                          <FaComments className="h-3.5 w-3.5 text-emerald-200" />
                         </button>
                       </div>
                     </div>
@@ -471,32 +669,30 @@ const SupportChatWidget = () => {
 
                   {/* TAB 3: HELP (KNOWLEDGE BASE) */}
                   {activeTab === 'help' && (
-                    <div className="space-y-4 animate-fadeIn">
+                    <div className="space-y-3 animate-fadeIn">
                       <div className="border-b border-slate-800 pb-2">
-                        <h2 className="text-lg font-extrabold text-white">Help & Knowledge Base</h2>
-                        <p className="text-[10px] text-slate-400 font-medium">Browse articles or search for instant solutions.</p>
+                        <h2 className="text-sm font-extrabold text-white">Help & Knowledge Base</h2>
+                        <p className="text-[10px] text-slate-400 font-medium">Browse answers or search for instant solutions.</p>
                       </div>
 
-                      {/* Search Bar */}
                       <div className="relative">
-                        <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 h-3.5 w-3.5" />
+                        <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 h-3 w-3" />
                         <input
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Filter help articles..."
-                          className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-750 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          placeholder="Search questions..."
+                          className="w-full pl-9 pr-4 py-2 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-750 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
 
-                      {/* FAQs Expanders */}
                       <div className="space-y-2">
                         {filteredArticles.map((art) => {
                           const isExpanded = expandedFaq === art.id;
                           return (
                             <div 
                               key={art.id} 
-                              className="p-3.5 bg-slate-800/80 rounded-2xl border border-slate-750 transition-all space-y-2"
+                              className="p-3 bg-slate-800/80 rounded-2xl border border-slate-750 transition-all space-y-2"
                             >
                               <div 
                                 onClick={() => setExpandedFaq(isExpanded ? null : art.id)}
@@ -522,62 +718,57 @@ const SupportChatWidget = () => {
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
 
             </div>
 
-            {/* BOTTOM NAVIGATION BAR (MATCHING SCREENSHOT 1 & SCREENSHOT 2) */}
-            <div className="p-3 bg-slate-950 border-t border-slate-800 flex items-center justify-around">
-              
-              {/* Home Tab Button */}
+            {/* BOTTOM NAVIGATION BAR */}
+            <div className="p-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-around">
               <button
                 onClick={() => {
                   setActiveTab('home');
                   setActiveChat(null);
                 }}
-                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                className={`flex flex-col items-center space-y-1 px-4 py-1 rounded-xl transition-all ${
                   activeTab === 'home' && !activeChat
                     ? 'text-emerald-400 font-extrabold'
                     : 'text-slate-400 hover:text-slate-200 font-medium'
                 }`}
               >
-                <FaHome className="h-5 w-5" />
+                <FaHome className="h-4 w-4" />
                 <span className="text-[10px]">Home</span>
               </button>
 
-              {/* Messages Tab Button */}
               <button
                 onClick={() => {
                   setActiveTab('messages');
                   setActiveChat(null);
                 }}
-                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                className={`flex flex-col items-center space-y-1 px-4 py-1 rounded-xl transition-all ${
                   (activeTab === 'messages' || activeChat)
                     ? 'text-emerald-400 font-extrabold'
                     : 'text-slate-400 hover:text-slate-200 font-medium'
                 }`}
               >
-                <FaRegCommentAlt className="h-5 w-5" />
+                <FaRegCommentAlt className="h-4 w-4" />
                 <span className="text-[10px]">Messages</span>
               </button>
 
-              {/* Help Tab Button */}
               <button
                 onClick={() => {
                   setActiveTab('help');
                   setActiveChat(null);
                 }}
-                className={`flex flex-col items-center space-y-1 px-4 py-1.5 rounded-xl transition-all ${
+                className={`flex flex-col items-center space-y-1 px-4 py-1 rounded-xl transition-all ${
                   activeTab === 'help' && !activeChat
                     ? 'text-emerald-400 font-extrabold'
                     : 'text-slate-400 hover:text-slate-200 font-medium'
                 }`}
               >
-                <FaHeadset className="h-5 w-5" />
+                <FaHeadset className="h-4 w-4" />
                 <span className="text-[10px]">Help</span>
               </button>
-
             </div>
           </motion.div>
         )}
@@ -587,3 +778,4 @@ const SupportChatWidget = () => {
 };
 
 export default SupportChatWidget;
+

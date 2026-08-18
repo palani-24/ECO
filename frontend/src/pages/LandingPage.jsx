@@ -959,8 +959,7 @@ const LandingPage = () => {
                   src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80" 
                   alt="Raw Unsorted Waste"
                   onError={() => handleImageError('before_img')}
-                  className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover"
-                  style={{ width: canvasRef.current ? canvasRef.current.width : '100%' }}
+                  className="absolute inset-y-0 left-0 w-full max-w-none h-full object-cover min-w-[700px] md:min-w-[1000px]"
                 />
                 <div className="absolute top-4 left-4 bg-slate-950/90 backdrop-blur px-3.5 py-1.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 font-bold">
                   BEFORE: Raw Unsorted Waste

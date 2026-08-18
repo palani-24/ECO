@@ -96,10 +96,12 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
+    window.socket = newSocket;
     setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
+      window.socket = null;
     };
   }, [user?._id]);
 

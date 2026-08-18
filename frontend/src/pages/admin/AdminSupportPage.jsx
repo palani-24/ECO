@@ -15,7 +15,7 @@ import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 
 const AdminSupportPage = () => {
   const { addToast } = useToast();
-  const { realtimeData } = useSocket() || {};
+  const { socket, realtimeData } = useSocket() || {};
   const [supportMessages, setSupportMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUserKey, setSelectedUserKey] = useState(null);
@@ -102,21 +102,54 @@ const AdminSupportPage = () => {
   useEffect(() => {
     fetchSupportMessages();
 
+    const activeSocket = socket || window.socket;
+    if (!activeSocket) return;
+
     const handleNewSupportMsg = (newMsg) => {
-      addToast(`💬 New Support Ticket from ${newMsg.user?.name || 'User'}!`, 'info', 'Incoming Support Ticket');
-      setSupportMessages(prev => [newMsg, ...prev]);
-    };
+      // Audio notification chime
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(987.77, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
 
-    if (window.socket) {
-      window.socket.on('support:new', handleNewSupportMsg);
-    }
+      addToast(`💬 New Message from ${newMsg.user?.name || 'User'}!`, 'info', 'Incoming Support Ticket');
+      
+      setSupportMessages(prev => {
+        if (prev.some(m => m._id === newMsg._id)) return prev;
+        return [newMsg, ...prev];
+      });
 
-    return () => {
-      if (window.socket) {
-        window.socket.off('support:new', handleNewSupportMsg);
+      const userKey = newMsg.user?._id || newMsg.user?.email;
+      if (userKey) {
+        setSelectedUserKey(prevKey => prevKey || userKey);
       }
     };
-  }, []);
+
+    const handleSupportReplied = (repliedMsg) => {
+      setSupportMessages(prev => {
+        if (prev.some(m => m._id === repliedMsg._id)) return prev;
+        return [repliedMsg, ...prev];
+      });
+    };
+
+    activeSocket.on('support:new', handleNewSupportMsg);
+    activeSocket.on('support:replied', handleSupportReplied);
+
+    return () => {
+      activeSocket.off('support:new', handleNewSupportMsg);
+      activeSocket.off('support:replied', handleSupportReplied);
+    };
+  }, [socket]);
 
   // Group support messages by UNIQUE VALID USER (filtering out Anonymous/null users)
   const groupedConversations = useMemo(() => {
@@ -238,6 +271,11 @@ const AdminSupportPage = () => {
   const activeTicket = activeConversation?.latestMessage;
 
   const chatEndRef = useRef(null);
+
+  // Auto-scroll admin chat window on message change
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [activeConversation?.messages?.length, selectedUserKey]);
 
   // Helper to convert user messages & admin replies into a line-by-line stream of chat bubbles
   const getFlattenedMessages = (messagesList) => {

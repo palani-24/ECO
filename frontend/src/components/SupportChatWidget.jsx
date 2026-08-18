@@ -14,7 +14,7 @@ import {
 
 const SupportChatWidget = () => {
   const { user } = useAuth();
-  const { isConnected } = useSocket() || {};
+  const { socket, isConnected } = useSocket() || {};
   const { addToast } = useToast();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -27,19 +27,41 @@ const SupportChatWidget = () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [unreadAdminCount, setUnreadAdminCount] = useState(0);
 
-  // EcoBot AI Thread State
-  const [botMessages, setBotMessages] = useState([
+  // EcoBot AI Thread State - Isolated per logged-in user account
+  const defaultBotGreeting = (userName) => [
     {
-      id: 'bot-1',
+      id: `bot-1-${userName || 'user'}`,
       sender: 'bot',
-      text: `Hello ${user?.name || 'Eco Warrior'}! 🌱 I am EcoBot, your 24/7 AI Assistant. Ask me about waste points rates, pickup verification, driver tracking, or account settings!`,
+      text: `Hello ${userName || 'Eco Warrior'}! 🌱 I am EcoBot, your 24/7 AI Assistant. Ask me about waste points rates, pickup verification, driver tracking, or account settings!`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
-  ]);
+  ];
+
+  const [botMessages, setBotMessages] = useState(() => defaultBotGreeting(user?.name));
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   const messagesEndRef = useRef(null);
+
+  // Reset chat & bot messages when switching user accounts
+  useEffect(() => {
+    if (user?._id) {
+      const saved = sessionStorage.getItem(`ecobot_history_${user._id}`);
+      if (saved) {
+        try {
+          setBotMessages(JSON.parse(saved));
+        } catch (e) {
+          setBotMessages(defaultBotGreeting(user.name));
+        }
+      } else {
+        setBotMessages(defaultBotGreeting(user.name));
+      }
+      fetchMySupportMessages();
+    } else {
+      setLiveMessages([]);
+      setBotMessages(defaultBotGreeting('Guest'));
+    }
+  }, [user?._id, user?.name]);
 
   // Knowledge Base FAQs
   const helpArticles = [
@@ -103,12 +125,41 @@ const SupportChatWidget = () => {
     }
   }, [isOpen]);
 
-  // Real-time socket listener for Admin replies
+  // Real-time socket listener for Admin replies & user messages (Instant sync without refresh!)
   useEffect(() => {
+    const activeSocket = socket || window.socket;
+    if (!activeSocket) return;
+
     const handleAdminReply = (replyData) => {
       const targetUserId = replyData.user?._id || replyData.user;
-      if (user && (targetUserId === user._id || replyData.senderRole === 'admin')) {
-        setLiveMessages(prev => [replyData, ...prev]);
+      const isForMe = user && (
+        targetUserId?.toString() === user._id?.toString() || 
+        replyData.user?.email === user.email ||
+        replyData.senderRole === 'admin'
+      );
+
+      if (isForMe) {
+        setLiveMessages(prev => {
+          if (prev.some(m => m._id === replyData._id)) return prev;
+          return [replyData, ...prev];
+        });
+
+        // Instant audio notification chime
+        try {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.3);
+        } catch (e) {}
+
         if (!isOpen || activeChat !== 'admin') {
           setUnreadAdminCount(c => c + 1);
           addToast(`💬 Admin Response: "${replyData.message?.substring(0, 45)}..."`, 'info', 'New Support Message');
@@ -116,16 +167,24 @@ const SupportChatWidget = () => {
       }
     };
 
-    if (window.socket) {
-      window.socket.on('support:replied', handleAdminReply);
-    }
-
-    return () => {
-      if (window.socket) {
-        window.socket.off('support:replied', handleAdminReply);
+    const handleNewTicket = (newMsg) => {
+      const msgUserId = newMsg.user?._id || newMsg.user;
+      if (user && msgUserId && msgUserId.toString() === user._id.toString()) {
+        setLiveMessages(prev => {
+          if (prev.some(m => m._id === newMsg._id)) return prev;
+          return [newMsg, ...prev];
+        });
       }
     };
-  }, [user, isOpen, activeChat]);
+
+    activeSocket.on('support:replied', handleAdminReply);
+    activeSocket.on('support:new', handleNewTicket);
+
+    return () => {
+      activeSocket.off('support:replied', handleAdminReply);
+      activeSocket.off('support:new', handleNewTicket);
+    };
+  }, [socket, user, isOpen, activeChat]);
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -203,16 +262,22 @@ const SupportChatWidget = () => {
         botReply = "🛡️ You can switch to the 'EcoReward Support Team' chat to speak directly with our human support team!";
       }
 
-      setBotMessages(prev => [
-        ...prev,
+      const updatedBotMsgs = [
+        ...botMessages,
+        newMsg,
         {
           id: `bot-${Date.now()}`,
           sender: 'bot',
           text: botReply,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
-      ]);
-    }, 800);
+      ];
+
+      setBotMessages(updatedBotMsgs);
+      if (user?._id) {
+        sessionStorage.setItem(`ecobot_history_${user._id}`, JSON.stringify(updatedBotMsgs));
+      }
+    }, 350);
   };
 
   // Convert raw support messages list into chronological bubbles

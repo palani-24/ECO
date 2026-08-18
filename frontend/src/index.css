@@ -269,6 +269,85 @@ html, body {
   transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
+/* Radar Sonar Pulsing Ring */
+@keyframes radarPing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
 
+.animate-radarPing {
+  animation: radarPing 2.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
 
+/* Cyber Neon Pulse Glow Border */
+@keyframes neonBorderPulse {
+  0%, 100% {
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+  }
+  50% {
+    border-color: rgba(6, 182, 212, 0.7);
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+  }
+}
 
+.neon-border-pulse {
+  animation: neonBorderPulse 3s infinite ease-in-out;
+}
+
+/* Holographic Metallic Shimmer Sweep */
+@keyframes metallicShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-card {
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.25) 20%,
+    rgba(255, 255, 255, 0.05) 40%
+  );
+  background-size: 200% 100%;
+  animation: metallicShimmer 3s infinite linear;
+}
+
+.dark .shimmer-card {
+  background: linear-gradient(
+    110deg,
+    rgba(15, 23, 42, 0.4) 0%,
+    rgba(16, 185, 129, 0.2) 20%,
+    rgba(15, 23, 42, 0.4) 40%
+  );
+  background-size: 200% 100%;
+  animation: metallicShimmer 3s infinite linear;
+}
+
+/* Futuristic Pilot Cockpit HUD Utilities */
+.hud-glass {
+  background: rgba(5, 12, 24, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.hud-pill {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(10px);
+}

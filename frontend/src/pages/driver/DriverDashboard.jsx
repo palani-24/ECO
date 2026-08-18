@@ -306,98 +306,112 @@ const DriverDashboard = () => {
 
   return (
     <DriverLayout>
-      {/* Top Header & Driver Status Bar */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-md">
-                <FaTruck />
-              </div>
-              <div>
-                <h3 className="font-black text-slate-900 dark:text-white text-base sm:text-lg">Driver Console</h3>
-                <div className="flex items-center space-x-2 text-[11px]">
-                  <span className="text-emerald-500 font-black uppercase tracking-wider">
-                    {driverProfile?.status === 'active' ? '🟢 ONLINE & READY' : '🔴 STANDBY OFFLINE'}
-                  </span>
-                  <span className="text-slate-400 font-medium">• {driverProfile?.vehicleNumber || 'TN-38-ECO-9945'}</span>
-                </div>
-              </div>
+      {/* Top Header & Driver Status Bar (EV Pilot HUD Style) */}
+      <div className="hud-glass p-4 sm:p-5 rounded-3xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-emerald-500/30 relative overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-1/2 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
+
+        <div className="flex items-center space-x-3 w-full sm:w-auto">
+          <div className="relative">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-500 text-slate-950 flex items-center justify-center text-xl flex-shrink-0 shadow-lg shadow-emerald-500/30 border border-emerald-300">
+              <FaTruck />
             </div>
-
-            <div className="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
-              <button 
-                onClick={() => setShowSosModal(true)}
-                className="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl text-xs flex items-center space-x-1.5 shadow-md shadow-rose-600/20 animate-pulse"
-              >
-                <FaExclamationTriangle className="h-3.5 w-3.5" />
-                <span>🚨 SOS</span>
-              </button>
-
-              <button 
-                onClick={toggleOnline}
-                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-black text-xs transition-all shadow-sm ${
-                  driverProfile?.status === 'active' || driverProfile?.status === 'busy'
-                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/20'
-                    : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                }`}
-              >
-                {driverProfile?.status === 'active' || driverProfile?.status === 'busy' ? (
-                  <>
-                    <FaToggleOn className="h-5 w-5" />
-                    <span>ONLINE</span>
-                  </>
-                ) : (
-                  <>
-                    <FaToggleOff className="h-5 w-5" />
-                    <span>OFFLINE</span>
-                  </>
-                )}
-              </button>
+            <div className="absolute -top-1 -right-1 h-3 w-3 bg-emerald-400 rounded-full animate-ping"></div>
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <h3 className="font-black text-white text-base sm:text-lg tracking-wide uppercase">EV PILOT COCKPIT</h3>
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                HUD v2.4
+              </span>
+            </div>
+            <div className="flex items-center space-x-2 text-[11px]">
+              <span className="text-emerald-400 font-black uppercase tracking-wider">
+                {driverProfile?.status === 'active' ? '🟢 ONLINE & ACCEPTING JOBS' : '🔴 STANDBY OFFLINE'}
+              </span>
+              <span className="text-slate-400 font-mono">• {driverProfile?.vehicleNumber || 'TN-38-ECO-9945'}</span>
             </div>
           </div>
+        </div>
 
-          {/* EV Vehicle Performance & Earnings Metrics Bar */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg flex-shrink-0 border border-emerald-500/20">
-                <FaCoins />
-              </div>
-              <div>
-                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white block">₹1,250</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Today's Earnings</span>
-              </div>
-            </div>
+        <div className="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
+          <button 
+            onClick={() => setShowSosModal(true)}
+            className="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl text-xs flex items-center space-x-1.5 shadow-md shadow-rose-600/30 animate-pulse border border-rose-400/40"
+          >
+            <FaExclamationTriangle className="h-3.5 w-3.5" />
+            <span>🚨 SOS</span>
+          </button>
 
-            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-lg flex-shrink-0 border border-sky-500/20">
-                <FaCheckCircle />
-              </div>
-              <div>
-                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white block">{recentCompleted.length || 8}</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Completed Pickups</span>
-              </div>
-            </div>
+          <button 
+            onClick={toggleOnline}
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-black text-xs transition-all shadow-md ${
+              driverProfile?.status === 'active' || driverProfile?.status === 'busy'
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-slate-950 shadow-emerald-500/30 border border-emerald-300'
+                : 'bg-slate-800 text-slate-300 border border-slate-700'
+            }`}
+          >
+            {driverProfile?.status === 'active' || driverProfile?.status === 'busy' ? (
+              <>
+                <FaToggleOn className="h-5 w-5 text-slate-950" />
+                <span>ONLINE</span>
+              </>
+            ) : (
+              <>
+                <FaToggleOff className="h-5 w-5" />
+                <span>OFFLINE</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
-            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-lg flex-shrink-0 border border-teal-500/20">
-                <FaBatteryThreeQuarters />
-              </div>
-              <div>
-                <span className="text-lg sm:text-xl font-black text-emerald-500 block">85% Charge</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">EV Battery (45 km)</span>
-              </div>
-            </div>
-
-            <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 rounded-3xl shadow-sm flex items-center space-x-3">
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg flex-shrink-0 border border-amber-500/20">
-                <FaWeight />
-              </div>
-              <div>
-                <span className="text-lg sm:text-xl font-black text-amber-500 block">42.5 kg</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Collected Today</span>
-              </div>
-            </div>
+      {/* EV Vehicle Performance & Telematics HUD Metrics Bar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-4 bg-slate-900/90 border border-emerald-500/30 rounded-3xl shadow-lg flex items-center space-x-3 backdrop-blur">
+          <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg flex-shrink-0 border border-emerald-500/20">
+            <FaCoins />
           </div>
+          <div>
+            <span className="text-lg sm:text-xl font-black text-white block">₹1,250</span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Today's Earnings</span>
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-900/90 border border-sky-500/30 rounded-3xl shadow-lg flex items-center space-x-3 backdrop-blur">
+          <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-lg flex-shrink-0 border border-sky-500/20">
+            <FaCheckCircle />
+          </div>
+          <div>
+            <span className="text-lg sm:text-xl font-black text-white block">{recentCompleted.length || 8}</span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Completed Pickups</span>
+          </div>
+        </div>
+
+        {/* Circular EV Battery & Range Gauge */}
+        <div className="p-4 bg-slate-900/90 border border-cyan-500/30 rounded-3xl shadow-lg flex items-center space-x-3 backdrop-blur relative overflow-hidden">
+          <div className="relative h-11 w-11 flex items-center justify-center flex-shrink-0">
+            <svg className="w-11 h-11 -rotate-90" viewBox="0 0 36 36">
+              <path className="text-slate-800" strokeWidth="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path className="text-cyan-400 stroke-current" strokeDasharray="85, 100" strokeWidth="3.5" strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <FaBatteryThreeQuarters className="absolute text-cyan-400 text-xs" />
+          </div>
+          <div>
+            <span className="text-lg sm:text-xl font-black text-cyan-400 block font-mono">85%</span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">EV Range: 45 km</span>
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-900/90 border border-amber-500/30 rounded-3xl shadow-lg flex items-center space-x-3 backdrop-blur">
+          <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg flex-shrink-0 border border-amber-500/20">
+            <FaWeight />
+          </div>
+          <div>
+            <span className="text-lg sm:text-xl font-black text-amber-400 block font-mono">42.5 kg</span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Collected Today</span>
+          </div>
+        </div>
+      </div>
 
           {/* Main Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -159,21 +159,40 @@ const AdminDashboard = () => {
 
         <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
           
-          {/* Header Banner */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 border border-emerald-500/20 p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
-                <span>Admin Command Center</span>
-                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold border border-emerald-500/30">
-                  ⚡ Live System Control
-                </span>
-              </h2>
-              <p className="text-xs text-slate-400 font-medium">Monitor global recycling operations, user support requests, driver licenses, and payout settings.</p>
+          {/* Cyber Command Center Header Banner with Live Carbon Offset Ticker */}
+          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 border border-emerald-500/30 p-6 rounded-3xl text-white shadow-2xl relative overflow-hidden space-y-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1 z-10">
+                <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2 tracking-tight">
+                  <span>ADMIN COMMAND CENTER</span>
+                  <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-mono font-bold border border-emerald-500/30 animate-pulse">
+                    ⚡ LIVE FLEET DISPATCH
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-300 font-medium">Monitor global recycling operations, user support requests, driver licenses, and payout settings.</p>
+              </div>
+
+              <div className="flex items-center space-x-3 w-full sm:w-auto z-10">
+                <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-mono text-xs font-bold flex items-center space-x-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span>Operational Status: 🟢 100% Active</span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-400 font-mono text-xs font-bold">
-                Operational Status: 🟢 100% Online
+            {/* Live Ticking Carbon Offset Banner */}
+            <div className="pt-2 border-t border-emerald-500/20 flex items-center justify-between text-[11px] font-mono text-emerald-300 overflow-x-auto gap-4">
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span>🌿 GLOBAL CARBON OFFSET:</span>
+                <span className="font-black text-white text-xs bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">142.8 Tons CO₂</span>
+              </div>
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span>🌲 TREES SAVED:</span>
+                <span className="font-black text-emerald-400 text-xs">1,620 Trees</span>
+              </div>
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span>⚡ RECYCLED THROUGHPUT:</span>
+                <span className="font-black text-cyan-400 text-xs">95.2 Tons Plastic & Metal</span>
               </div>
             </div>
           </div>

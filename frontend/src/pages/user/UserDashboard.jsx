@@ -132,23 +132,61 @@ const UserDashboard = () => {
   return (
     <UserLayout>
         
-          {/* Reduced Height Compact Welcome Card */}
-          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="space-y-1 z-10">
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                Welcome back, {user?.name ? user.name.split(' ')[0] : 'Palani'}! 👋
-              </h2>
-              <p className="text-xs text-emerald-100 font-medium max-w-md leading-relaxed">
-                Together we make the environment better. Schedule pickups and turn household waste into rewards.
-              </p>
+          {/* Reduced Height Compact Welcome Card with 3D Eco-Level Avatar */}
+          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-5 sm:p-6 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-emerald-400/30">
+            {/* Background Glow Aura */}
+            <div className="absolute -top-12 -right-12 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="flex items-center space-x-4 z-10">
+              {/* Animated Eco Avatar Level Badge */}
+              <div className="relative flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-900/60 p-1 border-2 border-emerald-300 shadow-lg relative flex items-center justify-center">
+                  <span className="text-2xl sm:text-3xl">🌱</span>
+                  <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-[9px] px-2 py-0.5 rounded-full border border-white shadow">
+                    LVL 4
+                  </div>
+                </div>
+                {/* SVG Progress Ring */}
+                <svg className="absolute top-0 left-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 36 36">
+                  <path
+                    className="text-emerald-950/40"
+                    strokeWidth="3"
+                    stroke="currentColor"
+                    fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                  <path
+                    className="text-emerald-300 stroke-current animate-pulse"
+                    strokeDasharray="75, 100"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                </svg>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+                    Welcome back, {user?.name ? user.name.split(' ')[0] : 'Palani'}! 👋
+                  </h2>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-400/20 text-emerald-200 border border-emerald-300/30">
+                    Eco Guardian
+                  </span>
+                </div>
+                <p className="text-xs text-emerald-100 font-medium max-w-md leading-relaxed">
+                  Together we make the environment better. Schedule pickups and turn household waste into rewards.
+                </p>
+              </div>
             </div>
             
             {/* Larger, Glowing, High-Contrast Book a Pickup Button */}
             <motion.button 
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(52, 211, 153, 0.6)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => window.location.href = '/schedule-pickup'}
-              className="z-10 px-6 py-3.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black rounded-2xl text-xs shadow-xl transition-all flex items-center space-x-2 flex-shrink-0 animate-bounce-short"
+              className="z-10 px-6 py-3.5 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black rounded-2xl text-xs shadow-xl transition-all flex items-center space-x-2 flex-shrink-0 animate-bounce-short border border-emerald-200"
             >
               <FaCalendarPlus className="h-4 w-4" />
               <span>Book a Pickup</span>
@@ -162,43 +200,43 @@ const UserDashboard = () => {
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => window.location.href = '/schedule-pickup'}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black transition-all"
+                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaCalendarCheck />
                 <span>Book Pickup</span>
               </motion.button>
 
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   if (activePickup) setTrackingDriver(activePickup);
                   else addToast('No active pickup found for live tracking', 'info', 'Live Tracking');
                 }}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-xs font-black transition-all"
+                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaRoute />
                 <span>Track Pickup</span>
               </motion.button>
 
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setShowAiScanner(true)}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-black transition-all"
+                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaCamera />
                 <span>Scan Waste</span>
               </motion.button>
 
               <motion.button
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => window.location.href = '/redeem'}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-black transition-all"
+                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaGift />
                 <span>Redeem Rewards</span>

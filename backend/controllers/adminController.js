@@ -232,9 +232,18 @@ export const getSystemSettings = async (req, res) => {
   }
 };
 
-// Update Configurations
+// Update Configurations & Broadcast Real-Time Sync
 export const updateSystemSettings = async (req, res) => {
-  const { rewardRates, basePoints, systemMaintenance } = req.body;
+  const { 
+    rewardRates, 
+    basePoints, 
+    minPickupWeight, 
+    systemMaintenance, 
+    driverCommissionRate, 
+    driverAutoDispatch, 
+    requirePhotoAudit, 
+    permissions 
+  } = req.body;
   try {
     let settings = await AdminSettings.findOne({});
     if (!settings) {
@@ -243,10 +252,19 @@ export const updateSystemSettings = async (req, res) => {
 
     if (rewardRates) settings.rewardRates = rewardRates;
     if (basePoints !== undefined) settings.basePoints = basePoints;
+    if (minPickupWeight !== undefined) settings.minPickupWeight = minPickupWeight;
     if (systemMaintenance !== undefined) settings.systemMaintenance = systemMaintenance;
+    if (driverCommissionRate !== undefined) settings.driverCommissionRate = driverCommissionRate;
+    if (driverAutoDispatch !== undefined) settings.driverAutoDispatch = driverAutoDispatch;
+    if (requirePhotoAudit !== undefined) settings.requirePhotoAudit = requirePhotoAudit;
+    if (permissions) settings.permissions = { ...settings.permissions, ...permissions };
 
     await settings.save();
-    res.json({ success: true, data: settings });
+
+    // Broadcast system settings update to all active Users, Drivers, and Admin sockets
+    broadcastEvent('settings:updated', settings);
+
+    res.json({ success: true, message: 'System configurations updated and broadcasted live', data: settings });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -18,6 +18,23 @@ const SchedulePickup = () => {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  const [systemSettings, setSystemSettings] = useState(null);
+
+  // Fetch Live Admin Settings (Material rates & Maintenance status)
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/admin/settings');
+        if (res.data.success) {
+          setSystemSettings(res.data.data);
+        }
+      } catch (err) {
+        console.warn('Loading fallback material exchange rates');
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const [step, setStep] = useState(1);
   const [wasteCategory, setWasteCategory] = useState('');
   const [estimatedWeight, setEstimatedWeight] = useState(5);
@@ -133,7 +150,7 @@ const SchedulePickup = () => {
   const categories = [
     { 
       name: 'Plastic', 
-      rate: 10, 
+      rate: systemSettings?.rewardRates?.Plastic || 10, 
       desc: 'Bottles, containers, caps', 
       icon: '🥤', 
       badge: 'Popular', 
@@ -142,7 +159,7 @@ const SchedulePickup = () => {
     },
     { 
       name: 'Paper', 
-      rate: 8, 
+      rate: systemSettings?.rewardRates?.Paper || 8, 
       desc: 'Newspapers, boxes, cartons', 
       icon: '📦', 
       badge: 'High Volume', 
@@ -151,7 +168,7 @@ const SchedulePickup = () => {
     },
     { 
       name: 'Metal', 
-      rate: 20, 
+      rate: systemSettings?.rewardRates?.Metal || 20, 
       desc: 'Aluminum cans, iron scrap', 
       icon: '🥫', 
       badge: 'Top Value', 
@@ -160,7 +177,7 @@ const SchedulePickup = () => {
     },
     { 
       name: 'Glass', 
-      rate: 6, 
+      rate: systemSettings?.rewardRates?.Glass || 6, 
       desc: 'Bottles, jars, glassware', 
       icon: '🍼', 
       badge: '100% Recyclable', 
@@ -169,7 +186,7 @@ const SchedulePickup = () => {
     },
     { 
       name: 'Organic', 
-      rate: 4, 
+      rate: systemSettings?.rewardRates?.Organic || 4, 
       desc: 'Bio waste, garden scraps', 
       icon: '🍎', 
       badge: 'Eco Compost', 
@@ -178,7 +195,7 @@ const SchedulePickup = () => {
     },
     { 
       name: 'E-Waste', 
-      rate: 15, 
+      rate: systemSettings?.rewardRates?.['E-Waste'] || 15, 
       desc: 'Cables, gadgets, batteries', 
       icon: '💻', 
       badge: 'Hazardous', 

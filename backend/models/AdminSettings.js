@@ -14,10 +14,22 @@ const adminSettingsSchema = new mongoose.Schema({
     }
   },
   basePoints: { type: Number, default: 5 },
-  systemMaintenance: { type: Boolean, default: false }
+  minPickupWeight: { type: Number, default: 2.0 },
+  systemMaintenance: { type: Boolean, default: false },
+  driverCommissionRate: { type: Number, default: 80 }, // % paid to driver
+  driverAutoDispatch: { type: Boolean, default: true },
+  requirePhotoAudit: { type: Boolean, default: true },
+  permissions: {
+    canApproveDrivers: { type: Boolean, default: true },
+    canManageCoupons: { type: Boolean, default: true },
+    canApprovePayouts: { type: Boolean, default: true },
+    canEditRates: { type: Boolean, default: true },
+    canViewAuditLogs: { type: Boolean, default: true }
+  }
 }, {
   timestamps: true
 });
 
 const AdminSettings = mongoose.model('AdminSettings', adminSettingsSchema);
 export default AdminSettings;
+

@@ -732,7 +732,7 @@ const AdminSupportPage = () => {
                 </div>
 
                 {/* Live Chat Input Footer (WhatsApp Web Style) */}
-                <div className="p-3 sm:p-4 bg-white dark:bg-[#202c33] border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                <div className="p-3 sm:p-4 bg-white dark:bg-[#202c33] border-t border-slate-200/80 dark:border-slate-800 space-y-2.5 relative z-20">
                   
                   {/* Canned Responses Chips */}
                   <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
@@ -742,7 +742,7 @@ const AdminSupportPage = () => {
                         key={idx}
                         type="button"
                         onClick={() => setReplyText(template)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors"
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors cursor-pointer"
                       >
                         {template.substring(0, 24)}...
                       </button>
@@ -750,8 +750,8 @@ const AdminSupportPage = () => {
                   </div>
 
                   {/* Input Box */}
-                  <div className="flex items-end space-x-2">
-                    <div className="flex-1 bg-slate-50 dark:bg-[#2a3942] border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-emerald-500 transition-all">
+                  <div className="flex items-end space-x-2.5">
+                    <div className="flex-1 bg-slate-50 dark:bg-[#2a3942] border border-slate-200 dark:border-slate-700 rounded-2xl px-3.5 py-2 focus-within:ring-2 focus-within:ring-emerald-500 transition-all">
                       <textarea
                         rows="2"
                         value={replyText}
@@ -784,10 +784,11 @@ const AdminSupportPage = () => {
                       type="button"
                       onClick={() => handleSendReply(activeTicket._id)}
                       disabled={sendingReply || !replyText.trim()}
-                      className="p-3.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-black text-xs rounded-2xl shadow-lg flex items-center justify-center transition-all active:scale-95 shrink-0 cursor-pointer"
+                      className="px-4 sm:px-5 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 text-white font-black text-xs rounded-2xl shadow-lg flex items-center justify-center space-x-1.5 transition-all active:scale-95 shrink-0 cursor-pointer min-w-[50px] sm:min-w-[90px]"
                       title="Send Message"
                     >
                       <FaPaperPlane className="h-4 w-4" />
+                      <span className="hidden sm:inline font-bold">Send</span>
                     </button>
                   </div>
 

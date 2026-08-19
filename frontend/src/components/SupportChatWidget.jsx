@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -58,12 +59,18 @@ const POPULAR_EMOJIS = ['👍', '🌱', '♻️', '🙏', '🚛', '💰', '😊'
 
 const SupportChatWidget = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const { socket, isConnected } = useSocket() || {};
   const { addToast } = useToast();
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'messages' | 'help'
   const [activeChat, setActiveChat] = useState(null); // 'admin' | 'bot' | null
+
+  // Hide widget completely for Admin users and on admin pages or driver navigation
+  if (user?.role === 'admin' || location.pathname.startsWith('/admin') || location.pathname.includes('/driver/navigation')) {
+    return null;
+  }
   
   // Search & input states
   const [searchQuery, setSearchQuery] = useState('');

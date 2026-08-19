@@ -28,13 +28,29 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const SOCKET_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '/';
+    const getSocketUrl = () => {
+      if (import.meta.env.VITE_SOCKET_URL) return import.meta.env.VITE_SOCKET_URL;
+      if (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.startsWith('http')) {
+        return import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '');
+      }
+      const hostname = window.location.hostname;
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000';
+      }
+      // When connected via local network/mobile device (e.g. 192.168.1.5:5173)
+      if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
+        return `http://${hostname}:5000`;
+      }
+      return '/';
+    };
+
+    const SOCKET_URL = getSocketUrl();
 
     const newSocket = io(SOCKET_URL, {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,
-      reconnectionAttempts: 10,
+      reconnectionAttempts: 15,
       reconnectionDelay: 1000
     });
 

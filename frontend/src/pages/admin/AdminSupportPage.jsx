@@ -99,6 +99,29 @@ const AdminSupportPage = () => {
     }
   };
 
+  const [isUserTyping, setIsUserTyping] = useState(false);
+  const adminTypingTimeoutRef = useRef(null);
+
+  // Background polling sync to guarantee zero-miss real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      api.get('/support/admin/all')
+        .then(res => {
+          if (res.data.success && Array.isArray(res.data.data)) {
+            setSupportMessages(prev => {
+              if (prev.length !== res.data.data.length || prev[0]?._id !== res.data.data[0]?._id) {
+                return res.data.data;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     fetchSupportMessages();
 
@@ -142,14 +165,27 @@ const AdminSupportPage = () => {
       });
     };
 
+    const handleUserTyping = (data) => {
+      if (data && (!selectedUserKey || data.userId?.toString() === selectedUserKey?.toString())) {
+        setIsUserTyping(Boolean(data.isTyping));
+        if (adminTypingTimeoutRef.current) clearTimeout(adminTypingTimeoutRef.current);
+        if (data.isTyping) {
+          adminTypingTimeoutRef.current = setTimeout(() => setIsUserTyping(false), 4000);
+        }
+      }
+    };
+
     activeSocket.on('support:new', handleNewSupportMsg);
     activeSocket.on('support:replied', handleSupportReplied);
+    activeSocket.on('support:user_typing', handleUserTyping);
 
     return () => {
       activeSocket.off('support:new', handleNewSupportMsg);
       activeSocket.off('support:replied', handleSupportReplied);
+      activeSocket.off('support:user_typing', handleUserTyping);
+      if (adminTypingTimeoutRef.current) clearTimeout(adminTypingTimeoutRef.current);
     };
-  }, [socket]);
+  }, [socket, selectedUserKey]);
 
   // Group support messages by UNIQUE VALID USER (filtering out Anonymous/null users)
   const groupedConversations = useMemo(() => {
@@ -681,6 +717,17 @@ const AdminSupportPage = () => {
                     }
                   })}
 
+                  {isUserTyping && (
+                    <div className="flex items-start space-x-2.5 max-w-md animate-fadeIn">
+                      <div className="bg-white dark:bg-[#202c33] border border-slate-200/80 dark:border-slate-700/80 p-3 rounded-2xl rounded-tl-none shadow-sm flex items-center space-x-2 text-xs text-slate-400">
+                        <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce"></span>
+                        <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                        <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        <span className="text-[10px] text-emerald-500 font-bold ml-1">{activeConversation.user?.name || 'Customer'} is typing...</span>
+                      </div>
+                    </div>
+                  )}
+
                   <div ref={chatEndRef} />
                 </div>
 
@@ -708,7 +755,18 @@ const AdminSupportPage = () => {
                       <textarea
                         rows="2"
                         value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
+                        onChange={(e) => {
+                          setReplyText(e.target.value);
+                          const activeSocket = socket || window.socket;
+                          if (activeSocket && activeConversation?.user?._id) {
+                            activeSocket.emit('support:typing', {
+                              userId: activeConversation.user._id,
+                              userName: 'Support Officer',
+                              role: 'admin',
+                              isTyping: e.target.value.length > 0
+                            });
+                          }
+                        }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();

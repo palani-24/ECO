@@ -77,13 +77,21 @@ export const initSocket = (server) => {
       }
     });
 
-    // Real-Time Driver GPS Tracking stream
-    socket.on('driver:location_stream', (data) => {
-      // data: { pickupId, userId, lat, lng, speed, timestamp }
-      if (data && data.userId) {
-        io.to(`user_${data.userId.toString()}`).emit('driver:location_update', data);
+    // Real-Time Chat Typing Indicator
+    socket.on('support:typing', (data) => {
+      // data: { userId, userName, role, isTyping }
+      if (data) {
+        if (data.role === 'admin') {
+          if (data.userId) {
+            io.to(`user_${data.userId.toString()}`).emit('support:admin_typing', data);
+          } else {
+            io.emit('support:admin_typing', data);
+          }
+        } else {
+          io.to('admin').emit('support:user_typing', data);
+          io.emit('support:user_typing', data);
+        }
       }
-      io.to('admin').emit('driver:location_update', data);
     });
 
     socket.on('disconnect', () => {

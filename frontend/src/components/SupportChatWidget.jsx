@@ -193,12 +193,44 @@ const SupportChatWidget = () => {
     }
   };
 
+  const [isAdminTyping, setIsAdminTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
+
   useEffect(() => {
     if (isOpen) {
       fetchMySupportMessages();
       setUnreadAdminCount(0);
     }
   }, [isOpen]);
+
+  // Real-time automatic background polling fallback (guarantees instant sync even on network delay)
+  useEffect(() => {
+    if (!isOpen || activeChat !== 'admin' || !user?._id) return;
+
+    const interval = setInterval(() => {
+      api.get('/support/my-messages')
+        .then(res => {
+          if (res.data.success && Array.isArray(res.data.data)) {
+            const uniqueMap = new Map();
+            res.data.data.forEach(item => {
+              if (item._id && !uniqueMap.has(item._id)) {
+                uniqueMap.set(item._id, item);
+              }
+            });
+            const newArr = Array.from(uniqueMap.values());
+            setLiveMessages(prev => {
+              if (prev.length !== newArr.length || prev[0]?._id !== newArr[0]?._id) {
+                return newArr;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isOpen, activeChat, user?._id]);
 
   // Real-time socket listener for Admin replies & user messages (Instant sync without duplicates)
   useEffect(() => {
@@ -209,11 +241,11 @@ const SupportChatWidget = () => {
       const targetUserId = replyData.user?._id || replyData.user;
       const isForMe = user && (
         targetUserId?.toString() === user._id?.toString() || 
-        replyData.user?.email === user.email ||
-        replyData.senderRole === 'admin'
+        replyData.user?.email === user.email
       );
 
       if (isForMe) {
+        setIsAdminTyping(false);
         setLiveMessages(prev => {
           if (prev.some(m => m._id === replyData._id)) return prev;
           return [replyData, ...prev];
@@ -239,12 +271,25 @@ const SupportChatWidget = () => {
       }
     };
 
+    const handleAdminTyping = (data) => {
+      if (data && (!data.userId || data.userId.toString() === user?._id?.toString())) {
+        setIsAdminTyping(Boolean(data.isTyping));
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        if (data.isTyping) {
+          typingTimeoutRef.current = setTimeout(() => setIsAdminTyping(false), 4000);
+        }
+      }
+    };
+
     activeSocket.on('support:replied', handleAdminReply);
     activeSocket.on('support:new', handleNewTicket);
+    activeSocket.on('support:admin_typing', handleAdminTyping);
 
     return () => {
       activeSocket.off('support:replied', handleAdminReply);
       activeSocket.off('support:new', handleNewTicket);
+      activeSocket.off('support:admin_typing', handleAdminTyping);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, [socket, user, isOpen, activeChat, isSoundMuted]);
 
@@ -713,6 +758,16 @@ const SupportChatWidget = () => {
                         );
                       })
                     )}
+                    {isAdminTyping && (
+                      <div className="flex justify-start animate-fadeIn">
+                        <div className="bg-[#1b2730] rounded-2xl px-3.5 py-2 rounded-bl-sm text-xs text-slate-400 flex items-center space-x-2 border border-slate-750 shadow-md">
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce"></span>
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                          <span className="h-2 w-2 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                          <span className="text-[10px] text-emerald-400 font-bold ml-1">EcoReward Admin is typing...</span>
+                        </div>
+                      </div>
+                    )}
                     <div ref={messagesEndRef} />
                   </div>
 
@@ -795,7 +850,18 @@ const SupportChatWidget = () => {
                     <input
                       type="text"
                       value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
+                      onChange={(e) => {
+                        setMessageText(e.target.value);
+                        const activeSocket = socket || window.socket;
+                        if (activeSocket && user) {
+                          activeSocket.emit('support:typing', {
+                            userId: user._id,
+                            userName: user.name,
+                            role: user.role || 'user',
+                            isTyping: e.target.value.length > 0
+                          });
+                        }
+                      }}
                       placeholder="Type a message to Admin..."
                       className="flex-1 px-4 py-2.5 bg-[#1b2730] border border-slate-700/80 rounded-full text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     />

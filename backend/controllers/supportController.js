@@ -111,11 +111,8 @@ export const replySupportMessage = async (req, res) => {
       targetUserId = supportMsg.user;
       targetSubject = supportMsg.subject;
       supportMsg.status = 'replied';
-      if (!supportMsg.adminReply) {
-        supportMsg.adminReply = replyText.trim();
-        supportMsg.repliedAt = new Date();
-        supportMsg.repliedBy = req.user._id;
-      }
+      supportMsg.repliedAt = new Date();
+      supportMsg.repliedBy = req.user._id;
       await supportMsg.save();
     }
 

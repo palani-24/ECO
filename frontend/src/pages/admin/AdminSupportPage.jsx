@@ -277,13 +277,18 @@ const AdminSupportPage = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeConversation?.messages?.length, selectedUserKey]);
 
-  // Helper to convert user messages & admin replies into a line-by-line stream of chat bubbles
+  // Helper to convert user messages & admin replies into a line-by-line stream of chat bubbles without duplicates
   const getFlattenedMessages = (messagesList) => {
     if (!messagesList || messagesList.length === 0) return [];
     const bubbles = [];
 
     // Sort chronologically (oldest first)
     const sorted = [...messagesList].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    // Track existing standalone admin texts to avoid rendering legacy adminReply duplicates
+    const standaloneAdminTexts = new Set(
+      sorted.filter(m => m.senderRole === 'admin').map(m => m.message?.trim())
+    );
 
     sorted.forEach(msg => {
       if (msg.senderRole === 'admin') {
@@ -303,8 +308,8 @@ const AdminSupportPage = () => {
           subject: msg.subject
         });
 
-        // If legacy adminReply exists on this user ticket
-        if (msg.adminReply) {
+        // If legacy adminReply exists and no standalone admin document has this text
+        if (msg.adminReply && msg.adminReply.trim() && !standaloneAdminTexts.has(msg.adminReply.trim())) {
           bubbles.push({
             _id: `${msg._id}-admin-reply`,
             senderRole: 'admin',

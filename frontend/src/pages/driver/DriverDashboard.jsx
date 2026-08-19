@@ -8,12 +8,13 @@ import DriverLayout from '../../components/DriverLayout';
 import api from '../../utils/api';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import DriverChatModal from '../../components/DriverChatModal';
+import BluetoothSmartScaleModal from '../../components/BluetoothSmartScaleModal';
 import { 
   FaToggleOn, FaToggleOff, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, 
   FaRobot, FaExclamationTriangle, FaCheckCircle, FaComments, FaPhoneAlt, 
   FaCoins, FaBell, FaCheckDouble, FaTimesCircle, FaMapMarkerAlt, 
   FaLocationArrow, FaCompass, FaExclamationCircle, FaArrowRight, FaImage, 
-  FaTimes, FaSpinner, FaRedo, FaBatteryThreeQuarters, FaGasPump, FaLeaf, FaShieldAlt
+  FaTimes, FaSpinner, FaRedo, FaBatteryThreeQuarters, FaGasPump, FaLeaf, FaShieldAlt, FaBluetooth
 } from 'react-icons/fa';
 
 const DriverDashboard = () => {
@@ -29,6 +30,7 @@ const DriverDashboard = () => {
   const [showCitizenChat, setShowCitizenChat] = useState(false);
   const [showSosModal, setShowSosModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showBleScaleModal, setShowBleScaleModal] = useState(false);
 
   // Active Collection Flow States
   const [pickupStatus, setPickupStatus] = useState('on_the_way');
@@ -599,7 +601,18 @@ const DriverDashboard = () => {
                         ) : (
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className="text-[9px] font-black text-emerald-500 uppercase block mb-1">Driver Scale Verified Weight (kg)</label>
+                              <div className="flex justify-between items-center mb-1">
+                                <label className="text-[9px] font-black text-emerald-500 uppercase block">Scale Verified Weight (kg)</label>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowBleScaleModal(true)}
+                                  className="text-[9px] font-black text-sky-400 hover:text-sky-300 flex items-center space-x-1 bg-sky-500/10 px-1.5 py-0.5 rounded-md border border-sky-500/20 cursor-pointer"
+                                  title="Connect BLE Smart Scale"
+                                >
+                                  <FaBluetooth className="h-2.5 w-2.5 text-sky-400" />
+                                  <span>BLE Sync</span>
+                                </button>
+                              </div>
                               <input 
                                 type="number"
                                 value={actualWeight}
@@ -805,6 +818,18 @@ const DriverDashboard = () => {
             pickupId={activePickup?._id}
             recipientName={activePickup?.user?.name || 'Customer Arjun Sharma'}
             recipientRole="user"
+          />
+
+          {/* IoT Bluetooth Smart Scale Modal */}
+          <BluetoothSmartScaleModal
+            isOpen={showBleScaleModal}
+            onClose={() => setShowBleScaleModal(false)}
+            materialName={activePickup?.wasteCategory || 'Mixed Recyclables'}
+            estimatedWeight={activePickup?.estimatedWeight || 5.0}
+            onWeightCaptured={(lockedWeight) => {
+              setActualWeight(lockedWeight.toString());
+              addToast(`Scale weight ${lockedWeight} kg captured!`, 'success', 'Weight Synced');
+            }}
           />
 
     </DriverLayout>

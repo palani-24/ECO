@@ -6,9 +6,11 @@ import UPIPayoutModal from '../../components/UPIPayoutModal';
 import SmartKioskLocatorModal from '../../components/SmartKioskLocatorModal';
 import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
+import PlantTreeModal from '../../components/PlantTreeModal';
 import { 
   FaCoins, FaGift, FaTicketAlt, FaPaypal, FaCheckCircle, 
-  FaExclamationTriangle, FaMobileAlt, FaUniversity, FaAmazon, FaShoppingCart, FaMapMarkedAlt, FaExchangeAlt
+  FaExclamationTriangle, FaMobileAlt, FaUniversity, FaAmazon, FaShoppingCart, 
+  FaMapMarkedAlt, FaExchangeAlt, FaTree, FaBolt, FaTint, FaBuilding
 } from 'react-icons/fa';
 
 const RedeemRewards = () => {
@@ -19,6 +21,7 @@ const RedeemRewards = () => {
   const [loading, setLoading] = useState(true);
   const [showUPIModal, setShowUPIModal] = useState(false);
   const [showKioskModal, setShowKioskModal] = useState(false);
+  const [showPlantTreeModal, setShowPlantTreeModal] = useState(false);
 
   // Forms
   const [cashbackEmail, setCashbackEmail] = useState('');
@@ -28,6 +31,10 @@ const RedeemRewards = () => {
   const [ifsc, setIfsc] = useState('');
   const [accountHolderName, setAccountHolderName] = useState('');
   const [selectedCoupon, setSelectedCoupon] = useState(null);
+  
+  // Utility Bill Inputs
+  const [tnebConsumerNo, setTnebConsumerNo] = useState('');
+  const [waterConsumerNo, setWaterConsumerNo] = useState('');
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -200,25 +207,95 @@ const RedeemRewards = () => {
                       </div>
                     </div>
 
-                    {/* Plant 5 Trees Donation */}
-                    <div className="p-5 border border-emerald-500/30 rounded-2xl flex flex-col justify-between h-44 hover:border-emerald-500 transition-colors bg-emerald-500/5 sm:col-span-2">
+                    {/* Plant a Real Geo-Tagged Living Tree */}
+                    <div className="p-5 border-2 border-emerald-500/40 rounded-2xl flex flex-col justify-between h-44 hover:border-emerald-500 transition-all bg-gradient-to-br from-emerald-950/30 to-slate-900 shadow-md sm:col-span-2 relative overflow-hidden group">
                       <div className="space-y-1">
-                        <h4 className="font-extrabold text-slate-800 dark:text-slate-200 text-sm flex items-center space-x-1.5">
-                          <span className="text-lg">🌱</span>
-                          <span>Plant 5 Real Trees (Green Impact Donation)</span>
-                        </h4>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
-                          Convert 400 points into a verified Reforestation Certificate planting 5 trees in endangered forest reserves.
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-extrabold text-white text-sm flex items-center space-x-2">
+                            <span className="text-xl">🌳</span>
+                            <span>Plant a Real Geo-Tagged Tree (Living Seedling)</span>
+                          </h4>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase">Verified NGO</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300 leading-normal">
+                          Convert 500 EcoPoints to plant an actual Neem/Teak tree with GPS Coordinates, Seedling ID, and Downloadable Official Certificate.
                         </p>
                       </div>
-                      <div className="flex justify-between items-center pt-2 border-t border-slate-200/50 dark:border-slate-800/60">
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">400 pts</span>
+                      <div className="flex justify-between items-center pt-2 border-t border-slate-700/60">
+                        <span className="text-xs font-black text-emerald-400">500 pts</span>
                         <button 
-                          onClick={() => handleRedeem('discount', { email: user?.email, title: 'Plant 5 Trees Certificate' })}
-                          disabled={processLoading || (user?.points < 400)}
-                          className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[10px] transition-colors disabled:opacity-50"
+                          onClick={() => setShowPlantTreeModal(true)}
+                          className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-md transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95"
                         >
-                          Plant Trees Now
+                          <FaTree className="h-3 w-3" />
+                          <span>Plant Tree & Get Certificate</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Smart Utility Bills & Government Tax Discounts */}
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center space-x-2">
+                      <FaBolt className="text-amber-500" />
+                      <span>Smart Utility & Government Tax Discounts</span>
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 text-[10px] font-black uppercase">Smart City</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* TNEB Electricity Bill */}
+                    <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3 bg-slate-50/20 dark:bg-slate-850/40">
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-xs text-slate-900 dark:text-white flex items-center space-x-1.5">
+                          <FaBolt className="text-amber-500" />
+                          <span>TNEB Electricity Bill Discount (₹150 Off)</span>
+                        </h4>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400">Direct rebate coupon for Tamil Nadu Electricity consumer accounts.</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={tnebConsumerNo}
+                          onChange={(e) => setTnebConsumerNo(e.target.value)}
+                          placeholder="Consumer No (e.g. 09-245-001)"
+                          className="flex-1 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none"
+                        />
+                        <button
+                          onClick={() => handleRedeem('discount', { title: 'TNEB ₹150 Bill Rebate Voucher', consumerNo: tnebConsumerNo })}
+                          disabled={processLoading || !tnebConsumerNo.trim() || user?.points < 500}
+                          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-[11px] disabled:opacity-40 transition-colors cursor-pointer"
+                        >
+                          Claim 500 pts
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* CMWSSB Metro Water Tax */}
+                    <div className="p-4 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3 bg-slate-50/20 dark:bg-slate-850/40">
+                      <div className="space-y-1">
+                        <h4 className="font-extrabold text-xs text-slate-900 dark:text-white flex items-center space-x-1.5">
+                          <FaTint className="text-sky-500" />
+                          <span>Metro Water & Tax Discount (₹100 Off)</span>
+                        </h4>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400">CMWSSB & Municipal tax adjustment certificate voucher.</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={waterConsumerNo}
+                          onChange={(e) => setWaterConsumerNo(e.target.value)}
+                          placeholder="CMC Water Connection ID"
+                          className="flex-1 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs text-slate-900 dark:text-white focus:outline-none"
+                        />
+                        <button
+                          onClick={() => handleRedeem('discount', { title: 'Water Tax ₹100 Rebate Voucher', consumerNo: waterConsumerNo })}
+                          disabled={processLoading || !waterConsumerNo.trim() || user?.points < 350}
+                          className="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-[11px] disabled:opacity-40 transition-colors cursor-pointer"
+                        >
+                          Claim 350 pts
                         </button>
                       </div>
                     </div>
@@ -412,6 +489,17 @@ const RedeemRewards = () => {
       <SmartKioskLocatorModal
         isOpen={showKioskModal}
         onClose={() => setShowKioskModal(false)}
+      />
+
+      {/* Plant a Real Living Tree Modal */}
+      <PlantTreeModal
+        isOpen={showPlantTreeModal}
+        onClose={() => setShowPlantTreeModal(false)}
+        userPoints={user?.points || 0}
+        onTreePlanted={(cost, cert) => {
+          updateUserPoints(Math.max(0, (user?.points || 0) - cost));
+          fetchRewardsData();
+        }}
       />
 
     </UserLayout>

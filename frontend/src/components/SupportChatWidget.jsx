@@ -66,11 +66,6 @@ const SupportChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'messages' | 'help'
   const [activeChat, setActiveChat] = useState(null); // 'admin' | 'bot' | null
-
-  // Hide widget completely for Admin users and on admin pages or driver navigation
-  if (user?.role === 'admin' || location.pathname.startsWith('/admin') || location.pathname.includes('/driver/navigation')) {
-    return null;
-  }
   
   // Search & input states
   const [searchQuery, setSearchQuery] = useState('');
@@ -496,6 +491,11 @@ const SupportChatWidget = () => {
     { label: '🔐 OTP Verification', action: () => setMessageText('How do I share the handover OTP with the driver?') },
     { label: '🛡️ Contact Support', action: () => setActiveChat('admin') }
   ];
+
+  // Hide widget completely for Admin users and on admin pages or driver navigation
+  if (user?.role === 'admin' || location.pathname.startsWith('/admin') || location.pathname.includes('/driver/navigation')) {
+    return null;
+  }
 
   return (
     <>

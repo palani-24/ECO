@@ -23,7 +23,8 @@ const Navbar = () => {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved === 'dark';
-    return true;
+    // Default to Light Mode on first visit
+    return false;
   });
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -101,11 +102,21 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center space-x-3">
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors flex items-center space-x-1.5 text-xs font-bold"
-                    title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                    className="relative flex items-center p-1 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-slate-300/80 dark:border-slate-700/80 transition-all shadow-sm group"
+                    title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
+                    aria-label="Toggle Theme"
                   >
-                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
-                    <span className="text-[11px] font-mono">{darkMode ? 'Light' : 'Dark'}</span>
+                    <div className="flex items-center space-x-1.5 px-2 py-0.5">
+                      <div className={`p-1 rounded-full transition-all duration-300 ${!darkMode ? 'bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(251,191,36,0.8)] scale-110' : 'text-slate-400 opacity-60'}`}>
+                        <FaSun className="h-3 w-3" />
+                      </div>
+                      <div className={`p-1 rounded-full transition-all duration-300 ${darkMode ? 'bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(52,211,153,0.8)] scale-110' : 'text-slate-400 opacity-60'}`}>
+                        <FaMoon className="h-3 w-3" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider font-mono pr-1 text-slate-700 dark:text-slate-200">
+                        {darkMode ? 'Dark' : 'Light'}
+                      </span>
+                    </div>
                   </button>
 
                   {user ? (
@@ -134,7 +145,7 @@ const Navbar = () => {
                 <div className="flex md:hidden items-center space-x-2">
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400"
+                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-amber-400 shadow-sm transition-all"
                     aria-label="Toggle Theme"
                   >
                     {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
@@ -216,10 +227,12 @@ const Navbar = () => {
                   {/* Dark Mode Toggle */}
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 sm:p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-400 transition-colors"
+                    className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-sm flex items-center space-x-1.5 text-xs transition-all"
                     aria-label="Toggle Dark Mode"
+                    title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
                   >
-                    {darkMode ? <FaSun className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" /> : <FaMoon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                    {darkMode ? <FaSun className="h-3.5 w-3.5 text-amber-400" /> : <FaMoon className="h-3.5 w-3.5 text-slate-700" />}
+                    <span className="hidden sm:inline text-[10px] font-mono font-bold">{darkMode ? 'Dark' : 'Light'}</span>
                   </button>
 
                   {/* User Profile Avatar & Name */}

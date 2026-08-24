@@ -594,8 +594,10 @@ const LandingPage = () => {
       {/* HERO SECTION */}
       <section 
         onMouseMove={handleMouseMove}
-        className={`relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b ${
-          isDarkMode ? 'bg-[#06121e] border-slate-800/80' : 'bg-white border-slate-200/80'
+        className={`relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-[#06121e] border-slate-800/80' 
+            : 'bg-gradient-to-b from-[#f0fdf4]/70 via-[#f8fafc] to-[#f0fdfa]/50 border-slate-200/80'
         }`}
       >
         {/* Particle Canvas Background */}
@@ -606,8 +608,10 @@ const LandingPage = () => {
           />
         )}
 
-        <div className={`absolute top-10 left-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${isDarkMode ? 'bg-emerald-500/10' : 'bg-emerald-500/5'}`}></div>
-        <div className={`absolute bottom-10 right-10 w-96 h-96 rounded-full blur-3xl pointer-events-none ${isDarkMode ? 'bg-teal-500/10' : 'bg-teal-500/5'}`}></div>
+        {/* Ambient Glow Orbs */}
+        <div className={`absolute top-10 left-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-emerald-500/10' : 'bg-emerald-400/20'}`}></div>
+        <div className={`absolute bottom-10 right-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-teal-500/10' : 'bg-cyan-400/15'}`}></div>
+        <div className={`absolute top-1/2 left-1/3 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-cyan-500/5' : 'bg-teal-300/15'}`}></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -618,11 +622,13 @@ const LandingPage = () => {
               transition={{ duration: 0.6 }}
               className="lg:col-span-7 space-y-6 text-center lg:text-left gpu-layer"
             >
-              <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-sm ${
-                isDarkMode ? 'bg-[#091b2e] border-emerald-500/30 text-emerald-400' : 'bg-slate-50 border-emerald-500/20 text-emerald-700'
+              <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-sm transition-all ${
+                isDarkMode 
+                  ? 'bg-[#091b2e] border-emerald-500/30 text-emerald-400' 
+                  : 'bg-white/95 border-emerald-500/30 text-emerald-800 shadow-md shadow-emerald-500/10 backdrop-blur-md'
               }`}>
                 <img src="/app-logo.png" alt="EcoReward Emblem" className="h-5 w-auto object-contain" />
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
                 <span>CIRCULAR ECO LOGISTICS v4.0</span>
               </div>
 
@@ -630,7 +636,7 @@ const LandingPage = () => {
                 isDarkMode ? 'text-white' : 'text-slate-900'
               }`}>
                 AI-Powered <br />
-                <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent"}>
+                <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(16,185,129,0.25)]"}>
                   Zero Waste Platform
                 </span>
               </h1>
@@ -645,7 +651,7 @@ const LandingPage = () => {
                 <Link 
                   to="/signup" 
                   onClick={() => playSciFiSound('click')}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/25 ring-2 ring-emerald-400/30 hover:shadow-emerald-500/40 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
                 >
                   <span>Get Started Free</span>
                   <FaArrowRight className="h-4 w-4" />
@@ -657,7 +663,9 @@ const LandingPage = () => {
                     setShowVideoModal(true);
                   }}
                   className={`w-full sm:w-auto px-8 py-4 rounded-2xl border font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-sm ${
-                    isDarkMode ? 'bg-[#091b2e] text-white border-slate-700 hover:bg-[#0c1f35]' : 'bg-slate-100 text-slate-900 border-slate-200 hover:bg-slate-200'
+                    isDarkMode 
+                      ? 'bg-[#091b2e] text-white border-slate-700 hover:bg-[#0c1f35]' 
+                      : 'bg-white/95 hover:bg-emerald-50 text-slate-800 border-slate-300/90 hover:border-emerald-400 shadow-md shadow-slate-200/50 backdrop-blur-md'
                   }`}
                 >
                   <FaVideo className="text-emerald-500 h-4 w-4" />
@@ -665,20 +673,32 @@ const LandingPage = () => {
                 </button>
               </div>
 
-              <div className={`pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs font-medium ${
+              <div className={`pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3.5 text-xs font-medium ${
                 isDarkMode ? 'text-slate-400' : 'text-slate-600'
               }`}>
-                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
+                  isDarkMode 
+                    ? 'bg-[#091b2e]/90 border-slate-800' 
+                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span>100% Free Account</span>
+                  <span className="font-semibold">100% Free Account</span>
                 </div>
-                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
+                  isDarkMode 
+                    ? 'bg-[#091b2e]/90 border-slate-800' 
+                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span>Instant UPI Cashback</span>
+                  <span className="font-semibold">Instant UPI Cashback</span>
                 </div>
-                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border ${isDarkMode ? 'bg-[#091b2e]/90 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
+                  isDarkMode 
+                    ? 'bg-[#091b2e]/90 border-slate-800' 
+                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span>Zero Landfill Mission</span>
+                  <span className="font-semibold">Zero Landfill Mission</span>
                 </div>
               </div>
             </motion.div>
@@ -690,26 +710,28 @@ const LandingPage = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-5 flex justify-center relative gpu-layer"
             >
-              <div className={`relative w-full max-w-[480px] border p-6 rounded-3xl shadow-2xl space-y-5 ${
-                isDarkMode ? 'bg-[#091b2e]/95 border-emerald-500/40' : 'bg-white border-slate-200'
+              <div className={`relative w-full max-w-[480px] border p-6 rounded-3xl shadow-2xl space-y-5 transition-all ${
+                isDarkMode 
+                  ? 'bg-[#091b2e]/95 border-emerald-500/40 shadow-emerald-500/10' 
+                  : 'bg-white/95 backdrop-blur-2xl border-2 border-emerald-500/30 shadow-[0_25px_60px_-15px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500/10'
               }`}>
                 
                 <div className={`flex items-center justify-between pb-3 border-b ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
                   <div className="flex items-center space-x-2.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className={`text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span className={`text-xs font-mono font-black tracking-wider uppercase flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                       <FaFingerprint className="text-emerald-500" />
                       Neural Scanner HUD
                     </span>
                   </div>
-                  <span className={`text-[10px] font-mono uppercase font-bold px-2.5 py-1 rounded-full border ${
-                    isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-emerald-700 bg-emerald-500/10 border-emerald-500/20'
+                  <span className={`text-[10px] font-mono uppercase font-bold px-2.5 py-1 rounded-full border shadow-sm ${
+                    isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-emerald-800 bg-emerald-100/90 border-emerald-500/30 font-black'
                   }`}>
                     Live Demo
                   </span>
                 </div>
 
-                <div className="relative h-60 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-inner group flex items-center justify-center">
+                <div className="relative h-60 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group flex items-center justify-center">
                   {imageErrors[activeDemoItem.id] ? (
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col items-center justify-center p-4 text-center space-y-2">
                       <FaRobot className="h-12 w-12 text-emerald-400 animate-bounce" />
@@ -748,7 +770,7 @@ const LandingPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <span className={`text-[10px] uppercase font-mono font-bold tracking-widest block ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] uppercase font-mono font-bold tracking-widest block ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                     Click item below to scan:
                   </span>
                   <div className="grid grid-cols-5 gap-1.5">
@@ -758,8 +780,10 @@ const LandingPage = () => {
                         onClick={() => handleSelectDemo(item)}
                         className={`p-2 rounded-xl text-center text-[10px] font-mono font-bold border transition-all ${
                           activeDemoItem.id === item.id 
-                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 shadow-md scale-105 font-black' 
-                            : isDarkMode ? 'bg-[#040c14] text-slate-300 border-slate-800 hover:bg-[#0c1f35]' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                            ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white border-emerald-400 shadow-md shadow-emerald-500/30 scale-105 font-black ring-1 ring-white/40' 
+                            : isDarkMode 
+                              ? 'bg-[#040c14] text-slate-300 border-slate-800 hover:bg-[#0c1f35]' 
+                              : 'bg-white hover:bg-emerald-50 text-slate-800 border-slate-200 hover:border-emerald-400 shadow-sm font-bold'
                         }`}
                       >
                         <span className="block truncate">{item.category}</span>
@@ -769,13 +793,17 @@ const LandingPage = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
-                    <span className="text-[9px] text-slate-400 block uppercase font-bold">Est. Points Earned</span>
-                    <span className="text-sm font-black text-emerald-500">+{activeDemoItem.points} EcoPoints</span>
+                  <div className={`p-3.5 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-emerald-50/90 to-teal-50/70 border-emerald-500/25 shadow-sm'
+                  }`}>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Est. Points Earned</span>
+                    <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">+{activeDemoItem.points} EcoPoints</span>
                   </div>
-                  <div className={`p-3 rounded-2xl border ${isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
-                    <span className="text-[9px] text-slate-400 block uppercase font-bold">Purity Rating</span>
-                    <span className={`text-xs font-bold truncate block ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{activeDemoItem.recyclable}</span>
+                  <div className={`p-3.5 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-emerald-50/90 to-teal-50/70 border-emerald-500/25 shadow-sm'
+                  }`}>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Purity Rating</span>
+                    <span className={`text-xs font-black truncate block ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{activeDemoItem.recyclable}</span>
                   </div>
                 </div>
 

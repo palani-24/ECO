@@ -499,7 +499,7 @@ const SupportChatWidget = () => {
 
   return (
     <>
-      {/* Floating Action Button (FAB) in Bottom Right */}
+      {/* Floating Action Button (FAB) in Bottom Right - Safely positioned above mobile bottom nav */}
       {!isOpen && (
         <motion.button
           initial={{ scale: 0, opacity: 0 }}
@@ -507,10 +507,12 @@ const SupportChatWidget = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 px-4 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-2xl hover:shadow-emerald-500/30 flex items-center space-x-3 border border-emerald-400/40 group cursor-pointer"
+          className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 px-3.5 py-3 sm:px-4 sm:py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-[0_10px_25px_rgba(16,185,129,0.35)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] flex items-center space-x-2.5 sm:space-x-3 border border-emerald-400/50 group cursor-pointer backdrop-blur-md"
+          title="Open Live Support & EcoBot AI Assistant"
+          aria-label="Open Support Chat"
         >
-          <div className="relative">
-            <div className="h-9 w-9 rounded-full bg-white/20 flex items-center justify-center text-lg backdrop-blur-sm">
+          <div className="relative flex items-center justify-center">
+            <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white/20 flex items-center justify-center text-base sm:text-lg backdrop-blur-sm shadow-inner group-hover:rotate-12 transition-transform">
               💬
             </div>
             {unreadAdminCount > 0 ? (
@@ -521,9 +523,12 @@ const SupportChatWidget = () => {
               <span className="absolute -top-0.5 -right-0.5 h-3 w-3 bg-emerald-300 rounded-full animate-ping"></span>
             )}
           </div>
-          <div className="text-left hidden sm:block">
-            <p className="text-xs font-black tracking-tight leading-none">Need Help?</p>
-            <p className="text-[10px] text-emerald-200 font-bold leading-tight mt-0.5">Live Support & EcoBot AI</p>
+          <div className="text-left">
+            <p className="text-xs font-black tracking-tight leading-none flex items-center gap-1">
+              <span>Need Help?</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 animate-pulse sm:hidden"></span>
+            </p>
+            <p className="text-[10px] text-emerald-200 font-bold leading-tight mt-0.5 hidden sm:block">Live Support & EcoBot AI</p>
           </div>
         </motion.button>
       )}
@@ -536,7 +541,7 @@ const SupportChatWidget = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.96 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[94vw] sm:w-[440px] h-[610px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans backdrop-blur-xl"
+            className="fixed bottom-2 sm:bottom-6 right-2 sm:right-6 z-50 w-[96vw] sm:w-[440px] h-[85vh] sm:h-[610px] max-h-[640px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans backdrop-blur-xl"
           >
             {/* Header Area */}
             <div className="relative p-3.5 sm:p-4 bg-slate-950/95 border-b border-slate-800 flex items-center justify-between backdrop-blur-md">

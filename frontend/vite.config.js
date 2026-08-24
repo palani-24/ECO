@@ -5,16 +5,27 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    target: 'esnext',
+    target: 'es2020',
     minify: 'esbuild',
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'icons-vendor': ['react-icons/fa'],
-          'motion-vendor': ['framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-icons')) {
+              return 'icons-vendor';
+            }
+            if (id.includes('framer-motion')) {
+              return 'motion-vendor';
+            }
+            if (id.includes('socket.io-client') || id.includes('axios')) {
+              return 'network-vendor';
+            }
+            if (id.includes('leaflet')) {
+              return 'maps-vendor';
+            }
+          }
         }
       }
     }

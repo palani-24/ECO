@@ -7,54 +7,54 @@ import { LanguageProvider } from './context/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Public Pages
-import LandingPage from './pages/LandingPage';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+const LandingPage = React.lazy(() => import('./pages/LandingPage'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Signup = React.lazy(() => import('./pages/Signup'));
+const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 
 // User Pages
-import UserDashboard from './pages/user/UserDashboard';
-import SchedulePickup from './pages/user/SchedulePickup';
-import MyPickups from './pages/user/MyPickups';
-import RedeemRewards from './pages/user/RedeemRewards';
-import EcoStore from './pages/user/EcoStore';
-import Profile from './pages/user/Profile';
-import Leaderboard from './pages/user/Leaderboard';
-import CommunityChallenges from './pages/user/CommunityChallenges';
-import ESGCorporatePortal from './pages/user/ESGCorporatePortal';
+const UserDashboard = React.lazy(() => import('./pages/user/UserDashboard'));
+const SchedulePickup = React.lazy(() => import('./pages/user/SchedulePickup'));
+const MyPickups = React.lazy(() => import('./pages/user/MyPickups'));
+const RedeemRewards = React.lazy(() => import('./pages/user/RedeemRewards'));
+const EcoStore = React.lazy(() => import('./pages/user/EcoStore'));
+const Profile = React.lazy(() => import('./pages/user/Profile'));
+const Leaderboard = React.lazy(() => import('./pages/user/Leaderboard'));
+const CommunityChallenges = React.lazy(() => import('./pages/user/CommunityChallenges'));
+const ESGCorporatePortal = React.lazy(() => import('./pages/user/ESGCorporatePortal'));
 
 // Driver Pages
-import DriverDashboard from './pages/driver/DriverDashboard';
-import DriverAssignedPickups from './pages/driver/DriverAssignedPickups';
-import DriverPickupHistory from './pages/driver/DriverPickupHistory';
-import DriverEarnings from './pages/driver/DriverEarnings';
-import DriverGatePass from './pages/driver/DriverGatePass';
-import DriverQualityAudit from './pages/driver/DriverQualityAudit';
-import DriverBatteryTelematics from './pages/driver/DriverBatteryTelematics';
-import DriverRoadHazards from './pages/driver/DriverRoadHazards';
-import DriverShifts from './pages/driver/DriverShifts';
-import DriverEquipment from './pages/driver/DriverEquipment';
-import DriverSettings from './pages/driver/DriverSettings';
-import DriverDocuments from './pages/driver/DriverDocuments';
-import DriverRewards from './pages/driver/DriverRewards';
-import DriverNotifications from './pages/driver/DriverNotifications';
-import DriverNavigationPage from './pages/driver/DriverNavigationPage';
-import DriverSecurity from './pages/driver/DriverSecurity';
-import DriverSupport from './pages/driver/DriverSupport';
-import DriverProfilePage from './pages/driver/DriverProfilePage';
-import DriverVehiclePage from './pages/driver/DriverVehiclePage';
+const DriverDashboard = React.lazy(() => import('./pages/driver/DriverDashboard'));
+const DriverAssignedPickups = React.lazy(() => import('./pages/driver/DriverAssignedPickups'));
+const DriverPickupHistory = React.lazy(() => import('./pages/driver/DriverPickupHistory'));
+const DriverEarnings = React.lazy(() => import('./pages/driver/DriverEarnings'));
+const DriverGatePass = React.lazy(() => import('./pages/driver/DriverGatePass'));
+const DriverQualityAudit = React.lazy(() => import('./pages/driver/DriverQualityAudit'));
+const DriverBatteryTelematics = React.lazy(() => import('./pages/driver/DriverBatteryTelematics'));
+const DriverRoadHazards = React.lazy(() => import('./pages/driver/DriverRoadHazards'));
+const DriverShifts = React.lazy(() => import('./pages/driver/DriverShifts'));
+const DriverEquipment = React.lazy(() => import('./pages/driver/DriverEquipment'));
+const DriverSettings = React.lazy(() => import('./pages/driver/DriverSettings'));
+const DriverDocuments = React.lazy(() => import('./pages/driver/DriverDocuments'));
+const DriverRewards = React.lazy(() => import('./pages/driver/DriverRewards'));
+const DriverNotifications = React.lazy(() => import('./pages/driver/DriverNotifications'));
+const DriverNavigationPage = React.lazy(() => import('./pages/driver/DriverNavigationPage'));
+const DriverSecurity = React.lazy(() => import('./pages/driver/DriverSecurity'));
+const DriverSupport = React.lazy(() => import('./pages/driver/DriverSupport'));
+const DriverProfilePage = React.lazy(() => import('./pages/driver/DriverProfilePage'));
+const DriverVehiclePage = React.lazy(() => import('./pages/driver/DriverVehiclePage'));
 
 // Admin Pages
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminDrivers from './pages/admin/AdminDrivers';
-import AdminPickups from './pages/admin/AdminPickups';
-import AdminCoupons from './pages/admin/AdminCoupons';
-import AdminSettings from './pages/admin/AdminSettings';
-import AdminSupportPage from './pages/admin/AdminSupportPage';
-import SupportChatWidget from './components/SupportChatWidget';
+const AdminLogin = React.lazy(() => import('./pages/admin/AdminLogin'));
+const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = React.lazy(() => import('./pages/admin/AdminUsers'));
+const AdminDrivers = React.lazy(() => import('./pages/admin/AdminDrivers'));
+const AdminPickups = React.lazy(() => import('./pages/admin/AdminPickups'));
+const AdminCoupons = React.lazy(() => import('./pages/admin/AdminCoupons'));
+const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
+const AdminSupportPage = React.lazy(() => import('./pages/admin/AdminSupportPage'));
+const SupportChatWidget = React.lazy(() => import('./components/SupportChatWidget'));
 import PWAInstallBanner from './components/PWAInstallBanner';
 
 function App() {

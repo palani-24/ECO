@@ -492,8 +492,12 @@ const SupportChatWidget = () => {
     { label: '🛡️ Contact Support', action: () => setActiveChat('admin') }
   ];
 
-  // Hide widget completely for Admin users and on admin pages or driver navigation
-  if (user?.role === 'admin' || location.pathname.startsWith('/admin') || location.pathname.includes('/driver/navigation')) {
+  // Auth pages list where widget must be hidden
+  const authRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
+  const isAuthPage = authRoutes.some(route => location.pathname === route || location.pathname.startsWith(route));
+
+  // Hide widget completely on login/signup pages, when user is not logged in, for Admin users, and during driver navigation
+  if (!user || isAuthPage || user?.role === 'admin' || location.pathname.startsWith('/admin') || location.pathname.includes('/driver/navigation')) {
     return null;
   }
 

@@ -164,6 +164,7 @@ export const schedulePickup = async (req, res) => {
       pickupDate,
       pickupTimeSlot,
       pickupAddress,
+      wasteImageUrl: req.body.wasteImageUrl || req.body.photoUrl,
       qrToken,
       status: 'pending',
       notes,

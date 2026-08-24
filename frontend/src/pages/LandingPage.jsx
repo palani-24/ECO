@@ -21,10 +21,12 @@ import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 const LandingPage = () => {
   // DUAL THEME ENGINE (SYNCHRONIZED WITH NAVBAR SUN/MOON BUTTON)
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved === 'dark';
       return document.documentElement.classList.contains('dark');
     }
-    return true;
+    return false;
   });
 
   useEffect(() => {

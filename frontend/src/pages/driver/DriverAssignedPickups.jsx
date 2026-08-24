@@ -24,6 +24,7 @@ const DriverAssignedPickups = () => {
   const [filterCategory, setFilterCategory] = useState('all');
   const [showChatModal, setShowChatModal] = useState(false);
   const [activeChatRecipient, setActiveChatRecipient] = useState(null);
+  const [selectedPhotoUrl, setSelectedPhotoUrl] = useState(null);
 
   const fetchAssignedPickups = async () => {
     setLoading(true);
@@ -261,38 +262,91 @@ const DriverAssignedPickups = () => {
                     </div>
 
                     <div className="space-y-2 text-xs">
+                      {/* Customer Uploaded Waste Photo Preview Thumbnail */}
+                      {pickup.wasteImageUrl && (
+                        <div className="flex items-center space-x-3 p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
+                          <img 
+                            src={pickup.wasteImageUrl} 
+                            alt="User Waste Pile" 
+                            className="h-12 w-12 object-cover rounded-xl border border-emerald-500/40 cursor-pointer hover:scale-105 transition-transform"
+                            onClick={() => setSelectedPhotoUrl(pickup.wasteImageUrl)}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-black uppercase text-emerald-500 flex items-center gap-1">
+                              <span>📸 Customer Photo Attached</span>
+                            </span>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Tap to inspect waste pile before arrival</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPhotoUrl(pickup.wasteImageUrl)}
+                            className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg text-[10px] font-bold border border-emerald-500/30"
+                          >
+                            View
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Multi-Material Itemized Badges if available */}
+                      {pickup.items && pickup.items.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {pickup.items.map((it, idx) => (
+                            <span key={idx} className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[10px] rounded-lg border border-slate-200 dark:border-slate-700">
+                              {it.category}: <strong className="text-emerald-500">{it.estimatedWeight}kg</strong>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300 font-medium">
                         <FaMapMarkerAlt className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
                         <span className="truncate">{addrStr}</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-extrabold p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                        <FaWeight className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
-                        <span>User Requested: <strong>{pickup.estimatedWeight || 5} kg (+{Math.round((pickup.estimatedWeight || 5) * 35)} pts)</strong></span>
+                      <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-extrabold p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+                        <span className="flex items-center space-x-1.5">
+                          <FaWeight className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
+                          <span>Total: <strong>{pickup.estimatedWeight || 5} kg</strong></span>
+                        </span>
+                        <span className="text-[11px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded-lg shadow-sm">
+                          +{Math.round((pickup.estimatedWeight || 5) * 35)} pts
+                        </span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                    <div className="grid grid-cols-4 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
                       <button 
                         onClick={() => openGoogleMapsNavigation(addrStr)}
                         className="py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-extrabold rounded-xl flex items-center justify-center space-x-1 shadow-sm transition-transform active:scale-95"
+                        title="Open Google Maps GPS Navigation"
                       >
-                        <FaCompass />
+                        <FaCompass className="h-3.5 w-3.5" />
                         <span>GPS</span>
                       </button>
 
+                      <a 
+                        href={`tel:${pickup.user?.phone || '9876543210'}`}
+                        className="py-2.5 bg-teal-500/10 text-teal-600 dark:text-teal-400 hover:bg-teal-500/20 font-bold rounded-xl flex items-center justify-center space-x-1 border border-teal-500/20"
+                        title="Call Customer"
+                      >
+                        <FaPhoneAlt className="h-3 w-3" />
+                        <span>Call</span>
+                      </a>
+
                       <button 
                         onClick={() => handleOpenChat(pickup.user)}
-                        className="py-2.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-bold rounded-xl flex items-center justify-center space-x-1 border border-emerald-500/20"
+                        className="py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 font-bold rounded-xl flex items-center justify-center space-x-1 border border-emerald-500/20"
+                        title="Chat with Customer"
                       >
-                        <FaComments />
+                        <FaComments className="h-3.5 w-3.5" />
                         <span>Chat</span>
                       </button>
 
                       <button 
                         onClick={() => handleAcceptJob(pickup._id)}
                         className="py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black rounded-xl shadow-md flex items-center justify-center space-x-1 transition-transform active:scale-95"
+                        title="Accept Pickup Job"
                       >
-                        <FaCheckCircle />
+                        <FaCheckCircle className="h-3.5 w-3.5" />
                         <span>Accept</span>
                       </button>
                     </div>
@@ -305,6 +359,40 @@ const DriverAssignedPickups = () => {
               <FaTruck className="h-10 w-10 text-slate-300 mx-auto" />
               <h4 className="font-black text-slate-900 dark:text-white text-base">No Pickups Found</h4>
               <p className="text-xs text-slate-400 font-medium">No pickup jobs matching your search criteria currently queued.</p>
+            </div>
+          )}
+
+          {/* Customer Waste Photo Preview Modal */}
+          {selectedPhotoUrl && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 max-w-lg w-full space-y-4 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">📸</span>
+                    <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Customer Attached Waste Photo</h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedPhotoUrl(null)}
+                    className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center max-h-96">
+                  <img src={selectedPhotoUrl} alt="Enlarged Waste Pile" className="w-full h-auto max-h-96 object-contain rounded-2xl" />
+                </div>
+
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs text-slate-700 dark:text-slate-300 font-medium flex items-center justify-between">
+                  <span>💡 Verify waste type & estimate vehicle sacks needed</span>
+                  <button
+                    onClick={() => setSelectedPhotoUrl(null)}
+                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition-colors"
+                  >
+                    Close Preview
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

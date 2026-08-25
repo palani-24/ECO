@@ -22,18 +22,25 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [currentStoryStep, setCurrentStoryStep] = useState(0);
 
-  // Background Video State
-  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  // Background Silent Ambient Video State
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
   const videoRef = useRef(null);
 
-  const toggleVideoMute = () => {
+  useEffect(() => {
     if (videoRef.current) {
-      const nextMuted = !isVideoMuted;
-      videoRef.current.muted = nextMuted;
-      setIsVideoMuted(nextMuted);
+      videoRef.current.muted = true;
+      videoRef.current.defaultMuted = true;
+      videoRef.current.play().catch(() => {});
     }
-  };
+    return () => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause();
+          videoRef.current.muted = true;
+        } catch (e) {}
+      }
+    };
+  }, []);
 
   const toggleVideoPlay = () => {
     if (videoRef.current) {
@@ -45,17 +52,6 @@ const Login = () => {
       setIsVideoPlaying(!isVideoPlaying);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      if (videoRef.current) {
-        try {
-          videoRef.current.pause();
-          videoRef.current.muted = true;
-        } catch (e) {}
-      }
-    };
-  }, []);
 
   // 11-Step Eco Background Story Milestones
   const storySteps = [
@@ -135,12 +131,13 @@ const Login = () => {
   return (
     <div className="relative min-h-screen bg-[#06121e] flex flex-col transition-colors duration-300 overflow-hidden font-sans text-slate-100">
       
-      {/* High-Definition Full Video Background Stream */}
+      {/* High-Definition Ambient Video Background - Permanently Silent & Smooth Autoplay */}
       <video
         ref={videoRef}
         autoPlay
         loop
-        muted={isVideoMuted}
+        muted
+        defaultMuted
         playsInline
         preload="auto"
         className="fixed inset-0 w-full h-full object-cover opacity-60 filter contrast-125 brightness-100 pointer-events-none z-0"
@@ -156,19 +153,11 @@ const Login = () => {
           type="button" 
           onClick={toggleVideoPlay}
           className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
-          title={isVideoPlaying ? "Pause HD Video" : "Play HD Video"}
+          title={isVideoPlaying ? "Pause Ambient Video" : "Play Ambient Video"}
         >
           {isVideoPlaying ? <FaPause className="h-3.5 w-3.5" /> : <FaPlay className="h-3.5 w-3.5" />}
         </button>
-        <button 
-          type="button" 
-          onClick={toggleVideoMute}
-          className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
-          title={isVideoMuted ? "Unmute HD Video Sound" : "Mute Sound"}
-        >
-          {isVideoMuted ? <FaVolumeMute className="h-3.5 w-3.5 text-amber-400" /> : <FaVolumeUp className="h-3.5 w-3.5" />}
-        </button>
-        <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase hidden sm:inline">1080p HD Video</span>
+        <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">1080p Ambient Video</span>
       </div>
 
       <div className="relative z-10">

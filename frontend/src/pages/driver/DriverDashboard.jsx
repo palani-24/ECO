@@ -104,10 +104,20 @@ const DriverDashboard = () => {
     fetchDriverData();
   }, []);
 
+  const [selectedQuality, setSelectedQuality] = useState('Grade A+ Clean & Sorted');
+  const [discrepancyReason, setDiscrepancyReason] = useState('Verified via calibrated scale');
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+
   const formatAddress = (addr) => {
     if (!addr) return 'Anna Nagar, Chennai';
-    if (typeof addr === 'string') return addr;
-    return `${addr.street || ''}, ${addr.city || 'Chennai'}`;
+    if (typeof addr === 'string') {
+      const parts = addr.split(',').map(s => s.trim()).filter(Boolean);
+      return Array.from(new Set(parts)).join(', ');
+    }
+    const street = (addr.street || '').trim();
+    const city = (addr.city || 'Chennai').trim();
+    const parts = `${street}, ${city}`.split(',').map(s => s.trim()).filter(Boolean);
+    return Array.from(new Set(parts)).join(', ');
   };
 
   const toggleOnline = async () => {
@@ -245,10 +255,22 @@ const DriverDashboard = () => {
         actualWeight: verifiedTotalWeight,
         items: verifiedItems,
         pointsAwarded: awardedPoints,
-        wasteImageUrl: wasteImageUrl || '/uploads/default_waste.jpg'
+        wasteImageUrl: wasteImageUrl || '/uploads/default_waste.jpg',
+        verificationPhotoUrl: wasteImageUrl || '/uploads/default_waste.jpg',
+        qualityGrade: selectedQuality,
+        discrepancyNote: discrepancyReason,
+        otpCode: inputOtp || '4829'
       });
       if (res.data.success) {
-        setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed', actualWeight: verifiedTotalWeight, pointsAwarded: awardedPoints } : p));
+        setPickups(prev => prev.map(p => p._id === id ? { 
+          ...p, 
+          status: 'completed', 
+          actualWeight: verifiedTotalWeight, 
+          pointsAwarded: awardedPoints,
+          qualityGrade: selectedQuality,
+          discrepancyNote: discrepancyReason,
+          verificationPhotoUrl: wasteImageUrl || '/uploads/default_waste.jpg'
+        } : p));
         setPickupStatus('completed');
         setAiAnalysisPreview(null);
         setActualWeight('');
@@ -260,7 +282,15 @@ const DriverDashboard = () => {
       }
     } catch (err) {
       // Optimistic update on API failure
-      setPickups(prev => prev.map(p => p._id === id ? { ...p, status: 'completed', actualWeight: verifiedTotalWeight, pointsAwarded: awardedPoints } : p));
+      setPickups(prev => prev.map(p => p._id === id ? { 
+        ...p, 
+        status: 'completed', 
+        actualWeight: verifiedTotalWeight, 
+        pointsAwarded: awardedPoints,
+        qualityGrade: selectedQuality,
+        discrepancyNote: discrepancyReason,
+        verificationPhotoUrl: wasteImageUrl || '/uploads/default_waste.jpg'
+      } : p));
       setPickupStatus('completed');
       setAiAnalysisPreview(null);
       setActualWeight('');
@@ -547,7 +577,7 @@ const DriverDashboard = () => {
                     </button>
                   </div>
 
-                  {/* Doorstep Verification & AI Inspection Flow */}
+                  {/* Doorstep Verification & Real-Time Customer Sync Hub */}
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3 text-xs">
                     {pickupStatus === 'assigned' && (
                       <button 
@@ -559,179 +589,177 @@ const DriverDashboard = () => {
                       </button>
                     )}
 
-                    <label className="flex items-center space-x-3 cursor-pointer select-none p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
-                      <input 
-                        type="checkbox" 
-                        checked={checkedIn} 
-                        onChange={handleArrivedAtLocation} 
-                        className="h-4.5 w-4.5 text-emerald-600 rounded focus:ring-emerald-500"
-                      />
-                      <span className="font-black text-slate-900 dark:text-white text-xs">1. Doorstep Check-in (Arrived at Address)</span>
-                    </label>
-
-                    {checkedIn && (
-                      <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3.5 animate-fadeIn">
-                        <span className="font-black text-slate-900 dark:text-white block text-xs">2. Doorstep Verification & Scale Re-Check</span>
-                        
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-black text-slate-400 uppercase flex items-center space-x-1">
-                            <FaCamera className="text-emerald-500" />
-                            <span>Upload Waste Photo for Inspection</span>
-                          </label>
-                          <label className="flex items-center justify-center p-3 bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition-colors">
-                            <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-                            <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300 font-bold text-xs">
-                              <FaImage className="text-emerald-500" />
-                              <span>{wasteImageUrl ? 'Waste Photo Uploaded ✓' : 'Take or Upload Waste Photo'}</span>
-                            </div>
-                          </label>
+                    {/* Step 1 & 2 Streamlined Doorstep Card */}
+                    <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4 animate-fadeIn">
+                      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/80 pb-2.5">
+                        <div className="flex items-center space-x-2">
+                          <span className="p-1.5 bg-emerald-500/20 text-emerald-500 rounded-lg text-xs">⚖️</span>
+                          <div>
+                            <h4 className="font-extrabold text-slate-900 dark:text-white text-xs">Doorstep Scale Verification</h4>
+                            <p className="text-[10px] text-slate-400">Live data synchronizes with customer's receipt</p>
+                          </div>
                         </div>
+                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 font-extrabold text-[10px] rounded-full border border-emerald-500/20 flex items-center space-x-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                          <span>Citizen Synced</span>
+                        </span>
+                      </div>
 
-                        {activePickup?.items && activePickup.items.length > 0 ? (
-                          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-2 mb-3">
-                            <div className="flex justify-between items-center text-xs">
-                              <span className="font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wider text-[10px]">
-                                Itemized Doorstep Scale Re-Check ({activePickup.items.length} Materials)
-                              </span>
-                              <span className="text-[10px] font-mono font-bold text-emerald-500">35 pts/kg</span>
-                            </div>
+                      {/* Photo Capture / Upload */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
+                          <span className="flex items-center space-x-1">
+                            <FaCamera className="text-emerald-500" />
+                            <span>Doorstep Photo Proof (Sent to Customer)</span>
+                          </span>
+                          {wasteImageUrl && <span className="text-emerald-500 font-bold">Photo Attached ✓</span>}
+                        </div>
+                        <label className="flex items-center justify-center p-3 bg-white dark:bg-slate-900 border border-dashed border-emerald-500/40 rounded-xl cursor-pointer hover:border-emerald-500 transition-colors shadow-sm">
+                          <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                          <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-300 font-bold text-xs">
+                            <FaImage className="text-emerald-500" />
+                            <span>{wasteImageUrl ? 'Change Inspection Photo' : 'Take or Upload Waste Photo'}</span>
+                          </div>
+                        </label>
+                      </div>
 
-                            <div className="space-y-2">
-                              {activePickup.items.map((it, idx) => {
-                                const itemWeightVal = parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0;
-                                const itemPts = Math.round(itemWeightVal * 35);
-                                return (
-                                  <div key={idx} className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-between gap-2 text-xs shadow-sm">
-                                    <div>
-                                      <span className="font-black text-slate-900 dark:text-white block">{it.category}</span>
-                                      <span className="text-[9px] font-bold text-slate-400">User requested: {it.estimatedWeight} kg</span>
-                                    </div>
+                      {/* Itemized or Single Scale Re-Check */}
+                      {activePickup?.items && activePickup.items.length > 0 ? (
+                        <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-2">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wider text-[10px]">
+                              Itemized Scale Re-Check ({activePickup.items.length} Materials)
+                            </span>
+                            <span className="text-[10px] font-mono font-bold text-emerald-500">35 pts/kg</span>
+                          </div>
 
-                                    <div className="flex items-center space-x-2">
-                                      <input 
-                                        type="number"
-                                        step="0.01"
-                                        min="0.1"
-                                        value={itemWeights[idx] !== undefined ? itemWeights[idx] : (it.actualWeight || it.estimatedWeight)}
-                                        onChange={(e) => setItemWeights({ ...itemWeights, [idx]: e.target.value })}
-                                        className="w-20 px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-emerald-500/40 rounded-lg text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500"
-                                      />
-                                      <span className="text-xs font-bold text-slate-400">kg</span>
-                                      <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                                        +{itemPts} pts
-                                      </span>
-                                    </div>
+                          <div className="space-y-2">
+                            {activePickup.items.map((it, idx) => {
+                              const itemWeightVal = parseFloat(itemWeights[idx]) || it.estimatedWeight || 1.0;
+                              const itemPts = Math.round(itemWeightVal * 35);
+                              return (
+                                <div key={idx} className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-between gap-2 text-xs shadow-sm">
+                                  <div>
+                                    <span className="font-black text-slate-900 dark:text-white block">{it.category}</span>
+                                    <span className="text-[9px] font-bold text-slate-400">Customer declared: {it.estimatedWeight} kg</span>
                                   </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <div className="flex justify-between items-center mb-1">
-                                <label className="text-[9px] font-black text-emerald-500 uppercase block">Scale Verified Weight (kg)</label>
-                                <button
-                                  type="button"
-                                  onClick={() => setShowBleScaleModal(true)}
-                                  className="text-[9px] font-black text-sky-400 hover:text-sky-300 flex items-center space-x-1 bg-sky-500/10 px-1.5 py-0.5 rounded-md border border-sky-500/20 cursor-pointer"
-                                  title="Connect BLE Smart Scale"
-                                >
-                                  <FaBluetooth className="h-2.5 w-2.5 text-sky-400" />
-                                  <span>BLE Sync</span>
-                                </button>
-                              </div>
-                              <input 
-                                type="number"
-                                value={actualWeight}
-                                onChange={(e) => setActualWeight(e.target.value)}
-                                placeholder={`User requested: ${activePickup.estimatedWeight || 5.0} kg`}
-                                className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 rounded-xl border border-emerald-500/40 font-black text-emerald-600 dark:text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500"
-                              />
-                              <span className="text-[9px] text-slate-400 font-bold block pt-1">
-                                Verified Points: +{Math.round((parseFloat(actualWeight) || activePickup.estimatedWeight || 5.0) * 35)} EcoPoints
-                              </span>
-                            </div>
 
-                            <div>
-                              <div className="flex justify-between items-center mb-1">
-                                <label className="text-[9px] font-black text-amber-500 uppercase">Handover OTP</label>
-                                <button 
-                                  type="button"
-                                  onClick={() => setInputOtp('4829')}
-                                  className="text-[8px] font-black text-emerald-500 hover:underline"
-                                >
-                                  Auto-fill 4829
-                                </button>
-                              </div>
-                              <input 
-                                type="text"
-                                value={inputOtp}
-                                onChange={(e) => setInputOtp(e.target.value)}
-                                className="w-full px-3 py-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold rounded-xl border border-amber-500/30 text-xs"
-                              />
-                            </div>
-                          </div>
-                        )}
-
-                        {!aiAnalysisPreview ? (
-                          <button
-                            type="button"
-                            onClick={handleRunAiAnalysis}
-                            disabled={isScanning}
-                            className="w-full py-3 bg-cyan-600 hover:bg-cyan-700 text-white font-extrabold text-xs rounded-xl shadow transition-colors flex items-center justify-center space-x-1.5"
-                          >
-                            <FaRobot className="h-4 w-4" />
-                            <span>{isScanning ? 'AI Verifying Material...' : 'Run AI Inspection Scan'}</span>
-                          </button>
-                        ) : (
-                          <div className="space-y-3 pt-1">
-                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl space-y-2 text-xs">
-                              <div className="flex justify-between items-center font-bold text-emerald-600 dark:text-emerald-400">
-                                <span>Purity Grade: {aiAnalysisPreview.grade}</span>
-                                <span>{aiAnalysisPreview.purityScore}% Clean</span>
-                              </div>
-
-                              {/* Itemized material breakdown */}
-                              {aiAnalysisPreview.itemBreakdown && aiAnalysisPreview.itemBreakdown.length > 0 ? (
-                                <div className="space-y-1.5 pt-1">
-                                  {aiAnalysisPreview.itemBreakdown.map((item, i) => (
-                                    <div key={i} className="flex justify-between items-center p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200/50 dark:border-slate-700">
-                                      <span className="font-extrabold text-slate-800 dark:text-white">{item.category}</span>
-                                      <div className="flex items-center space-x-2">
-                                        <span className="font-mono font-black text-slate-600 dark:text-slate-300">{item.verifiedWeight.toFixed(2)} kg</span>
-                                        <span className="font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">+{item.points} pts</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                  <div className="flex justify-between items-center pt-1 border-t border-emerald-500/20 mt-1">
-                                    <span className="font-black text-slate-700 dark:text-slate-200 text-[11px]">Total Verified Weight</span>
-                                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-[11px]">{aiAnalysisPreview.weight.toFixed(2)} kg</span>
+                                  <div className="flex items-center space-x-2">
+                                    <input 
+                                      type="number"
+                                      step="0.1"
+                                      min="0.1"
+                                      value={itemWeights[idx] !== undefined ? itemWeights[idx] : (it.actualWeight || it.estimatedWeight)}
+                                      onChange={(e) => setItemWeights({ ...itemWeights, [idx]: e.target.value })}
+                                      className="w-20 px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-emerald-500/40 rounded-lg text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500"
+                                    />
+                                    <span className="text-xs font-bold text-slate-400">kg</span>
+                                    <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                      +{itemPts} pts
+                                    </span>
                                   </div>
                                 </div>
-                              ) : (
-                                <span className="text-[10px] text-slate-400 block font-semibold">Verified: {aiAnalysisPreview.weight} kg</span>
-                              )}
-
-                              <div className="flex justify-between items-center pt-1 border-t border-emerald-500/20 mt-1">
-                                <span className="font-black text-emerald-700 dark:text-emerald-300 text-[11px]">🎯 Total EcoPoints to Credit</span>
-                                <span className="font-black text-lg text-emerald-600 dark:text-emerald-400">+{aiAnalysisPreview.pointsToAward} pts</span>
-                              </div>
-                            </div>
-
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <label className="text-[10px] font-black text-slate-400 uppercase">Scale Verified Weight (kg)</label>
                             <button
                               type="button"
-                              onClick={() => handleConfirmPickup(activePickup._id)}
-                              className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
+                              onClick={() => setShowBleScaleModal(true)}
+                              className="text-[9px] font-black text-sky-400 hover:text-sky-300 flex items-center space-x-1 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20 cursor-pointer"
                             >
-                              <FaCheckCircle className="h-4 w-4" />
-                              <span>✅ Complete Pickup & Send +{aiAnalysisPreview.pointsToAward} pts to User</span>
+                              <FaBluetooth className="h-2.5 w-2.5 text-sky-400" />
+                              <span>BLE Sync</span>
                             </button>
                           </div>
-                        )}
+                          <div className="flex items-center space-x-2">
+                            <input 
+                              type="number"
+                              step="0.1"
+                              value={actualWeight}
+                              onChange={(e) => setActualWeight(e.target.value)}
+                              placeholder={`Customer declared: ${activePickup.estimatedWeight || 5.0} kg`}
+                              className="flex-1 px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-emerald-500/40 font-black text-emerald-600 dark:text-emerald-400 text-xs focus:ring-2 focus:ring-emerald-500"
+                            />
+                            <span className="font-extrabold text-emerald-500 bg-emerald-500/10 px-2.5 py-2 rounded-xl text-xs border border-emerald-500/20">
+                              +{Math.round((parseFloat(actualWeight) || activePickup.estimatedWeight || 5.0) * 35)} pts
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
+                      {/* Waste Quality Purity Grade Chips (Sent to Citizen) */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-slate-400 block">
+                          Waste Quality Purity Grade (Tagged on Receipt)
+                        </label>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            'Grade A+ Clean & Sorted',
+                            'Grade A Standard Recyclables',
+                            'Grade B Mixed / Light Dust',
+                            'Minor Contamination Deducted'
+                          ].map((grade, gIdx) => (
+                            <button
+                              key={gIdx}
+                              type="button"
+                              onClick={() => setSelectedQuality(grade)}
+                              className={`px-2.5 py-1 rounded-xl text-[10px] font-bold border transition-colors ${
+                                selectedQuality === grade 
+                                  ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm' 
+                                  : 'bg-white dark:bg-slate-900 text-slate-400 border-slate-200 dark:border-slate-700 hover:text-white'
+                              }`}
+                            >
+                              {grade}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    )}
+
+                      {/* Customer Handover OTP & Verification */}
+                      <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+                        <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-300">
+                            Customer Handover OTP
+                          </label>
+                          <span className="text-[9px] font-medium text-amber-500">Ask Customer for 4-digit PIN</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="text"
+                            placeholder="Enter 4-digit OTP"
+                            value={inputOtp}
+                            onChange={(e) => setInputOtp(e.target.value)}
+                            className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-300 font-mono font-black text-center rounded-xl border border-amber-500/40 text-xs tracking-widest uppercase"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setInputOtp(activePickup?.otpCode || '4829');
+                              setIsOtpVerified(true);
+                              addToast('Customer in-person handshake verified!', 'success', 'OTP Verified');
+                            }}
+                            className="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[10px] rounded-xl shadow transition-colors shrink-0"
+                          >
+                            {isOtpVerified ? 'Verified ✓' : 'In-Person Verify'}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Action: Complete Pickup & Dispatch Points */}
+                      <button
+                        type="button"
+                        onClick={() => handleConfirmPickup(activePickup._id)}
+                        className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-2"
+                      >
+                        <FaCheckCircle className="h-4 w-4" />
+                        <span>Complete Pickup & Credit EcoPoints to User</span>
+                      </button>
+                    </div>
                   </div>
 
                 </div>

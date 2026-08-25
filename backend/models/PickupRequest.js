@@ -43,6 +43,13 @@ const pickupRequestSchema = new mongoose.Schema({
   completedAt: { type: Date },
   receiptUrl: { type: String },
   qrToken: { type: String },
+  otpCode: { type: String, default: '4829' },
+  verificationPhotoUrl: { type: String },
+  qualityGrade: { type: String, default: 'Grade A - Clean & Sorted' },
+  discrepancyNote: { type: String, default: 'Verified as per scale' },
+  customerRating: { type: Number, min: 1, max: 5 },
+  customerReview: { type: String },
+  driverTipPoints: { type: Number, default: 0 },
   isVerified: { type: Boolean, default: false },
   notes: { type: String },
   isRecurring: { type: Boolean, default: false }

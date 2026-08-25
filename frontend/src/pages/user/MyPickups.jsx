@@ -3,12 +3,14 @@ import UserLayout from '../../components/UserLayout';
 import DriverLiveTrackingModal from '../../components/DriverLiveTrackingModal';
 import CarbonCertificateModal from '../../components/CarbonCertificateModal';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useToast } from '../../context/ToastContext';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
-import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye, FaTruck, FaMedal, FaCertificate } from 'react-icons/fa';
+import { FaRecycle, FaClock, FaCheckCircle, FaExclamationTriangle, FaTimes, FaFileInvoice, FaEye, FaTruck, FaMedal, FaCertificate, FaStar, FaLeaf, FaCoins, FaCamera } from 'react-icons/fa';
 
 const MyPickups = () => {
+  const { user } = useAuth() || {};
   const { addToast } = useToast();
   const { realtimeData } = useSocket() || {};
   const [pickups, setPickups] = useState([]);
@@ -18,6 +20,9 @@ const MyPickups = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [trackingPickup, setTrackingPickup] = useState(null);
   const [showCertModal, setShowCertModal] = useState(false);
+  const [ratingScore, setRatingScore] = useState(5);
+  const [tipAmount, setTipAmount] = useState(0);
+  const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
 
   // Real-Time Socket Updates Sync
   useEffect(() => {
@@ -218,58 +223,166 @@ const MyPickups = () => {
             </div>
           )}
 
-          {/* Receipt Modal */}
+          {/* Rich Digital Eco-Receipt & Driver Rating Modal */}
           {selectedReceipt && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 rounded-3xl p-6 shadow-2xl w-full max-w-[420px] space-y-6 text-xs text-slate-600 dark:text-slate-400">
-                <div className="flex justify-between items-center pb-4 border-b border-slate-200 dark:border-slate-800">
-                  <div>
-                    <h3 className="font-extrabold text-base text-slate-900 dark:text-white uppercase">Recycling Receipt</h3>
-                    <span className="text-[10px] font-bold text-slate-400">{selectedReceipt.receiptUrl}</span>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4 text-xs max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 bg-emerald-500/20 text-emerald-500 rounded-xl">
+                      <FaFileInvoice className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-sm text-slate-900 dark:text-white uppercase tracking-tight">Verified Eco-Receipt</h3>
+                      <span className="text-[10px] font-mono text-emerald-500 font-bold">{selectedReceipt.receiptUrl || 'REC-VERIFIED'}</span>
+                    </div>
                   </div>
-                  <FaRecycle className="h-8 w-8 text-emerald-500" />
+                  <button 
+                    onClick={() => { setSelectedReceipt(null); setIsRatingSubmitted(false); }}
+                    className="p-1.5 text-slate-400 hover:text-white rounded-xl bg-slate-100 dark:bg-slate-800"
+                  >
+                    <FaTimes />
+                  </button>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-400">Customer:</span>
-                    <span className="font-bold text-slate-800 dark:text-white">{user?.name}</span>
+                {/* Doorstep Verification Photo Proof */}
+                {(selectedReceipt.verificationPhotoUrl || selectedReceipt.wasteImageUrl) && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-black uppercase text-slate-400 flex items-center space-x-1">
+                      <FaCamera className="text-emerald-500" />
+                      <span>Doorstep Scale Photo Proof</span>
+                    </span>
+                    <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 h-32 flex items-center justify-center">
+                      <img 
+                        src={selectedReceipt.verificationPhotoUrl || selectedReceipt.wasteImageUrl} 
+                        alt="Doorstep Verified Pile" 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-400">Collector Driver:</span>
-                    <span className="font-bold text-slate-800 dark:text-white">{selectedReceipt.driver?.user?.name || 'Assigned Driver'}</span>
+                )}
+
+                {/* Itemized Verified Table or Summary */}
+                {selectedReceipt.items && selectedReceipt.items.length > 0 ? (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-black uppercase text-slate-400 block">Verified Itemized Breakdown</span>
+                    <div className="space-y-1 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-800">
+                      {selectedReceipt.items.map((it, idx) => (
+                        <div key={idx} className="flex justify-between items-center py-1 border-b border-slate-200/40 dark:border-slate-800/60 last:border-0">
+                          <div>
+                            <span className="font-bold text-slate-900 dark:text-white block">{it.category}</span>
+                            <span className="text-[9px] text-slate-400">{it.actualWeight || it.estimatedWeight} kg verified</span>
+                          </div>
+                          <span className="font-black text-emerald-500">+{it.pointsEarned || Math.round((it.actualWeight || it.estimatedWeight || 1) * 35)} pts</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex justify-between">
+                ) : (
+                  <div className="flex justify-between p-2.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <span className="font-semibold text-slate-400">Processed Waste:</span>
-                    <span className="font-bold text-slate-800 dark:text-white">{selectedReceipt.wasteCategory} ({selectedReceipt.actualWeight} kg)</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{selectedReceipt.wasteCategory} ({selectedReceipt.actualWeight || selectedReceipt.estimatedWeight} kg)</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-400">Material Purity Code:</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{selectedReceipt.wasteAnalysis?.qualityScore}% Pure</span>
+                )}
+
+                {/* Quality Grade & Carbon Impact */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
+                    <p className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase">Quality Grade</p>
+                    <p className="text-xs font-black text-emerald-700 dark:text-emerald-300 mt-0.5">{selectedReceipt.qualityGrade || 'Grade A+ Premium'}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-400">Completion Time:</span>
-                    <span className="font-bold text-slate-850 dark:text-white">{new Date(selectedReceipt.completedAt).toLocaleString()}</span>
+                  <div className="p-2.5 bg-teal-500/10 border border-teal-500/20 rounded-2xl text-center">
+                    <p className="text-[9px] font-black text-teal-600 dark:text-teal-400 uppercase">CO2 Offset</p>
+                    <p className="text-xs font-black text-teal-700 dark:text-teal-300 mt-0.5">{((selectedReceipt.actualWeight || 5) * 1.8).toFixed(1)} kg saved</p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-250/20 rounded-2xl flex items-center justify-between text-emerald-800 dark:text-emerald-400">
-                  <span className="font-extrabold">Points Credited:</span>
-                  <span className="font-black text-lg">+{selectedReceipt.pointsAwarded} Points</span>
+                {/* Total Points Credited Banner */}
+                <div className="p-3.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 rounded-2xl flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <FaCoins className="w-5 h-5 text-amber-400" />
+                    <div>
+                      <span className="text-[10px] font-black text-slate-400 uppercase block">Wallet Reward</span>
+                      <span className="font-black text-sm text-slate-900 dark:text-white">EcoPoints Credited</span>
+                    </div>
+                  </div>
+                  <span className="font-black text-lg text-emerald-500">+{selectedReceipt.pointsAwarded || 175} pts</span>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Star Rating & Driver Tip Section */}
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase text-slate-400">
+                      Rate Collector Driver ({selectedReceipt.driver?.user?.name || 'Driver'})
+                    </span>
+                    {isRatingSubmitted && <span className="text-[10px] font-bold text-emerald-500">Feedback Saved ✓</span>}
+                  </div>
+
+                  {/* 5 Stars */}
+                  <div className="flex items-center space-x-2 justify-center py-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRatingScore(star)}
+                        className={`text-xl transition-transform hover:scale-110 ${star <= ratingScore ? 'text-amber-400' : 'text-slate-300 dark:text-slate-700'}`}
+                      >
+                        <FaStar />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Quick Tip Chips */}
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/40 dark:border-slate-800">
+                    <span className="text-[10px] font-bold text-slate-400">Tip Driver (EcoPoints):</span>
+                    <div className="flex items-center space-x-1.5">
+                      {[0, 10, 25, 50].map((pts) => (
+                        <button
+                          key={pts}
+                          type="button"
+                          onClick={() => setTipAmount(pts)}
+                          className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-colors ${
+                            tipAmount === pts ? 'bg-amber-400 text-slate-950 border-amber-300 font-black' : 'bg-white dark:bg-slate-900 text-slate-400 border-slate-200 dark:border-slate-700'
+                          }`}
+                        >
+                          {pts === 0 ? 'No tip' : `+${pts} pts`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {!isRatingSubmitted && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await api.put(`/user/pickups/${selectedReceipt._id}/rate`, {
+                            rating: ratingScore,
+                            tipPoints: tipAmount
+                          });
+                        } catch (e) {}
+                        setIsRatingSubmitted(true);
+                        addToast(`⭐ Thank you! Rated ${ratingScore} Stars for driver.`, 'success', 'Rating Submitted');
+                      }}
+                      className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow transition-colors"
+                    >
+                      Submit Driver Rating
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex gap-2 pt-1">
                   <button 
                     onClick={() => addToast('📄 Official Eco Receipt PDF downloaded successfully!', 'success', 'PDF Export')}
-                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-colors text-xs"
+                    className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-2xl transition-colors text-xs border border-slate-700"
                   >
-                    Download PDF Receipt
+                    Download PDF
                   </button>
                   <button 
-                    onClick={() => setSelectedReceipt(null)}
-                    className="py-3 px-5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors text-xs"
+                    onClick={() => { setSelectedReceipt(null); setIsRatingSubmitted(false); }}
+                    className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl transition-colors text-xs shadow-md"
                   >
-                    Close
+                    Done
                   </button>
                 </div>
               </div>

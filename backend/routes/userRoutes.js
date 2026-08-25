@@ -13,7 +13,8 @@ import {
   getImpactMetrics,
   getChallenges,
   joinChallenge,
-  spinDailyWheel
+  spinDailyWheel,
+  rateAndTipPickup
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -26,6 +27,7 @@ router.put('/profile', editProfile);
 router.post('/addresses', manageAddresses);
 router.post('/pickups', schedulePickup);
 router.get('/pickups', getMyPickups);
+router.put('/pickups/:pickupId/rate', rateAndTipPickup);
 router.get('/transactions', getMyTransactions);
 router.get('/redemptions', getMyRedemptions);
 router.post('/redeem', redeemReward);

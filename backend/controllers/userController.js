@@ -619,7 +619,56 @@ export const spinDailyWheel = async (req, res) => {
       success: true,
       message: `🎉 Daily Spin Bonus: +${prize} EcoPoints credited to your wallet!`,
       prize,
-      totalPoints: user.points
+// Rate Driver & Tip Points on Completed Pickup
+export const rateAndTipPickup = async (req, res) => {
+  const { pickupId } = req.params;
+  const { rating, review, tipPoints } = req.body;
+
+  try {
+    const pickup = await PickupRequest.findById(pickupId).populate('driver');
+    if (!pickup) return res.status(404).json({ success: false, message: 'Pickup not found' });
+    if (pickup.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Unauthorized to rate this pickup' });
+    }
+
+    pickup.customerRating = rating || 5;
+    if (review) pickup.customerReview = review;
+
+    // Process Driver Tip if provided
+    const parsedTip = parseInt(tipPoints) || 0;
+    if (parsedTip > 0) {
+      const user = await User.findById(req.user._id);
+      if (user.points >= parsedTip) {
+        user.points -= parsedTip;
+        await user.save();
+        pickup.driverTipPoints = (pickup.driverTipPoints || 0) + parsedTip;
+
+        await Transaction.create({
+          user: user._id,
+          pointsChange: -parsedTip,
+          type: 'spend',
+          description: `Tipped driver ${parsedTip} EcoPoints for pickup ${pickup._id}`
+        });
+
+        emitToUser(user._id, 'points:updated', { points: user.points, deductedPoints: parsedTip });
+      }
+    }
+
+    await pickup.save();
+
+    // Update Driver Green Rating Average
+    if (pickup.driver) {
+      const driver = await Driver.findById(pickup.driver);
+      if (driver) {
+        driver.rating = driver.rating ? parseFloat(((driver.rating + (rating || 5)) / 2).toFixed(1)) : (rating || 5);
+        await driver.save();
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Thank you for your rating & feedback!',
+      data: pickup
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

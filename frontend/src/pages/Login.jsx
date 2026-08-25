@@ -46,6 +46,17 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause();
+          videoRef.current.muted = true;
+        } catch (e) {}
+      }
+    };
+  }, []);
+
   // 11-Step Eco Background Story Milestones
   const storySteps = [
     { title: '1. Waste Segregation', text: 'User separates plastic, paper, and metal waste.', icon: '♻️' },

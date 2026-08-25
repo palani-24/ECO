@@ -53,6 +53,36 @@ const LandingPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Teardown and silence all audio/video when leaving Landing Page
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause();
+          videoRef.current.muted = true;
+        } catch (e) {}
+      }
+      if (modalVideoRef.current) {
+        try {
+          modalVideoRef.current.pause();
+          modalVideoRef.current.muted = true;
+        } catch (e) {}
+      }
+      if (videoAudioCtxRef.current) {
+        try {
+          videoAudioCtxRef.current.close();
+        } catch (e) {}
+        videoAudioCtxRef.current = null;
+      }
+      if (audioCtxRef.current) {
+        try {
+          audioCtxRef.current.close();
+        } catch (e) {}
+        audioCtxRef.current = null;
+      }
+    };
+  }, []);
+
   // Web Audio Synthesizer Engine
   const [sfxEnabled, setSfxEnabled] = useState(true);
   const audioCtxRef = useRef(null);

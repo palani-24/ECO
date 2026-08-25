@@ -5,6 +5,18 @@ import { useAuth } from '../context/AuthContext';
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
+  React.useEffect(() => {
+    // Silence any background landing page video/audio when entering authenticated portals
+    try {
+      document.querySelectorAll('video, audio').forEach(el => {
+        if (!el.srcObject) { // Keep camera viewfinder streams alive
+          el.muted = true;
+          el.pause();
+        }
+      });
+    } catch (e) {}
+  }, []);
+
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-slate-50 dark:bg-slate-950">

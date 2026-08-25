@@ -63,6 +63,17 @@ const Signup = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause();
+          videoRef.current.muted = true;
+        } catch (e) {}
+      }
+    };
+  }, []);
+
   // Password Strength Meter
   const getPasswordStrength = (pass) => {
     if (!pass) return { score: 0, text: '', color: 'bg-slate-700' };

@@ -54,6 +54,13 @@ const AdminPickups = React.lazy(() => import('./pages/admin/AdminPickups'));
 const AdminCoupons = React.lazy(() => import('./pages/admin/AdminCoupons'));
 const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
 const AdminSupportPage = React.lazy(() => import('./pages/admin/AdminSupportPage'));
+
+// Municipality & Grievance Pages
+const MunicipalityDashboard = React.lazy(() => import('./pages/municipality/MunicipalityDashboard'));
+const MunicipalityHeatmap = React.lazy(() => import('./pages/municipality/MunicipalityHeatmap'));
+const MunicipalityGrievances = React.lazy(() => import('./pages/municipality/MunicipalityGrievances'));
+const ReportIllegalDump = React.lazy(() => import('./pages/user/ReportIllegalDump'));
+
 const SupportChatWidget = React.lazy(() => import('./components/SupportChatWidget'));
 import PWAInstallBanner from './components/PWAInstallBanner';
 
@@ -355,6 +362,42 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <AdminSettings />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Citizen Grievance & Reporting Route */}
+            <Route 
+              path="/report-dump" 
+              element={
+                <ProtectedRoute allowedRoles={['user', 'admin', 'municipality']}>
+                  <ReportIllegalDump />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Municipality Executive & GIS Routes */}
+            <Route 
+              path="/municipality/dashboard" 
+              element={
+                <ProtectedRoute allowedRoles={['municipality', 'admin']}>
+                  <MunicipalityDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/municipality/heatmap" 
+              element={
+                <ProtectedRoute allowedRoles={['municipality', 'admin', 'user']}>
+                  <MunicipalityHeatmap />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/municipality/grievances" 
+              element={
+                <ProtectedRoute allowedRoles={['municipality', 'admin']}>
+                  <MunicipalityGrievances />
                 </ProtectedRoute>
               } 
             />

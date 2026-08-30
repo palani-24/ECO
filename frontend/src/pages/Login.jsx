@@ -89,6 +89,7 @@ const Login = () => {
         addToast(`Welcome back, ${res.user.name}!`, 'success', 'Login Successful');
         if (res.user.role === 'admin') navigate('/admin');
         else if (res.user.role === 'driver') navigate('/driver');
+        else if (res.user.role === 'municipality') navigate('/municipality/dashboard');
         else navigate('/dashboard');
       } else {
         setError(res.message || 'Invalid email/phone or password');
@@ -104,7 +105,11 @@ const Login = () => {
     setLoading(true);
     setError('');
 
-    const demoEmail = roleType === 'driver' ? 'demo.driver@ecoreward.com' : 'demo.user@ecoreward.com';
+    const demoEmail = roleType === 'driver' 
+      ? 'demo.driver@ecoreward.com' 
+      : roleType === 'municipality' 
+      ? 'demo.municipality@ecoreward.com' 
+      : 'demo.user@ecoreward.com';
     const demoPass = '123456';
 
     setEmailOrPhone(demoEmail);
@@ -115,9 +120,11 @@ const Login = () => {
       setLoading(false);
 
       if (res.success) {
-        addToast(`⚡ Instant Demo ${roleType === 'driver' ? 'Driver' : 'User'} Login Successful!`, 'success', 'Welcome to EcoReward');
+        const roleLabel = roleType === 'driver' ? 'Driver' : roleType === 'municipality' ? 'Municipality Officer' : 'User';
+        addToast(`⚡ Instant Demo ${roleLabel} Login Successful!`, 'success', 'Welcome to EcoReward');
         if (res.user.role === 'admin') navigate('/admin');
         else if (res.user.role === 'driver') navigate('/driver');
+        else if (res.user.role === 'municipality') navigate('/municipality/dashboard');
         else navigate('/dashboard');
       } else {
         setError(res.message || 'Demo login failed');
@@ -226,27 +233,35 @@ const Login = () => {
               </div>
 
               {/* 1-Click Instant Demo Login Bar */}
-              <div className="p-2.5 bg-emerald-500/10 dark:bg-[#06121e] rounded-2xl border border-emerald-500/30 text-xs flex items-center justify-between gap-2 shadow-sm">
+              <div className="p-2.5 bg-emerald-500/10 dark:bg-[#06121e] rounded-2xl border border-emerald-500/30 text-xs flex flex-col sm:flex-row items-center justify-between gap-2 shadow-sm">
                 <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 pl-1">
                   <FaMagic className="text-emerald-500" />
                   <span>Instant 1-Click Demo:</span>
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   <button 
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('user')}
-                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[11px] shadow-md hover:scale-105 transition-all flex items-center space-x-1"
+                    className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all"
                   >
-                    <span>Demo User</span>
+                    Citizen
                   </button>
                   <button 
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('driver')}
-                    className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 font-black text-[11px] shadow-md hover:scale-105 transition-all flex items-center space-x-1"
+                    className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all"
                   >
-                    <span>Demo Driver</span>
+                    Driver
+                  </button>
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('municipality')}
+                    className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all"
+                  >
+                    Municipality
                   </button>
                 </div>
               </div>

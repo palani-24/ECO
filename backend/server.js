@@ -17,6 +17,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import supportRoutes from './routes/supportRoutes.js';
 import storeRoutes from './routes/storeRoutes.js';
 import advancedRoutes from './routes/advancedRoutes.js';
+import municipalityRoutes from './routes/municipalityRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,6 +67,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/store', storeRoutes);
 app.use('/api/advanced', advancedRoutes);
+app.use('/api/municipality', municipalityRoutes);
 
 // Root Healthcheck
 app.get('/', (req, res) => {

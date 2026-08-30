@@ -110,23 +110,27 @@ export const loginUser = async (req, res) => {
     });
 
     const demoEmails = [
-      'user@ecoreward.com', 'driver@ecoreward.com', 'admin@ecoreward.com',
-      'demo.user@ecoreward.com', 'demo.driver@ecoreward.com', 'user@example.com'
+      'user@ecoreward.com', 'driver@ecoreward.com', 'admin@ecoreward.com', 'municipality@ecoreward.com',
+      'demo.user@ecoreward.com', 'demo.driver@ecoreward.com', 'demo.municipality@ecoreward.com', 'user@example.com'
     ];
 
     // Auto-create demo user on the fly if missing in database
     if (!user && demoEmails.includes(cleanInput)) {
       const isDriver = cleanInput.includes('driver');
       const isAdmin = cleanInput.includes('admin');
-      const role = isAdmin ? 'admin' : isDriver ? 'driver' : 'user';
+      const isMunicipality = cleanInput.includes('municipality');
+      const role = isAdmin ? 'admin' : isMunicipality ? 'municipality' : isDriver ? 'driver' : 'user';
 
       user = await User.create({
-        name: isAdmin ? 'Demo Admin' : isDriver ? 'Demo Driver' : 'Demo Recycler',
+        name: isAdmin ? 'Demo Admin' : isMunicipality ? 'Coimbatore Municipal Officer' : isDriver ? 'Demo Driver' : 'Demo Recycler',
         email: cleanInput,
         phone: '9876543210',
         password: password || '123456',
         role: role,
-        points: isDriver || isAdmin ? 0 : 500
+        ward: 'Ward 12 - Central Zone',
+        department: 'Solid Waste & ESG Directorate',
+        jurisdiction: 'Coimbatore City Municipal Corp',
+        points: isDriver || isAdmin || isMunicipality ? 0 : 500
       });
 
       if (isDriver) {

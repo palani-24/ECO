@@ -14,10 +14,13 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, default: '' },
-  role: { type: String, enum: ['user', 'driver', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'driver', 'admin', 'municipality'], default: 'user' },
   addresses: [addressSchema],
   points: { type: Number, default: 0 },
   profileImage: { type: String, default: '' },
+  ward: { type: String, default: 'Ward 12 - Central' },
+  department: { type: String, default: 'Solid Waste Management' },
+  jurisdiction: { type: String, default: 'Coimbatore Municipal Corporation' },
   lastLogin: { type: Date },
   loginCount: { type: Number, default: 0 }
 }, {

@@ -8,6 +8,8 @@ import api from '../../utils/api';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
 import QRPassModal from '../../components/QRPassModal';
 import EcoCertificateModal from '../../components/EcoCertificateModal';
+import GreenCertificateModal from '../../components/GreenCertificateModal';
+import RecyclingJourneyModal from '../../components/RecyclingJourneyModal';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import DriverChatModal from '../../components/DriverChatModal';
@@ -16,7 +18,7 @@ import {
   FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, 
   FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, 
   FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt, FaSearch, FaBell,
-  FaCalendarPlus, FaArrowRight, FaCheckCircle, FaRupeeSign, FaChartBar
+  FaCalendarPlus, FaArrowRight, FaCheckCircle, FaRupeeSign, FaChartBar, FaExclamationTriangle, FaRecycle
 } from 'react-icons/fa';
 
 const UserDashboard = () => {
@@ -30,6 +32,8 @@ const UserDashboard = () => {
   const [trackingDriver, setTrackingDriver] = useState(null);
   const [showAiScanner, setShowAiScanner] = useState(false);
   const [showDriverChat, setShowDriverChat] = useState(false);
+  const [showGreenCert, setShowGreenCert] = useState(false);
+  const [showJourney, setShowJourney] = useState(false);
 
   // Sync Real-Time Socket Pickup Updates
   useEffect(() => {
@@ -196,14 +200,14 @@ const UserDashboard = () => {
           {/* Quick Actions Row */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4 rounded-3xl shadow-sm space-y-2">
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 block">
-              Quick Actions
+              Smart Eco Actions
             </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-center">
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => window.location.href = '/schedule-pickup'}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black transition-all shadow-sm"
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaCalendarCheck />
                 <span>Book Pickup</span>
@@ -212,34 +216,51 @@ const UserDashboard = () => {
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  if (activePickup) setTrackingDriver(activePickup);
-                  else addToast('No active pickup found for live tracking', 'info', 'Live Tracking');
-                }}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-xs font-black transition-all shadow-sm"
+                onClick={() => setShowAiScanner(true)}
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-black transition-all shadow-sm"
               >
-                <FaRoute />
-                <span>Track Pickup</span>
+                <FaCamera />
+                <span>AI Vision Scan</span>
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => setShowAiScanner(true)}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 text-xs font-black transition-all shadow-sm"
+                onClick={() => window.location.href = '/report-dump'}
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-black transition-all shadow-sm"
               >
-                <FaCamera />
-                <span>Scan Waste</span>
+                <FaExclamationTriangle />
+                <span>Report Dump (+50)</span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowGreenCert(true)}
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/20 text-xs font-black transition-all shadow-sm"
+              >
+                <FaAward />
+                <span>Eco Certificate</span>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowJourney(true)}
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-xs font-black transition-all shadow-sm"
+              >
+                <FaRecycle />
+                <span>Trace Journey</span>
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => window.location.href = '/redeem'}
-                className="flex items-center justify-center space-x-2 p-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-black transition-all shadow-sm"
+                className="flex items-center justify-center space-x-1.5 p-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs font-black transition-all shadow-sm"
               >
                 <FaGift />
-                <span>Redeem Rewards</span>
+                <span>Redeem Shop</span>
               </motion.button>
             </div>
           </div>
@@ -411,6 +432,22 @@ const UserDashboard = () => {
             pickupId={activePickup?._id}
             recipientName={activePickup?.driver?.user?.name || 'Driver Karthik M'}
             recipientRole="driver"
+          />
+
+          {/* Green Citizen Certificate Modal */}
+          <GreenCertificateModal
+            isOpen={showGreenCert}
+            onClose={() => setShowGreenCert(false)}
+            totalWeight={analytics?.co2Reduced ? (analytics.co2Reduced / 1.5).toFixed(1) : 48.5}
+            totalCO2={analytics?.co2Reduced || 72.8}
+            points={user?.points || 500}
+          />
+
+          {/* Circular Economy & Traceability Journey Modal */}
+          <RecyclingJourneyModal
+            isOpen={showJourney}
+            onClose={() => setShowJourney(false)}
+            pickup={activePickup}
           />
 
     </UserLayout>

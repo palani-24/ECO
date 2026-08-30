@@ -128,6 +128,9 @@ const Signup = () => {
       if (res.success) {
         if (role === 'driver') {
           setShowPendingModal(true);
+        } else if (role === 'municipality') {
+          addToast('Municipal Officer account registered successfully!', 'success', 'Registration Successful');
+          navigate('/municipality/dashboard');
         } else {
           addToast('Account created successfully! Welcome to EcoReward.', 'success', 'Registration Successful');
           navigate('/dashboard');
@@ -195,31 +198,44 @@ const Signup = () => {
           </div>
 
           {/* Role Selection Cards */}
-          <div className="grid grid-cols-2 gap-2.5 p-1 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200/80 dark:border-slate-800">
+          <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 dark:bg-[#06121e] rounded-2xl border border-slate-200/80 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setRole('user')}
-              className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-1.5 ${
+              className={`py-2 px-2 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 ${
                 role === 'user'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <FaLeaf className="h-3.5 w-3.5" />
-              <span>Recycling User</span>
+              <FaLeaf className="h-3 w-3 shrink-0" />
+              <span>Citizen</span>
             </button>
 
             <button
               type="button"
               onClick={() => setRole('driver')}
-              className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-1.5 ${
+              className={`py-2 px-2 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 ${
                 role === 'driver'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md font-black'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <FaTruck className="h-3.5 w-3.5" />
-              <span>Collection Driver</span>
+              <FaTruck className="h-3 w-3 shrink-0" />
+              <span>Driver</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setRole('municipality')}
+              className={`py-2 px-2 rounded-xl font-black text-[11px] transition-all flex items-center justify-center space-x-1 ${
+                role === 'municipality'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 shadow-md font-black'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <FaShieldAlt className="h-3 w-3 shrink-0" />
+              <span>Municipality</span>
             </button>
           </div>
 

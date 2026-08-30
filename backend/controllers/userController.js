@@ -619,6 +619,14 @@ export const spinDailyWheel = async (req, res) => {
       success: true,
       message: `🎉 Daily Spin Bonus: +${prize} EcoPoints credited to your wallet!`,
       prize,
+      newPoints: user.points
+    });
+  } catch (error) {
+    console.error('Spin Daily Wheel Error:', error);
+    res.status(500).json({ success: false, message: 'Server error spinning daily wheel' });
+  }
+};
+
 // Rate Driver & Tip Points on Completed Pickup
 export const rateAndTipPickup = async (req, res) => {
   const { pickupId } = req.params;

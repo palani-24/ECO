@@ -52,6 +52,7 @@ const Navbar = () => {
     if (!user) return '/login';
     if (user.role === 'admin') return '/admin';
     if (user.role === 'driver') return '/driver';
+    if (user.role === 'municipality') return '/municipality/dashboard';
     return '/dashboard';
   };
 
@@ -59,6 +60,7 @@ const Navbar = () => {
     if (!user) return '/login';
     if (user.role === 'admin') return '/admin/settings';
     if (user.role === 'driver') return '/driver';
+    if (user.role === 'municipality') return '/municipality/dashboard';
     return '/profile';
   };
 

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { downloadElementAsImage, downloadElementAsPDF } from '../utils/pdfExport';
 
 const GreenCertificateModal = ({ 
   isOpen, 
@@ -34,6 +35,7 @@ const GreenCertificateModal = ({
   const certRef = useRef(null);
   const [certTheme, setCertTheme] = useState('gold'); // 'gold' | 'emerald'
   const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -53,6 +55,36 @@ const GreenCertificateModal = ({
     window.print();
   };
 
+  const handleDownloadImage = async () => {
+    if (!certRef.current) return;
+    setIsDownloading(true);
+    addToast('Saving high-resolution certificate to your gallery / downloads...', 'info', 'Downloading Image');
+    const filename = `EcoReward_Green_Certificate_${userName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+    const success = await downloadElementAsImage(certRef.current, filename);
+    setIsDownloading(false);
+    if (success) {
+      addToast('Certificate image successfully saved to your device!', 'success', 'Saved to Gallery');
+    } else {
+      addToast('Failed to generate image. Trying fallback print dialog.', 'error', 'Error');
+      window.print();
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!certRef.current) return;
+    setIsDownloading(true);
+    addToast('Generating official A4 ISO 14001 PDF document...', 'info', 'Downloading PDF');
+    const filename = `EcoReward_Official_Certificate_${userName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+    const success = await downloadElementAsPDF(certRef.current, filename, 'landscape');
+    setIsDownloading(false);
+    if (success) {
+      addToast('Official PDF Certificate downloaded successfully!', 'success', 'PDF Downloaded');
+    } else {
+      addToast('PDF generation failed. Opening print window...', 'error', 'Error');
+      window.print();
+    }
+  };
+
   const handleCopyCertId = () => {
     navigator.clipboard.writeText(certId);
     setCopied(true);
@@ -70,13 +102,6 @@ const GreenCertificateModal = ({
     } else {
       handleCopyCertId();
     }
-  };
-
-  const handleDownloadPDF = () => {
-    addToast('Preparing High-Resolution 300-DPI Certificate for download...', 'info', 'Generating PDF');
-    setTimeout(() => {
-      window.print();
-    }, 600);
   };
 
   return (
@@ -324,20 +349,38 @@ const GreenCertificateModal = ({
             </button>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              className="px-3.5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition"
             >
               Close
             </button>
 
             <button
+              onClick={handleDownloadImage}
+              disabled={isDownloading}
+              className="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              <span>{isDownloading ? 'Saving...' : 'Save to Gallery (PNG)'}</span>
+            </button>
+
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isDownloading}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 active:scale-95"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Download PDF</span>
+            </button>
+
+            <button
               onClick={handlePrint}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2"
+              className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition"
+              title="Print Certificate"
             >
               <Printer className="w-4 h-4" />
-              <span>Print / Save Certificate PDF</span>
             </button>
           </div>
 

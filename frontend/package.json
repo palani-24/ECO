@@ -13,6 +13,8 @@
     "@react-google-maps/api": "^2.20.8",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.10",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.35.0",
     "react": "^18.3.1",

@@ -30,6 +30,7 @@ import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import GreenCertificateModal from '../../components/GreenCertificateModal';
+import { generateESGReportPDF } from '../../utils/pdfExport';
 
 const ESGCorporatePortal = () => {
   const { user } = useAuth();
@@ -41,6 +42,7 @@ const ESGCorporatePortal = () => {
   const [bulkCategory, setBulkCategory] = useState('Bulk E-Waste & Servers');
   const [bulkWeightEst, setBulkWeightEst] = useState('250');
   const [pickupFrequency, setPickupFrequency] = useState('Weekly Recurring');
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetchESGData();
@@ -118,10 +120,18 @@ const ESGCorporatePortal = () => {
   };
 
   const handleDownloadESGReport = () => {
-    addToast('Generating ISO 14001 ESG Comprehensive Audit Report PDF...', 'info', 'ESG Audit');
+    setIsExporting(true);
+    addToast('Generating official ISO 14001 ESG Statement PDF...', 'info', 'Generating PDF');
     setTimeout(() => {
-      addToast('ESG Environmental Statement downloaded successfully!', 'success', 'PDF Ready');
-    }, 1500);
+      const success = generateESGReportPDF(data, user);
+      setIsExporting(false);
+      if (success) {
+        addToast('ISO 14001 ESG Audit Report PDF downloaded to your device!', 'success', 'PDF Downloaded');
+      } else {
+        addToast('Failed to download PDF. Opening print window...', 'error', 'Error');
+        window.print();
+      }
+    }, 600);
   };
 
   return (

@@ -124,7 +124,7 @@ function App() {
               <Route 
                 path="/esg-portal" 
                 element={
-                  <ProtectedRoute allowedRoles={['user']}>
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
                     <ESGCorporatePortal />
                   </ProtectedRoute>
                 } 
@@ -132,7 +132,7 @@ function App() {
               <Route 
                 path="/store" 
                 element={
-                  <ProtectedRoute allowedRoles={['user']}>
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
                     <EcoStore />
                   </ProtectedRoute>
                 } 
@@ -140,7 +140,7 @@ function App() {
               <Route 
                 path="/leaderboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['user']}>
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin', 'driver']}>
                     <Leaderboard />
                   </ProtectedRoute>
                 } 
@@ -148,7 +148,7 @@ function App() {
               <Route 
                 path="/challenges" 
                 element={
-                  <ProtectedRoute allowedRoles={['user']}>
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
                     <CommunityChallenges />
                   </ProtectedRoute>
                 } 

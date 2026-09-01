@@ -100,6 +100,7 @@ const ChangeView = ({ center }) => {
 const GoogleRouteMap = ({
   driverName = 'Driver',
   vehicleNumber = '',
+  pickupAddress = '',
   pickups = [],
   driverLocation = null,
   userLocation = null,

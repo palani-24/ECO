@@ -66,8 +66,18 @@ const Sidebar = () => {
     { path: '/admin/settings', label: 'Settings', icon: FaCogs },
   ];
 
+  const municipalityLinks = [
+    { path: '/municipality/dashboard', label: 'Command Center', icon: FaChartLine },
+    { path: '/municipality/heatmap', label: 'GIS Heatmap', icon: FaMapPin, badge: 'LIVE' },
+    { path: '/municipality/grievances', label: 'Citizen Grievances', icon: FaExclamationTriangle, badge: 'ALERT' },
+    { path: '/esg-portal', label: 'ESG Audit Portal', icon: FaBuilding, badge: 'ISO' },
+    { path: '/leaderboard', label: 'Ward Leaderboard', icon: FaTrophy },
+    { path: '/profile', label: 'Officer Profile', icon: FaUser },
+  ];
+
   const getLinks = () => {
     if (user.role === 'admin') return adminLinks;
+    if (user.role === 'municipality') return municipalityLinks;
     if (user.role === 'driver') return driverLinks;
     return customerLinks;
   };

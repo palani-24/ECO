@@ -238,12 +238,12 @@ const Leaderboard = () => {
 
                     <div className="flex items-center space-x-6 sm:text-right">
                       <div>
-                        <span className="font-black text-sm text-slate-900 dark:text-white block">{soc.totalKg.toLocaleString()} KG</span>
+                        <span className="font-black text-sm text-slate-900 dark:text-white block">{(soc.totalKg || 0).toLocaleString()} KG</span>
                         <span className="text-[10px] text-slate-400 font-bold">Waste Diverted</span>
                       </div>
 
                       <div>
-                        <span className="font-black text-sm text-emerald-600 dark:text-emerald-400 block">{soc.points.toLocaleString()} pts</span>
+                        <span className="font-black text-sm text-emerald-600 dark:text-emerald-400 block">{(soc.points || 0).toLocaleString()} pts</span>
                         <span className="text-[10px] text-slate-400 font-bold">Total Pool</span>
                       </div>
                     </div>

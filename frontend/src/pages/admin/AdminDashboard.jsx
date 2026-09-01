@@ -217,7 +217,7 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <span className="text-2xl font-black text-slate-900 dark:text-white block">
-                    {analytics?.metrics?.totalUsers.toLocaleString()}
+                    {(analytics?.metrics?.totalUsers || 0).toLocaleString()}
                   </span>
                   <p className="text-[10px] uppercase font-black tracking-wider text-emerald-600 dark:text-emerald-400">Recycling Users</p>
                 </div>
@@ -229,7 +229,7 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <span className="text-2xl font-black text-slate-900 dark:text-white block">
-                    {analytics?.metrics?.totalDrivers.toLocaleString()}
+                    {(analytics?.metrics?.totalDrivers || 0).toLocaleString()}
                   </span>
                   <p className="text-[10px] uppercase font-black tracking-wider text-sky-600 dark:text-sky-400">Registered Drivers</p>
                 </div>
@@ -241,7 +241,7 @@ const AdminDashboard = () => {
                 </div>
                 <div>
                   <span className="text-2xl font-black text-slate-900 dark:text-white block">
-                    {analytics?.metrics?.totalPickups.toLocaleString()}
+                    {(analytics?.metrics?.totalPickups || 0).toLocaleString()}
                   </span>
                   <p className="text-[10px] uppercase font-black tracking-wider text-amber-600 dark:text-amber-400">Total Pickups</p>
                 </div>

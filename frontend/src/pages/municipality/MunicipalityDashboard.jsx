@@ -82,27 +82,27 @@ const MunicipalityDashboard = () => {
     fetchStats();
   }, []);
 
-  const summary = stats?.summary || {
-    totalWeightKg: 1820.5,
-    totalTons: 1.82,
-    totalPickups: 64,
-    completedPickups: 58,
-    activePickups: 6,
-    pickupEfficiencyPct: 91,
-    totalCitizens: 1420,
-    activeDrivers: 12,
-    openGrievances: 3,
-    resolvedGrievances: 19,
-    landfillTippingSaved: 42500
+  const summary = {
+    totalWeightKg: stats?.summary?.totalWeightKg ?? 1820.5,
+    totalTons: stats?.summary?.totalTons ?? 1.82,
+    totalPickups: stats?.summary?.totalPickups ?? 64,
+    completedPickups: stats?.summary?.completedPickups ?? 58,
+    activePickups: stats?.summary?.pendingPickups ?? stats?.summary?.activePickups ?? 6,
+    pickupEfficiencyPct: stats?.summary?.pickupEfficiencyPct ?? 91,
+    totalCitizens: stats?.summary?.totalCitizens ?? 1420,
+    activeDrivers: stats?.summary?.activeDrivers ?? 12,
+    openGrievances: stats?.summary?.openGrievances ?? 3,
+    resolvedGrievances: stats?.summary?.resolvedGrievances ?? 19,
+    landfillTippingSaved: stats?.summary?.landfillTippingSaved ?? 42500
   };
 
-  const esg = stats?.esgImpact || {
-    co2SavedKg: 2845.2,
-    co2SavedTons: 2.85,
-    treesSavedEquivalent: 130.7,
-    energySavedKwh: 12450,
-    waterSavedLiters: 48900,
-    landfillDivertedM3: 4.36
+  const esg = {
+    co2SavedKg: stats?.esgImpact?.co2SavedKg ?? 2845.2,
+    co2SavedTons: stats?.esgImpact?.co2SavedTons ?? 2.85,
+    treesSavedEquivalent: stats?.esgImpact?.treesSavedEquivalent ?? 130.7,
+    energySavedKwh: stats?.esgImpact?.energySavedKwh ?? 12450,
+    waterSavedLiters: stats?.esgImpact?.waterSavedLiters ?? 48900,
+    landfillDivertedM3: stats?.esgImpact?.landfillDivertedM3 ?? 4.36
   };
 
   const categoryBreakdown = stats?.categoryBreakdown || {
@@ -416,7 +416,7 @@ const MunicipalityDashboard = () => {
             </div>
             <div className="min-w-0">
               <div className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
-                ₹{summary.landfillTippingSaved.toLocaleString()}
+                ₹{(summary.landfillTippingSaved || 42500).toLocaleString()}
               </div>
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 truncate">
                 Landfill Cost Saved
@@ -579,7 +579,7 @@ const MunicipalityDashboard = () => {
               <div className="w-10 h-10 mx-auto rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center mb-2">
                 <Droplets className="w-5 h-5" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{esg.waterSavedLiters.toLocaleString()} L</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-800">{(esg.waterSavedLiters || 48900).toLocaleString()} L</div>
               <div className="text-xs font-bold text-slate-400 uppercase mt-0.5">Fresh Water Saved</div>
             </div>
 
@@ -587,7 +587,7 @@ const MunicipalityDashboard = () => {
               <div className="w-10 h-10 mx-auto rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center mb-2">
                 <Zap className="w-5 h-5" />
               </div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{esg.energySavedKwh.toLocaleString()} kWh</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-800">{(esg.energySavedKwh || 12450).toLocaleString()} kWh</div>
               <div className="text-xs font-bold text-slate-400 uppercase mt-0.5">Clean Energy Conserved</div>
             </div>
 
@@ -644,7 +644,7 @@ const MunicipalityDashboard = () => {
                   <div key={cat} className="space-y-1.5">
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-slate-700">{cat}</span>
-                      <span className="text-slate-500">{weight.toLocaleString()} kg <span className="text-slate-400 font-semibold">({pct}%)</span></span>
+                      <span className="text-slate-500">{(weight || 0).toLocaleString()} kg <span className="text-slate-400 font-semibold">({pct}%)</span></span>
                     </div>
                     <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                       <div

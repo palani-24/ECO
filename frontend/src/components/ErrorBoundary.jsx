@@ -13,10 +13,20 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('React Application Error Caught:', error, errorInfo);
+    // If a new build was deployed and an old chunk is requested, auto-reload once to fetch fresh assets
+    if (error?.message?.includes('dynamically imported module') || error?.message?.includes('Failed to fetch')) {
+      const lastReload = sessionStorage.getItem('last_chunk_reload');
+      const now = Date.now();
+      if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+        sessionStorage.setItem('last_chunk_reload', now.toString());
+        window.location.reload();
+      }
+    }
   }
 
   handleReset = () => {
     localStorage.clear();
+    sessionStorage.clear();
     window.location.href = '/';
   };
 

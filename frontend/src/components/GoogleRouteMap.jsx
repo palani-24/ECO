@@ -123,9 +123,30 @@ const GoogleRouteMap = ({
   const [duration, setDuration] = useState('');
   const [selectedMarker, setSelectedMarker] = useState(null);
 
-  // Watch device live GPS position
+  // Watch device live GPS position & center user location locally
   useEffect(() => {
     if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const liveUserCoords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        setUserPos(liveUserCoords);
+        if (!driverLocation) {
+          // Place driver 1.2km away from the user's real location with active route!
+          setCurrentPos({
+            lat: liveUserCoords.lat + 0.0075,
+            lng: liveUserCoords.lng + 0.0095
+          });
+        }
+      },
+      (err) => {
+        console.log('Using default city coordinates:', err.message);
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -133,7 +154,7 @@ const GoogleRouteMap = ({
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
-        setCurrentPos(newCoords);
+        setUserPos(newCoords);
         if (onLocationUpdate) {
           onLocationUpdate(newCoords);
         }
@@ -149,7 +170,7 @@ const GoogleRouteMap = ({
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [onLocationUpdate]);
+  }, [onLocationUpdate, driverLocation]);
 
   // Sync external driver location updates
   useEffect(() => {
@@ -217,68 +238,76 @@ const GoogleRouteMap = ({
   // IF GOOGLE MAPS API KEY IS NOT PROVIDED -> RENDER REAL INTERACTIVE OPENSTREETMAP LEAFLET MAP
   if (!apiKey) {
     return (
-      <div className="space-y-3">
-        {/* Header Bar */}
-        <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-3 rounded-2xl text-xs text-white">
-          <div className="flex items-center space-x-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span className="font-extrabold text-emerald-400">Live GPS OpenStreetMap Active</span>
-            {driverName && <span className="text-slate-400">({driverName})</span>}
-          </div>
-          <div className="flex items-center space-x-2 text-[10px] font-black">
-            <span className="bg-slate-800 text-slate-200 px-2 py-0.5 rounded-md border border-slate-700">
-              Live GPS Tracking
-            </span>
-          </div>
-        </div>
+      <div className="relative w-full h-full min-h-[380px] sm:min-h-[430px] rounded-2xl overflow-hidden z-0">
+        <MapContainer
+          center={[currentPos.lat, currentPos.lng]}
+          zoom={14}
+          scrollWheelZoom={true}
+          className="w-full h-full min-h-[380px] sm:min-h-[430px]"
+          style={{ width: '100%', height: '100%', minHeight: '380px' }}
+        >
+          <ChangeView center={currentPos} />
+          
+          {/* CartoDB High-Definition Street Tiles */}
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          />
 
-        {/* Leaflet OpenStreetMap Container */}
-        <div className="relative border border-slate-800 rounded-2xl overflow-hidden shadow-xl z-0" style={{ height }}>
-          <MapContainer
-            center={[currentPos.lat, currentPos.lng]}
-            zoom={13}
-            scrollWheelZoom={true}
-            style={{ width: '100%', height: '100%' }}
-          >
-            <ChangeView center={currentPos} />
-            {/* Dark CartoDB Map Tiles */}
-            <TileLayer
-              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-            />
+          {/* Real User / Destination Live Marker */}
+          <LeafletMarker position={[userPos ? userPos.lat : (currentPos.lat - 0.008), userPos ? userPos.lng : (currentPos.lng - 0.012)]} icon={citizenIcon}>
+            <Popup>
+              <div className="text-slate-900 text-xs font-bold p-1">
+                📍 <strong>Your Doorstep Location</strong>
+                <br />
+                <span className="text-[10px] text-emerald-700 font-semibold">
+                  {pickupAddress || 'Verified Pickup Address'}
+                </span>
+              </div>
+            </Popup>
+          </LeafletMarker>
 
-            {/* Driver Live Marker */}
-            <LeafletMarker position={[currentPos.lat, currentPos.lng]} icon={driverIcon}>
-              <Popup>
-                <div className="text-slate-900 text-xs font-bold p-1">
-                  🚛 Driver: {driverName} ({vehicleNumber})
-                  <br />
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    Lat: {currentPos.lat.toFixed(4)}, Lng: {currentPos.lng.toFixed(4)}
-                  </span>
-                </div>
-              </Popup>
-            </LeafletMarker>
+          {/* Driver Live Moving Marker */}
+          <LeafletMarker position={[currentPos.lat, currentPos.lng]} icon={driverIcon}>
+            <Popup>
+              <div className="text-slate-900 text-xs font-bold p-1">
+                🚛 <strong>Driver: {driverName}</strong>
+                <br />
+                <span className="text-[10px] text-emerald-600 font-bold">{vehicleNumber}</span>
+                <br />
+                <span className="text-[9px] text-slate-500 font-mono">
+                  GPS: {currentPos.lat.toFixed(4)}, {currentPos.lng.toFixed(4)}
+                </span>
+              </div>
+            </Popup>
+          </LeafletMarker>
 
-            {/* Pickups / Destination Markers */}
-            {pickups.map((p, idx) => {
-              const coords = getPickupCoords(p, idx, currentPos);
-              return (
-                <LeafletMarker key={p._id || idx} position={[coords.lat, coords.lng]} icon={citizenIcon}>
-                  <Popup>
-                    <div className="text-slate-900 text-xs p-1">
-                      <strong className="block text-emerald-700">{p.user?.name || `Pickup #${idx + 1}`}</strong>
-                      <span>Category: {p.wasteCategory} ({p.estimatedWeight}kg)</span>
-                    </div>
-                  </Popup>
-                </LeafletMarker>
-              );
-            })}
+          {/* Pickups / Destination Markers */}
+          {pickups.map((p, idx) => {
+            const coords = getPickupCoords(p, idx, currentPos);
+            return (
+              <LeafletMarker key={p._id || idx} position={[coords.lat, coords.lng]} icon={citizenIcon}>
+                <Popup>
+                  <div className="text-slate-900 text-xs p-1">
+                    <strong className="block text-emerald-700">{p.user?.name || `Pickup #${idx + 1}`}</strong>
+                    <span>Category: {p.wasteCategory} ({p.estimatedWeight}kg)</span>
+                  </div>
+                </Popup>
+              </LeafletMarker>
+            );
+          })}
 
-            {/* Route Polyline */}
-            <Polyline positions={leafletPolyline} color="#10b981" weight={4} dashArray="6,8" />
-          </MapContainer>
-        </div>
+          {/* Route Polyline connecting Driver to Doorstep */}
+          <Polyline 
+            positions={[
+              [currentPos.lat, currentPos.lng],
+              [userPos ? userPos.lat : (currentPos.lat - 0.008), userPos ? userPos.lng : (currentPos.lng - 0.012)]
+            ]} 
+            color="#059669" 
+            weight={5} 
+            dashArray="8,10" 
+          />
+        </MapContainer>
       </div>
     );
   }

@@ -93,24 +93,28 @@ const ESGCorporatePortal = () => {
     });
   };
 
-  const data = esgData || {
-    organizationName: 'Coimbatore Municipal Solid Waste Corporation',
-    totalRecycledKg: 5840.5,
-    totalTons: 5.84,
-    co2OffsetTons: 9.8,
-    treesSavedCount: 184,
-    waterConservedLiters: 48900,
-    cleanEnergyKwh: 12450,
-    landfillDiversionRate: '98.4%',
-    circularityIndex: '94/100',
-    esgComplianceScore: '96/100 (ISO 14001 Gold Certified)',
+  const data = {
+    organizationName: esgData?.organizationName || 'Coimbatore Municipal Solid Waste Corporation',
+    totalRecycledKg: esgData?.totalRecycledKg ?? 5840.5,
+    totalTons: esgData?.totalTons ?? ((esgData?.totalRecycledKg ? esgData.totalRecycledKg / 1000 : 5.84)),
+    co2OffsetTons: esgData?.co2OffsetTons ?? 9.8,
+    treesSavedCount: esgData?.treesSavedCount ?? 184,
+    waterConservedLiters: esgData?.waterConservedLiters ?? 48900,
+    cleanEnergyKwh: esgData?.cleanEnergyKwh ?? 12450,
+    landfillDiversionRate: esgData?.landfillDiversionRate || '98.4%',
+    circularityIndex: esgData?.circularityIndex || '94/100',
+    esgComplianceScore: esgData?.esgComplianceScore || '96/100 (ISO 14001 Gold Certified)',
     scopeEmissions: {
-      scope1Direct: '0.00 MT CO2e',
-      scope2Indirect: '0.45 MT CO2e',
-      scope3Avoided: '9.80 MT CO2e'
+      scope1Direct: esgData?.scopeEmissions?.scope1Direct || '0.00 MT CO2e (Zero Landfill)',
+      scope2Indirect: esgData?.scopeEmissions?.scope2Indirect || '0.45 MT CO2e (EV Fleet)',
+      scope3Avoided: esgData?.scopeEmissions?.scope3Avoided || '9.80 MT CO2e (Recycled Material Offset)'
     },
-    monthlyData: [],
-    sdgGoals: []
+    monthlyData: esgData?.monthlyData || [],
+    sdgGoals: esgData?.sdgGoals || [
+      { goal: 'SDG 11: Sustainable Cities & Communities', score: '98%', status: 'Achieved' },
+      { goal: 'SDG 12: Responsible Consumption & Production', score: '94%', status: 'Target Met' },
+      { goal: 'SDG 13: Climate Action (GHG Abatement)', score: '96%', status: 'Gold Level' }
+    ]
   };
 
   const handleDownloadESGReport = () => {

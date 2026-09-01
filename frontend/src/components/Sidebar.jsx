@@ -5,7 +5,8 @@ import {
   FaCalendarAlt, FaHistory, FaGift, FaUser, FaBell, FaSignOutAlt, 
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
   FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock, FaComments, 
-  FaStore, FaBars, FaTimes, FaRecycle, FaEllipsisH, FaBuilding
+  FaStore, FaBars, FaTimes, FaRecycle, FaEllipsisH, FaBuilding,
+  FaMapPin, FaExclamationTriangle
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 

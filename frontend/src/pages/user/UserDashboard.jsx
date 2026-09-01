@@ -17,7 +17,7 @@ import LeaderboardWidget from '../../components/LeaderboardWidget';
 import { 
   FaCoins, FaCheckDouble, FaHourglassHalf, FaGift, FaCalendarCheck, FaUserCircle, 
   FaCompass, FaMapPin, FaPaperPlane, FaLeaf, FaTree, FaTint, FaBolt, FaTruck, 
-  FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt, FaSearch, FaBell,
+  FaQrcode, FaAward, FaCamera, FaRoute, FaComments, FaPhoneAlt, FaPhone, FaExpand, FaClock, FaSearch, FaBell,
   FaCalendarPlus, FaArrowRight, FaCheckCircle, FaRupeeSign, FaChartBar, FaExclamationTriangle, FaRecycle
 } from 'react-icons/fa';
 

@@ -33,6 +33,12 @@ const Signup = () => {
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [vehicleType, setVehicleType] = useState('E-Rickshaw Heavy Loader');
 
+  // Municipality Fields
+  const [jurisdiction, setJurisdiction] = useState('Coimbatore Municipal Corporation');
+  const [department, setDepartment] = useState('Solid Waste Management (SWM)');
+  const [ward, setWard] = useState('Ward 12 - Central');
+  const [officerDesignation, setOfficerDesignation] = useState('Sanitary Inspector / SWM In-Charge');
+
   // UI States
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -119,6 +125,10 @@ const Signup = () => {
       payload.vehicleType = vehicleType;
       payload.licenseNumber = licenseNumber || `DL-${vehicleNumber.replace(/\s+/g, '-').toUpperCase()}`;
       payload.aadhaarNumber = aadhaarNumber;
+    } else if (role === 'municipality') {
+      payload.jurisdiction = jurisdiction;
+      payload.department = department;
+      payload.ward = ward;
     }
 
     try {
@@ -380,6 +390,71 @@ const Signup = () => {
                   <div>
                     <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Aadhaar Card No.</label>
                     <input type="text" value={aadhaarNumber} onChange={(e) => setAadhaarNumber(e.target.value)} placeholder="1234 5678 9012" className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* MUNICIPALITY SPECIFIC FIELDS */}
+            {role === 'municipality' && (
+              <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2.5 animate-fadeIn">
+                <span className="text-xs font-extrabold text-cyan-500 flex items-center space-x-1.5">
+                  <FaShieldAlt />
+                  <span>Municipal Officer Authority Verification</span>
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                  <div>
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">City Municipal Corporation</label>
+                    <select 
+                      value={jurisdiction} 
+                      onChange={(e) => setJurisdiction(e.target.value)} 
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold"
+                    >
+                      <option value="Coimbatore Municipal Corporation">Coimbatore Municipal Corporation</option>
+                      <option value="Greater Chennai Corporation">Greater Chennai Corporation</option>
+                      <option value="Madurai Municipal Corporation">Madurai Municipal Corporation</option>
+                      <option value="Tiruchirappalli Corporation">Tiruchirappalli Corporation</option>
+                      <option value="Salem City Municipal Corporation">Salem City Municipal Corporation</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Department / Wing</label>
+                    <select 
+                      value={department} 
+                      onChange={(e) => setDepartment(e.target.value)} 
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold"
+                    >
+                      <option value="Solid Waste Management (SWM)">Solid Waste Management (SWM)</option>
+                      <option value="Sanitary & Public Health Division">Sanitary & Public Health Division</option>
+                      <option value="City GIS & Smart Surveillance">City GIS & Smart Surveillance</option>
+                      <option value="Environmental & ESG Audit Unit">Environmental & ESG Audit Unit</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                  <div>
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Ward / Zone Assignment</label>
+                    <input 
+                      type="text" 
+                      value={ward} 
+                      onChange={(e) => setWard(e.target.value)} 
+                      placeholder="e.g. Ward 12 - Central Zone" 
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[8px] font-black text-slate-400 uppercase block mb-0.5">Officer Designation</label>
+                    <input 
+                      type="text" 
+                      value={officerDesignation} 
+                      onChange={(e) => setOfficerDesignation(e.target.value)} 
+                      placeholder="Sanitary Inspector / Executive Officer" 
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-[#06121e] rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-extrabold" 
+                    />
                   </div>
                 </div>
               </div>

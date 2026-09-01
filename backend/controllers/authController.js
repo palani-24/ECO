@@ -16,7 +16,7 @@ const generateToken = (id) => {
  * @access  Public
  */
 export const registerUser = async (req, res) => {
-  const { name, email, password, role, vehicleNumber, vehicleType, address } = req.body;
+  const { name, email, password, role, phone, ward, department, jurisdiction, vehicleNumber, vehicleType, address } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -27,15 +27,19 @@ export const registerUser = async (req, res) => {
 
     // Prepare default address if provided
     const addresses = address ? [ { ...address, isDefault: true } ] : [];
-    const welcomePoints = (role === 'driver' || role === 'admin') ? 0 : 50;
+    const welcomePoints = (role === 'driver' || role === 'admin' || role === 'municipality') ? 0 : 50;
 
     // Create User
     const user = await User.create({
       name,
       email,
       password,
+      phone: phone || '',
       role: role || 'user',
       points: welcomePoints,
+      ward: ward || 'Ward 12 - Central',
+      department: department || 'Solid Waste Management',
+      jurisdiction: jurisdiction || 'Coimbatore Municipal Corporation',
       addresses
     });
 

@@ -5,34 +5,24 @@ import User from '../models/User.js';
 import PickupRequest from '../models/PickupRequest.js';
 import { protect } from '../middleware/auth.js';
 
+import { scanWasteWithVisionAI } from '../services/aiService.js';
+
 const router = express.Router();
 
-// 1. AI Waste Image Scanner API
+// 1. AI Waste Image Scanner API (Powered by Real Gemini Vision + Anti-Fraud)
 router.post('/ai/scan-waste', protect, async (req, res) => {
   try {
     const { imageBase64, sampleCategory } = req.body;
     
-    // Simulate AI Computer Vision processing
-    const categories = ['Plastic Containers & Bottles', 'Electronic Waste (E-Waste)', 'Paper & Cardboard Boxes', 'Metal Cans & Aluminum'];
-    const chosenCategory = sampleCategory || categories[Math.floor(Math.random() * categories.length)];
-    const estimatedWeight = (Math.random() * 8 + 1.5).toFixed(1); // 1.5 - 9.5 kg
-    const confidenceScore = Math.floor(Math.random() * 6 + 93); // 93% - 98%
-    const calculatedPoints = Math.round(estimatedWeight * 25);
-    const co2Saved = (estimatedWeight * 1.8).toFixed(2);
+    // Call Gemini 1.5 Flash Vision & Anti-Fraud detection
+    const result = await scanWasteWithVisionAI(imageBase64, sampleCategory);
 
     res.json({
       success: true,
-      data: {
-        category: chosenCategory,
-        estimatedWeightKg: parseFloat(estimatedWeight),
-        confidencePercentage: confidenceScore,
-        estimatedEcoPoints: calculatedPoints,
-        co2OffsetKg: parseFloat(co2Saved),
-        recyclabilityGrade: 'Grade A+ Premium',
-        aiTips: 'Please rinse bottles and tie loose cardboard bundles prior to driver arrival.'
-      }
+      data: result
     });
   } catch (err) {
+    console.error('AI Scan Error:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

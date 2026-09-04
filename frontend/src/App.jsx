@@ -6,80 +6,99 @@ import { SocketProvider } from './context/SocketContext';
 import { LanguageProvider } from './context/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
+import ErrorBoundary from './components/ErrorBoundary';
+import SupportChatWidget from './components/SupportChatWidget';
+import PWAInstallBanner from './components/PWAInstallBanner';
+
+// Resilient chunk loader with automatic cache busting on Vercel deployments
+const lazyWithRetry = (componentImport) =>
+  React.lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error) {
+      console.warn('Chunk loading failed, checking deployment update:', error);
+      const isRetried = window.sessionStorage.getItem('chunk_retry_' + window.location.pathname);
+      if (!isRetried) {
+        window.sessionStorage.setItem('chunk_retry_' + window.location.pathname, '1');
+        window.location.reload();
+        return new Promise(() => {}); // hold suspense until reload triggers
+      }
+      throw error;
+    }
+  });
+
 // Public Pages
-const LandingPage = React.lazy(() => import('./pages/LandingPage'));
-const Login = React.lazy(() => import('./pages/Login'));
-const Signup = React.lazy(() => import('./pages/Signup'));
-const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
+const LandingPage = lazyWithRetry(() => import('./pages/LandingPage'));
+const Login = lazyWithRetry(() => import('./pages/Login'));
+const Signup = lazyWithRetry(() => import('./pages/Signup'));
+const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
 
 // User Pages
-const UserDashboard = React.lazy(() => import('./pages/user/UserDashboard'));
-const SchedulePickup = React.lazy(() => import('./pages/user/SchedulePickup'));
-const MyPickups = React.lazy(() => import('./pages/user/MyPickups'));
-const RedeemRewards = React.lazy(() => import('./pages/user/RedeemRewards'));
-const EcoStore = React.lazy(() => import('./pages/user/EcoStore'));
-const Profile = React.lazy(() => import('./pages/user/Profile'));
-const Leaderboard = React.lazy(() => import('./pages/user/Leaderboard'));
-const CommunityChallenges = React.lazy(() => import('./pages/user/CommunityChallenges'));
-const ESGCorporatePortal = React.lazy(() => import('./pages/user/ESGCorporatePortal'));
+const UserDashboard = lazyWithRetry(() => import('./pages/user/UserDashboard'));
+const SchedulePickup = lazyWithRetry(() => import('./pages/user/SchedulePickup'));
+const MyPickups = lazyWithRetry(() => import('./pages/user/MyPickups'));
+const RedeemRewards = lazyWithRetry(() => import('./pages/user/RedeemRewards'));
+const EcoStore = lazyWithRetry(() => import('./pages/user/EcoStore'));
+const Profile = lazyWithRetry(() => import('./pages/user/Profile'));
+const Leaderboard = lazyWithRetry(() => import('./pages/user/Leaderboard'));
+const CommunityChallenges = lazyWithRetry(() => import('./pages/user/CommunityChallenges'));
+const ESGCorporatePortal = lazyWithRetry(() => import('./pages/user/ESGCorporatePortal'));
 
 // Driver Pages
-const DriverDashboard = React.lazy(() => import('./pages/driver/DriverDashboard'));
-const DriverAssignedPickups = React.lazy(() => import('./pages/driver/DriverAssignedPickups'));
-const DriverPickupHistory = React.lazy(() => import('./pages/driver/DriverPickupHistory'));
-const DriverEarnings = React.lazy(() => import('./pages/driver/DriverEarnings'));
-const DriverGatePass = React.lazy(() => import('./pages/driver/DriverGatePass'));
-const DriverQualityAudit = React.lazy(() => import('./pages/driver/DriverQualityAudit'));
-const DriverBatteryTelematics = React.lazy(() => import('./pages/driver/DriverBatteryTelematics'));
-const DriverRoadHazards = React.lazy(() => import('./pages/driver/DriverRoadHazards'));
-const DriverShifts = React.lazy(() => import('./pages/driver/DriverShifts'));
-const DriverEquipment = React.lazy(() => import('./pages/driver/DriverEquipment'));
-const DriverSettings = React.lazy(() => import('./pages/driver/DriverSettings'));
-const DriverDocuments = React.lazy(() => import('./pages/driver/DriverDocuments'));
-const DriverRewards = React.lazy(() => import('./pages/driver/DriverRewards'));
-const DriverNotifications = React.lazy(() => import('./pages/driver/DriverNotifications'));
-const DriverNavigationPage = React.lazy(() => import('./pages/driver/DriverNavigationPage'));
-const DriverSecurity = React.lazy(() => import('./pages/driver/DriverSecurity'));
-const DriverSupport = React.lazy(() => import('./pages/driver/DriverSupport'));
-const DriverProfilePage = React.lazy(() => import('./pages/driver/DriverProfilePage'));
-const DriverVehiclePage = React.lazy(() => import('./pages/driver/DriverVehiclePage'));
+const DriverDashboard = lazyWithRetry(() => import('./pages/driver/DriverDashboard'));
+const DriverAssignedPickups = lazyWithRetry(() => import('./pages/driver/DriverAssignedPickups'));
+const DriverPickupHistory = lazyWithRetry(() => import('./pages/driver/DriverPickupHistory'));
+const DriverEarnings = lazyWithRetry(() => import('./pages/driver/DriverEarnings'));
+const DriverGatePass = lazyWithRetry(() => import('./pages/driver/DriverGatePass'));
+const DriverQualityAudit = lazyWithRetry(() => import('./pages/driver/DriverQualityAudit'));
+const DriverBatteryTelematics = lazyWithRetry(() => import('./pages/driver/DriverBatteryTelematics'));
+const DriverRoadHazards = lazyWithRetry(() => import('./pages/driver/DriverRoadHazards'));
+const DriverShifts = lazyWithRetry(() => import('./pages/driver/DriverShifts'));
+const DriverEquipment = lazyWithRetry(() => import('./pages/driver/DriverEquipment'));
+const DriverSettings = lazyWithRetry(() => import('./pages/driver/DriverSettings'));
+const DriverDocuments = lazyWithRetry(() => import('./pages/driver/DriverDocuments'));
+const DriverRewards = lazyWithRetry(() => import('./pages/driver/DriverRewards'));
+const DriverNotifications = lazyWithRetry(() => import('./pages/driver/DriverNotifications'));
+const DriverNavigationPage = lazyWithRetry(() => import('./pages/driver/DriverNavigationPage'));
+const DriverSecurity = lazyWithRetry(() => import('./pages/driver/DriverSecurity'));
+const DriverSupport = lazyWithRetry(() => import('./pages/driver/DriverSupport'));
+const DriverProfilePage = lazyWithRetry(() => import('./pages/driver/DriverProfilePage'));
+const DriverVehiclePage = lazyWithRetry(() => import('./pages/driver/DriverVehiclePage'));
 
 // Admin Pages
-const AdminLogin = React.lazy(() => import('./pages/admin/AdminLogin'));
-const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
-const AdminUsers = React.lazy(() => import('./pages/admin/AdminUsers'));
-const AdminDrivers = React.lazy(() => import('./pages/admin/AdminDrivers'));
-const AdminPickups = React.lazy(() => import('./pages/admin/AdminPickups'));
-const AdminCoupons = React.lazy(() => import('./pages/admin/AdminCoupons'));
-const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
-const AdminSupportPage = React.lazy(() => import('./pages/admin/AdminSupportPage'));
+const AdminLogin = lazyWithRetry(() => import('./pages/admin/AdminLogin'));
+const AdminDashboard = lazyWithRetry(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazyWithRetry(() => import('./pages/admin/AdminUsers'));
+const AdminDrivers = lazyWithRetry(() => import('./pages/admin/AdminDrivers'));
+const AdminPickups = lazyWithRetry(() => import('./pages/admin/AdminPickups'));
+const AdminCoupons = lazyWithRetry(() => import('./pages/admin/AdminCoupons'));
+const AdminSettings = lazyWithRetry(() => import('./pages/admin/AdminSettings'));
+const AdminSupportPage = lazyWithRetry(() => import('./pages/admin/AdminSupportPage'));
 
 // Municipality & Grievance Pages
-const MunicipalityDashboard = React.lazy(() => import('./pages/municipality/MunicipalityDashboard'));
-const MunicipalityHeatmap = React.lazy(() => import('./pages/municipality/MunicipalityHeatmap'));
-const MunicipalityGrievances = React.lazy(() => import('./pages/municipality/MunicipalityGrievances'));
-const ReportIllegalDump = React.lazy(() => import('./pages/user/ReportIllegalDump'));
-
-const SupportChatWidget = React.lazy(() => import('./components/SupportChatWidget'));
-import PWAInstallBanner from './components/PWAInstallBanner';
+const MunicipalityDashboard = lazyWithRetry(() => import('./pages/municipality/MunicipalityDashboard'));
+const MunicipalityHeatmap = lazyWithRetry(() => import('./pages/municipality/MunicipalityHeatmap'));
+const MunicipalityGrievances = lazyWithRetry(() => import('./pages/municipality/MunicipalityGrievances'));
+const ReportIllegalDump = lazyWithRetry(() => import('./pages/user/ReportIllegalDump'));
 
 function App() {
   return (
-    <Router>
-      <ToastProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <SocketProvider>
-              <SupportChatWidget />
-              <PWAInstallBanner />
-              <React.Suspense fallback={
-                <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
-                  <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
-                </div>
-              }>
-                <Routes>
+    <ErrorBoundary>
+      <Router>
+        <ToastProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <SocketProvider>
+                <SupportChatWidget />
+                <PWAInstallBanner />
+                <React.Suspense fallback={
+                  <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
+                    <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
+                  </div>
+                }>
+                  <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
@@ -420,9 +439,9 @@ function App() {
         </LanguageProvider>
       </AuthProvider>
     </ToastProvider>
-  </Router>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
 export default App;
-

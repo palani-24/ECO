@@ -265,12 +265,17 @@ export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
     };
   }
 
-  // 4. Waste Segregation & Which Bin
-  if (q.includes('battery') || q.includes('bulb') || q.includes('plastic') || q.includes('food') || q.includes('bin') || q.includes('segregat') || q.includes('kuppa') || q.includes('waste')) {
+  // 4. Waste Types & Segregation (Tamil/Tanglish/English - matches "ethana type wast iruku", "waste types", "bins")
+  if (
+    q.includes('type') || q.includes('ethana') || q.includes('vagai') || q.includes('vaga') ||
+    q.includes('wast') || q.includes('waste') || q.includes('kuppa') || q.includes('kuppai') ||
+    q.includes('bin') || q.includes('segregat') || q.includes('battery') || q.includes('bulb') ||
+    q.includes('food') || q.includes('plastic')
+  ) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `🗑️ **Household 4-Bin Segregation Guide:**\n• 🟢 **Green Bin (Wet)**: Food waste, fruit peels & compostable matter.\n• 🔵 **Blue Bin (Dry)**: Clean paper, cardboard boxes, plastics, metals & glass jars.\n• 🔴 **Red Bin (Hazardous)**: AA/Lithium batteries, electronic chargers, CFL bulbs.\n• 🟡 **Yellow Bin (Sanitary)**: Sanitary napkins, diapers wrapped in paper.\n\n⚠️ *Safety Tip:* Tape battery terminals before handover to prevent short-circuits!`
+      reply: `♻️ **Namma Platform-la 4 Main Waste Categories & 5 Recyclables irukku:**\n\n📌 **4-Bin Color Coding:**\n• 🟢 **Green Bin (Wet / Organic)**: Food waste, fruit peels, compostable items.\n• 🔵 **Blue Bin (Dry Recyclables)**: Clean plastic bottles, paper, cardboard, metal cans, glass.\n• 🔴 **Red Bin (Hazardous)**: Batteries, chargers, CFL bulbs, chemical containers.\n• 🟡 **Yellow Bin (Sanitary)**: Sanitary napkins, medical bandages.\n\n💰 **Doorstep Pickup Recyclables (Cash & Points):**\n1. Plastics (₹18/kg + 3 pts)\n2. Paper / Cardboard (₹14/kg + 2 pts)\n3. Scrap Metal / Iron (₹34/kg + 5 pts)\n4. E-Waste / Electronics (₹48/kg + 10 pts)\n5. Glass Bottles (₹6/kg + 1 pt)\n\nEndha waste unga kitta irukku, ${name}? Schedule Pickup panna ready-ah?`
     };
   }
 

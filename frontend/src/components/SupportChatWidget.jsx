@@ -364,12 +364,17 @@ const SupportChatWidget = () => {
       return `🚛 **Doorstep Pickup Booking:**\nNeenga 'Schedule Pickup' tab-la poyi unga address & preferred time slot select pannalam. Namma smart EV truck unga doorstep-kku vandhu certified scale moolama waste weigh panni instant-ah points credit pannuvom!`;
     }
 
-    // 4. Handover OTP & Driver Verification
+    // 4. Waste Types & 4-Bin Segregation (matches "ethana type wast iruku", "waste types", "kuppai vagai")
+    if (q.includes('type') || q.includes('ethana') || q.includes('vagai') || q.includes('vaga') || q.includes('wast') || q.includes('waste') || q.includes('kuppa') || q.includes('kuppai') || q.includes('bin') || q.includes('segregat') || q.includes('dustbin') || q.includes('color')) {
+      return `♻️ **Namma Platform-la 4 Main Waste Categories & 5 Recyclable Types irukku:**\n\n📌 **4-Bin Color Coding:**\n• 🟢 **Green Bin (Wet / Organic)**: Food waste, fruit peels, compostable items.\n• 🔵 **Blue Bin (Dry Recyclables)**: Clean plastic bottles, paper, cardboard, metal cans, glass.\n• 🔴 **Red Bin (Hazardous)**: Batteries, chargers, CFL bulbs, chemical containers.\n• 🟡 **Yellow Bin (Sanitary)**: Sanitary napkins, medical bandages.\n\n💰 **Doorstep EV Pickup (Points & Cash):**\n1. Plastics (₹18/kg)\n2. Paper & Cardboard (₹14/kg)\n3. Scrap Metal / Iron (₹34/kg)\n4. E-Waste / Electronics (₹48/kg)\n5. Glass Bottles (₹6/kg)\n\nSchedule Pickup click panni unga doorstep-kku EV truck book pannalam!`;
+    }
+
+    // 5. Handover OTP & Driver Verification
     if (q.includes('otp') || q.includes('driver') || q.includes('handover') || q.includes('verify')) {
       return `🔐 **Driver Handover OTP:**\nDriver unga veetuku vandhavudan, ungaloda active order card-la kaattura 4-digit Handover OTP-ah avanga app-la enter pannanum. OTP verify aana udane EcoPoints instant-ah unga wallet-ku vandhudum!`;
     }
 
-    // 5. Points Redemption & UPI Cashback
+    // 6. Points Redemption & UPI Cashback
     if (q.includes('point') || q.includes('upi') || q.includes('cash') || q.includes('redeem') || q.includes('gpay') || q.includes('phonepe') || q.includes('kaasu') || q.includes('wallet')) {
       return `💸 **EcoPoints to Cash Conversion:**\n• 500 Points = ₹250 direct UPI payout to Google Pay or PhonePe!\n• 1,000 Points = ₹550 payout!\n• Or use points to sponsor real geo-tagged Miyawaki trees in Tamil Nadu!\nUnga wallet balance: ${user?.points || 0} pts.`;
     }

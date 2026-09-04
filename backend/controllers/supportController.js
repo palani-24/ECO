@@ -1,6 +1,7 @@
 import SupportMessage from '../models/SupportMessage.js';
 import Notification from '../models/Notification.js';
 import { getIO } from '../config/socket.js';
+import { generateConversationalAIResponse } from '../services/aiService.js';
 
 /**
  * @desc    User/Driver sends a support message to Admin
@@ -160,3 +161,40 @@ export const replySupportMessage = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+/**
+ * @desc    EcoBot Real Conversational AI Assistant
+ * @route   POST /api/support/ai-chat
+ * @access  Public / Authenticated
+ */
+export const handleAIChat = async (req, res) => {
+  const { message, userContext } = req.body;
+
+  try {
+    if (!message || message.trim() === '') {
+      return res.status(400).json({ success: false, message: 'User message cannot be empty' });
+    }
+
+    const context = {
+      name: req.user?.name || userContext?.name || 'Citizen',
+      points: req.user?.points ?? userContext?.points ?? 100,
+      role: req.user?.role || userContext?.role || 'user',
+      ...userContext
+    };
+
+    const aiResult = await generateConversationalAIResponse(message.trim(), context);
+
+    res.json({
+      success: true,
+      data: {
+        reply: aiResult.reply,
+        source: aiResult.source,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    console.error('[handleAIChat Error]:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+

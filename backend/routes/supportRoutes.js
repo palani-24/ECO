@@ -3,11 +3,15 @@ import {
   sendSupportMessage, 
   getUserSupportMessages, 
   getAdminSupportMessages, 
-  replySupportMessage 
+  replySupportMessage,
+  handleAIChat
 } from '../controllers/supportController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Real AI Assistant Conversation Route
+router.post('/ai-chat', handleAIChat);
 
 // User / Driver Routes
 router.post('/send', protect, sendSupportMessage);

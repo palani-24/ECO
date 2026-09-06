@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -88,9 +88,52 @@ const UserDashboard = () => {
   const [showGreenCert, setShowGreenCert] = useState(false);
   const [showUpiPayout, setShowUpiPayout] = useState(false);
 
-  // Daily Streak & Gamified Quests
-  const [streakClaimed, setStreakClaimed] = useState(false);
-  const [streakDays, setStreakDays] = useState(5);
+  // Real-Time Dynamic Date & 7-Day Week Calculation
+  const now = new Date();
+  const currentDayIndex = (now.getDay() + 6) % 7; // Monday = 0, Tuesday = 1, ..., Sunday = 6
+  const todayFormattedName = now.toLocaleDateString('en-US', { weekday: 'long' });
+  const todayFormattedDate = now.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+
+  // Check if today's streak has been claimed today in this browser
+  const [streakClaimed, setStreakClaimed] = useState(() => {
+    try {
+      return localStorage.getItem('ecoreward_streak_claimed_date') === new Date().toDateString();
+    } catch {
+      return false;
+    }
+  });
+
+  const baseStreakDays = Math.max(1, currentDayIndex);
+  const [streakDays, setStreakDays] = useState(() => {
+    const isClaimed = localStorage.getItem('ecoreward_streak_claimed_date') === new Date().toDateString();
+    return baseStreakDays + (isClaimed ? 1 : 0);
+  });
+
+  // Dynamically compute the 7 days of the current week (Monday to Sunday) with actual dates
+  const weekDays = useMemo(() => {
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - currentDayIndex);
+    const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const shortNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    return dayLabels.map((label, idx) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + idx);
+      const isToday = idx === currentDayIndex;
+      const isPast = idx < currentDayIndex;
+      const isDone = isPast || (isToday && streakClaimed);
+
+      return {
+        label,
+        shortName: shortNames[idx],
+        dateNum: d.getDate(),
+        isToday,
+        isPast,
+        isDone
+      };
+    });
+  }, [currentDayIndex, streakClaimed]);
+
   const [quests, setQuests] = useState([
     { id: 1, title: 'Segregate Dry & Wet Household Waste', points: 15, completed: true, icon: '♻️' },
     { id: 2, title: 'Scan 1 Scrap Item with AI Vision', points: 20, completed: false, icon: '📷', action: 'scanner' },
@@ -185,10 +228,13 @@ const UserDashboard = () => {
 
   const handleClaimStreak = () => {
     if (streakClaimed) return;
+    try {
+      localStorage.setItem('ecoreward_streak_claimed_date', new Date().toDateString());
+    } catch {}
     setStreakClaimed(true);
     setStreakDays(prev => prev + 1);
     setAnalytics(prev => prev ? ({ ...prev, walletPoints: (prev.walletPoints || 0) + 10 }) : prev);
-    addToast('🎉 Daily Streak Claimed! +10 EcoPoints added to your wallet.', 'success', 'Streak Claimed');
+    addToast(`🎉 ${todayFormattedName} Streak Bonus Claimed! +10 EcoPoints added to your wallet.`, 'success', 'Daily Streak Claimed');
   };
 
   const handleCompleteQuest = (q) => {
@@ -655,12 +701,12 @@ const UserDashboard = () => {
                       <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                         {streakDays}-Day Green Streak
                       </h3>
-                      <span className="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-600 dark:text-orange-400 text-[10px] font-black">
-                        ACTIVE 🔥
+                      <span className="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider">
+                        {todayFormattedName} 🔥
                       </span>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                      Recycle daily to maintain streak bonuses
+                      Today: <strong className="text-emerald-600 dark:text-emerald-400">{todayFormattedName}, {todayFormattedDate}</strong>
                     </p>
                   </div>
                 </div>
@@ -680,25 +726,36 @@ const UserDashboard = () => {
                 </motion.button>
               </div>
 
-              {/* 7-Day Visual Track */}
-              <div className="grid grid-cols-7 gap-2">
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => {
-                  const isDone = idx < 5;
-                  const isToday = idx === 4;
-                  return (
+              {/* Dynamic 7-Day Visual Track with Real Dates */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 px-1">
+                  <span>Week of {weekDays[0]?.dateNum} – {weekDays[6]?.dateNum} {todayFormattedDate.split(' ')[1]}</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>Today is {todayFormattedName}</span>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                  {weekDays.map((day, idx) => (
                     <div 
                       key={idx} 
                       className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl text-center border transition-all ${
-                        isDone 
-                          ? 'bg-gradient-to-b from-emerald-500/15 to-teal-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-sm' 
+                        day.isToday
+                          ? 'ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900 font-black bg-emerald-500/10 border-emerald-500/40 shadow-sm'
+                          : day.isDone
+                          ? 'bg-gradient-to-b from-emerald-500/15 to-teal-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-xs' 
                           : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
-                      } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900 font-black' : ''}`}
+                      }`}
                     >
-                      <span className="text-[10px] font-black">{day}</span>
-                      <span className="text-xs mt-1">{isDone ? '🔥' : '⚪'}</span>
+                      <span className="text-[10px] font-black">{day.label}</span>
+                      <span className="text-[9px] font-mono font-bold opacity-75">{day.dateNum}</span>
+                      <span className="text-xs mt-1">
+                        {day.isDone ? '🔥' : day.isToday ? (streakClaimed ? '🔥' : '⚡') : '⚪'}
+                      </span>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
 
               {/* Daily Missions */}

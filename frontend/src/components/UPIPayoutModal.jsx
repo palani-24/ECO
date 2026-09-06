@@ -59,12 +59,16 @@ const UPIPayoutModal = ({ isOpen, onClose, userPoints = 0, onPayoutSuccess }) =>
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto"
+      >
         <motion.div
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-lg bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 border border-emerald-500/30 rounded-3xl p-6 text-white shadow-2xl overflow-hidden"
+          className="relative w-full max-w-lg bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 border border-emerald-500/30 rounded-3xl p-5 sm:p-6 text-white shadow-2xl overflow-hidden max-h-[92vh] overflow-y-auto my-auto"
         >
           {/* Close Button */}
           <button

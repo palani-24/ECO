@@ -171,12 +171,16 @@ const MobileQRScannerModal = ({ isOpen, onClose, onScanSuccess }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto"
+      >
         <motion.div
+          onClick={(e) => e.stopPropagation()}
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative w-full max-w-sm bg-slate-900 border border-emerald-500/30 rounded-3xl p-5 text-white shadow-2xl overflow-hidden flex flex-col items-center"
+          className="relative w-full max-w-sm bg-slate-900 border border-emerald-500/30 rounded-3xl p-5 text-white shadow-2xl overflow-hidden flex flex-col items-center max-h-[92vh] overflow-y-auto my-auto"
         >
           {/* Close Button */}
           <button

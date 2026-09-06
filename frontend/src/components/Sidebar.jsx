@@ -38,13 +38,13 @@ const Sidebar = () => {
 
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
-    { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
-    { path: '/profile', label: 'My Profile & Support', icon: FaUser },
-    { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
-    { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt },
+    { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt, badge: 'FAST' },
     { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
-    { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding, badge: 'PRO' },
+    { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
+    { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
+    { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding, badge: 'PRO' },
+    { path: '/profile', label: 'My Profile & Support', icon: FaUser },
   ];
 
   const driverLinks = [
@@ -62,7 +62,7 @@ const Sidebar = () => {
     { path: '/admin/users', label: 'Users', icon: FaUsers },
     { path: '/admin/drivers', label: 'Drivers', icon: FaTruck },
     { path: '/admin/pickups', label: 'Pickups', icon: FaClipboardList },
-    { path: '/admin/support', label: 'Support', icon: FaComments, badge: '3' },
+    { path: '/admin/support', label: 'Support Desk', icon: FaComments, badge: '3' },
     { path: '/admin/coupons', label: 'Coupons', icon: FaTicketAlt },
     { path: '/admin/settings', label: 'Settings', icon: FaCogs },
   ];
@@ -84,6 +84,43 @@ const Sidebar = () => {
   };
 
   const links = getLinks();
+
+  // Primary 4 shortcuts for the Mobile Bottom Bar per role
+  const getMobileBottomItems = () => {
+    if (user.role === 'admin') {
+      return [
+        { path: '/admin', label: 'Overview', icon: FaChartLine },
+        { path: '/admin/users', label: 'Users', icon: FaUsers },
+        { path: '/admin/drivers', label: 'Drivers', icon: FaTruck },
+        { path: '/admin/pickups', label: 'Pickups', icon: FaClipboardList },
+      ];
+    }
+    if (user.role === 'municipality') {
+      return [
+        { path: '/municipality/dashboard', label: 'Command', icon: FaChartLine },
+        { path: '/municipality/heatmap', label: 'Heatmap', icon: FaMapPin },
+        { path: '/municipality/grievances', label: 'Grievance', icon: FaExclamationTriangle },
+        { path: '/esg-portal', label: 'Audit', icon: FaBuilding },
+      ];
+    }
+    if (user.role === 'driver') {
+      return [
+        { path: '/driver', label: 'Cockpit', icon: FaChartLine },
+        { path: '/driver/pickups', label: 'Pickups', icon: FaTruck },
+        { path: '/driver/gate-pass', label: 'Gate Pass', icon: FaTicketAlt },
+        { path: '/driver/earnings', label: 'Earnings', icon: FaCoins },
+      ];
+    }
+    // Default Customer
+    return [
+      { path: '/dashboard', label: 'Home', icon: FaChartLine },
+      { path: '/schedule-pickup', label: 'Book Pickup', icon: FaCalendarAlt },
+      { path: '/my-pickups', label: 'My Pickups', icon: FaClipboardList },
+      { path: '/redeem', label: 'Wallet', icon: FaCoins },
+    ];
+  };
+
+  const mobileBottomItems = getMobileBottomItems();
 
   // Strict Active Link Checker to prevent multiple items highlighting simultaneously
   const isLinkActive = (linkPath) => {
@@ -118,7 +155,7 @@ const Sidebar = () => {
             />
             <div className="flex-1 min-w-0">
               <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1">
-                <span>{user?.name || 'Driver Console'}</span>
+                <span>{user?.name || 'User Profile'}</span>
               </h4>
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                 <FaLeaf className="h-2.5 w-2.5" />
@@ -172,7 +209,7 @@ const Sidebar = () => {
         <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-black transition-all border border-rose-200/50 dark:border-rose-800/50"
+            className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-black transition-all border border-rose-200/50 dark:border-rose-800/50 cursor-pointer"
           >
             <FaSignOutAlt className="h-4 w-4" />
             <span>Logout Account</span>
@@ -180,38 +217,50 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* Mobile Slide-Out Drawer Side Menu (Appears on Mobile when opened) */}
+      {/* Mobile Slide-Out Drawer Side Menu (Opens on Mobile with z-[100] and click-outside dismissal) */}
       {isMobileDrawerOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm transition-opacity">
-          <div className="fixed inset-y-0 left-0 w-4/5 max-w-xs bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-5 space-y-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300">
+        <div 
+          onClick={() => setIsMobileDrawerOpen(false)}
+          className="md:hidden fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-y-0 left-0 w-[85%] max-w-xs bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-5 space-y-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300 h-full"
+          >
             
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2.5">
                 <img 
                   src="/app-logo.png" 
                   alt="EcoReward Logo" 
-                  className="h-7 w-7 rounded-lg object-cover ring-1 ring-emerald-500/30" 
+                  className="h-8 w-8 rounded-xl object-contain ring-1 ring-emerald-500/30 shadow-sm" 
                 />
-                <span className="font-black text-slate-900 dark:text-white text-sm">
-                  {user.role === 'driver' ? 'Driver Menu' : 'Main Menu'}
-                </span>
+                <div>
+                  <span className="font-black text-slate-900 dark:text-white text-sm block leading-tight">
+                    EcoReward
+                  </span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold capitalize">
+                    {user.role} Navigation
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setIsMobileDrawerOpen(false)}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                aria-label="Close navigation menu"
               >
                 <FaTimes className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Mobile User Profile Card */}
+            {/* Mobile User Profile Quick Card */}
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
               <img 
                 src={getAvatarUrl(user, user?.name)} 
                 onError={(e) => handleAvatarError(e, user?.name)}
                 alt={user?.name || 'User'} 
-                className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/30"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/40"
               />
               <div className="flex-1 min-w-0">
                 <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate">
@@ -219,18 +268,40 @@ const Sidebar = () => {
                 </h4>
                 <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                   <FaLeaf className="h-2.5 w-2.5" />
-                  <span>Eco Warrior</span>
+                  <span className="capitalize">{user.role} Member</span>
                 </span>
               </div>
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg border border-emerald-500/20">
+              <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg border border-emerald-500/20 shrink-0">
                 {user.points || 0} pts
               </span>
             </div>
 
-            {/* Full Vertical Menu List for Mobile */}
-            <div className="flex-1 overflow-y-auto pr-1 space-y-1">
-              <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-2">
-                All Navigation Links
+            {/* Quick Action Shortcuts for Customers on Mobile */}
+            {user.role !== 'driver' && user.role !== 'admin' && user.role !== 'municipality' && (
+              <div className="grid grid-cols-2 gap-2">
+                <NavLink
+                  to="/schedule-pickup"
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2 text-xs font-black hover:bg-emerald-500/20 transition"
+                >
+                  <FaCalendarAlt className="text-xs shrink-0" />
+                  <span className="truncate">Book Pickup</span>
+                </NavLink>
+                <NavLink
+                  to="/redeem"
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center space-x-2 text-xs font-black hover:bg-teal-500/20 transition"
+                >
+                  <FaCoins className="text-xs shrink-0" />
+                  <span className="truncate">Redeem Cash</span>
+                </NavLink>
+              </div>
+            )}
+
+            {/* Full Scrollable Navigation Links List for Mobile */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 scrollbar-thin">
+              <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-1">
+                All Available Options
               </span>
               {links.map((link, idx) => {
                 const Icon = link.icon;
@@ -250,7 +321,9 @@ const Sidebar = () => {
                     }
                   >
                     <div className="flex items-center space-x-3">
-                      <Icon className="h-4.5 w-4.5 flex-shrink-0" />
+                      <div className={`p-1.5 rounded-xl ${active ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                        <Icon className="h-4 w-4 shrink-0" />
+                      </div>
                       <span>{link.label}</span>
                     </div>
                     {link.badge && (
@@ -267,7 +340,7 @@ const Sidebar = () => {
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-black text-xs border border-rose-200/50 dark:border-rose-800/50"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-black text-xs border border-rose-200/50 dark:border-rose-800/50 cursor-pointer active:scale-98 transition"
               >
                 <FaSignOutAlt className="h-4 w-4" />
                 <span>Logout Account</span>
@@ -279,8 +352,11 @@ const Sidebar = () => {
       )}
 
       {/* Mobile Bottom Bar with Menu Toggle */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-2 flex justify-around items-center shadow-lg">
-        {links.slice(0, 4).map((link, idx) => {
+      <nav 
+        aria-label="Mobile Navigation Bar"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-1.5 py-1.5 flex justify-around items-center shadow-lg pb-[calc(0.375rem+env(safe-area-inset-bottom,0px))]"
+      >
+        {mobileBottomItems.map((link, idx) => {
           const Icon = link.icon;
           const active = isLinkActive(link.path);
           return (
@@ -289,26 +365,37 @@ const Sidebar = () => {
               to={link.path}
               end={link.path.indexOf('?') === -1}
               className={
-                `flex flex-col items-center space-y-1 p-2 rounded-xl transition-all ${
-                  active ? 'text-emerald-500 font-extrabold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-medium'
+                `flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
+                  active 
+                    ? 'text-emerald-600 dark:text-emerald-400 font-black' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-bold'
                 }`
               }
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px]">{link.label.split(' ')[0]}</span>
+              <div className={`p-1 rounded-lg ${active ? 'bg-emerald-500/15' : ''}`}>
+                <Icon className="h-4.5 w-4.5" />
+              </div>
+              <span className="text-[10px] tracking-tight mt-0.5">{link.label}</span>
             </NavLink>
           );
         })}
 
-        {/* 5th Menu Toggle Button for Mobile Full Side List */}
+        {/* 5th Button: Open Full Slide-Out Drawer with All Options */}
         <button
           onClick={() => setIsMobileDrawerOpen(true)}
-          className="flex flex-col items-center space-y-1 p-2 rounded-xl text-emerald-600 dark:text-emerald-400 font-black"
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
+            isMobileDrawerOpen
+              ? 'text-emerald-600 dark:text-emerald-400 font-black'
+              : 'text-slate-600 dark:text-slate-300 font-black'
+          }`}
+          aria-label="Open Full Navigation Drawer"
         >
-          <FaBars className="h-5 w-5" />
-          <span className="text-[10px]">All Menu</span>
+          <div className="p-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <FaBars className="h-4.5 w-4.5" />
+          </div>
+          <span className="text-[10px] tracking-tight mt-0.5">All Menu</span>
         </button>
-      </div>
+      </nav>
     </>
   );
 };

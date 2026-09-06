@@ -14,12 +14,17 @@ const PWAInstallBanner = () => {
       return; // Already installed, do not show banner
     }
 
-    // Check if user dismissed banner recently
+    // Only show install prompt on mobile devices (width < 768px)
+    if (window.innerWidth >= 768) {
+      return;
+    }
+
+    // Check if user dismissed banner recently (within 7 days)
     const isDismissed = localStorage.getItem('pwa_banner_dismissed');
     if (isDismissed) {
       const dismissedTime = parseInt(isDismissed, 10);
-      if (Date.now() - dismissedTime < 24 * 60 * 60 * 1000) {
-        return; // Don't show again within 24 hrs
+      if (Date.now() - dismissedTime < 7 * 24 * 60 * 60 * 1000) {
+        return; // Don't show again within 7 days
       }
     }
 

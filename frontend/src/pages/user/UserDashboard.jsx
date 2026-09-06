@@ -349,13 +349,13 @@ const UserDashboard = () => {
                 TN-38-ECO • ETA ~8 Mins (1.8 km)
               </span>
             </div>
-            <button
-              onClick={() => setShowDriverChat(true)}
-              className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/30 transition flex items-center justify-center space-x-1.5"
-            >
-              <FaComments className="text-xs" />
-              <span>Live Chat with Driver</span>
-            </button>
+            <div className="flex items-center justify-between py-2 px-3 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20">
+              <span className="flex items-center space-x-1.5">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>Driver En Route</span>
+              </span>
+              <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">OTP: 4892</span>
+            </div>
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
@@ -378,16 +378,19 @@ const UserDashboard = () => {
               <div className="mt-2 space-y-1">
                 <div className="flex justify-between text-[10px] font-extrabold text-slate-500 dark:text-slate-400">
                   <span>Goal: 40 kg</span>
-                  <span className="text-emerald-500">71% Reached</span>
+                  <span className="text-emerald-500 font-black">71% Reached</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style={{ width: '71%' }}></div>
                 </div>
               </div>
             </div>
-            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">
-              11.5 kg away from ₹250 Green Partner Voucher
-            </span>
+            <div className="flex items-center justify-between py-2 px-3 bg-teal-500/10 text-teal-700 dark:text-teal-300 font-extrabold text-xs rounded-xl border border-teal-500/20">
+              <span className="truncate">Reward Goal</span>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-300">
+                11.5 kg to ₹250 Voucher
+              </span>
+            </div>
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
@@ -413,7 +416,7 @@ const UserDashboard = () => {
             </div>
             <button
               onClick={() => setShowGreenCert(true)}
-              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-1.5"
+              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
             >
               <FaAward className="text-xs" />
               <span>Official Green Certificate</span>
@@ -486,24 +489,38 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              {/* 4-Step Milestone Stepper */}
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div className="flex items-center space-x-1.5 text-emerald-600 font-extrabold">
-                    <FaCheckCircle className="h-3.5 w-3.5 shrink-0" />
-                    <span className="text-[11px]">1. Booked</span>
+              {/* Connected Milestone Stepper */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/70 dark:border-slate-800">
+                <div className="relative grid grid-cols-4 gap-2">
+                  <div className="absolute top-3 left-8 right-8 h-0.5 bg-slate-200 dark:bg-slate-700 -z-0 hidden sm:block"></div>
+                  <div className="absolute top-3 left-8 w-[62%] h-0.5 bg-emerald-500 -z-0 hidden sm:block"></div>
+
+                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
+                      ✓
+                    </div>
+                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">1. Booked</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 text-emerald-600 font-extrabold">
-                    <FaCheckCircle className="h-3.5 w-3.5 shrink-0" />
-                    <span className="text-[11px]">2. Dispatched</span>
+
+                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
+                      ✓
+                    </div>
+                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">2. Dispatched</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 text-amber-500 font-black">
-                    <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping shrink-0"></span>
-                    <span className="text-[11px]">3. En Route</span>
+
+                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-black shadow-md ring-4 ring-amber-500/20 animate-pulse">
+                      3
+                    </div>
+                    <span className="text-[11px] font-black text-amber-500">3. En Route</span>
                   </div>
-                  <div className="flex items-center space-x-1.5 text-slate-400 font-medium">
-                    <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-700 shrink-0"></span>
-                    <span className="text-[11px]">4. Weighed & Paid</span>
+
+                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-400 flex items-center justify-center text-[10px] font-black">
+                      4
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-400">4. Paid</span>
                   </div>
                 </div>
               </div>
@@ -626,18 +643,23 @@ const UserDashboard = () => {
           <div className="lg:col-span-5 space-y-6">
             
             {/* Daily Green Streak & Quests */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
               
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center text-base border border-orange-500/20">
-                    <FaFire />
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-orange-500 flex items-center justify-center text-lg border border-orange-500/30 shadow-inner">
+                    <FaFire className="animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm">
-                      {streakDays}-Day Green Streak 🔥
-                    </h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                        {streakDays}-Day Green Streak
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-600 dark:text-orange-400 text-[10px] font-black">
+                        ACTIVE 🔥
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                       Recycle daily to maintain streak bonuses
                     </p>
                   </div>
@@ -648,10 +670,10 @@ const UserDashboard = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleClaimStreak}
                   disabled={streakClaimed}
-                  className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
                     streakClaimed 
-                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default' 
-                      : 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm'
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default border border-slate-200 dark:border-slate-700' 
+                      : 'bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 shadow-md shadow-orange-500/20'
                   }`}
                 >
                   {streakClaimed ? 'Claimed ✓' : 'Claim +10 Pts'}
@@ -659,47 +681,56 @@ const UserDashboard = () => {
               </div>
 
               {/* 7-Day Visual Track */}
-              <div className="grid grid-cols-7 gap-1.5 py-1">
+              <div className="grid grid-cols-7 gap-2">
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => {
                   const isDone = idx < 5;
                   const isToday = idx === 4;
                   return (
                     <div 
                       key={idx} 
-                      className={`flex flex-col items-center justify-center p-1.5 rounded-xl text-center border transition-all ${
+                      className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl text-center border transition-all ${
                         isDone 
-                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400' 
+                          ? 'bg-gradient-to-b from-emerald-500/15 to-teal-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-sm' 
                           : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
-                      } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-1 dark:ring-offset-slate-900 font-black' : ''}`}
+                      } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900 font-black' : ''}`}
                     >
-                      <span className="text-[9px] font-bold">{day}</span>
-                      <span className="text-xs mt-0.5">{isDone ? '🔥' : '⚪'}</span>
+                      <span className="text-[10px] font-black">{day}</span>
+                      <span className="text-xs mt-1">{isDone ? '🔥' : '⚪'}</span>
                     </div>
                   );
                 })}
               </div>
 
               {/* Daily Missions */}
-              <div className="space-y-2 pt-2">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400">
-                  <span>Today's Missions</span>
-                  <span>{quests.filter(q => q.completed).length}/{quests.length} Done</span>
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center justify-between text-xs font-extrabold text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center space-x-2">
+                    <span>Daily Missions</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-black">
+                      {Math.round((quests.filter(q => q.completed).length / quests.length) * 100)}% Complete
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-slate-400">
+                    {quests.filter(q => q.completed).length}/{quests.length} Done
+                  </span>
                 </div>
 
                 <div className="space-y-2">
                   {quests.map((q) => (
                     <div
                       key={q.id}
-                      className={`flex items-center justify-between p-2.5 rounded-2xl border transition-all ${
+                      className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                         q.completed
-                          ? 'bg-emerald-500/5 border-emerald-500/20 text-slate-700 dark:text-slate-300'
-                          : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800'
+                          ? 'bg-emerald-500/5 border-emerald-500/25'
+                          : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-emerald-500/30'
                       }`}
                     >
-                      <div className="flex items-center space-x-2.5 min-w-0">
-                        <span className="text-sm shrink-0">{q.icon}</span>
+                      <div className="flex items-center space-x-3 min-w-0">
+                        <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-sm shadow-xs border border-slate-200/60 dark:border-slate-700 shrink-0">
+                          {q.icon}
+                        </div>
                         <div className="min-w-0">
-                          <span className={`text-xs font-bold block truncate ${q.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                          <span className={`text-xs font-black block truncate ${q.completed ? 'text-slate-500 dark:text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'}`}>
                             {q.title}
                           </span>
                           <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold">
@@ -709,13 +740,13 @@ const UserDashboard = () => {
                       </div>
 
                       {q.completed ? (
-                        <span className="h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[9px] font-bold shrink-0">
+                        <span className="h-6 w-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-sm">
                           <FaCheck />
                         </span>
                       ) : (
                         <button
                           onClick={() => handleCompleteQuest(q)}
-                          className="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-black rounded-xl shadow-xs transition shrink-0 cursor-pointer"
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black rounded-xl shadow-xs transition shrink-0 cursor-pointer active:scale-95"
                         >
                           Start
                         </button>
@@ -745,7 +776,7 @@ const UserDashboard = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
+                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
                   <div className="flex items-center space-x-1.5 text-sky-400 text-xs mb-1">
                     <FaCarSide />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Car Travel</span>
@@ -754,7 +785,7 @@ const UserDashboard = () => {
                   <span className="text-[9px] text-slate-400">Gasoline offset</span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
+                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
                   <div className="flex items-center space-x-1.5 text-lime-400 text-xs mb-1">
                     <FaSeedling />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Saplings</span>
@@ -763,7 +794,7 @@ const UserDashboard = () => {
                   <span className="text-[9px] text-slate-400">Nurtured 1 yr</span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
+                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
                   <div className="flex items-center space-x-1.5 text-amber-400 text-xs mb-1">
                     <FaLightbulb />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Clean Power</span>
@@ -772,7 +803,7 @@ const UserDashboard = () => {
                   <span className="text-[9px] text-slate-400">LED power saved</span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
+                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
                   <div className="flex items-center space-x-1.5 text-cyan-400 text-xs mb-1">
                     <FaWater />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Fresh Water</span>

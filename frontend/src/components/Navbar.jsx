@@ -181,20 +181,37 @@ const Navbar = () => {
                 {/* Header Right Action Controls */}
                 <div className="flex items-center space-x-1.5 sm:space-x-2.5 ml-auto">
                   
-                  {/* Language Switcher Selector */}
-                  <div className="relative flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                  {/* Language Switcher Segmented Pill */}
+                  <div className="relative flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
                     <button
                       onClick={() => {
-                        const nextLang = lang === 'en' ? 'ta' : lang === 'ta' ? 'hi' : 'en';
-                        setLang(nextLang);
-                        const labels = { en: 'English', ta: 'தமிழ்', hi: 'हिंदी' };
-                        addToast(`🌐 Language switched to ${labels[nextLang]}!`, 'info', 'Language Updated');
+                        triggerHaptic(25);
+                        setLang('en');
+                        addToast('🌐 Switched to English', 'info', 'Language Updated');
                       }}
-                      className="px-2 py-1 flex items-center space-x-1 hover:text-emerald-500 transition-colors text-[11px]"
-                      title="Switch Language (English / தமிழ் / हिंदी)"
+                      className={`px-2 py-0.5 rounded-lg transition-all ${
+                        lang === 'en' 
+                          ? 'bg-emerald-600 text-white shadow-sm font-black' 
+                          : 'text-slate-600 dark:text-slate-300 hover:text-emerald-500'
+                      }`}
+                      title="Switch to English"
                     >
-                      <FaGlobe className="text-emerald-500 text-xs" />
-                      <span className="font-black uppercase">{lang}</span>
+                      EN
+                    </button>
+                    <button
+                      onClick={() => {
+                        triggerHaptic(25);
+                        setLang('ta');
+                        addToast('🌐 தமிழுக்கு மாற்றப்பட்டது', 'info', 'மொழி புதுப்பிக்கப்பட்டது');
+                      }}
+                      className={`px-2 py-0.5 rounded-lg transition-all ${
+                        lang === 'ta' 
+                          ? 'bg-emerald-600 text-white shadow-sm font-black' 
+                          : 'text-slate-600 dark:text-slate-300 hover:text-emerald-500'
+                      }`}
+                      title="தமிழுக்கு மாறுக"
+                    >
+                      தமிழ்
                     </button>
                   </div>
 

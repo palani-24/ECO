@@ -44,34 +44,50 @@ export const ToastProvider = ({ children }) => {
       <div className="fixed top-5 right-5 z-[9999] flex flex-col space-y-3 max-w-sm w-full pointer-events-none px-4 sm:px-0">
         {toasts.map(toast => {
           const bgColors = {
-            success: 'bg-emerald-900/90 border-emerald-500/30 text-white shadow-emerald-950/40',
-            error: 'bg-rose-900/90 border-rose-500/30 text-white shadow-rose-950/40',
-            info: 'bg-slate-900/90 border-slate-700/50 text-white shadow-slate-950/40',
-            reward: 'bg-amber-900/90 border-amber-500/30 text-white shadow-amber-950/40'
+            success: 'bg-emerald-950/90 border-emerald-500/40 text-white shadow-[0_10px_30px_rgba(16,185,129,0.25)]',
+            error: 'bg-rose-950/90 border-rose-500/40 text-white shadow-[0_10px_30px_rgba(244,63,94,0.25)]',
+            info: 'bg-slate-900/90 border-slate-700/60 text-white shadow-2xl',
+            reward: 'bg-amber-950/90 border-amber-500/40 text-white shadow-[0_10px_30px_rgba(245,158,11,0.25)]'
+          };
+          const progressColors = {
+            success: 'bg-emerald-400',
+            error: 'bg-rose-400',
+            info: 'bg-sky-400',
+            reward: 'bg-amber-400'
           };
           const icons = {
             success: <FaCheckCircle className="text-emerald-400 h-5 w-5 flex-shrink-0" />,
             error: <FaExclamationCircle className="text-rose-400 h-5 w-5 flex-shrink-0" />,
             info: <FaInfoCircle className="text-sky-400 h-5 w-5 flex-shrink-0" />,
-            reward: <FaRecycle className="text-amber-400 h-5 w-5 flex-shrink-0 animate-bounce" />
+            reward: <FaRecycle className="text-amber-400 h-5 w-5 flex-shrink-0 animate-spin" />
           };
 
           return (
             <div
               key={toast.id}
-              className={`pointer-events-auto flex items-start space-x-3 p-4 rounded-2xl border backdrop-blur-xl shadow-2xl transition-all transform duration-300 translate-y-0 ${bgColors[toast.type] || bgColors.info}`}
+              className={`pointer-events-auto relative overflow-hidden flex items-start space-x-3 p-4 rounded-2xl border backdrop-blur-xl transition-all transform duration-300 translate-y-0 ${bgColors[toast.type] || bgColors.info}`}
             >
               {icons[toast.type] || <FaBell className="text-emerald-400 h-5 w-5" />}
               <div className="flex-1 space-y-0.5">
-                <h4 className="text-xs font-black tracking-wide uppercase">{toast.title}</h4>
+                <h4 className="text-[11px] font-black tracking-wider uppercase text-slate-100">{toast.title}</h4>
                 <p className="text-xs text-slate-200 font-medium leading-relaxed">{toast.message}</p>
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="text-slate-400 hover:text-white text-xs p-1"
+                className="text-slate-400 hover:text-white text-xs p-1 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Dismiss toast"
               >
                 ✕
               </button>
+
+              {/* Dismiss countdown progress bar */}
+              <div 
+                className={`absolute bottom-0 left-0 h-1 ${progressColors[toast.type] || progressColors.info}`}
+                style={{
+                  width: '100%',
+                  animation: 'toastProgress 4.5s linear forwards'
+                }}
+              />
             </div>
           );
         })}

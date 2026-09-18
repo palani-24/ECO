@@ -370,19 +370,40 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
             </motion.div>
           )}
 
-          {/* Camera / Image Scan Viewfinder with Google Lens Reticle */}
-          <div className="relative h-52 bg-slate-950 rounded-2xl border border-emerald-500/30 flex flex-col items-center justify-center overflow-hidden shadow-inner">
+          {/* Camera / Image Scan Viewfinder with Sci-Fi AR HUD Overlay */}
+          <div className="relative h-56 bg-slate-950 rounded-2xl border-2 border-emerald-500/40 flex flex-col items-center justify-center overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.15)]">
             
-            {/* Google Lens Corner Reticles (Top-Left, Top-Right, Bottom-Left, Bottom-Right) */}
-            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-emerald-400 rounded-tl pointer-events-none z-20"></div>
-            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-emerald-400 rounded-tr pointer-events-none z-20"></div>
-            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-emerald-400 rounded-bl pointer-events-none z-20"></div>
-            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-emerald-400 rounded-br pointer-events-none z-20"></div>
+            {/* Sci-Fi Holographic Corner Reticles */}
+            <div className="absolute top-2.5 left-2.5 w-7 h-7 border-t-2 border-l-2 border-emerald-400 rounded-tl pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
+            <div className="absolute top-2.5 right-2.5 w-7 h-7 border-t-2 border-r-2 border-emerald-400 rounded-tr pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
+            <div className="absolute bottom-2.5 left-2.5 w-7 h-7 border-b-2 border-l-2 border-emerald-400 rounded-bl pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
+            <div className="absolute bottom-2.5 right-2.5 w-7 h-7 border-b-2 border-r-2 border-emerald-400 rounded-br pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
 
-            {/* Subtle Grid / Center Target Crosshair */}
+            {/* AR HUD Telemetry Bar at top */}
+            <div className="absolute top-2 inset-x-8 flex items-center justify-between pointer-events-none z-20 text-[9px] font-mono text-emerald-400/90 tracking-wider">
+              <span className="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                AR HUD // OPTICAL SENSOR 1.5
+              </span>
+              <span className="hidden sm:inline bg-black/60 px-2 py-0.5 rounded-full border border-emerald-500/30 text-slate-300">
+                AI CONFIDENCE: HIGH
+              </span>
+            </div>
+
+            {/* Continuous AR Laser Scan Line when active */}
+            {(isLiveCamera || scanning) && (
+              <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_15px_#10b981] animate-laser-sweep z-20 pointer-events-none" />
+            )}
+
+            {/* Subtle Center Target Crosshair */}
             {!scannedResult && !scanning && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 z-10">
-                <FaCrosshairs className="w-16 h-16 text-emerald-400" />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div className="relative flex items-center justify-center">
+                  <FaCrosshairs className="w-20 h-20 text-emerald-400/20" />
+                  <span className="absolute text-[8px] font-mono text-emerald-500/40 uppercase tracking-widest">
+                    ALIGN MATERIAL
+                  </span>
+                </div>
               </div>
             )}
 
@@ -407,7 +428,7 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
                   </button>
                   <button
                     onClick={captureFrameFromLiveCamera}
-                    className="p-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-full shadow-lg shadow-emerald-500/40 transform active:scale-90 transition-transform flex items-center justify-center border-4 border-slate-950"
+                    className="p-3.5 bg-gradient-to-tr from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 rounded-full shadow-lg shadow-emerald-500/40 transform active:scale-90 transition-transform flex items-center justify-center border-4 border-slate-950"
                     title="Capture photo"
                   >
                     <FaCamera className="w-5 h-5 text-slate-950" />
@@ -428,7 +449,7 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
               <img 
                 src={selectedImage} 
                 alt="Scanned Waste" 
-                className="absolute inset-0 w-full h-full object-cover opacity-75" 
+                className="absolute inset-0 w-full h-full object-cover opacity-80" 
               />
             )}
 
@@ -437,16 +458,11 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
 
             {/* Scanning Laser Animation */}
             {scanning && (
-              <div className="relative z-20 flex flex-col items-center space-y-2 p-4 text-center">
+              <div className="relative z-20 flex flex-col items-center space-y-2 p-4 text-center bg-black/60 backdrop-blur-sm rounded-2xl border border-emerald-500/30">
                 <FaSpinner className="w-8 h-8 text-emerald-400 animate-spin" />
                 <p className="text-xs font-black text-emerald-300 tracking-wider uppercase animate-pulse">
                   {SCAN_STEPS[scanStepIndex]}
                 </p>
-                <motion.div
-                  animate={{ y: [-80, 80, -80] }}
-                  transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_18px_#10b981]"
-                />
               </div>
             )}
 

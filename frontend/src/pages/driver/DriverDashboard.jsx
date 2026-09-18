@@ -9,12 +9,16 @@ import api from '../../utils/api';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import DriverChatModal from '../../components/DriverChatModal';
 import BluetoothSmartScaleModal from '../../components/BluetoothSmartScaleModal';
+import SwipeButton from '../../components/SwipeButton';
+import { triggerConfetti } from '../../utils/confetti';
+import { triggerHaptic } from '../../utils/mobileNative';
+import { soundFx } from '../../utils/audioFeedback';
 import { 
   FaToggleOn, FaToggleOff, FaTruck, FaClock, FaCheck, FaWeight, FaCamera, 
   FaCheckCircle, FaComments, FaPhoneAlt, FaCoins, FaMapMarkerAlt, 
   FaCompass, FaExclamationCircle, FaArrowRight, FaImage, 
   FaTimes, FaSpinner, FaRedo, FaBatteryThreeQuarters, FaLeaf, FaShieldAlt, 
-  FaBluetooth, FaExclamationTriangle, FaCheckDouble
+  FaBluetooth, FaExclamationTriangle, FaCheckDouble, FaSun
 } from 'react-icons/fa';
 
 const DriverDashboard = () => {
@@ -34,6 +38,7 @@ const DriverDashboard = () => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showBleScaleModal, setShowBleScaleModal] = useState(false);
   const [customerPhotoModalUrl, setCustomerPhotoModalUrl] = useState(null);
+  const [daylightMode, setDaylightMode] = useState(false);
 
   // Active Collection Flow States
   const [pickupStatus, setPickupStatus] = useState('on_the_way');
@@ -79,24 +84,8 @@ const DriverDashboard = () => {
       if (profileRes.data?.success) setDriverProfile(profileRes.data.data);
       if (pickupRes.data?.success) setPickups(pickupRes.data.data);
     } catch (err) {
-      console.warn('API fetch warning, loading driver fallback data', err);
-      setDriverProfile({
-        user: { name: user?.name || 'Ramesh Kumar', email: user?.email },
-        status: 'active',
-        isApproved: true,
-        vehicleNumber: 'TN-38-ECO-9945'
-      });
-      setPickups([
-        {
-          _id: 'PK123456',
-          wasteCategory: 'Paper, Plastic',
-          estimatedWeight: 5,
-          pickupTimeSlot: '10:00 AM - 12:00 PM',
-          status: 'assigned',
-          user: { name: 'Arjun Sharma', phone: '+91 98765 43210' },
-          pickupAddress: { street: '12-A, Metro Heights', city: 'Anna Nagar, Chennai' }
-        }
-      ]);
+      console.warn('API fetch warning in driver dashboard', err);
+      setPickups([]);
     } finally {
       setLoading(false);
     }
@@ -205,6 +194,9 @@ const DriverDashboard = () => {
         setActualWeight('');
         setItemWeights({});
         const finalPts = res.data?.pointsAwarded || res.data?.data?.pointsAwarded || awardedPoints;
+        triggerHaptic(60);
+        triggerConfetti();
+        soundFx.playSuccessChime();
         addToast(`🏆 Pickup Completed! +${finalPts} EcoPoints sent to customer!`, 'success', 'Pickup Verified');
       } else {
         throw new Error('API returned failure');
@@ -222,6 +214,9 @@ const DriverDashboard = () => {
       setPickupStatus('completed');
       setActualWeight('');
       setItemWeights({});
+      triggerHaptic(60);
+      triggerConfetti();
+      soundFx.playSuccessChime();
       addToast(`🏆 Job Completed! +${awardedPoints} EcoPoints sent to user (${verifiedTotalWeight.toFixed(2)} kg).`, 'success', 'Pickup Verified');
     }
   };
@@ -269,7 +264,7 @@ const DriverDashboard = () => {
 
   return (
     <DriverLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-8">
+      <div className={`space-y-6 max-w-7xl mx-auto pb-8 transition-all ${daylightMode ? 'daylight-mode p-3' : ''}`}>
 
         {/* Executive Pilot Cockpit Glass Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-5 sm:p-6 text-white shadow-xl backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -302,6 +297,23 @@ const DriverDashboard = () => {
           </div>
 
           <div className="flex items-center space-x-2.5 w-full sm:w-auto justify-end">
+            <button 
+              onClick={() => {
+                triggerHaptic(30);
+                setDaylightMode(!daylightMode);
+                addToast(!daylightMode ? '☀️ High-Contrast Daylight Mode Enabled' : 'Standard Cockpit Mode', 'info', 'Cockpit Optics');
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs font-black flex items-center space-x-1.5 transition cursor-pointer border ${
+                daylightMode 
+                  ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md shadow-amber-400/30' 
+                  : 'bg-slate-800/80 text-amber-300 border-slate-700 hover:bg-slate-700'
+              }`}
+              title="Toggle High-Contrast Outdoor Daylight Mode"
+            >
+              <FaSun className="h-3.5 w-3.5" />
+              <span>{daylightMode ? 'Sunlight ON' : 'Sunlight Mode'}</span>
+            </button>
+
             <button 
               onClick={() => setShowSosModal(true)}
               className="px-3.5 py-2 bg-rose-600/90 hover:bg-rose-600 text-white font-black rounded-xl text-xs flex items-center space-x-1.5 shadow-sm border border-rose-500/40 transition cursor-pointer"
@@ -454,7 +466,7 @@ const DriverDashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div className="p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl space-y-1 border border-slate-100 dark:border-slate-800">
                     <span className="text-[10px] text-slate-400 font-black uppercase block">Customer Name</span>
-                    <p className="font-extrabold text-slate-900 dark:text-white text-sm">{activePickup.user?.name || 'Arjun Sharma'}</p>
+                    <p className="font-extrabold text-slate-900 dark:text-white text-sm">{activePickup.user?.name || 'Customer'}</p>
                   </div>
 
                   <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl space-y-1">
@@ -634,17 +646,14 @@ const DriverDashboard = () => {
                     </div>
                   </div>
 
-                  {/* Complete Pickup Action */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="button"
-                    onClick={() => handleConfirmPickup(activePickup._id)}
-                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2 cursor-pointer"
-                  >
-                    <FaCheckCircle className="h-4 w-4" />
-                    <span>Complete Pickup & Credit EcoPoints to User</span>
-                  </motion.button>
+                  {/* Complete Pickup Action via Ergonomic 1-Swipe Slider */}
+                  <div className="pt-2">
+                    <SwipeButton 
+                      onConfirm={() => handleConfirmPickup(activePickup._id)}
+                      text="Slide to Confirm Pickup & Weigh"
+                      confirmedText="Pickup Completed & Verified"
+                    />
+                  </div>
                 </div>
 
               </div>
@@ -723,7 +732,7 @@ const DriverDashboard = () => {
         isOpen={showCitizenChat}
         onClose={() => setShowCitizenChat(false)}
         pickupId={activePickup?._id}
-        recipientName={activePickup?.user?.name || 'Customer Arjun Sharma'}
+        recipientName={activePickup?.user?.name || 'Customer'}
         recipientRole="user"
       />
 

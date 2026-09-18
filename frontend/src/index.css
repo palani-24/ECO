@@ -386,3 +386,53 @@ html, body {
   border: 1px solid rgba(16, 185, 129, 0.3);
   backdrop-filter: blur(10px);
 }
+
+/* Toast Progress Animation */
+@keyframes toastProgress {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+/* Sci-Fi AR Laser Sweep for AI Scanner */
+@keyframes laserSweep {
+  0% {
+    top: 5%;
+    opacity: 0.9;
+  }
+  50% {
+    top: 92%;
+    opacity: 1;
+  }
+  100% {
+    top: 5%;
+    opacity: 0.9;
+  }
+}
+
+.animate-laser-sweep {
+  animation: laserSweep 2.2s ease-in-out infinite;
+}
+
+/* Driver High-Contrast Daylight Mode */
+.daylight-mode {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.daylight-mode .daylight-card {
+  background-color: #f8fafc !important;
+  border: 2px solid #0f172a !important;
+  color: #000000 !important;
+  box-shadow: 0 4px 0 #0f172a !important;
+}
+
+.daylight-mode .daylight-accent {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border: 2px solid #064e3b !important;
+}
+

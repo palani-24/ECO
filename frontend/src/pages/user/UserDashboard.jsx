@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
+import { useLanguage } from '../../context/LanguageContext';
 import UserLayout from '../../components/UserLayout';
 import api from '../../utils/api';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
@@ -10,11 +11,15 @@ import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import DriverChatModal from '../../components/DriverChatModal';
 import GreenCertificateModal from '../../components/GreenCertificateModal';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
+import EcoStoryModal from '../../components/EcoStoryModal';
+import { triggerConfetti } from '../../utils/confetti';
+import { soundFx } from '../../utils/audioFeedback';
+import { triggerHaptic } from '../../utils/mobileNative';
 import { 
   FaCoins, FaTruck, FaLeaf, FaCheckCircle, FaCalendarPlus, FaCamera, 
   FaComments, FaPhone, FaFire, FaCalculator, FaSeedling, FaCarSide, 
   FaLightbulb, FaWater, FaCheck, FaAward, FaTrashAlt, FaChevronRight,
-  FaArrowRight, FaWallet, FaShieldAlt, FaClock, FaRoute, FaBolt
+  FaArrowRight, FaWallet, FaShieldAlt, FaClock, FaRoute, FaBolt, FaShareAlt
 } from 'react-icons/fa';
 
 const SCRAP_RATES = {
@@ -82,11 +87,32 @@ const UserDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const { t } = useLanguage() || { t: (k) => k };
+
   // Modals state
   const [showAiScanner, setShowAiScanner] = useState(false);
   const [showDriverChat, setShowDriverChat] = useState(false);
   const [showGreenCert, setShowGreenCert] = useState(false);
   const [showUpiPayout, setShowUpiPayout] = useState(false);
+  const [showEcoStory, setShowEcoStory] = useState(false);
+
+  // Virtual Tree Growth Stage Calculation
+  const totalKgNumber = parseFloat(analytics?.totalRecycledKg || '48.5') || 48.5;
+  const treeStage = useMemo(() => {
+    if (totalKgNumber < 20) {
+      return { level: 1, name: 'Sprouting Seedling', stageTag: 'Stage 1/5', icon: '🌱', nextGoal: 20, pct: Math.min(100, Math.round((totalKgNumber / 20) * 100)), remaining: (20 - totalKgNumber).toFixed(1) };
+    }
+    if (totalKgNumber < 50) {
+      return { level: 2, name: 'Vibrant Sprout', stageTag: 'Stage 2/5', icon: '🌿', nextGoal: 50, pct: Math.min(100, Math.round(((totalKgNumber - 20) / 30) * 100)), remaining: (50 - totalKgNumber).toFixed(1) };
+    }
+    if (totalKgNumber < 100) {
+      return { level: 3, name: 'Young Sapling', stageTag: 'Stage 3/5', icon: '🌳', nextGoal: 100, pct: Math.min(100, Math.round(((totalKgNumber - 50) / 50) * 100)), remaining: (100 - totalKgNumber).toFixed(1) };
+    }
+    if (totalKgNumber < 250) {
+      return { level: 4, name: 'Flourishing Tree', stageTag: 'Stage 4/5', icon: '🌲', nextGoal: 250, pct: Math.min(100, Math.round(((totalKgNumber - 100) / 150) * 100)), remaining: (250 - totalKgNumber).toFixed(1) };
+    }
+    return { level: 5, name: 'Ancient Forest Guardian', stageTag: 'Max Stage', icon: '🏞️', nextGoal: 500, pct: 100, remaining: '0' };
+  }, [totalKgNumber]);
 
   // Real-Time Dynamic Date & 7-Day Week Calculation
   const now = new Date();
@@ -202,19 +228,19 @@ const UserDashboard = () => {
           totalWeight += p.actualWeight || p.estimatedWeight || 0;
         });
 
-        const co2Reduced = totalWeight > 0 ? (totalWeight * 1.5).toFixed(1) : '35.3';
-        const treesSaved = totalWeight > 0 ? (totalWeight * 0.017).toFixed(2) : '0.40';
+        const co2Reduced = (totalWeight * 1.5).toFixed(1);
+        const treesSaved = (totalWeight * 0.017).toFixed(2);
 
         setAnalytics({
-          completedCount: completed.length || 2,
-          pendingCount: pending.length || 1,
-          activeCount: active.length || 1,
-          todayCount: 1,
-          walletPoints: user?.points || 100,
+          completedCount: completed.length,
+          pendingCount: pending.length,
+          activeCount: active.length,
+          todayCount: pickupList.filter(p => new Date(p.pickupDate || p.createdAt).toDateString() === new Date().toDateString()).length,
+          walletPoints: user?.points || 0,
           co2Reduced,
           treesSaved,
-          totalRewards: '120',
-          totalRecycledKg: totalWeight > 0 ? totalWeight.toFixed(1) : '48.5'
+          totalRewards: (user?.points || 0).toString(),
+          totalRecycledKg: totalWeight.toFixed(1)
         });
       } catch (err) {
         console.error('Failed to load user dashboard data', err);
@@ -234,6 +260,9 @@ const UserDashboard = () => {
     setStreakClaimed(true);
     setStreakDays(prev => prev + 1);
     setAnalytics(prev => prev ? ({ ...prev, walletPoints: (prev.walletPoints || 0) + 10 }) : prev);
+    triggerHaptic(50);
+    triggerConfetti();
+    soundFx.playSuccessChime();
     addToast(`🎉 ${todayFormattedName} Streak Bonus Claimed! +10 EcoPoints added to your wallet.`, 'success', 'Daily Streak Claimed');
   };
 
@@ -247,21 +276,15 @@ const UserDashboard = () => {
     }
     setQuests(prev => prev.map(item => item.id === q.id ? { ...item, completed: true } : item));
     setAnalytics(prev => prev ? ({ ...prev, walletPoints: (prev.walletPoints || 0) + q.points }) : prev);
+    triggerHaptic(40);
+    triggerConfetti();
+    soundFx.playSuccessChime();
     addToast(`Mission Completed: "${q.title}"! +${q.points} EcoPoints added.`, 'success', 'Quest Unlocked');
   };
 
-  const activePickup = pickups.find(p => p.status !== 'completed' && p.status !== 'cancelled') || {
-    _id: 'PK123456',
-    wasteCategory: 'Paper, Plastic',
-    address: { street: '123, Bharathi Street', city: 'Anna Nagar, Chennai' },
-    status: 'accepted',
-    driver: {
-      user: { name: 'Karthik Raja' },
-      vehicleNumber: 'TN-38-ECO-9945 (EV Mini-Truck)'
-    }
-  };
+  const activePickup = pickups.find(p => p.status !== 'completed' && p.status !== 'cancelled') || null;
 
-  const currentPoints = analytics?.walletPoints || user?.points || 100;
+  const currentPoints = analytics?.walletPoints ?? user?.points ?? 0;
   const inrEquivalent = Math.round(currentPoints * 0.25);
 
   return (
@@ -292,7 +315,7 @@ const UserDashboard = () => {
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                    Welcome back, {user?.name ? user.name.split(' ')[0] : 'Palani'}! 👋
+                    Welcome back, {user?.name ? user.name.split(' ')[0] : 'Citizen'}! 👋
                   </h1>
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-400/30">
                     Eco Guardian
@@ -336,19 +359,33 @@ const UserDashboard = () => {
                 <FaCamera className="h-4 w-4 text-emerald-400" />
                 <span>AI Waste Scanner</span>
               </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  triggerHaptic(30);
+                  setShowEcoStory(true);
+                }}
+                className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 hover:from-teal-500/30 hover:to-emerald-500/30 text-emerald-300 font-black text-xs border border-emerald-400/40 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-md backdrop-blur-md"
+                title="Generate 9:16 Instagram & WhatsApp Story Card"
+              >
+                <FaLeaf className="h-4 w-4 text-emerald-400" />
+                <span>Eco Story</span>
+              </motion.button>
             </div>
 
           </div>
         </div>
 
-        {/* 4 High-Impact Streamlined Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Dynamic 4-Metric Bento Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
-          {/* Card 1: Eco Wallet & Balance */}
+          {/* Card 1: Wallet Balance & EcoPoints */}
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-emerald-500/40 transition-all group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Eco Wallet Points
+                EcoPoints Balance
               </span>
               <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border border-emerald-500/20 group-hover:scale-110 transition-transform">
                 <FaCoins />
@@ -359,15 +396,15 @@ const UserDashboard = () => {
                 <span className="text-3xl font-black text-slate-900 dark:text-white">
                   {currentPoints}
                 </span>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">EcoPts</span>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">pts</span>
               </div>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
-                ≈ ₹{inrEquivalent} Direct Bank Cashout
+                ≈ ₹{inrEquivalent} direct bank / UPI cash value
               </span>
             </div>
             <button
               onClick={() => setShowUpiPayout(true)}
-              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border border-emerald-500/30 transition flex items-center justify-center space-x-1.5"
+              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border border-emerald-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
             >
               <FaWallet className="text-xs" />
               <span>Redeem UPI Cash</span>
@@ -384,24 +421,51 @@ const UserDashboard = () => {
                 <FaTruck />
               </div>
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-lg font-black text-slate-900 dark:text-white truncate">
-                  {activePickup?.driver?.user?.name || 'Driver Dispatched'}
-                </span>
-              </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
-                TN-38-ECO • ETA ~8 Mins (1.8 km)
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-2 px-3 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20">
-              <span className="flex items-center space-x-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span>Driver En Route</span>
-              </span>
-              <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">OTP: 4892</span>
-            </div>
+            {activePickup ? (
+              <>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-base font-black text-slate-900 dark:text-white truncate">
+                      {activePickup.driver?.user?.name || 'Driver Assigned'}
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                    {activePickup.driver?.vehicleNumber || 'Vehicle Assigned'} • Status: {activePickup.status}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 px-3 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20">
+                  <span className="flex items-center space-x-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span className="capitalize">{activePickup.status}</span>
+                  </span>
+                  {activePickup.otpCode && (
+                    <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">OTP: {activePickup.otpCode}</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-400"></span>
+                    <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
+                      No Active Pickup
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                    Ready to recycle scrap & earn rewards?
+                  </span>
+                </div>
+                <a
+                  href="/schedule-pickup"
+                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/30 transition flex items-center justify-center space-x-1.5"
+                >
+                  <FaCalendarPlus className="text-xs" />
+                  <span>Schedule Pickup</span>
+                </a>
+              </>
+            )}
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
@@ -452,12 +516,12 @@ const UserDashboard = () => {
             <div>
               <div className="flex items-baseline space-x-2">
                 <span className="text-3xl font-black text-slate-900 dark:text-white">
-                  {analytics?.totalRecycledKg || '48.5'}
+                  {analytics?.totalRecycledKg || 0}
                 </span>
                 <span className="text-xs font-bold text-amber-600 dark:text-amber-400">kg diverted</span>
               </div>
               <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
-                Across {analytics?.completedCount || 2} verified door collections
+                Across {analytics?.completedCount || 0} verified door collections
               </span>
             </div>
             <button
@@ -477,101 +541,126 @@ const UserDashboard = () => {
           {/* Left Column: Active Telematics & Scrap Market Estimator (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
             
-            {/* Live Doorstep Telematics Tracking Card */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
-              
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-                <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
-                    <FaRoute />
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                        Live Doorstep Telematics
-                      </h3>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 text-[9px] font-black uppercase tracking-wider flex items-center space-x-1 border border-emerald-500/30">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                        <span>GPS Live</span>
-                      </span>
+            {/* Live Doorstep Telematics Tracking Card or Empty State */}
+            {activePickup ? (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+                
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
+                      <FaRoute />
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                      Real-time EV coordinates, route traffic & doorstep arrival estimate
-                    </p>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                          Live Doorstep Telematics
+                        </h3>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 text-[9px] font-black uppercase tracking-wider flex items-center space-x-1 border border-emerald-500/30">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                          <span>GPS Live</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                        Real-time EV coordinates & doorstep arrival tracking
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setShowDriverChat(true)}
+                      className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition flex items-center space-x-1"
+                    >
+                      <FaComments className="text-xs" />
+                      <span>Chat</span>
+                    </button>
+                    {activePickup?.driver?.user?.phone && (
+                      <a
+                        href={`tel:${activePickup.driver.user.phone}`}
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 rounded-xl text-xs font-bold transition flex items-center space-x-1"
+                      >
+                        <FaPhone className="text-xs text-emerald-600" />
+                        <span>Call Driver</span>
+                      </a>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setShowDriverChat(true)}
-                    className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition flex items-center space-x-1"
-                  >
-                    <FaComments className="text-xs" />
-                    <span>Chat</span>
-                  </button>
-                  <a
-                    href="tel:+919876543210"
-                    className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 rounded-xl text-xs font-bold transition flex items-center space-x-1"
-                  >
-                    <FaPhone className="text-xs text-emerald-600" />
-                    <span>Call Driver</span>
-                  </a>
+                {/* Map View */}
+                <div className="relative h-[280px] sm:h-[320px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
+                  <GoogleRouteMap 
+                    driverName={activePickup?.driver?.user?.name || 'Assigned Driver'} 
+                    vehicleNumber={activePickup?.driver?.vehicleNumber || 'EV Collection Vehicle'}
+                    pickupAddress={activePickup?.address?.street ? `${activePickup.address.street}, ${activePickup.address.city || ''}` : 'Scheduled Address'}
+                    height="100%"
+                  />
+
+                  {/* Floating Telematics Pill */}
+                  <div className="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-white shadow-lg flex items-center space-x-2 text-xs pointer-events-none">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span className="font-bold text-[11px]">{activePickup.driver?.vehicleNumber || 'EV Green Fleet'} • Status: {activePickup.status}</span>
+                  </div>
                 </div>
+
+                {/* Connected Milestone Stepper */}
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/70 dark:border-slate-800">
+                  <div className="relative grid grid-cols-4 gap-2">
+                    <div className="absolute top-3 left-8 right-8 h-0.5 bg-slate-200 dark:bg-slate-700 -z-0 hidden sm:block"></div>
+                    <div className="absolute top-3 left-8 w-[62%] h-0.5 bg-emerald-500 -z-0 hidden sm:block"></div>
+
+                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
+                        ✓
+                      </div>
+                      <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">1. Booked</span>
+                    </div>
+
+                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                      <div className={`w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-sm ${activePickup.status !== 'pending' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                        {activePickup.status !== 'pending' ? '✓' : '2'}
+                      </div>
+                      <span className={`text-[11px] font-black ${activePickup.status !== 'pending' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>2. Assigned</span>
+                    </div>
+
+                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                      <div className={`w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-md ${activePickup.status === 'in_transit' || activePickup.status === 'accepted' ? 'bg-amber-500 ring-4 ring-amber-500/20 animate-pulse' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
+                        3
+                      </div>
+                      <span className={`text-[11px] font-black ${activePickup.status === 'in_transit' || activePickup.status === 'accepted' ? 'text-amber-500' : 'text-slate-400'}`}>3. En Route</span>
+                    </div>
+
+                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
+                      <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-400 flex items-center justify-center text-[10px] font-black">
+                        4
+                      </div>
+                      <span className="text-[11px] font-bold text-slate-400">4. Paid</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-
-              {/* Map View */}
-              <div className="relative h-[280px] sm:h-[320px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
-                <GoogleRouteMap 
-                  driverName={activePickup?.driver?.user?.name || 'Karthik Raja'} 
-                  vehicleNumber="TN-38-ECO-9945 (EV Mini-Truck)"
-                  pickupAddress={activePickup?.address?.street || '123, Bharathi Street, Anna Nagar, Chennai'}
-                  height="100%"
-                />
-
-                {/* Floating Telematics Pill */}
-                <div className="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-white shadow-lg flex items-center space-x-2 text-xs pointer-events-none">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="font-bold text-[11px]">EV Mini-Truck • 28 km/h • ETA ~8 mins</span>
+            ) : (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-sm text-center space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl mx-auto border border-emerald-500/20">
+                  <FaTruck />
                 </div>
-              </div>
-
-              {/* Connected Milestone Stepper */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/70 dark:border-slate-800">
-                <div className="relative grid grid-cols-4 gap-2">
-                  <div className="absolute top-3 left-8 right-8 h-0.5 bg-slate-200 dark:bg-slate-700 -z-0 hidden sm:block"></div>
-                  <div className="absolute top-3 left-8 w-[62%] h-0.5 bg-emerald-500 -z-0 hidden sm:block"></div>
-
-                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
-                      ✓
-                    </div>
-                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">1. Booked</span>
-                  </div>
-
-                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
-                      ✓
-                    </div>
-                    <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">2. Dispatched</span>
-                  </div>
-
-                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                    <div className="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-black shadow-md ring-4 ring-amber-500/20 animate-pulse">
-                      3
-                    </div>
-                    <span className="text-[11px] font-black text-amber-500">3. En Route</span>
-                  </div>
-
-                  <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                    <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-400 flex items-center justify-center text-[10px] font-black">
-                      4
-                    </div>
-                    <span className="text-[11px] font-bold text-slate-400">4. Paid</span>
-                  </div>
+                <div className="space-y-1">
+                  <h3 className="font-black text-slate-900 dark:text-white text-lg">
+                    No Active Pickups Scheduled
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto">
+                    Turn your recyclable paper, plastics, and scrap into instant EcoPoints & cash. Schedule a doorstep pickup anytime!
+                  </p>
                 </div>
+                <button
+                  onClick={() => window.location.href = '/schedule-pickup'}
+                  className="inline-flex items-center space-x-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 hover:scale-105 transition cursor-pointer"
+                >
+                  <FaCalendarPlus className="h-4 w-4" />
+                  <span>Book Doorstep Pickup</span>
+                </button>
               </div>
-
-            </div>
+            )}
 
             {/* Smart Scrap Value Estimator & Live Rates */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
@@ -688,6 +777,135 @@ const UserDashboard = () => {
           {/* Right Column: Green Streak, Quests & Equivalencies (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             
+            {/* Dynamic Virtual Tree Growth & Impact Progression Widget */}
+            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 border-2 border-emerald-500/30 rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden text-white">
+              
+              {/* Background ambient lighting */}
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/15 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="relative z-10 flex items-center justify-between pb-3 border-b border-emerald-500/20">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center text-lg shadow-inner">
+                    <FaSeedling className="animate-bounce" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-black text-white text-sm sm:text-base">
+                        {t('plantTree') || 'Virtual Tree Growth'}
+                      </h3>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-black uppercase tracking-wider border border-emerald-400/30">
+                        {treeStage.stageTag}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-emerald-200/80 font-medium">
+                      Grows with every kilogram you recycle
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    triggerHaptic(30);
+                    setShowEcoStory(true);
+                  }}
+                  className="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-xl text-[11px] font-black border border-emerald-500/30 transition flex items-center gap-1"
+                >
+                  <FaShareAlt className="text-[10px]" />
+                  <span>Story</span>
+                </button>
+              </div>
+
+              {/* Center Interactive Tree Canvas */}
+              <div className="relative z-10 my-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/60 p-4 rounded-2xl border border-emerald-500/20">
+                
+                {/* SVG Tree Stage Graphic */}
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_12px_rgba(16,185,129,0.4)]">
+                    {/* Ground Mound */}
+                    <ellipse cx="50" cy="88" rx="38" ry="8" fill="#14532d" opacity="0.6" />
+                    <ellipse cx="50" cy="86" rx="28" ry="6" fill="#166534" />
+                    
+                    {treeStage.level === 1 && (
+                      <g className="animate-pulse">
+                        <path d="M50 86 Q49 70 50 62" stroke="#10b981" strokeWidth="3" strokeLinecap="round" fill="none" />
+                        <path d="M50 62 Q38 52 42 42 Q50 50 50 62" fill="#34d399" />
+                        <path d="M50 62 Q62 52 58 42 Q50 50 50 62" fill="#10b981" />
+                      </g>
+                    )}
+
+                    {treeStage.level === 2 && (
+                      <g>
+                        <path d="M50 86 Q48 64 50 50" stroke="#059669" strokeWidth="4" strokeLinecap="round" fill="none" />
+                        <path d="M50 65 Q35 55 38 42 Q48 52 50 65" fill="#34d399" />
+                        <path d="M50 60 Q65 50 62 38 Q52 48 50 60" fill="#10b981" />
+                        <circle cx="50" cy="46" r="10" fill="#059669" />
+                        <circle cx="50" cy="42" r="7" fill="#34d399" />
+                      </g>
+                    )}
+
+                    {treeStage.level >= 3 && (
+                      <g>
+                        <path d="M50 86 L48 56 L44 48 M50 64 L56 50" stroke="#78350f" strokeWidth="5" strokeLinecap="round" />
+                        <circle cx="42" cy="40" r="15" fill="#059669" opacity="0.9" />
+                        <circle cx="58" cy="40" r="15" fill="#10b981" opacity="0.9" />
+                        <circle cx="50" cy="30" r="18" fill="#34d399" />
+                        <circle cx="50" cy="26" r="12" fill="#6ee7b7" opacity="0.7" />
+                        {treeStage.level >= 4 && (
+                          <>
+                            <circle cx="40" cy="32" r="3" fill="#f59e0b" />
+                            <circle cx="58" cy="34" r="3" fill="#f59e0b" />
+                            <circle cx="48" cy="22" r="2.5" fill="#f59e0b" />
+                          </>
+                        )}
+                      </g>
+                    )}
+                  </svg>
+                </div>
+
+                {/* Tree Metrics & Level Description */}
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                    <span className="text-lg">{treeStage.icon}</span>
+                    <h4 className="text-sm font-black text-white">{treeStage.name}</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
+                    {treeStage.level === 5 
+                      ? 'Congratulations! You have reached maximum tree maturity and diverted hundreds of kilograms.'
+                      : `Recycle ${treeStage.remaining} kg more waste to evolve your tree to the next maturity rank.`}
+                  </p>
+
+                  {/* Growth Progress Bar */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] font-bold text-emerald-300">
+                      <span>Maturity Progress</span>
+                      <span>{treeStage.pct}%</span>
+                    </div>
+                    <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-emerald-500/30">
+                      <div 
+                        className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_#10b981]" 
+                        style={{ width: `${treeStage.pct}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Mini quick nudge */}
+              <div className="flex items-center justify-between text-[11px] text-emerald-200/90 font-medium">
+                <span>Total Diverted: <strong className="text-white font-black">{totalKgNumber} kg</strong></span>
+                <button
+                  onClick={() => window.location.href = '/schedule-pickup'}
+                  className="font-black text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors"
+                >
+                  <span>Water Tree with Scrap</span>
+                  <FaChevronRight className="text-[9px]" />
+                </button>
+              </div>
+
+            </div>
+
             {/* Daily Green Streak & Quests */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
               
@@ -997,6 +1215,14 @@ const UserDashboard = () => {
         onPayoutSuccess={(updatedPts) => {
           setAnalytics(prev => prev ? ({ ...prev, walletPoints: updatedPts }) : prev);
         }}
+      />
+
+      {/* Shareable 9:16 Instagram & WhatsApp Story Modal */}
+      <EcoStoryModal
+        isOpen={showEcoStory}
+        onClose={() => setShowEcoStory(false)}
+        user={user}
+        stats={analytics}
       />
 
     </UserLayout>

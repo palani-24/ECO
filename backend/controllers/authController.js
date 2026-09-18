@@ -106,61 +106,23 @@ export const loginUser = async (req, res) => {
 
   try {
     const cleanInput = (email || '').trim().toLowerCase();
-    let user = await User.findOne({
+    const user = await User.findOne({
       $or: [
         { email: cleanInput },
         { phone: cleanInput }
       ]
     });
 
-    const demoEmails = [
-      'user@ecoreward.com', 'driver@ecoreward.com', 'admin@ecoreward.com', 'municipality@ecoreward.com',
-      'demo.user@ecoreward.com', 'demo.driver@ecoreward.com', 'demo.municipality@ecoreward.com', 'user@example.com'
-    ];
-
-    // Auto-create demo user on the fly if missing in database
-    if (!user && demoEmails.includes(cleanInput)) {
-      const isDriver = cleanInput.includes('driver');
-      const isAdmin = cleanInput.includes('admin');
-      const isMunicipality = cleanInput.includes('municipality');
-      const role = isAdmin ? 'admin' : isMunicipality ? 'municipality' : isDriver ? 'driver' : 'user';
-
-      user = await User.create({
-        name: isAdmin ? 'Demo Admin' : isMunicipality ? 'Coimbatore Municipal Officer' : isDriver ? 'Demo Driver' : 'Demo Recycler',
-        email: cleanInput,
-        phone: '9876543210',
-        password: password || '123456',
-        role: role,
-        ward: 'Ward 12 - Central Zone',
-        department: 'Solid Waste & ESG Directorate',
-        jurisdiction: 'Coimbatore City Municipal Corp',
-        points: isDriver || isAdmin || isMunicipality ? 0 : 500
-      });
-
-      if (isDriver) {
-        await Driver.create({
-          user: user._id,
-          vehicleNumber: 'TN-38-ECO-9945',
-          vehicleType: 'E-Rickshaw Heavy Loader',
-          isApproved: true,
-          status: 'active'
-        });
-      }
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid email/phone or password' });
     }
 
-    let isMatch = user ? await user.matchPassword(password) : false;
-
-    // Fail-safe handler for demo/sample accounts to ensure 100% login success
-    if (user && !isMatch) {
-      if (demoEmails.includes(user.email) || password === '1234' || password === '123456') {
-        user.password = password || '123456';
-        await user.save();
-        isMatch = true;
-      }
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid email/phone or password' });
     }
 
-    if (user && isMatch) {
-      let isApproved = true;
+    let isApproved = true;
 
       // Update permanent login metadata in database
       user.lastLogin = new Date();

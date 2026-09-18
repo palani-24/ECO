@@ -233,98 +233,62 @@ const Login = () => {
                 <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Log in to manage your eco pickups and reward balance.</p>
               </div>
 
-              {/* 1-Click Instant Demo Login Bar with Full Account Details */}
-              <div className="p-3 bg-emerald-500/10 dark:bg-[#06121e] rounded-2xl border border-emerald-500/30 text-xs space-y-2.5 shadow-sm">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                    <FaMagic className="text-emerald-500" />
-                    <span>Instant 1-Click Role Switcher:</span>
+              {/* Simple & Clean 1-Click Demo Login */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-bold px-0.5">
+                  <span className="flex items-center space-x-1">
+                    <span>⚡</span>
+                    <span>Demo 1-Click Login</span>
                   </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button 
-                      type="button" 
-                      disabled={loading}
-                      onClick={() => handleInstantDemoLogin('user')}
-                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
-                    >
-                      Citizen
-                    </button>
-                    <button 
-                      type="button" 
-                      disabled={loading}
-                      onClick={() => handleInstantDemoLogin('driver')}
-                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
-                    >
-                      Driver
-                    </button>
-                    <button 
-                      type="button" 
-                      disabled={loading}
-                      onClick={() => handleInstantDemoLogin('municipality')}
-                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
-                    >
-                      Municipality
-                    </button>
-                    <button 
-                      type="button" 
-                      disabled={loading}
-                      onClick={() => handleInstantDemoLogin('admin')}
-                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
-                    >
-                      Admin
-                    </button>
-                  </div>
+                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    PIN: 1234
+                  </span>
                 </div>
 
-                {/* Pre-configured Demo Account Details Pill Container */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 border-t border-emerald-500/20 text-[10px] font-mono">
-                  <div 
-                    onClick={() => {
-                      setEmailOrPhone('user@ecoreward.com');
-                      setPassword('1234');
-                      addToast('Citizen credentials filled!', 'info', 'Credentials Loaded');
-                    }}
-                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-emerald-500/20 hover:border-emerald-500/50 transition cursor-pointer flex items-center justify-between"
+                <div className="grid grid-cols-4 gap-1.5">
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('user')}
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-emerald-500/10 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    title="Login as Citizen (user@ecoreward.com)"
                   >
-                    <span>🧑 <strong className="text-emerald-600 dark:text-emerald-400">user@ecoreward.com</strong></span>
-                    <span className="text-slate-400">PIN: 1234</span>
-                  </div>
+                    <span className="text-base">🧑</span>
+                    <span className="text-[10px] font-black">Citizen</span>
+                  </button>
 
-                  <div 
-                    onClick={() => {
-                      setEmailOrPhone('driver@ecoreward.com');
-                      setPassword('1234');
-                      addToast('Driver credentials filled!', 'info', 'Credentials Loaded');
-                    }}
-                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-teal-500/20 hover:border-teal-500/50 transition cursor-pointer flex items-center justify-between"
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('driver')}
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-teal-500/10 border border-slate-200 dark:border-slate-800 hover:border-teal-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    title="Login as Driver (driver@ecoreward.com)"
                   >
-                    <span>🚚 <strong className="text-teal-600 dark:text-teal-400">driver@ecoreward.com</strong></span>
-                    <span className="text-slate-400">PIN: 1234</span>
-                  </div>
+                    <span className="text-base">🚚</span>
+                    <span className="text-[10px] font-black">Driver</span>
+                  </button>
 
-                  <div 
-                    onClick={() => {
-                      setEmailOrPhone('municipality@ecoreward.com');
-                      setPassword('1234');
-                      addToast('Municipality credentials filled!', 'info', 'Credentials Loaded');
-                    }}
-                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-cyan-500/20 hover:border-cyan-500/50 transition cursor-pointer flex items-center justify-between"
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('municipality')}
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-cyan-500/10 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    title="Login as Municipality Officer (municipality@ecoreward.com)"
                   >
-                    <span>🏛️ <strong className="text-cyan-600 dark:text-cyan-400">municipality@ecoreward.com</strong></span>
-                    <span className="text-slate-400">PIN: 1234</span>
-                  </div>
+                    <span className="text-base">🏛️</span>
+                    <span className="text-[10px] font-black">Officer</span>
+                  </button>
 
-                  <div 
-                    onClick={() => {
-                      setEmailOrPhone('admin@ecoreward.com');
-                      setPassword('1234');
-                      addToast('Admin credentials filled!', 'info', 'Credentials Loaded');
-                    }}
-                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-amber-500/20 hover:border-amber-500/50 transition cursor-pointer flex items-center justify-between"
+                  <button 
+                    type="button" 
+                    disabled={loading}
+                    onClick={() => handleInstantDemoLogin('admin')}
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-amber-500/10 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    title="Login as Admin (admin@ecoreward.com)"
                   >
-                    <span>👑 <strong className="text-amber-600 dark:text-amber-400">admin@ecoreward.com</strong></span>
-                    <span className="text-slate-400">PIN: 1234</span>
-                  </div>
+                    <span className="text-base">👑</span>
+                    <span className="text-[10px] font-black">Admin</span>
+                  </button>
                 </div>
               </div>
 

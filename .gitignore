@@ -37,3 +37,13 @@ yarn-debug.log*
 yarn-error.log*
 logs/
 *.log
+
+# Java & Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+maven_bin/
+.mvn/
+bin/

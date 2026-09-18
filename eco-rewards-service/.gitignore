@@ -1,0 +1,12 @@
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+maven_bin/
+.mvn/
+bin/
+.project
+.classpath
+.settings/

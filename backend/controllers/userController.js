@@ -321,11 +321,48 @@ export const redeemReward = async (req, res) => {
       code = `AMZN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     } 
     else if (rewardType === 'discount') {
-      pointsCost = 300; // 300 points = 10% Shopping Discount
-      title = '15% Off EcoStore Coupon';
-      provider = 'EcoStore';
+      pointsCost = req.body.pointsCost || 300;
+      title = req.body.title || '15% Off EcoStore Coupon';
+      provider = req.body.provider || 'EcoStore';
       code = `ECO-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     } 
+    else if (rewardType === 'metro_pass') {
+      pointsCost = 350;
+      title = 'Green Metro & EV Bus Pass (₹100 Recharge)';
+      provider = 'CMRL / Smart Transit';
+      code = `METRO-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    }
+    else if (rewardType === 'ev_charging') {
+      pointsCost = 450;
+      title = 'EV Fast Charging Wallet Credits (₹150)';
+      provider = 'Tata Power / Ather Grid';
+      code = `EVCHG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    }
+    else if (rewardType === 'ocean_plastic') {
+      pointsCost = 400;
+      title = 'Recover 2kg Ocean-Bound Plastic';
+      provider = 'CleanSeas Alliance';
+      code = `OCEAN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    }
+    else if (rewardType === 'solar_rebate') {
+      pointsCost = 600;
+      title = 'Rooftop Solar & Clean Energy Rebate (₹200 Off)';
+      provider = 'TNERC Green Energy Portal';
+      code = `SOLAR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    }
+    else if (rewardType === 'mystery_box') {
+      pointsCost = 150;
+      const rewardsPool = [
+        { t: '🎁 Won 300 Bonus EcoPoints!', c: 'BONUS-300-PTS' },
+        { t: '🎁 Won 40% Off Mega Eco Store Coupon!', c: 'ECO-SUPER-40' },
+        { t: '🎁 Sponsored Free Native Seedling!', c: 'TREE-BONUS-' + Math.random().toString(36).substr(2, 6).toUpperCase() },
+        { t: '🎁 Won ₹100 Clean Transit Metro Recharge!', c: 'METRO-WIN-100' }
+      ];
+      const win = rewardsPool[Math.floor(Math.random() * rewardsPool.length)];
+      title = win.t;
+      provider = 'EcoReward Gamification';
+      code = win.c;
+    }
     else {
       return res.status(400).json({ success: false, message: 'Invalid reward type' });
     }

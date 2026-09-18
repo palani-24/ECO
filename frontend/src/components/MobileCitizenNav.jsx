@@ -14,6 +14,18 @@ const MobileCitizenNav = () => {
   const location = useLocation();
   const [showDrawer, setShowDrawer] = useState(false);
 
+  // Close drawer on route change
+  useEffect(() => {
+    setShowDrawer(false);
+  }, [location.pathname, location.search]);
+
+  // Global listener for top 3-line hamburger menu toggle
+  useEffect(() => {
+    const handleToggle = () => setShowDrawer(prev => !prev);
+    window.addEventListener('toggle-mobile-citizen-drawer', handleToggle);
+    return () => window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
+  }, []);
+
   const navItems = [
     { path: '/dashboard', label: 'Home', icon: FaHome },
     { path: '/schedule-pickup', label: 'Book Pickup', icon: FaCalendarAlt },
@@ -30,12 +42,12 @@ const MobileCitizenNav = () => {
 
   return (
     <>
-      {/* Sticky Bottom 5-Tab Navigation Bar */}
+      {/* Sticky Bottom 4-Tab Navigation Bar */}
       <nav 
         aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-xl px-2 py-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-xl px-4 py-2 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))]"
       >
-        <div className="flex items-center justify-around">
+        <div className="flex items-center justify-around max-w-md mx-auto">
           {navItems.map((item, idx) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -45,39 +57,19 @@ const MobileCitizenNav = () => {
                 key={idx}
                 to={item.path}
                 onClick={() => triggerHaptic(20)}
-                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
+                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all active:scale-95 cursor-pointer ${
                   active 
                     ? 'text-emerald-600 dark:text-emerald-400 font-black' 
                     : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
                 }`}
               >
-                <div className={`p-1 rounded-lg ${active ? 'bg-emerald-500/15' : ''}`}>
-                  <Icon className="text-lg" />
+                <div className={`p-1.5 rounded-xl transition-all ${active ? 'bg-emerald-500/15 scale-105' : ''}`}>
+                  <Icon className="text-xl" />
                 </div>
-                <span className="text-[9px] tracking-tight mt-0.5">{item.label}</span>
+                <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
               </NavLink>
             );
           })}
-
-          {/* 5th Button: All Menu Drawer */}
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(25);
-              setShowDrawer(true);
-            }}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 cursor-pointer ${
-              showDrawer
-                ? 'text-emerald-600 dark:text-emerald-400 font-black'
-                : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
-            }`}
-            aria-label="Open Navigation Drawer"
-          >
-            <div className={`p-1 rounded-lg ${showDrawer ? 'bg-emerald-500/15' : ''}`}>
-              <FaBars className="text-lg" />
-            </div>
-            <span className="text-[9px] tracking-tight mt-0.5">All Menu</span>
-          </button>
         </div>
       </nav>
 

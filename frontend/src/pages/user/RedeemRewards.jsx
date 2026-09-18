@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import UserLayout from '../../components/UserLayout';
+import MobileRedeemRewards from '../../components/MobileRedeemRewards';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
 import SmartKioskLocatorModal from '../../components/SmartKioskLocatorModal';
 import PlantTreeModal from '../../components/PlantTreeModal';
@@ -267,7 +268,15 @@ const RedeemRewards = () => {
   }, [redemptions, claimsFilter]);
 
   return (
-    <UserLayout>
+    <>
+      {/* 📱 MOBILE VIEW - Screenshot 2 Exact Match */}
+      <div className="block md:hidden">
+        <MobileRedeemRewards />
+      </div>
+
+      {/* 💻 DESKTOP WORKSPACE VIEW */}
+      <div className="hidden md:block">
+        <UserLayout>
       <div className="space-y-6 pb-12">
         {/* Top Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm">
@@ -710,7 +719,9 @@ const RedeemRewards = () => {
         onClose={() => setSelectedVoucherForQR(null)}
         voucher={selectedVoucherForQR}
       />
-    </UserLayout>
+        </UserLayout>
+      </div>
+    </>
   );
 };
 

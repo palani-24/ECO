@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLanguage } from '../../context/LanguageContext';
 import UserLayout from '../../components/UserLayout';
+import MobileSchedulePickup from '../../components/MobileSchedulePickup';
 import AIWasteScanner from '../../components/AIWasteScanner';
 import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import GPSLocationPicker from '../../components/GPSLocationPicker';
@@ -416,7 +417,15 @@ const SchedulePickup = () => {
   };
 
   return (
-    <UserLayout>
+    <>
+      {/* 📱 MOBILE VIEW - Screenshot 1 Unified Theme */}
+      <div className="block md:hidden">
+        <MobileSchedulePickup />
+      </div>
+
+      {/* 💻 DESKTOP WORKSPACE VIEW */}
+      <div className="hidden md:block">
+        <UserLayout>
       {/* Header Banner */}
       <div className="relative overflow-hidden p-6 md:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white shadow-2xl border border-emerald-500/20">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -1357,7 +1366,9 @@ const SchedulePickup = () => {
         onClose={() => setShowAIScanner(false)} 
         onApplyScannedData={handleApplyAiData} 
       />
-    </UserLayout>
+        </UserLayout>
+      </div>
+    </>
   );
 };
 

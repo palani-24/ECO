@@ -16,7 +16,11 @@ const UserLayout = ({ children, hideFooter = false }) => {
         </main>
       </div>
 
-      {!hideFooter && <Footer />}
+      {!hideFooter && (
+        <div className="hidden md:block">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 };

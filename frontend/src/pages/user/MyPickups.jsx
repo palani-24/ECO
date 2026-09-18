@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserLayout from '../../components/UserLayout';
+import MobileMyPickups from '../../components/MobileMyPickups';
 import DriverLiveTrackingModal from '../../components/DriverLiveTrackingModal';
 import CarbonCertificateModal from '../../components/CarbonCertificateModal';
 import api from '../../utils/api';
@@ -86,7 +87,15 @@ const MyPickups = () => {
   };
 
   return (
-    <UserLayout>
+    <>
+      {/* 📱 MOBILE VIEW - Screenshot 1 & 4 Unified Theme */}
+      <div className="block md:hidden">
+        <MobileMyPickups />
+      </div>
+
+      {/* 💻 DESKTOP WORKSPACE VIEW */}
+      <div className="hidden md:block">
+        <UserLayout>
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="space-y-1">
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
@@ -481,7 +490,9 @@ const MyPickups = () => {
             onClose={() => setShowCertModal(false)} 
           />
 
-    </UserLayout>
+        </UserLayout>
+      </div>
+    </>
   );
 };
 

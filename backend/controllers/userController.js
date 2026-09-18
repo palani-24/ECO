@@ -145,10 +145,10 @@ export const schedulePickup = async (req, res) => {
         status: { $in: ['pending', 'assigned', 'accepted', 'completed'] }
       });
 
-      if (todayPickupsCount >= 1) {
+      if (todayPickupsCount >= 10) {
         return res.status(400).json({
           success: false,
-          message: 'Daily pickup limit reached! To prevent abuse, regular citizens are allowed max 1 pickup collection (up to 25kg) per day. Please try scheduling again tomorrow!'
+          message: 'Daily pickup limit (10 collections) reached for today. Please try scheduling again tomorrow!'
         });
       }
     }

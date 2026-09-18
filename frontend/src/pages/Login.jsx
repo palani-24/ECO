@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import { 
   FaRecycle, FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash, 
   FaGoogle, FaApple, FaShieldAlt, FaUserPlus, FaSpinner, FaLeaf, 
-  FaTruck, FaMapMarkerAlt, FaGlobeAmericas, FaKey, FaChevronRight, FaVolumeUp, FaVolumeMute, FaPlay, FaPause
+  FaTruck, FaMapMarkerAlt, FaGlobeAmericas, FaKey, FaChevronRight, FaVolumeUp, FaVolumeMute, FaPlay, FaPause, FaMagic
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 
@@ -97,6 +97,42 @@ const Login = () => {
     } catch (err) {
       setLoading(false);
       setError('Connection failed. Please check network and try again.');
+    }
+  };
+
+  // 1-CLICK INSTANT DEMO LOGIN HANDLER
+  const handleInstantDemoLogin = async (roleType) => {
+    setLoading(true);
+    setError('');
+
+    const credentialsMap = {
+      user: { email: 'user@ecoreward.com', pass: '1234' },
+      driver: { email: 'driver@ecoreward.com', pass: '1234' },
+      municipality: { email: 'municipality@ecoreward.com', pass: '1234' },
+      admin: { email: 'admin@ecoreward.com', pass: '1234' }
+    };
+
+    const target = credentialsMap[roleType] || credentialsMap.user;
+    setEmailOrPhone(target.email);
+    setPassword(target.pass);
+
+    try {
+      const res = await login(target.email, target.pass);
+      setLoading(false);
+
+      if (res.success) {
+        const roleLabel = roleType === 'driver' ? 'Driver' : roleType === 'municipality' ? 'Municipality Officer' : roleType === 'admin' ? 'Administrator' : 'Citizen';
+        addToast(`⚡ 1-Click ${roleLabel} Login Successful! (${res.user.name})`, 'success', 'Welcome to EcoReward');
+        if (res.user.role === 'admin') navigate('/admin');
+        else if (res.user.role === 'driver') navigate('/driver');
+        else if (res.user.role === 'municipality') navigate('/municipality/dashboard');
+        else navigate('/dashboard');
+      } else {
+        setError(res.message || 'Demo login failed');
+      }
+    } catch (err) {
+      setLoading(false);
+      setError('Demo login connection error. Please try again.');
     }
   };
 
@@ -195,6 +231,101 @@ const Login = () => {
                 <img src="/app-logo.png" alt="EcoReward Emblem Logo" className="h-12 sm:h-14 w-auto mx-auto object-contain mb-1 drop-shadow-md" />
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Welcome Back</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Log in to manage your eco pickups and reward balance.</p>
+              </div>
+
+              {/* 1-Click Instant Demo Login Bar with Full Account Details */}
+              <div className="p-3 bg-emerald-500/10 dark:bg-[#06121e] rounded-2xl border border-emerald-500/30 text-xs space-y-2.5 shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                    <FaMagic className="text-emerald-500" />
+                    <span>Instant 1-Click Role Switcher:</span>
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button 
+                      type="button" 
+                      disabled={loading}
+                      onClick={() => handleInstantDemoLogin('user')}
+                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
+                    >
+                      Citizen
+                    </button>
+                    <button 
+                      type="button" 
+                      disabled={loading}
+                      onClick={() => handleInstantDemoLogin('driver')}
+                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
+                    >
+                      Driver
+                    </button>
+                    <button 
+                      type="button" 
+                      disabled={loading}
+                      onClick={() => handleInstantDemoLogin('municipality')}
+                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
+                    >
+                      Municipality
+                    </button>
+                    <button 
+                      type="button" 
+                      disabled={loading}
+                      onClick={() => handleInstantDemoLogin('admin')}
+                      className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 font-black text-[10px] shadow hover:scale-105 transition-all cursor-pointer"
+                    >
+                      Admin
+                    </button>
+                  </div>
+                </div>
+
+                {/* Pre-configured Demo Account Details Pill Container */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 border-t border-emerald-500/20 text-[10px] font-mono">
+                  <div 
+                    onClick={() => {
+                      setEmailOrPhone('user@ecoreward.com');
+                      setPassword('1234');
+                      addToast('Citizen credentials filled!', 'info', 'Credentials Loaded');
+                    }}
+                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-emerald-500/20 hover:border-emerald-500/50 transition cursor-pointer flex items-center justify-between"
+                  >
+                    <span>🧑 <strong className="text-emerald-600 dark:text-emerald-400">user@ecoreward.com</strong></span>
+                    <span className="text-slate-400">PIN: 1234</span>
+                  </div>
+
+                  <div 
+                    onClick={() => {
+                      setEmailOrPhone('driver@ecoreward.com');
+                      setPassword('1234');
+                      addToast('Driver credentials filled!', 'info', 'Credentials Loaded');
+                    }}
+                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-teal-500/20 hover:border-teal-500/50 transition cursor-pointer flex items-center justify-between"
+                  >
+                    <span>🚚 <strong className="text-teal-600 dark:text-teal-400">driver@ecoreward.com</strong></span>
+                    <span className="text-slate-400">PIN: 1234</span>
+                  </div>
+
+                  <div 
+                    onClick={() => {
+                      setEmailOrPhone('municipality@ecoreward.com');
+                      setPassword('1234');
+                      addToast('Municipality credentials filled!', 'info', 'Credentials Loaded');
+                    }}
+                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-cyan-500/20 hover:border-cyan-500/50 transition cursor-pointer flex items-center justify-between"
+                  >
+                    <span>🏛️ <strong className="text-cyan-600 dark:text-cyan-400">municipality@ecoreward.com</strong></span>
+                    <span className="text-slate-400">PIN: 1234</span>
+                  </div>
+
+                  <div 
+                    onClick={() => {
+                      setEmailOrPhone('admin@ecoreward.com');
+                      setPassword('1234');
+                      addToast('Admin credentials filled!', 'info', 'Credentials Loaded');
+                    }}
+                    className="p-1.5 rounded-lg bg-white/50 dark:bg-slate-900/60 border border-amber-500/20 hover:border-amber-500/50 transition cursor-pointer flex items-center justify-between"
+                  >
+                    <span>👑 <strong className="text-amber-600 dark:text-amber-400">admin@ecoreward.com</strong></span>
+                    <span className="text-slate-400">PIN: 1234</span>
+                  </div>
+                </div>
               </div>
 
               {/* Error Alert */}

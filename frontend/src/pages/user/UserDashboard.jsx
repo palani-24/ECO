@@ -12,6 +12,7 @@ import DriverChatModal from '../../components/DriverChatModal';
 import GreenCertificateModal from '../../components/GreenCertificateModal';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
 import EcoStoryModal from '../../components/EcoStoryModal';
+import MobileEcoHome from '../../components/MobileEcoHome';
 import { triggerConfetti } from '../../utils/confetti';
 import { soundFx } from '../../utils/audioFeedback';
 import { triggerHaptic } from '../../utils/mobileNative';
@@ -288,8 +289,23 @@ const UserDashboard = () => {
   const inrEquivalent = Math.round(currentPoints * 0.25);
 
   return (
-    <UserLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-8">
+    <>
+      {/* 📱 MOBILE VIEW: Exact Native Screen from user screenshot */}
+      <div className="block md:hidden">
+        <MobileEcoHome 
+          pickups={pickups} 
+          onPickupCreated={(newPickup) => {
+            setPickups(prev => [newPickup, ...prev]);
+            handlePickupUpdated(newPickup);
+          }}
+          onOpenScanner={() => setShowAiScanner(true)}
+        />
+      </div>
+
+      {/* 💻 DESKTOP WORKSPACE VIEW */}
+      <div className="hidden md:block">
+        <UserLayout>
+          <div className="space-y-6 max-w-7xl mx-auto pb-8">
         
         {/* Modern Executive Hero Glass Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-900/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-6 sm:p-8 text-white shadow-xl backdrop-blur-xl">
@@ -1202,8 +1218,8 @@ const UserDashboard = () => {
       <GreenCertificateModal
         isOpen={showGreenCert}
         onClose={() => setShowGreenCert(false)}
-        totalWeight={analytics?.totalRecycledKg || 48.5}
-        totalCO2={analytics?.co2Reduced || 35.3}
+        totalWeight={analytics?.totalRecycledKg || 0}
+        totalCO2={analytics?.co2Reduced || 0}
         points={currentPoints}
       />
 
@@ -1225,7 +1241,9 @@ const UserDashboard = () => {
         stats={analytics}
       />
 
-    </UserLayout>
+        </UserLayout>
+      </div>
+    </>
   );
 };
 

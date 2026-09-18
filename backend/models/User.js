@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
   department: { type: String, default: 'Solid Waste Management' },
   jurisdiction: { type: String, default: 'Coimbatore Municipal Corporation' },
   lastLogin: { type: Date },
-  loginCount: { type: Number, default: 0 }
+  loginCount: { type: Number, default: 0 },
+  isDemo: { type: Boolean, default: false }
 }, {
   timestamps: true
 });

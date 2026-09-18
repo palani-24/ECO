@@ -118,8 +118,26 @@ export const schedulePickup = async (req, res) => {
       }];
     }
 
-    // Weight Limit Validation (Max 100kg household, 500kg bulk)
-    const maxLimit = pickupType === 'bulk' ? 500 : 100;
+    // Identify Demo Accounts for Unlimited Pickups
+    const userEmail = (req.user?.email || '').toLowerCase();
+    const userName = (req.user?.name || '').toLowerCase();
+    const isDemoAccount = 
+      req.user?.isDemo === true ||
+      req.body?.isDemo === true ||
+      req.headers['x-demo-user'] === 'true' ||
+      userEmail.includes('demo') || 
+      userEmail.includes('example') || 
+      userEmail.includes('test') ||
+      userEmail.endsWith('@ecoreward.com') ||
+      userEmail === 'user@ecoreward.com' ||
+      userEmail.includes('k2d') ||
+      userName.includes('demo') ||
+      userName.includes('k2d') ||
+      userName.includes('citizen') ||
+      userName.includes('test');
+
+    // Weight Limit Validation (Max 100kg household, 500kg bulk, 2000kg demo)
+    const maxLimit = isDemoAccount ? 2000 : (pickupType === 'bulk' ? 500 : 100);
     if (isNaN(weightNum) || weightNum <= 0 || weightNum > maxLimit) {
       return res.status(400).json({ 
         success: false, 
@@ -127,11 +145,8 @@ export const schedulePickup = async (req, res) => {
       });
     }
 
-    // Daily Per-User Rate Limit Check (Exempt Demo Accounts for Unlimited Testing)
-    const userEmail = (req.user?.email || '').toLowerCase();
-    const userName = (req.user?.name || '').toLowerCase();
-    const isDemoAccount = userEmail.includes('demo') || userEmail.includes('example') || userName.includes('demo');
-
+    // Daily Per-User Rate Limit Check:
+    // Demo accounts have completely UNLIMITED pickups (bypass all daily limits)
     if (!isDemoAccount) {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);

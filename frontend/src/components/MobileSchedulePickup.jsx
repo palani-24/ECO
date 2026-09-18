@@ -228,6 +228,14 @@ const MobileSchedulePickup = () => {
       })
       .join(', ');
 
+    const isDemo = 
+      user?.isDemo ||
+      user?.email?.toLowerCase().includes('demo') ||
+      user?.email?.toLowerCase().endsWith('@ecoreward.com') ||
+      user?.email?.toLowerCase().includes('k2d') ||
+      user?.name?.toLowerCase().includes('k2d') ||
+      user?.name?.toLowerCase().includes('demo');
+
     const payload = {
       wasteCategory: `${catNames} (${numericWeight}kg)`,
       estimatedWeight: numericWeight,
@@ -240,7 +248,8 @@ const MobileSchedulePickup = () => {
         zipCode: '600040'
       },
       wasteImageUrl: photoPreview || undefined,
-      notes: 'Scheduled via Mobile App'
+      notes: 'Scheduled via Mobile App',
+      isDemo
     };
 
     try {

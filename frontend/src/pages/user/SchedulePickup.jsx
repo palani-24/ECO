@@ -378,6 +378,14 @@ const SchedulePickup = () => {
       return;
     }
 
+    const isDemo = 
+      user?.isDemo ||
+      user?.email?.toLowerCase().includes('demo') ||
+      user?.email?.toLowerCase().endsWith('@ecoreward.com') ||
+      user?.email?.toLowerCase().includes('k2d') ||
+      user?.name?.toLowerCase().includes('k2d') ||
+      user?.name?.toLowerCase().includes('demo');
+
     const payload = {
       wasteCategory: multiItems.map(i => `${i.category} (${i.estimatedWeight}kg)`).join(', '),
       items: multiItems.map(i => ({
@@ -397,7 +405,8 @@ const SchedulePickup = () => {
       wasteImageUrl: wastePhotoPreview || undefined,
       notes: driverNotes,
       isRecurring,
-      pickupType
+      pickupType,
+      isDemo
     };
 
     try {

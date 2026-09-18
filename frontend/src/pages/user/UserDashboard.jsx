@@ -294,11 +294,16 @@ const UserDashboard = () => {
       <div className="block md:hidden">
         <MobileEcoHome 
           pickups={pickups} 
+          analytics={analytics}
+          activePickup={activePickup}
           onPickupCreated={(newPickup) => {
             setPickups(prev => [newPickup, ...prev]);
             handlePickupUpdated(newPickup);
           }}
           onOpenScanner={() => setShowAiScanner(true)}
+          onOpenUpi={() => setShowUpiPayout(true)}
+          onOpenCert={() => setShowGreenCert(true)}
+          onOpenStory={() => setShowEcoStory(true)}
         />
       </div>
 

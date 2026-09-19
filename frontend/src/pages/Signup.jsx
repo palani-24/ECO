@@ -173,8 +173,8 @@ const Signup = () => {
       {/* Ambient Dark Glass Overlay Vignette */}
       <div className="fixed inset-0 z-0 bg-gradient-to-br from-[#06121e]/90 via-[#06121e]/70 to-emerald-950/80 backdrop-blur-[2px] pointer-events-none" />
 
-      {/* Floating Video Control Buttons */}
-      <div className="fixed bottom-6 right-6 z-40 flex items-center space-x-2 bg-[#091b2e]/90 border border-emerald-500/40 px-3.5 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
+      {/* Floating Video Control Buttons (Desktop only to prevent mobile overlap) */}
+      <div className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center space-x-2 bg-[#091b2e]/90 border border-emerald-500/40 px-3.5 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
         <button 
           type="button" 
           onClick={toggleVideoPlay}

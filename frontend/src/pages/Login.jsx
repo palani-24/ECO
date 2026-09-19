@@ -155,12 +155,12 @@ const Login = () => {
       {/* Ambient Dark Glass Vignette Overlay */}
       <div className="fixed inset-0 z-0 bg-gradient-to-br from-[#06121e]/90 via-[#06121e]/70 to-emerald-950/80 backdrop-blur-[2px] pointer-events-none" />
 
-      {/* Floating Video Controls */}
-      <div className="fixed bottom-6 right-6 z-40 flex items-center space-x-2 bg-[#091b2e]/90 border border-emerald-500/40 px-3.5 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
+      {/* Floating Video Controls (Visible on Desktop only to prevent mobile overlap) */}
+      <div className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center space-x-2 bg-[#091b2e]/90 border border-emerald-500/40 px-3.5 py-2 rounded-2xl backdrop-blur-md shadow-2xl">
         <button 
           type="button" 
           onClick={toggleVideoPlay}
-          className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+          className="p-1.5 text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
           title={isVideoPlaying ? "Pause Ambient Video" : "Play Ambient Video"}
         >
           {isVideoPlaying ? <FaPause className="h-3.5 w-3.5" /> : <FaPlay className="h-3.5 w-3.5" />}
@@ -179,7 +179,7 @@ const Login = () => {
         </span>
       </div>
 
-      <div className="relative z-10 flex-1 flex items-center justify-center p-4 py-8 max-w-7xl mx-auto w-full">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-4 py-4 sm:py-8 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
           
           {/* Left Column: 11-Step Eco Background Story Banner */}
@@ -224,10 +224,10 @@ const Login = () => {
 
           {/* Right Column: Login Card */}
           <div className="lg:col-span-6 flex justify-center">
-            <div className="w-full max-w-[460px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-6 sm:p-9 rounded-3xl shadow-2xl space-y-6">
+            <div className="w-full max-w-[460px] bg-white/95 dark:bg-[#091b2e]/95 backdrop-blur-2xl border border-emerald-500/30 dark:border-emerald-500/40 p-5 sm:p-9 rounded-3xl shadow-2xl space-y-5">
               
               {/* Header with Official Logo */}
-              <div className="text-center space-y-2">
+              <div className="text-center space-y-1.5">
                 <img src="/app-logo.png" alt="EcoReward Emblem Logo" className="h-12 sm:h-14 w-auto mx-auto object-contain mb-1 drop-shadow-md" />
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Welcome Back</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-300 font-medium">Log in to manage your eco pickups and reward balance.</p>
@@ -250,7 +250,7 @@ const Login = () => {
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('user')}
-                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-emerald-500/10 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-emerald-500/15 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
                     title="Login as Citizen (user@ecoreward.com)"
                   >
                     <span className="text-base">🧑</span>
@@ -261,7 +261,7 @@ const Login = () => {
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('driver')}
-                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-teal-500/10 border border-slate-200 dark:border-slate-800 hover:border-teal-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-teal-500/15 border border-slate-200 dark:border-slate-800 hover:border-teal-500 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
                     title="Login as Driver (driver@ecoreward.com)"
                   >
                     <span className="text-base">🚚</span>
@@ -272,7 +272,7 @@ const Login = () => {
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('municipality')}
-                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-cyan-500/10 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-cyan-500/15 border border-slate-200 dark:border-slate-800 hover:border-cyan-500 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
                     title="Login as Municipality Officer (municipality@ecoreward.com)"
                   >
                     <span className="text-base">🏛️</span>
@@ -283,7 +283,7 @@ const Login = () => {
                     type="button" 
                     disabled={loading}
                     onClick={() => handleInstantDemoLogin('admin')}
-                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-amber-500/10 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
+                    className="py-2.5 px-1 rounded-2xl bg-slate-50 dark:bg-slate-900 hover:bg-amber-500/15 border border-slate-200 dark:border-slate-800 hover:border-amber-500 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex flex-col items-center justify-center space-y-1 cursor-pointer active:scale-95 shadow-sm"
                     title="Login as Admin (admin@ecoreward.com)"
                   >
                     <span className="text-base">👑</span>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import DriverLayout from '../../components/DriverLayout';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import { 
   FaCompass, FaVolumeUp, FaVolumeMute, FaRoute, 
@@ -77,12 +76,8 @@ const DriverNavigationPage = () => {
   const currentStop = stops[activeStopIndex] || stops[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-        
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 pb-28 md:pb-8">
+    <DriverLayout>
+      <div className="space-y-6 max-w-7xl mx-auto pb-12">
           
           {/* Header */}
           <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -251,9 +246,8 @@ const DriverNavigationPage = () => {
 
           </div>
 
-        </main>
       </div>
-    </div>
+    </DriverLayout>
   );
 };
 

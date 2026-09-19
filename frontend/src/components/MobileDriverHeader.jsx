@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaBars, FaBell, FaTruck, FaBolt, FaTimes, 
-  FaArrowLeft, FaCheckCircle, FaBatteryThreeQuarters 
+  FaArrowLeft, FaCheckCircle, FaBatteryThreeQuarters,
+  FaSun, FaMoon
 } from 'react-icons/fa';
 import { triggerHaptic } from '../utils/mobileNative';
 import { useToast } from '../context/ToastContext';
@@ -18,6 +19,22 @@ const MobileDriverHeader = ({
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('eco_driver_theme') || 'dark');
+
+  const handleToggleTheme = () => {
+    triggerHaptic(20);
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    localStorage.setItem('eco_driver_theme', next);
+    window.dispatchEvent(new CustomEvent('driver-theme-change', { detail: { theme: next } }));
+    if (next === 'light') {
+      document.documentElement.classList.remove('dark');
+      addToast('☀️ White Daylight Theme Activated', 'info', 'Theme Changed');
+    } else {
+      document.documentElement.classList.add('dark');
+      addToast('🌙 Night Dark Theme Activated', 'info', 'Theme Changed');
+    }
+  };
 
   return (
     <>
@@ -96,6 +113,16 @@ const MobileDriverHeader = ({
               <FaBatteryThreeQuarters className="text-emerald-400" />
               <span>{batteryLevel}%</span>
             </div>
+
+            {/* Double Theme (White / Dark) Toggle Pill */}
+            <button
+              type="button"
+              onClick={handleToggleTheme}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition active:scale-95 cursor-pointer text-white flex items-center justify-center text-xs"
+              title={theme === 'dark' ? 'Switch to White Theme' : 'Switch to Dark Mode'}
+            >
+              {theme === 'dark' ? <FaSun className="text-amber-300" /> : <FaMoon className="text-cyan-200" />}
+            </button>
 
             {/* Notification Bell */}
             <button 

@@ -278,13 +278,13 @@ const MobileDriverNav = () => {
                 </div>
               </div>
 
-              {/* Scrollable Navigation Options Organized in Clean Categories */}
+              {/* Scrollable Navigation Options Streamlined to Essential Working Items */}
               <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 overscroll-contain">
                 
-                {/* Category 1: Mission & Operations */}
+                {/* Category 1: Live Missions & Radar */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Missions & Operations
+                    Live Missions & Radar
                   </span>
 
                   {/* Quick Doorstep Verify Action */}
@@ -294,7 +294,7 @@ const MobileDriverNav = () => {
                       triggerHaptic(25);
                       setShowVerifyModal(true);
                     }}
-                    className="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-cyan-500/10 border border-emerald-500/30 flex items-center justify-between cursor-pointer text-emerald-300 active:scale-98 transition-transform"
+                    className="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-cyan-500/10 border border-emerald-500/30 flex items-center justify-between cursor-pointer text-emerald-400 dark:text-emerald-300 active:scale-98 transition-transform"
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaBolt className="text-emerald-400 text-sm animate-pulse" />
@@ -333,39 +333,25 @@ const MobileDriverNav = () => {
                     </span>
                   </button>
 
-                  {/* Turn-by-Turn GPS Radar */}
+                  {/* Live GPS Route Navigation */}
                   <button 
                     onClick={() => handleNavigate('/driver/navigation')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaMapMarkedAlt className="text-sky-400 text-sm" />
-                      <span className="text-xs font-bold">GPS Route & Radar</span>
+                      <span className="text-xs font-bold">Live GPS Route Map</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 font-black">
                       RADAR
                     </span>
                   </button>
-
-                  {/* Scrap Quality Audit */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/quality-audit')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaShieldAlt className="text-indigo-400 text-sm" />
-                      <span className="text-xs font-bold">Scrap Quality Audit</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 font-black">
-                      QC
-                    </span>
-                  </button>
                 </div>
 
-                {/* Category 2: EV Fleet & Hub Logistics */}
+                {/* Category 2: EV Fleet & Financials */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    EV Fleet & Hub Logistics
+                    EV Fleet & Financials
                   </span>
 
                   {/* Hub Gate Pass */}
@@ -396,56 +382,6 @@ const MobileDriverNav = () => {
                     </span>
                   </button>
 
-                  {/* BLE Smart Scale Sync */}
-                  <button 
-                    onClick={() => {
-                      setShowDrawer(false);
-                      triggerHaptic(20);
-                      setShowScaleModal(true);
-                    }}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaWeight className="text-teal-400 text-sm" />
-                      <span className="text-xs font-bold">Bluetooth Digital Scale</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-400 font-black">
-                      BLE
-                    </span>
-                  </button>
-
-                  {/* Road Hazards & Weather Alerts */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/road-hazards')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaExclamationTriangle className="text-amber-400 text-sm" />
-                      <span className="text-xs font-bold">Road Hazards & Traffic</span>
-                    </div>
-                  </button>
-
-                  {/* Driver Documents */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/documents')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaFileAlt className="text-slate-400 text-sm" />
-                      <span className="text-xs font-bold">Vehicle & KYC Documents</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-black">
-                      VERIFIED
-                    </span>
-                  </button>
-                </div>
-
-                {/* Category 3: Earnings & Performance */}
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Earnings & Performance
-                  </span>
-
                   {/* Earnings & Incentives */}
                   <button 
                     onClick={() => handleNavigate('/driver/earnings')}
@@ -453,65 +389,32 @@ const MobileDriverNav = () => {
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaCoins className="text-amber-400 text-sm" />
-                      <span className="text-xs font-bold">Earnings & Daily Incentives</span>
+                      <span className="text-xs font-bold">Earnings & Daily Ledger</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-black">
                       ₹1,450
                     </span>
                   </button>
-
-                  {/* Pickup History */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/history')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaHistory className="text-violet-400 text-sm" />
-                      <span className="text-xs font-bold">Trip & Pickup History</span>
-                    </div>
-                  </button>
-
-                  {/* Driver Shifts */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/shifts')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaClock className="text-orange-400 text-sm" />
-                      <span className="text-xs font-bold">Driver Shifts & Roster</span>
-                    </div>
-                  </button>
-
-                  {/* Eco Badges & Milestone Rewards */}
-                  <button 
-                    onClick={() => handleNavigate('/driver/rewards')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaAward className="text-yellow-400 text-sm" />
-                      <span className="text-xs font-bold">Green Captain Rewards</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 font-black">
-                      TIER 4
-                    </span>
-                  </button>
                 </div>
 
-                {/* Category 4: Safety & Support */}
+                {/* Category 3: Account & Safety */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
                     Account & Safety
                   </span>
 
-                  {/* Profile */}
+                  {/* Profile & Vehicle Specs */}
                   <button 
                     onClick={() => handleNavigate('/driver/profile')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-200 active:scale-98 transition-colors"
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaUser className="text-slate-400 text-sm" />
-                      <span className="text-xs font-bold">Driver Profile & KYC</span>
+                      <span className="text-xs font-bold">Driver Profile & Vehicle Specs</span>
                     </div>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-black">
+                      VERIFIED
+                    </span>
                   </button>
 
                   {/* SOS Dispatch Hotline */}

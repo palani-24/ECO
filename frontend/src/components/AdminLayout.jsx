@@ -2,21 +2,21 @@ import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-import MobileDriverHeader from './MobileDriverHeader';
-import MobileDriverNav from './MobileDriverNav';
+import MobileAdminHeader from './MobileAdminHeader';
+import MobileAdminNav from './MobileAdminNav';
 
-const DriverLayout = ({ children, hideFooter = false }) => {
+const AdminLayout = ({ children, hideFooter = false, title = 'Admin Console' }) => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
       {/* 💻 Desktop Top Navbar */}
       <div className="hidden md:block">
         <Navbar />
       </div>
 
-      {/* 📱 Mobile Driver Green App Header */}
+      {/* 📱 Mobile Admin Cyber Header */}
       <div className="block md:hidden">
-        <MobileDriverHeader />
+        <MobileAdminHeader title={title} />
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 gap-6 min-w-0">
@@ -32,9 +32,9 @@ const DriverLayout = ({ children, hideFooter = false }) => {
         </main>
       </div>
 
-      {/* 📱 Mobile Driver Bottom 4-Tab Navigation & Slide-Out Drawer */}
+      {/* 📱 Mobile Admin Bottom 4-Tab Navigation & Slide-Out Drawer */}
       <div className="block md:hidden">
-        <MobileDriverNav />
+        <MobileAdminNav />
       </div>
 
       {/* 💻 Desktop Footer */}
@@ -47,4 +47,4 @@ const DriverLayout = ({ children, hideFooter = false }) => {
   );
 };
 
-export default DriverLayout;
+export default AdminLayout;

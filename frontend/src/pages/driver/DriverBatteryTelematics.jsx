@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import DriverLayout from '../../components/DriverLayout';
 import { useToast } from '../../context/ToastContext';
 import { FaBolt, FaMapMarkerAlt, FaCheckCircle, FaBatteryThreeQuarters, FaExchangeAlt, FaShieldAlt } from 'react-icons/fa';
 
@@ -23,13 +22,8 @@ const DriverBatteryTelematics = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
+    <DriverLayout>
+      <div className="space-y-6">
           <div className="flex items-center space-x-3">
             <div className="p-3 bg-amber-500/10 text-amber-500 rounded-2xl border border-amber-500/20">
               <FaBolt className="h-6 w-6 animate-pulse" />
@@ -111,9 +105,8 @@ const DriverBatteryTelematics = () => {
               ))}
             </div>
           </div>
-        </main>
       </div>
-    </div>
+    </DriverLayout>
   );
 };
 

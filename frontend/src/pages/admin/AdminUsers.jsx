@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import AdminLayout from '../../components/AdminLayout';
 import api from '../../utils/api';
 import { getAvatarUrl, handleAvatarError } from '../../utils/avatar';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
@@ -28,13 +27,8 @@ const AdminUsers = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
+    <AdminLayout title="Citizen Accounts">
+      <div className="space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Registered Users</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Manage and audit registered recycling customers and point credits.</p>
@@ -89,9 +83,8 @@ const AdminUsers = () => {
               </div>
             </div>
           )}
-        </main>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

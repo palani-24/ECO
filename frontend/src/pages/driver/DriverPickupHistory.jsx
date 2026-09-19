@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import DriverLayout from '../../components/DriverLayout';
 import api from '../../utils/api';
 import { 
   FaHistory, FaCheckCircle, FaCoins, FaWeight, FaCalendarAlt, 
@@ -82,14 +81,8 @@ const DriverPickupHistory = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        {/* Main Panel */}
-        <main className="flex-1 p-4 sm:p-6 pb-24 md:pb-8 space-y-6 overflow-hidden">
+    <DriverLayout>
+      <div className="space-y-6">
           
           {/* Header */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-5 rounded-3xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -192,10 +185,8 @@ const DriverPickupHistory = () => {
               <p className="text-xs text-slate-400 font-medium">Completed jobs will automatically log here.</p>
             </div>
           )}
-
-        </main>
       </div>
-    </div>
+    </DriverLayout>
   );
 };
 

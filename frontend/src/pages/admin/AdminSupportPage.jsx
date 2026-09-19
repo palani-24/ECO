@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import AdminLayout from '../../components/AdminLayout';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
@@ -422,14 +421,8 @@ const AdminSupportPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        {/* Main Live Support Messenger Panel (Added padding for mobile bottom bar) */}
-        <main className="flex-1 p-3 sm:p-6 pb-32 md:pb-8 space-y-4 overflow-hidden">
+    <AdminLayout title="Citizen Help Desk">
+      <div className="space-y-4">
           
           {/* Top Header Bar */}
           <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/80 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -804,10 +797,8 @@ const AdminSupportPage = () => {
             )}
 
           </div>
-
-        </main>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import AdminLayout from '../../components/AdminLayout';
+import MobileAdminDashboard from '../../components/MobileAdminDashboard';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
@@ -154,15 +154,34 @@ const AdminDashboard = () => {
   const recentPickups = pickups.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
+    <AdminLayout title="Admin Command">
+      {/* 📱 Mobile Admin Dedicated Cockpit View */}
+      <div className="block md:hidden">
+        <MobileAdminDashboard 
+          analytics={analytics}
+          drivers={drivers}
+          pickups={pickups}
+          supportMessages={supportMessages}
+          basePoints={basePoints}
+          setBasePoints={setBasePoints}
+          systemMaintenance={systemMaintenance}
+          setSystemMaintenance={setSystemMaintenance}
+          handleSaveSettings={handleSaveSettings}
+          handleApproveDriver={handleApproveDriver}
+          handleRejectDriver={handleRejectDriver}
+          handleSendReply={handleSendReply}
+          replyText={replyText}
+          setReplyText={setReplyText}
+          replyingMsgId={replyingMsgId}
+          setReplyingMsgId={setReplyingMsgId}
+          sendingReply={sendingReply}
+        />
+      </div>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8 space-y-6 overflow-hidden">
-          
-          {/* Executive Cyber Command Center Glass Banner */}
+      {/* 💻 Desktop Admin Dashboard View */}
+      <div className="hidden md:block space-y-6">
+        
+        {/* Executive Cyber Command Center Glass Banner */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 border border-emerald-500/30 p-6 sm:p-7 text-white shadow-xl backdrop-blur-xl space-y-4">
             <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -637,9 +656,8 @@ const AdminDashboard = () => {
 
           </div>
 
-        </main>
-      </div>
-    </div>
+        </div>
+    </AdminLayout>
   );
 };
 

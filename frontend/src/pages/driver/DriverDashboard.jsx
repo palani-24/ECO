@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
 import DriverLayout from '../../components/DriverLayout';
+import MobileDriverDashboard from '../../components/MobileDriverDashboard';
 import api from '../../utils/api';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import DriverChatModal from '../../components/DriverChatModal';
@@ -263,7 +264,19 @@ const DriverDashboard = () => {
   const isOnline = driverProfile?.status === 'active' || driverProfile?.status === 'busy';
 
   return (
-    <DriverLayout>
+    <>
+      {/* 📱 MOBILE VIEW - Driver Logistics Cockpit */}
+      <div className="block md:hidden">
+        <MobileDriverDashboard 
+          driverProfile={driverProfile} 
+          pickups={pickups} 
+          onPickupUpdated={fetchDriverData} 
+        />
+      </div>
+
+      {/* 💻 DESKTOP COCKPIT WORKSPACE */}
+      <div className="hidden md:block">
+        <DriverLayout>
       <div className={`space-y-6 max-w-7xl mx-auto pb-8 transition-all ${daylightMode ? 'daylight-mode p-3' : ''}`}>
 
         {/* Executive Pilot Cockpit Glass Banner */}
@@ -823,6 +836,8 @@ const DriverDashboard = () => {
       )}
 
     </DriverLayout>
+      </div>
+    </>
   );
 };
 

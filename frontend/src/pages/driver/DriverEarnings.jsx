@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import DriverLayout from '../../components/DriverLayout';
 import api from '../../utils/api';
 import { TableSkeleton } from '../../components/LoadingSkeleton';
 import { FaTruck, FaDollarSign, FaPassport, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -32,13 +31,8 @@ const DriverEarnings = () => {
   const totalIncentive = pickups.length * 125;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">
+    <DriverLayout>
+      <div className="space-y-6">
           <div className="space-y-1">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Earnings & Vehicle</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">Review collected jobs, incentives earned, and registered transport details.</p>
@@ -164,10 +158,8 @@ const DriverEarnings = () => {
 
             </div>
           )}
-
-        </main>
       </div>
-    </div>
+    </DriverLayout>
   );
 };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar';
+import AdminLayout from '../../components/AdminLayout';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
@@ -160,13 +159,8 @@ const AdminSettings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
-        <Sidebar />
-
-        <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8 space-y-6">
+    <AdminLayout title="System Settings">
+      <div className="space-y-6">
           
           {/* Header Banner */}
           <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950 border border-emerald-500/30 p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -545,10 +539,8 @@ const AdminSettings = () => {
 
             </div>
           )}
-
-        </main>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

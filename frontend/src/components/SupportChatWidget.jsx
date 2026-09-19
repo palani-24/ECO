@@ -113,6 +113,16 @@ const SupportChatWidget = () => {
     if (!nextState) playChime(false);
   };
 
+  // Listen for global open-support-chat event from mobile drawer or anywhere
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsOpen(true);
+      setActiveTab('messages');
+    };
+    window.addEventListener('open-support-chat', handleOpen);
+    return () => window.removeEventListener('open-support-chat', handleOpen);
+  }, []);
+
   // Reset chat & bot messages when switching user accounts
   useEffect(() => {
     if (user?._id) {

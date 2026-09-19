@@ -172,6 +172,30 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/community" 
+                element={
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
+                    <CommunityChallenges />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/report-dump" 
+                element={
+                  <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
+                    <ReportIllegalDump />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute allowedRoles={['user', 'driver', 'municipality', 'admin']}>
+                    <Profile />
+                  </ProtectedRoute>
+                } 
+              />
 
             {/* Driver Routes */}
             <Route 

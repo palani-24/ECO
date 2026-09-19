@@ -5,7 +5,8 @@ import {
   FaHome, FaCalendarAlt, FaClipboardList, FaCoins, FaBars, 
   FaTimes, FaUsers, FaLeaf, FaUser, FaSignOutAlt, FaAward, FaTruck, 
   FaStore, FaCamera, FaCertificate, FaShareAlt, FaBuilding, 
-  FaExclamationTriangle, FaComments, FaTrophy, FaWallet
+  FaExclamationTriangle, FaComments, FaTrophy, FaWallet, FaPlus,
+  FaGift, FaBolt
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { triggerHaptic } from '../utils/mobileNative';
@@ -29,23 +30,9 @@ const MobileCitizenNav = () => {
     return () => window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
   }, []);
 
-  const navItems = [
-    { path: '/dashboard', label: 'Home', icon: FaHome },
-    { path: '/schedule-pickup', label: 'Book Pickup', icon: FaCalendarAlt },
-    { path: '/my-pickups', label: 'My Pickups', icon: FaClipboardList },
-    { path: '/redeem', label: 'Wallet', icon: FaCoins },
-  ];
-
-  const isActive = (path) => {
-    if (path === '/dashboard') {
-      return location.pathname === '/dashboard' || location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  };
-
   const handleAction = (eventName) => {
     setShowDrawer(false);
-    triggerHaptic(20);
+    triggerHaptic(25);
     window.dispatchEvent(new CustomEvent(eventName));
   };
 
@@ -61,39 +48,108 @@ const MobileCitizenNav = () => {
     navigate('/login');
   };
 
+  const isCurrent = (path) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   const walletPoints = user?.points || 0;
   const inrEquivalent = Math.round(walletPoints * 0.25);
 
   return (
     <>
-      {/* Sticky Bottom 4-Tab Navigation Bar */}
+      {/* Elevated 5-Item Sticky Bottom Navigation Bar with Center FAB */}
       <nav 
-        aria-label="Mobile Navigation"
-        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-xl px-4 py-2 pb-[calc(0.6rem+env(safe-area-inset-bottom,0px))]"
+        aria-label="Citizen Mobile Navigation"
+        className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 shadow-2xl px-2 py-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]"
       >
-        <div className="flex items-center justify-around max-w-md mx-auto">
-          {navItems.map((item, idx) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
+        <div className="flex items-center justify-between max-w-md mx-auto relative px-1">
+          
+          {/* Tab 1: Home Dashboard */}
+          <NavLink
+            to="/dashboard"
+            onClick={() => triggerHaptic(15)}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 cursor-pointer ${
+              isCurrent('/dashboard')
+                ? 'text-emerald-600 dark:text-emerald-400 font-black'
+                : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${isCurrent('/dashboard') ? 'bg-emerald-500/15 scale-105' : ''}`}>
+              <FaHome className="text-lg" />
+            </div>
+            <span className="text-[10px] tracking-tight mt-0.5">Home</span>
+          </NavLink>
 
-            return (
-              <NavLink
-                key={idx}
-                to={item.path}
-                onClick={() => triggerHaptic(20)}
-                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all active:scale-95 cursor-pointer ${
-                  active 
-                    ? 'text-emerald-600 dark:text-emerald-400 font-black' 
-                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
-                }`}
-              >
-                <div className={`p-1.5 rounded-xl transition-all ${active ? 'bg-emerald-500/15 scale-105' : ''}`}>
-                  <Icon className="text-xl" />
-                </div>
-                <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
-              </NavLink>
-            );
-          })}
+          {/* Tab 2: My Pickups & Tracking */}
+          <NavLink
+            to="/my-pickups"
+            onClick={() => triggerHaptic(15)}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 cursor-pointer ${
+              isCurrent('/my-pickups')
+                ? 'text-emerald-600 dark:text-emerald-400 font-black'
+                : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${isCurrent('/my-pickups') ? 'bg-emerald-500/15 scale-105' : ''}`}>
+              <FaClipboardList className="text-lg" />
+            </div>
+            <span className="text-[10px] tracking-tight mt-0.5">Orders</span>
+          </NavLink>
+
+          {/* Tab 3: CENTER ELEVATED FLOATING '+' QUICK BOOK BUTTON */}
+          <div className="flex-1 flex flex-col items-center justify-center relative -top-3">
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(30);
+                navigate('/schedule-pickup');
+              }}
+              className="relative w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/40 border-4 border-white dark:border-slate-900 active:scale-90 transition-transform cursor-pointer group"
+              title="Book Scrap Pickup"
+            >
+              {/* Outer Pulse Ring */}
+              <span className="absolute inset-0 rounded-full bg-emerald-500/30 animate-ping pointer-events-none" />
+              <FaPlus className="text-lg group-hover:rotate-90 transition-transform duration-300" />
+            </button>
+            <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 tracking-tight mt-0.5">
+              Book
+            </span>
+          </div>
+
+          {/* Tab 4: Wallet & Rewards */}
+          <NavLink
+            to="/redeem"
+            onClick={() => triggerHaptic(15)}
+            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 cursor-pointer ${
+              isCurrent('/redeem')
+                ? 'text-emerald-600 dark:text-emerald-400 font-black'
+                : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold'
+            }`}
+          >
+            <div className={`p-1.5 rounded-xl transition-all ${isCurrent('/redeem') ? 'bg-emerald-500/15 scale-105' : ''}`}>
+              <FaCoins className="text-lg" />
+            </div>
+            <span className="text-[10px] tracking-tight mt-0.5">Wallet</span>
+          </NavLink>
+
+          {/* Tab 5: All Menu Drawer Trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(20);
+              setShowDrawer(true);
+            }}
+            className="flex-1 flex flex-col items-center justify-center py-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 font-bold transition-all active:scale-95 cursor-pointer"
+          >
+            <div className="p-1.5 rounded-xl">
+              <FaBars className="text-lg" />
+            </div>
+            <span className="text-[10px] tracking-tight mt-0.5">Menu</span>
+          </button>
+
         </div>
       </nav>
 
@@ -115,7 +171,7 @@ const MobileCitizenNav = () => {
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="fixed top-0 bottom-0 left-0 z-50 w-80 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl p-5 flex flex-col justify-between md:hidden border-r border-slate-200 dark:border-slate-800"
             >
-              <div className="space-y-4 overflow-hidden flex flex-col">
+              <div className="space-y-3.5 overflow-hidden flex flex-col">
                 {/* Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
                   <div className="flex items-center space-x-2">
@@ -159,21 +215,71 @@ const MobileCitizenNav = () => {
                 {/* Complete Citizen Navigation Categories (Scrollable) */}
                 <div className="space-y-4 text-xs font-bold overflow-y-auto max-h-[62vh] pr-1">
                   
-                  {/* Category 1: Doorstep Scrap Collection */}
+                  {/* Category 1: Smart AI & Gamification */}
                   <div className="space-y-1">
                     <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                      Recycling & Collections
+                      Daily Games & Smart AI Tools
                     </span>
 
+                    {/* Daily Spin & Win Wheel */}
                     <button 
-                      onClick={() => handleNavigate('/dashboard')}
+                      onClick={() => handleAction('open-spin-wheel')}
+                      className="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/30 flex items-center justify-between cursor-pointer text-amber-900 dark:text-amber-300"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <FaGift className="text-amber-500 text-sm animate-bounce" />
+                        <span className="font-black">Daily Eco Spin & Win</span>
+                      </div>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500 text-slate-950 font-black">
+                        FREE
+                      </span>
+                    </button>
+
+                    {/* AI Waste Scanner */}
+                    <button 
+                      onClick={() => handleAction('open-ai-scanner')}
                       className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
                     >
                       <div className="flex items-center space-x-2.5">
-                        <FaHome className="text-emerald-500 text-sm" />
-                        <span>Home Dashboard</span>
+                        <FaCamera className="text-teal-500 text-sm" />
+                        <span>AI Waste & Item Scanner</span>
+                      </div>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-400 font-black">
+                        AI
+                      </span>
+                    </button>
+
+                    {/* Green Impact Certificate */}
+                    <button 
+                      onClick={() => handleAction('open-green-certificate')}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <FaCertificate className="text-indigo-500 text-sm" />
+                        <span>Official Green Certificate</span>
+                      </div>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black">
+                        ISO
+                      </span>
+                    </button>
+
+                    {/* Social Story */}
+                    <button 
+                      onClick={() => handleAction('open-eco-story')}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
+                    >
+                      <div className="flex items-center space-x-2.5">
+                        <FaShareAlt className="text-pink-500 text-sm" />
+                        <span>Share 9:16 Social Story</span>
                       </div>
                     </button>
+                  </div>
+
+                  {/* Category 2: Doorstep Collections & Store */}
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
+                      Recycling & Marketplace
+                    </span>
 
                     <button 
                       onClick={() => handleNavigate('/schedule-pickup')}
@@ -204,11 +310,8 @@ const MobileCitizenNav = () => {
                     >
                       <div className="flex items-center space-x-2.5">
                         <FaCoins className="text-amber-500 text-sm" />
-                        <span>EcoPoints Wallet & UPI</span>
+                        <span>EcoPoints Wallet & UPI Cashout</span>
                       </div>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black">
-                        CASH
-                      </span>
                     </button>
 
                     <button 
@@ -222,49 +325,6 @@ const MobileCitizenNav = () => {
                       <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
                         NEW
                       </span>
-                    </button>
-                  </div>
-
-                  {/* Category 2: Smart Green Tools (1-Tap Modal Actions) */}
-                  <div className="space-y-1">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                      Smart AI Tools & Badges
-                    </span>
-
-                    <button 
-                      onClick={() => handleAction('open-ai-scanner')}
-                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <FaCamera className="text-teal-500 text-sm" />
-                        <span>AI Waste & Item Scanner</span>
-                      </div>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-400 font-black">
-                        AI
-                      </span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleAction('open-green-certificate')}
-                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <FaCertificate className="text-indigo-500 text-sm" />
-                        <span>Official Green Certificate</span>
-                      </div>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black">
-                        ISO
-                      </span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleAction('open-eco-story')}
-                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <FaShareAlt className="text-pink-500 text-sm" />
-                        <span>Share 9:16 Social Story</span>
-                      </div>
                     </button>
                   </div>
 
@@ -300,23 +360,10 @@ const MobileCitizenNav = () => {
                     >
                       <div className="flex items-center space-x-2.5">
                         <FaExclamationTriangle className="text-rose-500 text-sm" />
-                        <span>Report Illegal Dumping</span>
+                        <span>Report Illegal Roadside Dump</span>
                       </div>
                       <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-black">
                         ALERT
-                      </span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleNavigate('/esg-portal')}
-                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200"
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <FaBuilding className="text-purple-500 text-sm" />
-                        <span>ESG Corporate & City Audit</span>
-                      </div>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400 font-black">
-                        PRO
                       </span>
                     </button>
                   </div>

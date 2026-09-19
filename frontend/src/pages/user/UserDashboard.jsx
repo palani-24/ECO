@@ -13,6 +13,7 @@ import GreenCertificateModal from '../../components/GreenCertificateModal';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
 import EcoStoryModal from '../../components/EcoStoryModal';
 import MobileEcoHome from '../../components/MobileEcoHome';
+import DailySpinWheelModal from '../../components/DailySpinWheelModal';
 import { triggerConfetti } from '../../utils/confetti';
 import { soundFx } from '../../utils/audioFeedback';
 import { triggerHaptic } from '../../utils/mobileNative';
@@ -96,6 +97,7 @@ const UserDashboard = () => {
   const [showGreenCert, setShowGreenCert] = useState(false);
   const [showUpiPayout, setShowUpiPayout] = useState(false);
   const [showEcoStory, setShowEcoStory] = useState(false);
+  const [showSpinWheel, setShowSpinWheel] = useState(false);
 
   // Virtual Tree Growth Stage Calculation
   const totalKgNumber = parseFloat(analytics?.totalRecycledKg || '48.5') || 48.5;
@@ -301,6 +303,8 @@ const UserDashboard = () => {
     window.addEventListener('open-eco-story', handleStory);
     window.addEventListener('open-upi-payout', handleUpi);
     window.addEventListener('open-driver-chat', handleChat);
+    const handleSpin = () => setShowSpinWheel(true);
+    window.addEventListener('open-spin-wheel', handleSpin);
 
     return () => {
       window.removeEventListener('open-ai-scanner', handleScanner);
@@ -308,6 +312,7 @@ const UserDashboard = () => {
       window.removeEventListener('open-eco-story', handleStory);
       window.removeEventListener('open-upi-payout', handleUpi);
       window.removeEventListener('open-driver-chat', handleChat);
+      window.removeEventListener('open-spin-wheel', handleSpin);
     };
   }, []);
 
@@ -328,6 +333,7 @@ const UserDashboard = () => {
           onOpenCert={() => setShowGreenCert(true)}
           onOpenStory={() => setShowEcoStory(true)}
           onOpenChat={() => setShowDriverChat(true)}
+          onOpenSpin={() => setShowSpinWheel(true)}
           streakDays={streakDays}
           streakClaimed={streakClaimed}
           onClaimStreak={handleClaimStreak}
@@ -1286,6 +1292,15 @@ const UserDashboard = () => {
         onClose={() => setShowEcoStory(false)}
         user={user}
         stats={analytics}
+      />
+
+      {/* Daily Spin & Win Wheel Modal */}
+      <DailySpinWheelModal
+        isOpen={showSpinWheel}
+        onClose={() => setShowSpinWheel(false)}
+        onRewardWon={(pts) => {
+          setAnalytics(prev => prev ? ({ ...prev, walletPoints: (prev.walletPoints || 0) + pts }) : prev);
+        }}
       />
 
         </UserLayout>

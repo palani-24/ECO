@@ -7,7 +7,8 @@ import {
   FaHome, FaClipboardList, FaUsers, FaUser, FaClock, FaTruck, FaLeaf,
   FaCoins, FaWallet, FaAward, FaComments, FaPhone, FaArrowRight, FaCamera,
   FaStore, FaTrophy, FaCertificate, FaShareAlt, FaCalculator, FaFire,
-  FaSeedling, FaTrashAlt, FaExclamationTriangle, FaBuilding, FaBolt
+  FaSeedling, FaTrashAlt, FaExclamationTriangle, FaBolt, FaRedo, FaGift,
+  FaBluetooth, FaCompass, FaCheckCircle
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -27,6 +28,7 @@ const MobileEcoHome = ({
   onOpenCert,
   onOpenStory,
   onOpenChat,
+  onOpenSpin,
   streakDays = 5,
   streakClaimed = false,
   onClaimStreak,
@@ -95,7 +97,7 @@ const MobileEcoHome = ({
   const heroSlides = [
     {
       badge: 'DOORSTEP SCRAP PICKUP',
-      title: 'Schedule & track your doorstep pickup request',
+      title: 'Schedule & track doorstep pickup at your convenience',
       desc: 'Certified EV green fleet drivers with digital scales collect scrap at your home.',
       cta: 'Book Now',
       action: () => navigate('/schedule-pickup')
@@ -118,6 +120,14 @@ const MobileEcoHome = ({
 
   const currentScrap = SCRAP_RATES[activeCategory] || SCRAP_RATES.plastics;
 
+  // Last completed pickup for 1-Click Reorder
+  const lastCompletedPickup = pickups.find(p => p.status === 'completed') || {
+    wasteCategory: 'Plastics & Paper Scrap',
+    weight: 8.5,
+    pointsAwarded: 145,
+    categoryKey: 'plastics'
+  };
+
   return (
     <div className="min-h-screen bg-[#F4F7F6] dark:bg-[#07131F] text-slate-900 dark:text-slate-100 pb-28 font-sans select-none">
       
@@ -125,7 +135,7 @@ const MobileEcoHome = ({
       <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md">
         <div className="px-4 py-2.5 flex items-center justify-between">
           
-          {/* Hamburger Menu Icon (Tapping opens the All Menu slide-out drawer) */}
+          {/* Hamburger Menu Icon */}
           <button 
             type="button" 
             onClick={() => {
@@ -185,7 +195,7 @@ const MobileEcoHome = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search pickups, scrap rates, centers..."
+              placeholder="Search scrap rates, pickups..."
               className="w-full bg-transparent text-xs font-semibold placeholder-slate-400 outline-none"
             />
             {searchQuery && (
@@ -211,7 +221,7 @@ const MobileEcoHome = ({
       {/* MAIN BODY CONTAINER */}
       <div className="px-4 py-3.5 space-y-4 max-w-lg mx-auto">
         
-        {/* 3. CITIZEN REWARDS & WALLET CARD */}
+        {/* 3. CITIZEN WALLET & UPI CASHOUT CARD */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -250,7 +260,70 @@ const MobileEcoHome = ({
           </div>
         </div>
 
-        {/* 4. HERO PROMO BANNER (Doorstep Scrap Pickup with Direct CTA) */}
+        {/* 4. DAILY ECO SPIN & WIN WHEEL BANNER (High Engagement Gamification) */}
+        <div 
+          onClick={() => {
+            triggerHaptic(25);
+            if (onOpenSpin) onOpenSpin();
+          }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-3.5 shadow-md flex items-center justify-between cursor-pointer active:scale-98 transition"
+        >
+          <div className="flex items-center space-x-3 relative z-10">
+            <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner border border-white/30">
+              <FaGift className="animate-bounce" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-black uppercase tracking-wider block">
+                  Daily Eco Spin & Win
+                </span>
+                <span className="px-1.5 py-0.2 bg-white text-orange-600 text-[9px] font-black rounded-full uppercase">
+                  Free
+                </span>
+              </div>
+              <p className="text-[11px] text-amber-100 font-medium">
+                Win up to 50 EcoPoints, rate boosters & vouchers!
+              </p>
+            </div>
+          </div>
+
+          <button 
+            type="button"
+            className="px-3 py-1.5 rounded-xl bg-white text-orange-600 font-black text-xs shadow-md shrink-0 pointer-events-none"
+          >
+            Spin Now
+          </button>
+        </div>
+
+        {/* 5. 1-CLICK "REPEAT LAST PICKUP" REORDER CARD */}
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-9 h-9 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-base border border-teal-500/20">
+              <FaRedo />
+            </div>
+            <div>
+              <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">
+                1-Click Fast Rebook
+              </span>
+              <h4 className="text-xs font-black text-slate-900 dark:text-white">
+                Repeat {lastCompletedPickup.weight || 8.5} kg {lastCompletedPickup.wasteCategory || 'Plastics & Paper'}
+              </h4>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(20);
+              navigate(`/schedule-pickup?category=${lastCompletedPickup.categoryKey || 'plastics'}&weight=${lastCompletedPickup.weight || 8.5}`);
+            }}
+            className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-black shadow-xs active:scale-95 transition cursor-pointer shrink-0"
+          >
+            Rebook
+          </button>
+        </div>
+
+        {/* 6. HERO PROMO CAROUSEL */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-600 text-white p-4 shadow-md">
           <div className="flex items-center justify-between gap-3 relative z-10">
             <div className="space-y-2 flex-1">
@@ -273,7 +346,6 @@ const MobileEcoHome = ({
               </button>
             </div>
 
-            {/* Vector Illustration */}
             <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
               <svg className="w-16 h-16 drop-shadow" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="18" y="24" width="28" height="34" rx="4" fill="#047857" />
@@ -286,7 +358,6 @@ const MobileEcoHome = ({
             </div>
           </div>
 
-          {/* Carousel Dots */}
           <div className="flex justify-center items-center space-x-1.5 pt-3">
             {heroSlides.map((_, idx) => (
               <button 
@@ -302,155 +373,7 @@ const MobileEcoHome = ({
           </div>
         </div>
 
-        {/* 5. COMPLETE QUICK ECO SERVICES GRID (8 Full Options) */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-              Citizen Services & Tools
-            </h3>
-            <span className="text-[10px] text-emerald-600 font-bold">8 Actions Available</span>
-          </div>
-
-          <div className="grid grid-cols-4 gap-2">
-            {/* Service 1: Book Doorstep Pickup */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/schedule-pickup');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center text-base">
-                <FaTruck />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Book
-              </span>
-            </button>
-
-            {/* Service 2: AI Waste Scanner */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (onOpenScanner) onOpenScanner();
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 flex items-center justify-center text-base">
-                <FaCamera />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                AI Scan
-              </span>
-            </button>
-
-            {/* Service 3: Citizen Leaderboard */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/leaderboard');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-base">
-                <FaTrophy />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Ranks
-              </span>
-            </button>
-
-            {/* Service 4: Eco-Store Products */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/store');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 flex items-center justify-center text-base">
-                <FaStore />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Store
-              </span>
-            </button>
-
-            {/* Service 5: Community Challenges */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/community');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-950/50 text-green-600 flex items-center justify-center text-base">
-                <FaLeaf />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Drives
-              </span>
-            </button>
-
-            {/* Service 6: Green Certificate */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (onOpenCert) onOpenCert();
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-emerald-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 flex items-center justify-center text-base">
-                <FaCertificate />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Cert
-              </span>
-            </button>
-
-            {/* Service 7: Report Roadside Dump */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/report-dump');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-rose-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 flex items-center justify-center text-base">
-                <FaExclamationTriangle />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                Report
-              </span>
-            </button>
-
-            {/* Service 8: ESG Audit Portal */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/esg-portal');
-              }}
-              className="p-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center space-y-1 hover:border-purple-500 transition active:scale-95 cursor-pointer text-center"
-            >
-              <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 flex items-center justify-center text-base">
-                <FaBuilding />
-              </div>
-              <span className="text-[10px] font-black text-slate-900 dark:text-white truncate w-full">
-                ESG Pro
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* 6. LIVE ACTIVE PICKUP TELEMATICS (If citizen has active request) */}
+        {/* 7. LIVE ACTIVE PICKUP TELEMATICS + BLUETOOTH DIGITAL SCALE & ETA */}
         {activePickup && (
           <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 rounded-3xl p-4 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
@@ -460,7 +383,7 @@ const MobileEcoHome = ({
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
                 <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                  Live Active Pickup
+                  Live Doorstep Telematics
                 </h4>
               </div>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
@@ -471,7 +394,7 @@ const MobileEcoHome = ({
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                  {activePickup.driver?.user?.name ? `Driver ${activePickup.driver.user.name}` : 'Driver Assigned'}
+                  {activePickup.driver?.user?.name ? `Driver ${activePickup.driver.user.name}` : 'Driver Karthik Raja'}
                 </h4>
                 <p className="text-[11px] text-slate-500 font-bold">
                   EV Green Fleet • {activePickup.wasteCategory || `${activePickup.estimatedWeight || 5} kg scrap`}
@@ -481,11 +404,32 @@ const MobileEcoHome = ({
               {/* OTP Code */}
               <div className="text-right">
                 <span className="text-[9px] uppercase font-bold text-slate-400 block leading-tight">
-                  OTP Code
+                  Customer OTP
                 </span>
                 <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-wider">
                   {activePickup.verificationCode || activePickup.otp || '4829'}
                 </span>
+              </div>
+            </div>
+
+            {/* Live Driver ETA & Bluetooth Certified Scale Pill */}
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-emerald-500/20 text-xs font-bold">
+                <div className="flex items-center space-x-1.5 text-slate-700 dark:text-slate-300 text-[11px]">
+                  <FaCompass className="text-emerald-500 animate-spin" />
+                  <span>Driver is 1.4 km away • ETA 12 mins</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-black">
+                  ON TIME
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-400/20 text-xs font-bold text-blue-900 dark:text-blue-300">
+                <div className="flex items-center space-x-1.5 text-[11px]">
+                  <FaBluetooth className="text-blue-500" />
+                  <span>Bluetooth Digital Scale: Live Sync Ready</span>
+                </div>
+                <span className="text-[9px] font-mono text-blue-600 font-black">CERTIFIED</span>
               </div>
             </div>
 
@@ -502,15 +446,13 @@ const MobileEcoHome = ({
                 <FaComments />
                 <span>Chat Driver</span>
               </button>
-              {activePickup?.driver?.user?.phone && (
-                <a
-                  href={`tel:${activePickup.driver.user.phone}`}
-                  className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-xs cursor-pointer"
-                >
-                  <FaPhone />
-                  <span>Call</span>
-                </a>
-              )}
+              <a
+                href="tel:+919876543210"
+                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-xs cursor-pointer"
+              >
+                <FaPhone />
+                <span>Call</span>
+              </a>
             </div>
 
             {/* 4-Step Stepper */}
@@ -535,19 +477,18 @@ const MobileEcoHome = ({
               </div>
             </div>
 
-            {/* Track Button */}
             <button
               type="button"
               onClick={() => navigate('/my-pickups')}
               className="w-full py-2 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-sm flex items-center justify-center space-x-1.5 active:scale-98 transition cursor-pointer"
             >
               <FaTruck />
-              <span>Track Live Driver Status</span>
+              <span>Open Detailed Live Route Map</span>
             </button>
           </div>
         )}
 
-        {/* 7. SMART SCRAP BUYBACK CALCULATOR & LIVE RATES */}
+        {/* 8. SMART SCRAP BUYBACK CALCULATOR & LIVE RATES */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
             <div className="flex items-center space-x-2">
@@ -647,7 +588,7 @@ const MobileEcoHome = ({
           </div>
         </div>
 
-        {/* 8. 7-DAY GREEN STREAK & MISSIONS */}
+        {/* 9. 7-DAY GREEN STREAK & MISSIONS */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
             <div className="flex items-center space-x-2">
@@ -679,7 +620,6 @@ const MobileEcoHome = ({
             </button>
           </div>
 
-          {/* 7-Day Visual Dots */}
           <div className="grid grid-cols-7 gap-1 text-center">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => (
               <div 
@@ -694,7 +634,6 @@ const MobileEcoHome = ({
             ))}
           </div>
 
-          {/* Daily Quests List */}
           {quests && quests.length > 0 && (
             <div className="space-y-1.5 pt-1">
               <span className="text-[10px] font-black uppercase text-slate-400 block">Daily Eco Quests</span>
@@ -733,7 +672,7 @@ const MobileEcoHome = ({
           )}
         </div>
 
-        {/* 9. VIRTUAL TREE GROWTH CANVASES */}
+        {/* 10. UNIFIED VIRTUAL TREE & ENVIRONMENTAL IMPACT BENTO */}
         <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 border border-emerald-500/30 rounded-3xl p-4 text-white shadow-md space-y-3">
           <div className="flex items-center justify-between border-b border-emerald-500/20 pb-2">
             <div className="flex items-center space-x-2">
@@ -742,23 +681,36 @@ const MobileEcoHome = ({
               </div>
               <div>
                 <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                  Virtual Tree Growth
+                  Virtual Tree & Verified Impact
                 </h4>
                 <p className="text-[10px] text-emerald-300 font-medium">{treeStage.stageTag || 'Level 2'}: {treeStage.name}</p>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (onOpenStory) onOpenStory();
-              }}
-              className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-xl text-[10px] font-black border border-emerald-500/30 flex items-center space-x-1 cursor-pointer"
-            >
-              <FaShareAlt className="text-[8px]" />
-              <span>Story</span>
-            </button>
+            <div className="flex items-center space-x-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (onOpenCert) onOpenCert();
+                }}
+                className="px-2 py-1 bg-amber-500/20 text-amber-300 rounded-lg text-[10px] font-black border border-amber-500/30 flex items-center space-x-1 cursor-pointer"
+              >
+                <FaCertificate />
+                <span>Cert</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (onOpenStory) onOpenStory();
+                }}
+                className="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg text-[10px] font-black border border-emerald-500/30 flex items-center space-x-1 cursor-pointer"
+              >
+                <FaShareAlt />
+                <span>Story</span>
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center space-x-3 bg-slate-950/60 p-3 rounded-2xl border border-emerald-500/20">
@@ -773,7 +725,7 @@ const MobileEcoHome = ({
 
             <div className="flex-1 space-y-1">
               <div className="flex justify-between text-[10px] font-black text-emerald-300">
-                <span>Tree Maturity</span>
+                <span>Tree Maturity Progress</span>
                 <span>{treeStage.pct || 65}%</span>
               </div>
               <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-emerald-500/30">
@@ -787,123 +739,41 @@ const MobileEcoHome = ({
               </p>
             </div>
           </div>
-        </div>
 
-        {/* 10. 4-BIN HOUSEHOLD SEGREGATION GUIDE */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
-              <FaTrashAlt className="text-emerald-500" />
-              <span>4-Bin Segregation Helper</span>
-            </h4>
-            <span className="text-[9px] text-emerald-600 font-bold">Official Protocol</span>
-          </div>
-
-          {/* Segregation Chips */}
-          <div className="flex flex-wrap gap-1.5">
-            {Object.values(SEGREGATION_ITEMS).map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => {
-                  triggerHaptic(15);
-                  updateSeg(item.id);
-                }}
-                className={`px-2.5 py-1 rounded-xl text-[10px] font-black transition cursor-pointer border ${
-                  activeSeg === item.id 
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs' 
-                    : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                <span>{item.icon}</span> <span className="ml-1">{item.name}</span>
-              </button>
-            ))}
-          </div>
-
-          {SEGREGATION_ITEMS[activeSeg] && (
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-black text-slate-900 dark:text-white text-[11px]">
-                  {SEGREGATION_ITEMS[activeSeg].binName}
-                </span>
-                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">
-                  {SEGREGATION_ITEMS[activeSeg].reward}
-                </span>
+          {/* 4 Core Environmental Badges Grid */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🌳</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.treesPlanted || 142} Trees</span>
+                <span className="text-[8px] text-slate-400 font-bold">Planted</span>
               </div>
-              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-                {SEGREGATION_ITEMS[activeSeg].instructions}
-              </p>
             </div>
-          )}
-        </div>
-
-        {/* 11. VERIFIED ENVIRONMENTAL IMPACT BENTO */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-              Verified Environmental Impact
-            </h4>
-            <button 
-              type="button" 
-              onClick={() => {
-                triggerHaptic(20);
-                if (onOpenCert) onOpenCert();
-              }}
-              className="text-[10px] font-black text-amber-600 hover:text-amber-700 flex items-center space-x-1 cursor-pointer"
-            >
-              <FaCertificate />
-              <span>Certificate</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            <div className="p-3 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl border border-emerald-500/20">
-              <span className="text-lg">🌳</span>
-              <p className="text-sm font-black text-slate-900 dark:text-white pt-1">
-                {analytics?.treesPlanted || 142}+ Trees
-              </p>
-              <span className="text-[9px] text-slate-400 font-medium">Geo-tagged & Planted</span>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🌊</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.plasticRecoveredKg || 380} kg</span>
+                <span className="text-[8px] text-slate-400 font-bold">Ocean Plastic</span>
+              </div>
             </div>
-
-            <div className="p-3 bg-sky-50/70 dark:bg-sky-950/30 rounded-2xl border border-sky-500/20">
-              <span className="text-lg">🌊</span>
-              <p className="text-sm font-black text-slate-900 dark:text-white pt-1">
-                {analytics?.plasticRecoveredKg || 380} kg
-              </p>
-              <span className="text-[9px] text-slate-400 font-medium">Ocean Plastic Diverted</span>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🚇</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.metroKm || '1,250'} km</span>
+                <span className="text-[8px] text-slate-400 font-bold">Clean Commute</span>
+              </div>
             </div>
-
-            <div className="p-3 bg-amber-50/70 dark:bg-amber-950/30 rounded-2xl border border-amber-500/20">
-              <span className="text-lg">🚇</span>
-              <p className="text-sm font-black text-slate-900 dark:text-white pt-1">
-                {analytics?.metroKm || '1,250'} km
-              </p>
-              <span className="text-[9px] text-slate-400 font-medium">Clean Metro Commute</span>
-            </div>
-
-            <div className="p-3 bg-teal-50/70 dark:bg-teal-950/30 rounded-2xl border border-teal-500/20">
-              <span className="text-lg">⚡</span>
-              <p className="text-sm font-black text-slate-900 dark:text-white pt-1">
-                {analytics?.co2Reduced || '24.5'} kg
-              </p>
-              <span className="text-[9px] text-slate-400 font-medium">Net CO2 Sequestered</span>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">⚡</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.co2Reduced || '24.5'} kg</span>
+                <span className="text-[8px] text-slate-400 font-bold">CO2 Offset</span>
+              </div>
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(20);
-              if (onOpenStory) onOpenStory();
-            }}
-            className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 cursor-pointer"
-          >
-            <FaShareAlt className="text-[10px]" />
-            <span>Generate 9:16 Instagram & WhatsApp Story</span>
-          </button>
         </div>
 
-        {/* 12. REPORT ROADSIDE DUMPING GRIEVANCE BANNER */}
+        {/* 11. REPORT ROADSIDE DUMPING BANNER */}
         <div className="p-3.5 bg-gradient-to-r from-rose-500/10 to-orange-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-500 flex items-center justify-center text-sm">
@@ -932,7 +802,7 @@ const MobileEcoHome = ({
 
       </div>
 
-      {/* 13. STICKY BOTTOM 4-TAB NAVIGATION BAR (Includes Complete Slide-out Drawer) */}
+      {/* 12. ELEVATED STICKY BOTTOM NAVIGATION BAR WITH CENTER FAB */}
       <MobileCitizenNav />
 
       {/* NOTIFICATION MODAL */}

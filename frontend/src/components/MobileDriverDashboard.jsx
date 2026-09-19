@@ -11,9 +11,9 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import MobileDriverHeader from './MobileDriverHeader';
+import MobileDriverNav from './MobileDriverNav';
 import DriverChatModal from './DriverChatModal';
 import BluetoothSmartScaleModal from './BluetoothSmartScaleModal';
-import DriverDoorstepVerifyModal from './DriverDoorstepVerifyModal';
 import api from '../utils/api';
 import { triggerConfetti } from '../utils/confetti';
 import { triggerHaptic } from '../utils/mobileNative';
@@ -38,7 +38,6 @@ const MobileDriverDashboard = ({
   // Modals
   const [showChat, setShowChat] = useState(false);
   const [showScaleModal, setShowScaleModal] = useState(false);
-  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   // Listen to scale sync or external doorstep complete events
   useEffect(() => {
@@ -119,7 +118,7 @@ const MobileDriverDashboard = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20 font-sans select-none">
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-36 font-sans select-none">
       
       {/* 1. DRIVER APP HEADER */}
       <MobileDriverHeader 
@@ -218,7 +217,10 @@ const MobileDriverDashboard = ({
               
               <button
                 type="button"
-                onClick={() => setShowVerifyModal(true)}
+                onClick={() => {
+                  triggerHaptic(25);
+                  window.dispatchEvent(new CustomEvent('open-driver-quick-verify', { detail: { activePickup } }));
+                }}
                 className="px-2.5 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[10px] font-black uppercase border border-emerald-500/40 flex items-center space-x-1 cursor-pointer transition active:scale-95"
               >
                 <FaBolt className="text-[9px]" />
@@ -444,16 +446,8 @@ const MobileDriverDashboard = ({
         }}
       />
 
-      <DriverDoorstepVerifyModal
-        isOpen={showVerifyModal}
-        onClose={() => setShowVerifyModal(false)}
-        activePickup={activePickup}
-        onComplete={(res) => {
-          setActualWeight(String(res.weight));
-          setIsOtpVerified(true);
-          onPickupUpdated();
-        }}
-      />
+      {/* 📱 5-TAB STICKY BOTTOM NAVIGATION BAR & SLIDE-OUT OPERATIONS DRAWER */}
+      <MobileDriverNav />
 
     </div>
   );

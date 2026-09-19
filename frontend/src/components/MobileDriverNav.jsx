@@ -31,10 +31,17 @@ const MobileDriverNav = () => {
     setShowDrawer(false);
   }, [location.pathname, location.search]);
 
+  const [customActivePickup, setCustomActivePickup] = useState(null);
+
   // Global listeners for drawer and modal events
   useEffect(() => {
     const handleToggleDrawer = () => setShowDrawer(prev => !prev);
-    const handleOpenVerify = () => setShowVerifyModal(true);
+    const handleOpenVerify = (e) => {
+      if (e.detail?.activePickup) {
+        setCustomActivePickup(e.detail.activePickup);
+      }
+      setShowVerifyModal(true);
+    };
     const handleOpenScale = () => setShowScaleModal(true);
 
     window.addEventListener('toggle-mobile-driver-drawer', handleToggleDrawer);
@@ -543,6 +550,7 @@ const MobileDriverNav = () => {
       <DriverDoorstepVerifyModal
         isOpen={showVerifyModal}
         onClose={() => setShowVerifyModal(false)}
+        activePickup={customActivePickup || undefined}
         onComplete={() => {
           // Trigger cockpit refresh
           window.dispatchEvent(new CustomEvent('driver-pickup-completed'));

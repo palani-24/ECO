@@ -14,6 +14,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import MobileCitizenNav from './MobileCitizenNav';
+import DailySpinWheelModal from './DailySpinWheelModal';
+import UPIPayoutModal from './UPIPayoutModal';
 import { triggerConfetti } from '../utils/confetti';
 import { triggerHaptic } from '../utils/mobileNative';
 import { soundFx } from '../utils/audioFeedback';
@@ -82,9 +84,41 @@ const MobileEcoHome = ({
   const activeSeg = setSelectedSegKey ? selectedSegKey : internalSeg;
   const updateSeg = setSelectedSegKey || setInternalSeg;
 
-  // Dynamic user points calculation
-  const walletPoints = analytics?.walletPoints ?? user?.points ?? 1758;
+  // Dynamic live user points calculation with real-time spin/payout sync
+  const [bonusPoints, setBonusPoints] = useState(0);
+  const [localUpiOpen, setLocalUpiOpen] = useState(false);
+  const [localSpinOpen, setLocalSpinOpen] = useState(false);
+
+  useEffect(() => {
+    const handlePointsRefresh = (e) => {
+      const delta = e?.detail?.points || 0;
+      setBonusPoints(prev => prev + delta);
+    };
+    window.addEventListener('refresh-wallet-points', handlePointsRefresh);
+    return () => window.removeEventListener('refresh-wallet-points', handlePointsRefresh);
+  }, []);
+
+  const basePoints = analytics?.walletPoints ?? user?.points ?? 1388;
+  const walletPoints = Math.max(0, basePoints + bonusPoints);
   const inrValue = Math.round(walletPoints * 0.25);
+
+  const handleWithdrawUpi = () => {
+    triggerHaptic(25);
+    if (onOpenUpi) {
+      onOpenUpi();
+    } else {
+      setLocalUpiOpen(true);
+    }
+  };
+
+  const handleOpenSpinWheel = () => {
+    triggerHaptic(25);
+    if (onOpenSpin) {
+      onOpenSpin();
+    } else {
+      setLocalSpinOpen(true);
+    }
+  };
 
   // Auto-slide hero banner
   useEffect(() => {
@@ -319,14 +353,10 @@ const MobileEcoHome = ({
             <div className="flex items-center space-x-2">
               <button
                 type="button"
-                onClick={() => {
-                  triggerHaptic(25);
-                  if (onOpenUpi) onOpenUpi();
-                  else navigate('/redeem');
-                }}
-                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center space-x-1 cursor-pointer active:scale-95"
+                onClick={handleWithdrawUpi}
+                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center space-x-1.5 cursor-pointer active:scale-95"
               >
-                <FaWallet className="text-[10px]" />
+                <FaWallet className="text-[11px]" />
                 <span>Withdraw UPI</span>
               </button>
               <button
@@ -335,7 +365,7 @@ const MobileEcoHome = ({
                   triggerHaptic(20);
                   navigate('/redeem');
                 }}
-                className="px-2.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition hover:bg-slate-200 cursor-pointer active:scale-95"
+                className="px-3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition hover:bg-slate-200 cursor-pointer active:scale-95"
               >
                 Rewards
               </button>
@@ -345,10 +375,7 @@ const MobileEcoHome = ({
 
         {/* 4. DAILY ECO SPIN & WIN WHEEL BANNER (With 3D Spin Wheel Artwork) */}
         <div 
-          onClick={() => {
-            triggerHaptic(25);
-            if (onOpenSpin) onOpenSpin();
-          }}
+          onClick={handleOpenSpinWheel}
           className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-3.5 shadow-md flex items-center justify-between cursor-pointer active:scale-98 transition group border border-amber-400/30"
         >
           {/* Subtle Ambient Glow */}
@@ -379,7 +406,11 @@ const MobileEcoHome = ({
 
           <button 
             type="button"
-            className="px-3.5 py-1.5 rounded-xl bg-white text-orange-600 font-black text-xs shadow-md shrink-0 active:scale-95 transition pointer-events-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenSpinWheel();
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-white text-orange-600 font-black text-xs shadow-md shrink-0 active:scale-95 hover:bg-orange-50 transition cursor-pointer"
           >
             Spin Now
           </button>
@@ -962,6 +993,23 @@ const MobileEcoHome = ({
         )}
       </AnimatePresence>
 
+      {/* Guaranteed Self-contained Modals */}
+      <UPIPayoutModal
+        isOpen={localUpiOpen}
+        onClose={() => setLocalUpiOpen(false)}
+        userPoints={walletPoints}
+        onPayoutSuccess={(updatedPts) => {
+          setBonusPoints(prev => prev - (walletPoints - updatedPts));
+        }}
+      />
+
+      <DailySpinWheelModal
+        isOpen={localSpinOpen}
+        onClose={() => setLocalSpinOpen(false)}
+        onRewardWon={(pts) => {
+          setBonusPoints(prev => prev + pts);
+        }}
+      />
     </div>
   );
 };

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import UserLayout from '../../components/UserLayout';
 
 const ReportIllegalDump = () => {
   const { user } = useAuth();
@@ -96,7 +97,7 @@ const ReportIllegalDump = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8">
+    <UserLayout title="Report Dumping" showBack={true}>
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Top Back Link */}
         <Link
@@ -322,7 +323,7 @@ const ReportIllegalDump = () => {
           </form>
         )}
       </div>
-    </div>
+    </UserLayout>
   );
 };
 

@@ -288,9 +288,32 @@ const UserDashboard = () => {
   const currentPoints = analytics?.walletPoints ?? user?.points ?? 0;
   const inrEquivalent = Math.round(currentPoints * 0.25);
 
+  // Global modal triggers from MobileCitizenNav or other components
+  useEffect(() => {
+    const handleScanner = () => setShowAiScanner(true);
+    const handleCert = () => setShowGreenCert(true);
+    const handleStory = () => setShowEcoStory(true);
+    const handleUpi = () => setShowUpiPayout(true);
+    const handleChat = () => setShowDriverChat(true);
+
+    window.addEventListener('open-ai-scanner', handleScanner);
+    window.addEventListener('open-green-certificate', handleCert);
+    window.addEventListener('open-eco-story', handleStory);
+    window.addEventListener('open-upi-payout', handleUpi);
+    window.addEventListener('open-driver-chat', handleChat);
+
+    return () => {
+      window.removeEventListener('open-ai-scanner', handleScanner);
+      window.removeEventListener('open-green-certificate', handleCert);
+      window.removeEventListener('open-eco-story', handleStory);
+      window.removeEventListener('open-upi-payout', handleUpi);
+      window.removeEventListener('open-driver-chat', handleChat);
+    };
+  }, []);
+
   return (
     <>
-      {/* 📱 MOBILE VIEW: Exact Native Screen from user screenshot */}
+      {/* 📱 MOBILE VIEW: Exact Native Screen with complete options */}
       <div className="block md:hidden">
         <MobileEcoHome 
           pickups={pickups} 
@@ -304,6 +327,25 @@ const UserDashboard = () => {
           onOpenUpi={() => setShowUpiPayout(true)}
           onOpenCert={() => setShowGreenCert(true)}
           onOpenStory={() => setShowEcoStory(true)}
+          onOpenChat={() => setShowDriverChat(true)}
+          streakDays={streakDays}
+          streakClaimed={streakClaimed}
+          onClaimStreak={handleClaimStreak}
+          todayFormattedName={todayFormattedName}
+          todayFormattedDate={todayFormattedDate}
+          weekDays={weekDays}
+          quests={quests}
+          onCompleteQuest={handleCompleteQuest}
+          treeStage={treeStage}
+          totalKgNumber={totalKgNumber}
+          calcCategory={calcCategory}
+          setCalcCategory={setCalcCategory}
+          calcWeight={calcWeight}
+          setCalcWeight={setCalcWeight}
+          SCRAP_RATES={SCRAP_RATES}
+          SEGREGATION_ITEMS={SEGREGATION_ITEMS}
+          selectedSegKey={selectedSegKey}
+          setSelectedSegKey={setSelectedSegKey}
         />
       </div>
 

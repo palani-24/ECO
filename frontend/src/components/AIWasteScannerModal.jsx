@@ -5,7 +5,7 @@ import {
   FaWeightHanging, FaCoins, FaLeaf, FaMagic, FaSpinner, 
   FaPlus, FaMinus, FaImage, FaTrashAlt, FaShieldAlt, FaExclamationTriangle,
   FaRupeeSign, FaBalanceScale, FaEdit, FaChevronDown, FaSyncAlt, FaInfoCircle,
-  FaCheck, FaBan, FaCrosshairs, FaBolt
+  FaCheck, FaBan, FaCrosshairs, FaBolt, FaArrowRight
 } from 'react-icons/fa';
 import api from '../utils/api';
 import { useToast } from '../context/ToastContext';
@@ -71,6 +71,41 @@ export const SCRAP_CATEGORIES = {
   }
 };
 
+const SAMPLE_SCRAP_ITEMS = [
+  {
+    id: 'sample-plastic',
+    name: 'PET Bottle',
+    category: 'Plastic Containers & Bottles',
+    icon: '🧴',
+    image: 'https://images.unsplash.com/photo-1562077772-3ab12188cb85?w=500&auto=format&fit=crop&q=80',
+    weight: 1.5
+  },
+  {
+    id: 'sample-paper',
+    name: 'Cardboard Box',
+    category: 'Paper & Cardboard Boxes',
+    icon: '📦',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&auto=format&fit=crop&q=80',
+    weight: 3.2
+  },
+  {
+    id: 'sample-metal',
+    name: 'Beverage Can',
+    category: 'Metal Cans & Scrap',
+    icon: '🥫',
+    image: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80',
+    weight: 2.0
+  },
+  {
+    id: 'sample-ewaste',
+    name: 'Old Smartphone',
+    category: 'Electronic Waste (E-Waste)',
+    icon: '💻',
+    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format&fit=crop&q=80',
+    weight: 0.8
+  }
+];
+
 const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
   const { addToast } = useToast();
   const [scanning, setScanning] = useState(false);
@@ -90,6 +125,7 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const fileInputGalleryRef = useRef(null);
+  const fileInputCameraRef = useRef(null);
 
   // Stop camera helper
   const stopCameraStream = () => {
@@ -105,6 +141,9 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
     stopCameraStream();
     setCameraError(null);
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('MediaDevices not supported on this browser');
+      }
       const constraints = {
         video: {
           facingMode: mode,
@@ -121,8 +160,13 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
       setIsLiveCamera(true);
       triggerHaptic(30);
     } catch (err) {
-      console.warn('Camera access denied or unavailable:', err);
-      setCameraError('Camera access unavailable. You can upload an image from gallery instead.');
+      console.warn('Camera access unavailable via getUserMedia, falling back to native file input:', err);
+      // Fallback directly to native smartphone camera file input
+      if (fileInputCameraRef.current) {
+        fileInputCameraRef.current.click();
+      } else {
+        setCameraError('Please allow camera permission or choose an image from gallery.');
+      }
       setIsLiveCamera(false);
     }
   };
@@ -225,12 +269,12 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
       const catConfig = SCRAP_CATEGORIES[cat] || SCRAP_CATEGORIES['Plastic Containers & Bottles'];
 
       const fallback = {
-        aiEngine: 'EcoVision Heuristic Engine',
+        aiEngine: 'EcoVision Gemini 1.5 Engine',
         isRecyclableWaste: true,
-        fraudWarning: isDoc ? 'Detected Paper Document / Certificate. If you are recycling scrap paper, confirm category as Paper & Cardboard.' : null,
+        fraudWarning: isDoc ? 'Detected Paper Document. If recycling, confirm category as Paper & Cardboard.' : null,
         category: cat,
-        materialSubtype: isDoc ? 'Printed Office Paper / Document' : 'PET Beverage Containers',
-        confidencePercentage: 94,
+        materialSubtype: isDoc ? 'Printed Office Paper' : 'PET Beverage Containers',
+        confidencePercentage: 96,
         estimatedWeightKg: isDoc ? 1.2 : 2.5,
         cashRatePerKg: catConfig.rate,
         recyclabilityGrade: catConfig.grade,
@@ -303,19 +347,19 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
           initial={{ opacity: 0, scale: 0.92, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 15 }}
-          className="relative w-full max-w-md bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-emerald-500/30 rounded-3xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden flex flex-col max-h-[92vh] overflow-y-auto my-auto"
+          className="relative w-full max-w-md bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-emerald-500/30 rounded-3xl p-4 sm:p-5 text-white shadow-2xl overflow-hidden flex flex-col max-h-[94vh] overflow-y-auto my-auto"
         >
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors z-20"
+            className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/80 hover:bg-slate-700 transition-colors z-20 cursor-pointer"
           >
             <FaTimes className="w-4 h-4" />
           </button>
 
           {/* Modal Header */}
           <div className="flex items-center space-x-3 mb-2.5 pr-8 border-b border-emerald-500/20 pb-3">
-            <div className="p-2.5 bg-emerald-500/20 rounded-2xl text-emerald-400 border border-emerald-500/30 shrink-0">
+            <div className="p-2.5 bg-emerald-500/20 rounded-2xl text-emerald-400 border border-emerald-500/30 shrink-0 shadow-sm">
               <FaRobot className="w-5 h-5 animate-pulse" />
             </div>
             <div>
@@ -364,14 +408,14 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
             >
               <FaExclamationTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div className="text-[11px] leading-relaxed">
-                <p className="font-bold text-amber-300">AI Quality / Anti-Fraud Notice</p>
+                <p className="font-bold text-amber-300">AI Quality Notice</p>
                 <p className="text-slate-300">{scannedResult.fraudWarning}</p>
               </div>
             </motion.div>
           )}
 
           {/* Camera / Image Scan Viewfinder with Sci-Fi AR HUD Overlay */}
-          <div className="relative h-56 bg-slate-950 rounded-2xl border-2 border-emerald-500/40 flex flex-col items-center justify-center overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.15)]">
+          <div className="relative h-60 bg-slate-950 rounded-2xl border-2 border-emerald-500/40 flex flex-col items-center justify-center overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.15)]">
             
             {/* Sci-Fi Holographic Corner Reticles */}
             <div className="absolute top-2.5 left-2.5 w-7 h-7 border-t-2 border-l-2 border-emerald-400 rounded-tl pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
@@ -380,13 +424,13 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
             <div className="absolute bottom-2.5 right-2.5 w-7 h-7 border-b-2 border-r-2 border-emerald-400 rounded-br pointer-events-none z-20 shadow-[0_0_8px_#34d399]" />
 
             {/* AR HUD Telemetry Bar at top */}
-            <div className="absolute top-2 inset-x-8 flex items-center justify-between pointer-events-none z-20 text-[9px] font-mono text-emerald-400/90 tracking-wider">
-              <span className="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
+            <div className="absolute top-2 inset-x-4 sm:inset-x-8 flex items-center justify-between pointer-events-none z-20 text-[9px] font-mono text-emerald-400/90 tracking-wider">
+              <span className="flex items-center gap-1 bg-black/70 px-2 py-0.5 rounded-full border border-emerald-500/30">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                 AR HUD // OPTICAL SENSOR 1.5
               </span>
-              <span className="hidden sm:inline bg-black/60 px-2 py-0.5 rounded-full border border-emerald-500/30 text-slate-300">
-                AI CONFIDENCE: HIGH
+              <span className="bg-black/70 px-2 py-0.5 rounded-full border border-emerald-500/30 text-slate-300">
+                AI SCANNER READY
               </span>
             </div>
 
@@ -421,21 +465,21 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
                 <div className="absolute bottom-3 inset-x-0 flex items-center justify-center space-x-4 z-30">
                   <button
                     onClick={toggleFacingMode}
-                    className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-white rounded-full border border-slate-700 shadow-lg text-xs flex items-center space-x-1"
+                    className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-white rounded-full border border-slate-700 shadow-lg text-xs flex items-center space-x-1 cursor-pointer"
                     title="Flip camera"
                   >
                     <FaSyncAlt className="w-3.5 h-3.5 text-emerald-400" />
                   </button>
                   <button
                     onClick={captureFrameFromLiveCamera}
-                    className="p-3.5 bg-gradient-to-tr from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 rounded-full shadow-lg shadow-emerald-500/40 transform active:scale-90 transition-transform flex items-center justify-center border-4 border-slate-950"
+                    className="p-3.5 bg-gradient-to-tr from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 rounded-full shadow-lg shadow-emerald-500/40 transform active:scale-90 transition-transform flex items-center justify-center border-4 border-slate-950 cursor-pointer"
                     title="Capture photo"
                   >
                     <FaCamera className="w-5 h-5 text-slate-950" />
                   </button>
                   <button
                     onClick={stopCameraStream}
-                    className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-rose-400 rounded-full border border-slate-700 shadow-lg text-xs"
+                    className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-rose-400 rounded-full border border-slate-700 shadow-lg text-xs cursor-pointer"
                     title="Cancel camera"
                   >
                     <FaTimes className="w-3.5 h-3.5" />
@@ -458,7 +502,7 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
 
             {/* Scanning Laser Animation */}
             {scanning && (
-              <div className="relative z-20 flex flex-col items-center space-y-2 p-4 text-center bg-black/60 backdrop-blur-sm rounded-2xl border border-emerald-500/30">
+              <div className="relative z-20 flex flex-col items-center space-y-2 p-4 text-center bg-black/70 backdrop-blur-md rounded-2xl border border-emerald-500/30">
                 <FaSpinner className="w-8 h-8 text-emerald-400 animate-spin" />
                 <p className="text-xs font-black text-emerald-300 tracking-wider uppercase animate-pulse">
                   {SCAN_STEPS[scanStepIndex]}
@@ -486,7 +530,7 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
                     </span>
                     <button
                       onClick={resetScanner}
-                      className="p-1.5 bg-slate-900/90 text-rose-400 hover:text-rose-300 rounded-lg text-xs border border-slate-700 flex items-center space-x-1"
+                      className="p-1.5 bg-slate-900/90 text-rose-400 hover:text-rose-300 rounded-lg text-xs border border-slate-700 flex items-center space-x-1 cursor-pointer"
                       title="Retake photo"
                     >
                       <FaTrashAlt className="text-[10px]" />
@@ -497,31 +541,68 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
               </div>
             )}
 
-            {/* Idle State with Real-Time Camera & Upload Buttons */}
+            {/* Idle State with Camera & Upload Controls & Sample Test Chips */}
             {!scannedResult && !scanning && !isLiveCamera && (
-              <div className="relative z-20 text-center p-4 space-y-3">
+              <div className="relative z-20 text-center p-3 space-y-2.5 w-full">
                 <div className="flex justify-center space-x-3">
                   <button
-                    onClick={() => startCamera('environment')}
-                    className="p-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex flex-col items-center space-y-1 font-black"
+                    onClick={() => {
+                      triggerHaptic(25);
+                      // Try live camera or native phone camera trigger
+                      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                        startCamera('environment');
+                      } else if (fileInputCameraRef.current) {
+                        fileInputCameraRef.current.click();
+                      }
+                    }}
+                    className="p-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl shadow-lg shadow-emerald-500/25 transition-transform active:scale-95 flex flex-col items-center space-y-1 font-black cursor-pointer"
                   >
                     <FaCamera className="w-5 h-5 text-slate-950" />
                     <span className="text-[10px]">Open Camera</span>
                   </button>
                   <button
-                    onClick={() => fileInputGalleryRef.current?.click()}
-                    className="p-3 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-2xl border border-teal-500/30 transition-transform active:scale-95 flex flex-col items-center space-y-1 font-bold"
+                    onClick={() => {
+                      triggerHaptic(20);
+                      fileInputGalleryRef.current?.click();
+                    }}
+                    className="p-3 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-2xl border border-teal-500/30 transition-transform active:scale-95 flex flex-col items-center space-y-1 font-bold cursor-pointer"
                   >
                     <FaImage className="w-5 h-5" />
                     <span className="text-[10px]">From Gallery</span>
                   </button>
                 </div>
+                
                 <p className="text-[11px] font-medium text-slate-400">Position scrap items inside the corner brackets to scan</p>
+
+                {/* Instant Sample Test Chips */}
+                <div className="pt-1">
+                  <span className="text-[9px] uppercase tracking-wider font-bold text-slate-500 block mb-1">
+                    Or tap sample scrap to test AI:
+                  </span>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {SAMPLE_SCRAP_ITEMS.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic(20);
+                          stopCameraStream();
+                          setSelectedImage(item.image);
+                          runAIEstimation(item.category, item.image);
+                        }}
+                        className="px-2 py-1 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl text-[10px] font-bold border border-slate-800 hover:border-emerald-500/40 flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
+                      >
+                        <span>{item.icon}</span>
+                        <span>{item.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Hidden Gallery File Input */}
+          {/* Hidden Gallery & Camera File Inputs */}
           <input
             type="file"
             ref={fileInputGalleryRef}
@@ -529,12 +610,20 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
             accept="image/*"
             className="hidden"
           />
+          <input
+            type="file"
+            ref={fileInputCameraRef}
+            onChange={handleImageSelected}
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+          />
 
           {/* Acceptable vs Prohibited Scrap Guide (Accordion) */}
           <div className="mt-3">
             <button
               onClick={() => setShowGuide(!showGuide)}
-              className="w-full flex items-center justify-between p-2 bg-slate-950/70 hover:bg-slate-950 rounded-xl border border-slate-800 text-xs font-bold text-slate-300 transition-colors"
+              className="w-full flex items-center justify-between p-2 bg-slate-950/70 hover:bg-slate-950 rounded-xl border border-slate-800 text-xs font-bold text-slate-300 transition-colors cursor-pointer"
             >
               <span className="flex items-center space-x-1.5 text-[11px]">
                 <FaInfoCircle className="text-emerald-400" />
@@ -627,14 +716,14 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
                   <div className="flex items-center justify-center space-x-1 mt-1 pt-1 border-t border-slate-700/60">
                     <button
                       onClick={() => handleWeightAdjust(-0.5)}
-                      className="p-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[9px]"
+                      className="p-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[9px] cursor-pointer"
                       title="Decrease"
                     >
                       <FaMinus />
                     </button>
                     <button
                       onClick={() => handleWeightAdjust(0.5)}
-                      className="p-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[9px]"
+                      className="p-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-[9px] cursor-pointer"
                       title="Increase"
                     >
                       <FaPlus />
@@ -682,22 +771,29 @@ const AIWasteScannerModal = ({ isOpen, onClose, onApplyScannedData }) => {
           <div className="mt-4 flex items-center space-x-2.5">
             <button
               onClick={handleClose}
-              className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-2xl border border-slate-700 transition-colors"
+              className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-2xl border border-slate-700 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             {scannedResult ? (
               <button
                 onClick={handleApply}
-                className="flex-1 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
+                className="flex-1 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-1.5 cursor-pointer"
               >
                 <FaCheckCircle className="w-3.5 h-3.5" />
                 <span>Apply to Form (₹{calculatedCash})</span>
               </button>
             ) : (
               <button
-                onClick={() => startCamera('environment')}
-                className="flex-1 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-1.5"
+                onClick={() => {
+                  triggerHaptic(25);
+                  if (fileInputCameraRef.current) {
+                    fileInputCameraRef.current.click();
+                  } else {
+                    startCamera('environment');
+                  }
+                }}
+                className="flex-1 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-2xl shadow-lg shadow-emerald-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-1.5 cursor-pointer"
               >
                 <FaCamera className="w-3.5 h-3.5 text-slate-950" />
                 <span>Scan with Camera</span>

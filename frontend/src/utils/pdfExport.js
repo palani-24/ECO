@@ -8,11 +8,18 @@ export const downloadElementAsImage = async (element, filename = 'EcoReward_Cert
   if (!element) return false;
   try {
     const canvas = await html2canvas(element, {
-      scale: 2, // High-resolution retina scale
+      scale: 2.5, // High-resolution retina scale
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
-      logging: false
+      logging: false,
+      windowWidth: 1100,
+      onclone: (clonedDoc, clonedElement) => {
+        // Enforce balanced award certificate proportions even on mobile screens
+        clonedElement.style.width = '920px';
+        clonedElement.style.maxWidth = '920px';
+        clonedElement.style.margin = '0 auto';
+      }
     });
 
     const dataUrl = canvas.toDataURL('image/png');
@@ -36,11 +43,18 @@ export const downloadElementAsPDF = async (element, filename = 'EcoReward_Certif
   if (!element) return false;
   try {
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 2.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
-      logging: false
+      logging: false,
+      windowWidth: 1100,
+      onclone: (clonedDoc, clonedElement) => {
+        // Enforce majestic A4 landscape award dimensions (960px width)
+        clonedElement.style.width = '960px';
+        clonedElement.style.maxWidth = '960px';
+        clonedElement.style.margin = '0 auto';
+      }
     });
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -57,11 +71,11 @@ export const downloadElementAsPDF = async (element, filename = 'EcoReward_Certif
     const canvasHeight = canvas.height;
     const ratio = canvasWidth / canvasHeight;
 
-    let imgWidth = pageWidth - 20; // 10mm margins
+    let imgWidth = pageWidth - 16; // 8mm margins
     let imgHeight = imgWidth / ratio;
 
-    if (imgHeight > pageHeight - 20) {
-      imgHeight = pageHeight - 20;
+    if (imgHeight > pageHeight - 16) {
+      imgHeight = pageHeight - 16;
       imgWidth = imgHeight * ratio;
     }
 

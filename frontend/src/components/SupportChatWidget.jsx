@@ -596,7 +596,7 @@ const SupportChatWidget = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 sm:bottom-6 right-3.5 sm:right-6 z-40 p-2.5 sm:px-4 sm:py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-[0_10px_25px_rgba(16,185,129,0.4)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] flex items-center space-x-0 sm:space-x-3 border border-emerald-400/50 group cursor-pointer backdrop-blur-md active:scale-95"
+          className="fixed bottom-22 sm:bottom-6 right-3 sm:right-6 z-40 p-2.5 sm:px-4 sm:py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-full shadow-[0_10px_25px_rgba(16,185,129,0.4)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.5)] flex items-center space-x-0 sm:space-x-3 border border-emerald-400/50 group cursor-pointer backdrop-blur-md active:scale-95"
           title="Open Live Support & EcoBot AI Assistant"
           aria-label="Open Support Chat"
         >
@@ -622,13 +622,22 @@ const SupportChatWidget = () => {
       {/* Main Support Floating Widget (Ultra-Clean Professional Messenger) */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="fixed inset-x-2 bottom-18 top-16 sm:inset-auto sm:bottom-6 sm:right-6 z-[90] sm:w-[440px] sm:h-[610px] sm:max-h-[640px] bg-slate-900 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans backdrop-blur-xl"
-          >
+          <>
+            {/* Mobile Backdrop to prevent page bleed-through */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[85] sm:hidden"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="fixed inset-x-3 bottom-22 top-12 sm:inset-auto sm:bottom-6 sm:right-6 z-[90] sm:w-[440px] sm:h-[610px] sm:max-h-[640px] bg-slate-950 text-white rounded-3xl shadow-2xl border border-slate-800 flex flex-col overflow-hidden font-sans"
+            >
             {/* Header Area */}
             <div className="relative p-3.5 sm:p-4 bg-slate-950/95 border-b border-slate-800 flex items-center justify-between backdrop-blur-md">
               {activeChat ? (
@@ -1356,8 +1365,9 @@ const SupportChatWidget = () => {
               </button>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </>
+      )}
+    </AnimatePresence>
     </>
   );
 };

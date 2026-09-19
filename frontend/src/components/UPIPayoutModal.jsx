@@ -16,7 +16,7 @@ const UPIPayoutModal = ({ isOpen, onClose, userPoints = 1388, onPayoutSuccess })
   const [loading, setLoading] = useState(false);
   const [payoutResult, setPayoutResult] = useState(null);
 
-  const amountInRupees = Math.floor(pointsToRedeem / 2);
+  const amountInRupees = Math.round(pointsToRedeem * 0.25);
 
   if (!isOpen) return null;
 
@@ -131,7 +131,7 @@ const UPIPayoutModal = ({ isOpen, onClose, userPoints = 1388, onPayoutSuccess })
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Conversion Rate:</span>
-                  <span className="font-bold text-white">2 EcoPoints = ₹1 Cash</span>
+                  <span className="font-bold text-white">4 EcoPoints = ₹1 Cash</span>
                 </div>
                 <div className="flex justify-between border-t border-slate-800 pt-2 font-black text-emerald-400">
                   <span>Payout Mode:</span>
@@ -158,7 +158,7 @@ const UPIPayoutModal = ({ isOpen, onClose, userPoints = 1388, onPayoutSuccess })
                   </div>
                 </div>
                 <span className="px-2.5 py-1 bg-amber-500/20 text-amber-300 text-xs font-black rounded-xl border border-amber-500/30">
-                  ≈ ₹{Math.floor(userPoints / 2)}
+                  ≈ ₹{Math.round(userPoints * 0.25)}
                 </span>
               </div>
 
@@ -167,10 +167,10 @@ const UPIPayoutModal = ({ isOpen, onClose, userPoints = 1388, onPayoutSuccess })
                 <label className="block text-xs font-bold text-slate-300 mb-1.5">Select EcoPoints to Withdraw:</label>
                 <div className="grid grid-cols-4 gap-1.5">
                   {[
-                    { pts: 100, label: '₹50' },
-                    { pts: 200, label: '₹100' },
-                    { pts: 500, label: '₹250' },
-                    { pts: userPoints > 0 ? userPoints : 1000, label: `Max (₹${Math.floor((userPoints || 1000) / 2)})` }
+                    { pts: 200, label: '₹50' },
+                    { pts: 400, label: '₹100' },
+                    { pts: 800, label: '₹200' },
+                    { pts: userPoints > 0 ? userPoints : 1000, label: `Max (₹${Math.round((userPoints || 1000) * 0.25)})` }
                   ].map((item, idx) => (
                     <button
                       key={idx}

@@ -152,27 +152,45 @@ const DailySpinWheelModal = ({ isOpen, onClose, onRewardWon }) => {
 
                   const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 0 1 ${x2} ${y2} Z`;
 
-                  // Text rotation angle (midpoint of segment)
-                  const textAngle = i * angle + angle / 2;
+                  // Correctly convert text midpoint angle from radians to DEGREES for SVG transform
+                  const textAngleDeg = (((i * angle + angle / 2) - Math.PI / 2) * 180) / Math.PI;
 
                   return (
                     <g key={i}>
-                      <path d={pathData} fill={seg.color} stroke="#0f172a" strokeWidth="1" />
-                      <g transform={`rotate(${textAngle} 50 50)`}>
+                      <path d={pathData} fill={seg.color} stroke="#0f172a" strokeWidth="0.8" />
+                      <g transform={`rotate(${textAngleDeg} 50 50)`}>
                         <text
-                          x="76"
-                          y="52"
+                          x="75"
+                          y="50"
                           fill={seg.textColor}
-                          fontSize="5.2"
+                          fontSize="4"
                           fontWeight="900"
                           textAnchor="middle"
                           dominantBaseline="central"
-                          transform={`rotate(90 76 52)`}
+                          className="drop-shadow-sm font-sans"
                         >
                           {seg.label}
                         </text>
                       </g>
                     </g>
+                  );
+                })}
+
+                {/* Golden Casino Pegs around the Rim */}
+                {Array.from({ length: 16 }).map((_, pegIdx) => {
+                  const pegAngle = (pegIdx * (360 / 16)) * (Math.PI / 180);
+                  const cx = 50 + 47.5 * Math.cos(pegAngle);
+                  const cy = 50 + 47.5 * Math.sin(pegAngle);
+                  return (
+                    <circle 
+                      key={`peg-${pegIdx}`} 
+                      cx={cx} 
+                      cy={cy} 
+                      r="1.2" 
+                      fill="#FDE047" 
+                      stroke="#B45309" 
+                      strokeWidth="0.4" 
+                    />
                   );
                 })}
               </svg>

@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { SocketProvider } from './context/SocketContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { DistrictProvider } from './context/DistrictContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import ErrorBoundary from './components/ErrorBoundary';
@@ -89,7 +90,8 @@ function App() {
         <ToastProvider>
           <AuthProvider>
             <LanguageProvider>
-              <SocketProvider>
+              <DistrictProvider>
+                <SocketProvider>
                 <SupportChatWidget />
                 <PWAInstallBanner />
                 <React.Suspense fallback={
@@ -459,8 +461,9 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </React.Suspense>
-        </SocketProvider>
-        </LanguageProvider>
+                </SocketProvider>
+              </DistrictProvider>
+            </LanguageProvider>
       </AuthProvider>
     </ToastProvider>
       </Router>

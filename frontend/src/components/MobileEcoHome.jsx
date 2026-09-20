@@ -13,8 +13,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useDistrict } from '../context/DistrictContext';
 import MobileCitizenNav from './MobileCitizenNav';
-import DailySpinWheelModal from './DailySpinWheelModal';
 import UPIPayoutModal from './UPIPayoutModal';
 import { triggerConfetti } from '../utils/confetti';
 import { triggerHaptic } from '../utils/mobileNative';
@@ -64,6 +64,7 @@ const MobileEcoHome = ({
   const { user, logout } = useAuth();
   const { addToast } = useToast();
   const { lang, setLang } = useLanguage() || { lang: 'en', setLang: () => {} };
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -373,33 +374,32 @@ const MobileEcoHome = ({
           </div>
         </div>
 
-        {/* 4. DAILY ECO SPIN & WIN WHEEL BANNER (With 3D Spin Wheel Artwork) */}
+        {/* 4. TAMIL NADU DISTRICT SOLID WASTE SCHEDULE & RECOVERY HUB */}
         <div 
-          onClick={handleOpenSpinWheel}
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-3.5 shadow-md flex items-center justify-between cursor-pointer active:scale-98 transition group border border-amber-400/30"
+          onClick={() => {
+            triggerHaptic(20);
+            openDistrictModal();
+          }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white p-3.5 shadow-md flex items-center justify-between cursor-pointer active:scale-98 transition group border border-emerald-500/30"
         >
           {/* Subtle Ambient Glow */}
-          <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-emerald-400/10 rounded-full blur-xl pointer-events-none" />
 
           <div className="flex items-center space-x-3 relative z-10 flex-1 pr-2">
-            <div className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-inner border border-white/40 shrink-0 bg-amber-600/50">
-              <img 
-                src="/images/citizen/spin_wheel_banner.jpg" 
-                alt="Spin & Win" 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
+            <div className="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-400/40 text-emerald-300 flex items-center justify-center shrink-0 shadow-inner font-black text-base">
+              🏛️
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-black uppercase tracking-wider block">
-                  Daily Eco Spin & Win
+                  {currentDistrict.name} ({currentDistrict.tamilName})
                 </span>
-                <span className="px-1.5 py-0.5 bg-white text-orange-600 text-[9px] font-black rounded-full uppercase">
-                  Free
+                <span className="px-1.5 py-0.5 bg-emerald-400 text-slate-950 text-[9px] font-black rounded-full uppercase">
+                  ACTIVE
                 </span>
               </div>
-              <p className="text-[11px] text-amber-100 font-medium line-clamp-1">
-                Win up to 50 EcoPoints, rate boosters & vouchers!
+              <p className="text-[11px] text-emerald-100 font-medium line-clamp-1">
+                {currentDistrict.corporation} • Daily Doorstep Segregated Collection
               </p>
             </div>
           </div>
@@ -408,11 +408,11 @@ const MobileEcoHome = ({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              handleOpenSpinWheel();
+              openDistrictModal();
             }}
-            className="px-3.5 py-1.5 rounded-xl bg-white text-orange-600 font-black text-xs shadow-md shrink-0 active:scale-95 hover:bg-orange-50 transition cursor-pointer"
+            className="px-3 py-1.5 rounded-xl bg-white text-emerald-800 font-black text-xs shadow-md shrink-0 active:scale-95 hover:bg-emerald-50 transition cursor-pointer"
           >
-            Spin Now
+            38 Districts
           </button>
         </div>
 
@@ -1000,14 +1000,6 @@ const MobileEcoHome = ({
         userPoints={walletPoints}
         onPayoutSuccess={(updatedPts) => {
           setBonusPoints(prev => prev - (walletPoints - updatedPts));
-        }}
-      />
-
-      <DailySpinWheelModal
-        isOpen={localSpinOpen}
-        onClose={() => setLocalSpinOpen(false)}
-        onRewardWon={(pts) => {
-          setBonusPoints(prev => prev + pts);
         }}
       />
     </div>

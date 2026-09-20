@@ -4,11 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useDistrict } from '../context/DistrictContext';
 import MobileQRScannerModal from './MobileQRScannerModal';
 import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
-  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode, FaArrowRight
+  FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode, FaArrowRight,
+  FaMapMarkerAlt
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -17,6 +19,7 @@ const Navbar = () => {
   const { isConnected } = useSocket() || {};
   const { addToast } = useToast();
   const { lang, setLang } = useLanguage() || { lang: 'en', setLang: () => {} };
+  const { currentDistrict, openDistrictModal } = useDistrict() || {};
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -181,6 +184,23 @@ const Navbar = () => {
                 {/* Header Right Action Controls */}
                 <div className="flex items-center space-x-1.5 sm:space-x-2.5 ml-auto">
                   
+                  {/* Tamil Nadu 38-District Selector Button */}
+                  {currentDistrict && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic(20);
+                        if (openDistrictModal) openDistrictModal();
+                      }}
+                      className="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-500/30 text-xs font-black cursor-pointer active:scale-95 transition"
+                      title="Select Tamil Nadu District (38 Districts)"
+                    >
+                      <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-xs shrink-0" />
+                      <span className="max-w-[120px] truncate">{currentDistrict.name}</span>
+                      <span className="text-[10px] opacity-75 font-normal">({currentDistrict.tamilName})</span>
+                    </button>
+                  )}
+
                   {/* Language Switcher Segmented Pill */}
                   <div className="relative flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
                     <button

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBars, FaBell, FaSearch, FaQrcode, FaTimes, FaArrowLeft } from 'react-icons/fa';
+import { FaBars, FaBell, FaSearch, FaQrcode, FaTimes, FaArrowLeft, FaMapMarkerAlt, FaChevronDown } from 'react-icons/fa';
 import { useLanguage } from '../context/LanguageContext';
+import { useDistrict } from '../context/DistrictContext';
 import { triggerHaptic } from '../utils/mobileNative';
 
 const MobileCitizenHeader = ({ 
@@ -16,12 +17,13 @@ const MobileCitizenHeader = ({
 }) => {
   const navigate = useNavigate();
   const { lang, setLang } = useLanguage() || { lang: 'en', setLang: () => {} };
+  const { currentDistrict, openDistrictModal } = useDistrict() || {};
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   return (
     <>
       <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md">
-        <div className="px-4 py-2.5 flex items-center justify-between">
+        <div className="px-3.5 py-2.5 flex items-center justify-between">
           
           {/* Left: Back or Drawer Menu Button */}
           <div className="flex items-center space-x-2">
@@ -57,14 +59,30 @@ const MobileCitizenHeader = ({
               className="flex items-center space-x-1.5 cursor-pointer" 
               onClick={() => navigate('/dashboard')}
             >
-              <span className="text-base font-black tracking-wider uppercase">
-                ECOREWARD
+              <span className="text-sm sm:text-base font-black tracking-wider uppercase">
+                {title || 'ECOREWARD'}
               </span>
             </div>
           </div>
 
-          {/* Right Controls: Language & Notification */}
-          <div className="flex items-center space-x-2">
+          {/* Right Controls: District Pill + Language + Notification */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
+            {/* Interactive Tamil Nadu District Selector Pill */}
+            {currentDistrict && (
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (openDistrictModal) openDistrictModal();
+                }}
+                className="flex items-center space-x-1 px-2 py-1 rounded-full bg-black/20 hover:bg-black/30 text-white border border-white/20 text-[10px] font-black cursor-pointer active:scale-95 transition"
+                title="Change Tamil Nadu District (38 Districts)"
+              >
+                <FaMapMarkerAlt className="text-emerald-300 text-[10px] shrink-0" />
+                <span className="max-w-[70px] sm:max-w-[100px] truncate">{currentDistrict.name}</span>
+                <FaChevronDown className="text-[7px] opacity-75 shrink-0" />
+              </button>
+            )}
             {/* Language Toggle */}
             <button
               type="button"

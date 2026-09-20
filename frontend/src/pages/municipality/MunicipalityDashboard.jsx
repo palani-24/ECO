@@ -14,6 +14,7 @@ import {
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { useDistrict } from '../../context/DistrictContext';
 import UserLayout from '../../components/UserLayout';
 import AIWasteScannerModal from '../../components/AIWasteScannerModal';
 import GreenCertificateModal from '../../components/GreenCertificateModal';
@@ -21,6 +22,7 @@ import GreenCertificateModal from '../../components/GreenCertificateModal';
 const MunicipalityDashboard = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const navigate = useNavigate();
 
   const [stats, setStats] = useState(null);
@@ -55,44 +57,50 @@ const MunicipalityDashboard = () => {
   }, []);
 
   const summary = {
-    totalWeightKg: stats?.summary?.totalWeightKg ?? 1820.5,
-    totalTons: stats?.summary?.totalTons ?? 1.82,
-    totalPickups: stats?.summary?.totalPickups ?? 64,
-    completedPickups: stats?.summary?.completedPickups ?? 58,
-    activePickups: stats?.summary?.pendingPickups ?? stats?.summary?.activePickups ?? 6,
-    pickupEfficiencyPct: stats?.summary?.pickupEfficiencyPct ?? 91,
-    totalCitizens: stats?.summary?.totalCitizens ?? 1420,
-    activeDrivers: stats?.summary?.activeDrivers ?? 12,
-    openGrievances: stats?.summary?.openGrievances ?? 3,
-    resolvedGrievances: stats?.summary?.resolvedGrievances ?? 19,
-    landfillTippingSaved: stats?.summary?.landfillTippingSaved ?? 42500
+    totalWeightKg: stats?.summary?.totalWeightKg ?? Math.round(currentDistrict.dailyWasteTons * 0.28 * 1000),
+    totalTons: stats?.summary?.totalTons ?? +(currentDistrict.dailyWasteTons * 0.28).toFixed(2),
+    totalPickups: stats?.summary?.totalPickups ?? Math.round(currentDistrict.wards * 1.8),
+    completedPickups: stats?.summary?.completedPickups ?? Math.round(currentDistrict.wards * 1.6),
+    activePickups: stats?.summary?.pendingPickups ?? stats?.summary?.activePickups ?? Math.round(currentDistrict.wards * 0.2),
+    pickupEfficiencyPct: stats?.summary?.pickupEfficiencyPct ?? currentDistrict.segregationRate,
+    totalCitizens: stats?.summary?.totalCitizens ?? Math.round(currentDistrict.wards * 340),
+    activeDrivers: stats?.summary?.activeDrivers ?? Math.round(currentDistrict.wards * 0.25),
+    openGrievances: stats?.summary?.openGrievances ?? Math.max(1, Math.round(currentDistrict.wards * 0.04)),
+    resolvedGrievances: stats?.summary?.resolvedGrievances ?? Math.round(currentDistrict.wards * 0.35),
+    landfillTippingSaved: stats?.summary?.landfillTippingSaved ?? Math.round(currentDistrict.dailyWasteTons * 820)
   };
 
   const esg = {
-    co2SavedKg: stats?.esgImpact?.co2SavedKg ?? 2845.2,
-    co2SavedTons: stats?.esgImpact?.co2SavedTons ?? 2.85,
-    treesSavedEquivalent: stats?.esgImpact?.treesSavedEquivalent ?? 130.7,
-    energySavedKwh: stats?.esgImpact?.energySavedKwh ?? 12450,
-    waterSavedLiters: stats?.esgImpact?.waterSavedLiters ?? 48900,
-    landfillDivertedM3: stats?.esgImpact?.landfillDivertedM3 ?? 4.36
+    co2SavedKg: stats?.esgImpact?.co2SavedKg ?? Math.round(currentDistrict.dailyWasteTons * 620),
+    co2SavedTons: stats?.esgImpact?.co2SavedTons ?? +(currentDistrict.dailyWasteTons * 0.62).toFixed(2),
+    treesSavedEquivalent: stats?.esgImpact?.treesSavedEquivalent ?? Math.round(currentDistrict.dailyWasteTons * 28),
+    energySavedKwh: stats?.esgImpact?.energySavedKwh ?? Math.round(currentDistrict.dailyWasteTons * 2600),
+    waterSavedLiters: stats?.esgImpact?.waterSavedLiters ?? Math.round(currentDistrict.dailyWasteTons * 10400),
+    landfillDivertedM3: stats?.esgImpact?.landfillDivertedM3 ?? +(currentDistrict.dailyWasteTons * 0.95).toFixed(2)
   };
 
   const categoryBreakdown = stats?.categoryBreakdown || {
-    Plastic: 520,
-    Paper: 410,
-    Metal: 280,
-    'E-Waste': 140,
-    Glass: 190,
-    Organic: 680
+    Plastic: Math.round(currentDistrict.dailyWasteTons * 85),
+    Paper: Math.round(currentDistrict.dailyWasteTons * 70),
+    Metal: Math.round(currentDistrict.dailyWasteTons * 45),
+    'E-Waste': Math.round(currentDistrict.dailyWasteTons * 25),
+    Glass: Math.round(currentDistrict.dailyWasteTons * 30),
+    Organic: Math.round(currentDistrict.dailyWasteTons * 120)
   };
 
-  const defaultWards = [
-    { ward: 'Ward 1 - Gandhipuram', totalWeightKg: 420.5, activePickups: 10, divertedPct: 88, cleanlinessScore: 92, status: 'Excellent', zone: 'North' },
-    { ward: 'Ward 2 - RS Puram', totalWeightKg: 385.0, activePickups: 8, divertedPct: 85, cleanlinessScore: 89, status: 'Excellent', zone: 'West' },
-    { ward: 'Ward 3 - Saibaba Colony', totalWeightKg: 310.2, activePickups: 6, divertedPct: 79, cleanlinessScore: 84, status: 'Good', zone: 'North' },
-    { ward: 'Ward 4 - Peelamedu', totalWeightKg: 295.8, activePickups: 5, divertedPct: 76, cleanlinessScore: 81, status: 'Good', zone: 'East' },
-    { ward: 'Ward 5 - Singanallur', totalWeightKg: 240.0, activePickups: 4, divertedPct: 71, cleanlinessScore: 74, status: 'Needs Action', zone: 'South' },
-    { ward: 'Ward 6 - Ukkadam', totalWeightKg: 169.0, activePickups: 3, divertedPct: 68, cleanlinessScore: 70, status: 'Needs Action', zone: 'Central' },
+  const districtReg = currentDistrict.regCode?.split('/')[0]?.trim() || 'TN-38';
+  const defaultWards = currentDistrict.sampleWards?.map((w, idx) => ({
+    ward: w.ward,
+    totalWeightKg: Math.round(w.activeFleet * 48.5 + (idx * 25)),
+    activePickups: w.activeFleet,
+    divertedPct: currentDistrict.segregationRate,
+    cleanlinessScore: w.cleanlinessScore,
+    status: w.cleanlinessScore >= 88 ? 'Excellent' : (w.cleanlinessScore >= 78 ? 'Good' : 'Needs Action'),
+    zone: w.zone
+  })) || [
+    { ward: 'Ward 1 - Central Zone', totalWeightKg: 420.5, activePickups: 10, divertedPct: 88, cleanlinessScore: 92, status: 'Excellent', zone: 'North' },
+    { ward: 'Ward 2 - Heritage Zone', totalWeightKg: 385.0, activePickups: 8, divertedPct: 85, cleanlinessScore: 89, status: 'Excellent', zone: 'West' },
+    { ward: 'Ward 3 - Colony Belt', totalWeightKg: 310.2, activePickups: 6, divertedPct: 79, cleanlinessScore: 84, status: 'Good', zone: 'North' }
   ];
 
   const wardStats = (stats?.wardStats && stats.wardStats.length > 0) ? stats.wardStats : defaultWards;
@@ -107,16 +115,16 @@ const MunicipalityDashboard = () => {
   });
 
   const activeFleets = [
-    { id: 'FL-101', driver: 'Karthik Raja', rating: '4.9', vehicle: 'EV Mini-Truck (TN-38-G-4011)', ward: 'Ward 1 - Gandhipuram', status: 'En Route', progress: 75, load: '320 / 500 kg' },
-    { id: 'FL-102', driver: 'Murugan S.', rating: '4.8', vehicle: 'Compactor (TN-38-C-8819)', ward: 'Ward 2 - RS Puram', status: 'Collecting', progress: 50, load: '680 / 1000 kg' },
-    { id: 'FL-103', driver: 'Praveen Kumar', rating: '4.9', vehicle: 'EV Tipper (TN-38-E-1204)', ward: 'Ward 3 - Saibaba Colony', status: 'At Hub', progress: 95, load: '450 / 500 kg' }
+    { id: 'FL-101', driver: 'Karthik Raja', rating: '4.9', vehicle: `EV Mini-Truck (${districtReg}-G-4011)`, ward: currentDistrict.sampleWards?.[0]?.ward || 'Ward 1 - Central', status: 'En Route', progress: 75, load: '320 / 500 kg' },
+    { id: 'FL-102', driver: 'Murugan S.', rating: '4.8', vehicle: `Compactor (${districtReg}-C-8819)`, ward: currentDistrict.sampleWards?.[1]?.ward || 'Ward 2 - West', status: 'Collecting', progress: 50, load: '680 / 1000 kg' },
+    { id: 'FL-103', driver: 'Praveen Kumar', rating: '4.9', vehicle: `EV Tipper (${districtReg}-E-1204)`, ward: currentDistrict.sampleWards?.[2]?.ward || 'Ward 3 - North', status: 'At Hub', progress: 95, load: '450 / 500 kg' }
   ];
 
   const recentActivities = [
-    { id: 1, title: 'Commercial Segregated Pickup', desc: 'Ward 1 • 86.5 kg verified plastic & paper', time: '12 mins ago', type: 'success' },
-    { id: 2, title: 'Spot Dump Resolved & Cleared', desc: 'Gandhipuram 5th St Grievance closed', time: '45 mins ago', type: 'info' },
-    { id: 3, title: 'AI Segregation Audit Passed', desc: 'RS Puram Hub verified 96% purity score', time: '1 hr ago', type: 'warning' },
-    { id: 4, title: 'Fleet #4 Route Initiated', desc: 'Driver Praveen started Peelamedu morning sweep', time: '2 hrs ago', type: 'success' }
+    { id: 1, title: 'Commercial Segregated Pickup', desc: `${currentDistrict.sampleWards?.[0]?.ward || 'Ward 1'} • 86.5 kg verified plastic & paper`, time: '12 mins ago', type: 'success' },
+    { id: 2, title: 'Spot Dump Resolved & Cleared', desc: `${currentDistrict.name} Grievance closed by Sanitary Team`, time: '45 mins ago', type: 'info' },
+    { id: 3, title: 'AI Segregation Audit Passed', desc: `${currentDistrict.mrfCenters?.[0] || 'MRF Hub'} verified 96% purity score`, time: '1 hr ago', type: 'warning' },
+    { id: 4, title: 'Fleet Route Initiated', desc: `Driver Praveen started ${currentDistrict.name} morning sweep`, time: '2 hrs ago', type: 'success' }
   ];
 
   return (
@@ -142,19 +150,30 @@ const MunicipalityDashboard = () => {
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Welcome, {user?.name || 'Municipal Officer'}! 👋
+                  Welcome, {user?.name || `${currentDistrict.name} Municipal Officer`}! 👋
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-400/30 uppercase tracking-wide">
-                  {user?.jurisdiction || 'Coimbatore City'} • Command Center
+                  {currentDistrict.corporation.toUpperCase()} • COMMAND CENTER
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-emerald-100/80 font-medium max-w-xl">
-                Real-time solid waste telemetry, GIS fleet tracking, citizen grievance triage, and ISO 14001 ESG balance sheet.
+                Real-time solid waste telemetry, GIS fleet tracking, citizen grievance triage, and ISO 14001 ESG balance sheet for {currentDistrict.name} ({currentDistrict.tamilName}).
               </p>
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center gap-2.5 w-full sm:w-auto justify-end">
+          <div className="relative z-10 flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={openDistrictModal}
+              className="px-3.5 py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-black rounded-xl text-xs border border-emerald-400/40 shadow-md transition flex items-center space-x-1.5 cursor-pointer"
+              title="Switch among all 38 Tamil Nadu districts"
+            >
+              <MapPin className="w-4 h-4 text-emerald-300" />
+              <span>{currentDistrict.name} (38 Districts)</span>
+            </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -390,7 +409,7 @@ const MunicipalityDashboard = () => {
                 <h3 className="text-base font-black text-white">
                   UN SDG & Environmental Balance Sheet
                 </h3>
-                <p className="text-xs text-emerald-200/80">Verified environmental dividends delivered to Coimbatore municipal jurisdiction</p>
+                <p className="text-xs text-emerald-200/80">Verified environmental dividends delivered to {currentDistrict.name} municipal jurisdiction</p>
               </div>
             </div>
 

@@ -18,20 +18,23 @@ import {
 } from 'lucide-react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { useDistrict } from '../../context/DistrictContext';
 import UserLayout from '../../components/UserLayout';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
 import { triggerHaptic } from '../../utils/mobileNative';
 
 const ReportIllegalDump = () => {
   const { user } = useAuth();
+  const { currentDistrict, setDistrict, districts } = useDistrict();
   const navigate = useNavigate();
 
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoFile, setPhotoFile] = useState(null);
-  const [address, setAddress] = useState('');
-  const [ward, setWard] = useState('Ward 12 - Central Zone');
-  const [lat, setLat] = useState(11.0168);
-  const [lng, setLng] = useState(76.9558);
+  const [address, setAddress] = useState(currentDistrict.headquarters || 'Cross Cut Road, Central Zone');
+  const [ward, setWard] = useState(currentDistrict.sampleWards?.[0]?.ward || 'Ward 1 - Central Zone');
+  const [lat, setLat] = useState(currentDistrict.lat || 11.0168);
+  const [lng, setLng] = useState(currentDistrict.lng || 76.9558);
+  const [isNearWaterbody, setIsNearWaterbody] = useState(false);
   const [wasteType, setWasteType] = useState('Plastic Heap');
   const [estimatedSeverity, setEstimatedSeverity] = useState('High');
   const [description, setDescription] = useState('');
@@ -116,17 +119,17 @@ const ReportIllegalDump = () => {
         },
         (err) => {
           console.warn('Geolocation fallback activated', err);
-          setLat(11.0168);
-          setLng(76.9558);
-          setAddress('Cross Cut Road Corner, Gandhipuram, Coimbatore');
+          setLat(currentDistrict.lat || 11.0168);
+          setLng(currentDistrict.lng || 76.9558);
+          setAddress(currentDistrict.headquarters || `${currentDistrict.name} Town Center`);
           setLoadingLoc(false);
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
     } else {
-      setLat(11.0168);
-      setLng(76.9558);
-      setAddress('Cross Cut Road Corner, Gandhipuram, Coimbatore');
+      setLat(currentDistrict.lat || 11.0168);
+      setLng(currentDistrict.lng || 76.9558);
+      setAddress(currentDistrict.headquarters || `${currentDistrict.name} Town Center`);
       setLoadingLoc(false);
     }
   };
@@ -448,31 +451,105 @@ const ReportIllegalDump = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2">
-                  <input
-                    type="text"
-                    required
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Street name, landmark, corner details (e.g., Near Bus Stand)"
-                    className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
+              {/* Tamil Nadu District and Municipal Ward Dropdown */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1">
+                    Tamil Nadu District (38 Districts)
+                  </span>
+                  <select
+                    value={currentDistrict.id}
+                    onChange={(e) => {
+                      const newDistId = e.target.value;
+                      setDistrict(newDistId);
+                      const found = districts.find(d => d.id === newDistId);
+                      if (found) {
+                        setLat(found.lat);
+                        setLng(found.lng);
+                        setWard(found.sampleWards?.[0]?.ward || 'Ward 1 - Central Zone');
+                        setAddress(found.headquarters || `${found.name} Town Center`);
+                      }
+                    }}
+                    className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl px-3.5 py-3 text-xs text-slate-900 dark:text-white font-black focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                  >
+                    {districts.map(d => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} ({d.tamilName}) • {d.corporation}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1">
+                    Municipal Ward / Zone
+                  </span>
                   <select
                     value={ward}
                     onChange={(e) => setWard(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl px-3.5 py-3 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl px-3.5 py-3 text-xs text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                   >
-                    <option value="Ward 12 - Central Zone">Ward 12 - Central Zone</option>
-                    <option value="Ward 1 - Gandhipuram">Ward 1 - Gandhipuram</option>
-                    <option value="Ward 2 - RS Puram">Ward 2 - RS Puram</option>
-                    <option value="Ward 3 - Saibaba Colony">Ward 3 - Saibaba Colony</option>
-                    <option value="Ward 4 - Peelamedu">Ward 4 - Peelamedu</option>
-                    <option value="Ward 5 - Singanallur">Ward 5 - Singanallur</option>
-                    <option value="Ward 6 - Saravanampatti">Ward 6 - Saravanampatti</option>
+                    {currentDistrict.sampleWards?.map((sw) => (
+                      <option key={sw.ward} value={sw.ward}>{sw.ward} ({sw.zone} Zone)</option>
+                    ))}
+                    <option value="Central Market / Bus Terminal Zone">Central Market / Bus Terminal Zone</option>
+                    <option value="Residential Colony Perimeter">Residential Colony Perimeter</option>
+                    <option value="Highway Bypass / Ring Road Belt">Highway Bypass / Ring Road Belt</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Landmark / Street Name */}
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1">
+                  Street Address / Landmark
+                </span>
+                <input
+                  type="text"
+                  required
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder={`Exact location in ${currentDistrict.name} (e.g. Near Bus Stand, Corner Shop, Lake bund)`}
+                  className="w-full bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              {/* Waterbody & River Protection Priority Red-Flag */}
+              <div 
+                onClick={() => {
+                  triggerHaptic(20);
+                  setIsNearWaterbody(!isNearWaterbody);
+                }}
+                className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between active:scale-98 ${
+                  isNearWaterbody
+                    ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-500 text-sky-900 dark:text-sky-200 shadow-sm'
+                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <span className="text-xl">🌊</span>
+                  <div>
+                    <span className="text-xs font-black block">Adjacent to River, Lake, Canal or Temple Tank</span>
+                    <span className="text-[10px] text-slate-400 block">
+                      Flags report with Top Priority for TNPCB & PWD Water Resources squad
+                    </span>
+                  </div>
+                </div>
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center text-xs font-black ${
+                  isNearWaterbody ? 'bg-sky-600 border-sky-600 text-white' : 'border-slate-400'
+                }`}>
+                  {isNearWaterbody ? '✓' : ''}
+                </div>
+              </div>
+
+              {/* SWM Rules 2016 Penalty & Jurisdiction Info Pill */}
+              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start space-x-2.5 text-amber-800 dark:text-amber-300 text-[11px]">
+                <span className="text-sm shrink-0 mt-0.5">⚖️</span>
+                <div className="space-y-0.5">
+                  <span className="font-bold block">Tamil Nadu SWM Rules & Legal Action</span>
+                  <p className="opacity-90 leading-relaxed text-[10px]">
+                    Under Tamil Nadu District Municipalities Act 1920 & SWM Rules 2016, unauthorized dumping attracts a fine up to ₹5,000. Routed directly to <strong>{currentDistrict.corporation}</strong> Sanitary Inspector (Helpline: {currentDistrict.helpline}).
+                  </p>
                 </div>
               </div>
             </div>

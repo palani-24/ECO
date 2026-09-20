@@ -4,31 +4,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaHome, FaCalendarAlt, FaClipboardList, FaCoins, FaBars, 
   FaTimes, FaUsers, FaLeaf, FaUser, FaSignOutAlt, FaAward, FaTruck, 
-  FaStore, FaCamera, FaCertificate, FaShareAlt, FaBuilding, 
+  FaStore, FaCamera, FaCertificate, FaBuilding, 
   FaExclamationTriangle, FaComments, FaTrophy, FaWallet, FaPlus,
-  FaGift, FaBolt, FaChevronRight
+  FaMapMarkerAlt, FaChevronRight, FaPhoneAlt
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { useDistrict } from '../context/DistrictContext';
 import { triggerHaptic } from '../utils/mobileNative';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
-// Citizen Modals
-import DailySpinWheelModal from './DailySpinWheelModal';
+// Core Useful Modals
 import AIWasteScannerModal from './AIWasteScannerModal';
 import GreenCertificateModal from './GreenCertificateModal';
-import EcoStoryModal from './EcoStoryModal';
 
 const MobileCitizenNav = () => {
   const { user, logout } = useAuth();
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const navigate = useNavigate();
   const location = useLocation();
   const [showDrawer, setShowDrawer] = useState(false);
 
   // Modals state
-  const [showSpinWheel, setShowSpinWheel] = useState(false);
   const [showAiScanner, setShowAiScanner] = useState(false);
   const [showGreenCert, setShowGreenCert] = useState(false);
-  const [showEcoStory, setShowEcoStory] = useState(false);
 
   // Close drawer on route change
   useEffect(() => {
@@ -38,23 +36,17 @@ const MobileCitizenNav = () => {
   // Global listener for top 3-line hamburger menu toggle and modal actions
   useEffect(() => {
     const handleToggle = () => setShowDrawer(prev => !prev);
-    const handleSpin = () => setShowSpinWheel(true);
     const handleScanner = () => setShowAiScanner(true);
     const handleCert = () => setShowGreenCert(true);
-    const handleStory = () => setShowEcoStory(true);
 
     window.addEventListener('toggle-mobile-citizen-drawer', handleToggle);
-    window.addEventListener('open-spin-wheel', handleSpin);
     window.addEventListener('open-ai-scanner', handleScanner);
     window.addEventListener('open-green-certificate', handleCert);
-    window.addEventListener('open-eco-story', handleStory);
 
     return () => {
       window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
-      window.removeEventListener('open-spin-wheel', handleSpin);
       window.removeEventListener('open-ai-scanner', handleScanner);
       window.removeEventListener('open-green-certificate', handleCert);
-      window.removeEventListener('open-eco-story', handleStory);
     };
   }, []);
 
@@ -136,9 +128,8 @@ const MobileCitizenNav = () => {
                 navigate('/schedule-pickup');
               }}
               className="relative w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/40 border-4 border-white dark:border-slate-900 active:scale-90 transition-transform cursor-pointer group"
-              title="Book Scrap Pickup"
+              title="Book Doorstep Scrap Pickup"
             >
-              {/* Outer Pulse Ring */}
               <span className="absolute inset-0 rounded-full bg-emerald-500/30 animate-ping pointer-events-none" />
               <FaPlus className="text-lg group-hover:rotate-90 transition-transform duration-300" />
             </button>
@@ -181,7 +172,7 @@ const MobileCitizenNav = () => {
         </div>
       </nav>
 
-      {/* Complete Citizen Slide-out Drawer Modal */}
+      {/* Streamlined Slide-out Drawer Panel */}
       <AnimatePresence>
         {showDrawer && (
           <>
@@ -194,7 +185,7 @@ const MobileCitizenNav = () => {
               className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm md:hidden"
             />
 
-            {/* Slide-out Drawer Panel */}
+            {/* Drawer Panel */}
             <motion.div 
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
@@ -209,8 +200,8 @@ const MobileCitizenNav = () => {
                   <div className="flex items-center space-x-2.5">
                     <img src="/app-logo.png" alt="Logo" className="h-7 w-auto object-contain" />
                     <div>
-                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 block leading-tight">ECOREWARD CITIZEN</span>
-                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">All Options & Services</span>
+                      <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 block leading-tight">ECOREWARD</span>
+                      <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Tamil Nadu Waste Management</span>
                     </div>
                   </div>
                   <button 
@@ -230,7 +221,7 @@ const MobileCitizenNav = () => {
                   <img 
                     src={getAvatarUrl(user, user?.name)} 
                     onError={(e) => handleAvatarError(e, user?.name)}
-                    alt="Citizen Avatar" 
+                    alt="User Avatar" 
                     className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/40 shrink-0"
                   />
                   <div className="min-w-0 flex-1">
@@ -248,34 +239,48 @@ const MobileCitizenNav = () => {
                   </div>
                   <FaChevronRight className="text-slate-400 text-xs shrink-0" />
                 </div>
-              </div>
 
-              {/* Scrollable Navigation Options with Full Natural Scroll (No clipping) */}
-              <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 overscroll-contain">
-                
-                {/* Category 1: Smart AI & Gamification */}
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Daily Games & Smart AI Tools
-                  </span>
-
-                  {/* Daily Spin & Win Wheel */}
-                  <button 
+                {/* Interactive Tamil Nadu Active District Card */}
+                <div className="p-2.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm font-black text-xs">
+                      🏛️
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-xs font-black text-slate-900 dark:text-white truncate">
+                          {currentDistrict.name}
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                          {currentDistrict.tamilName}
+                        </span>
+                      </div>
+                      <p className="text-[9px] text-slate-400 truncate">
+                        {currentDistrict.corporation}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
                     onClick={() => {
                       setShowDrawer(false);
-                      triggerHaptic(30);
-                      setShowSpinWheel(true);
+                      openDistrictModal();
                     }}
-                    className="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/30 flex items-center justify-between cursor-pointer text-amber-900 dark:text-amber-300 active:scale-98 transition-transform"
+                    className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black rounded-xl shrink-0 cursor-pointer active:scale-95 transition shadow-sm"
                   >
-                    <div className="flex items-center space-x-2.5">
-                      <FaGift className="text-amber-500 text-sm animate-bounce" />
-                      <span className="font-black text-xs">Daily Eco Spin & Win</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black">
-                      FREE
-                    </span>
+                    Change
                   </button>
+                </div>
+              </div>
+
+              {/* Scrollable Clean Options */}
+              <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 overscroll-contain">
+                
+                {/* Category 1: Smart AI & Verification Tools */}
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
+                    Smart AI Tools & Verification
+                  </span>
 
                   {/* AI Waste Scanner */}
                   <button 
@@ -309,33 +314,29 @@ const MobileCitizenNav = () => {
                       <span className="text-xs font-bold">Official Green Certificate</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black">
-                      ISO
+                      ISO 14001
                     </span>
                   </button>
 
-                  {/* Social Story */}
+                  {/* Tamil Nadu Scrap Rates & Store */}
                   <button 
-                    onClick={() => {
-                      setShowDrawer(false);
-                      triggerHaptic(25);
-                      setShowEcoStory(true);
-                    }}
+                    onClick={() => handleNavigate('/store')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-colors"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <FaShareAlt className="text-pink-500 text-sm" />
-                      <span className="text-xs font-bold">Share 9:16 Social Story</span>
+                      <FaStore className="text-emerald-500 text-sm" />
+                      <span className="text-xs font-bold">TN Scrap Rates & Eco-Store</span>
                     </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-pink-500/20 text-pink-600 dark:text-pink-400 font-black">
-                      STORY
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
+                      RATES
                     </span>
                   </button>
                 </div>
 
-                {/* Category 2: Doorstep Collections & Store */}
+                {/* Category 2: Doorstep Collections & Wallet */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Recycling & Marketplace
+                    Recycling Services
                   </span>
 
                   <button 
@@ -344,7 +345,7 @@ const MobileCitizenNav = () => {
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaCalendarAlt className="text-teal-500 text-sm" />
-                      <span className="text-xs font-bold">Book Doorstep Pickup</span>
+                      <span className="text-xs font-bold">Book Doorstep Scrap Pickup</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
                       FAST
@@ -370,26 +371,39 @@ const MobileCitizenNav = () => {
                       <span className="text-xs font-bold">EcoPoints Wallet & UPI Cashout</span>
                     </div>
                   </button>
+                </div>
+
+                {/* Category 3: Civic Governance & Grievance Reporting */}
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
+                    Municipal Governance & Civic Action
+                  </span>
 
                   <button 
-                    onClick={() => handleNavigate('/store')}
+                    onClick={() => handleNavigate('/report-dump')}
+                    className="w-full text-left p-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 flex items-center justify-between cursor-pointer text-rose-700 dark:text-rose-300 active:scale-98 transition-all"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <FaExclamationTriangle className="text-rose-500 text-sm" />
+                      <span className="text-xs font-bold">Report Roadside Illegal Dump</span>
+                    </div>
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-black">
+                      URGENT
+                    </span>
+                  </button>
+
+                  <button 
+                    onClick={() => handleNavigate('/municipality/dashboard')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-colors"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <FaStore className="text-emerald-500 text-sm" />
-                      <span className="text-xs font-bold">Eco-Store Marketplace</span>
+                      <FaBuilding className="text-emerald-500 text-sm" />
+                      <span className="text-xs font-bold">Municipal Command Center</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
-                      NEW
+                      LIVE
                     </span>
                   </button>
-                </div>
-
-                {/* Category 3: Community & Governance */}
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Community & Governance
-                  </span>
 
                   <button 
                     onClick={() => handleNavigate('/leaderboard')}
@@ -397,31 +411,8 @@ const MobileCitizenNav = () => {
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaTrophy className="text-amber-500 text-sm" />
-                      <span className="text-xs font-bold">Citizen Ward Leaderboard</span>
+                      <span className="text-xs font-bold">Citizen Ward Cleanliness Rank</span>
                     </div>
-                  </button>
-
-                  <button 
-                    onClick={() => handleNavigate('/community')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaLeaf className="text-green-500 text-sm" />
-                      <span className="text-xs font-bold">Community Challenges</span>
-                    </div>
-                  </button>
-
-                  <button 
-                    onClick={() => handleNavigate('/report-dump')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <FaExclamationTriangle className="text-rose-500 text-sm" />
-                      <span className="text-xs font-bold">Report Illegal Roadside Dump</span>
-                    </div>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 font-black">
-                      ALERT
-                    </span>
                   </button>
 
                   <button 
@@ -430,7 +421,7 @@ const MobileCitizenNav = () => {
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaBuilding className="text-indigo-500 text-sm" />
-                      <span className="text-xs font-bold">ESG Corporate Portal</span>
+                      <span className="text-xs font-bold">ESG Corporate Bulk Waste</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black">
                       B2B
@@ -438,10 +429,10 @@ const MobileCitizenNav = () => {
                   </button>
                 </div>
 
-                {/* Category 4: Profile & Help Desk */}
+                {/* Category 4: Profile & 24/7 Helpline */}
                 <div className="space-y-1">
                   <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
-                    Account & Assistance
+                    Assistance & Local Helpline
                   </span>
 
                   <button 
@@ -460,12 +451,28 @@ const MobileCitizenNav = () => {
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaComments className="text-blue-500 text-sm" />
-                      <span className="text-xs font-bold">Citizen Support Desk</span>
+                      <span className="text-xs font-bold">Citizen Grievance Support Desk</span>
                     </div>
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 font-black">
-                      LIVE
+                      24/7
                     </span>
                   </button>
+
+                  <a 
+                    href={`tel:${currentDistrict.helpline.split('/')[0].trim()}`}
+                    className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <FaPhoneAlt className="text-emerald-600 dark:text-emerald-400 text-sm" />
+                      <div>
+                        <span className="text-xs font-black block">{currentDistrict.name} Municipal Helpline</span>
+                        <span className="text-[10px] opacity-80">{currentDistrict.helpline}</span>
+                      </div>
+                    </div>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-600 text-white font-black">
+                      CALL
+                    </span>
+                  </a>
                 </div>
 
               </div>
@@ -477,7 +484,7 @@ const MobileCitizenNav = () => {
                   className="w-full py-2.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black text-xs rounded-xl hover:bg-rose-500/20 transition flex items-center justify-center space-x-2 cursor-pointer border border-rose-500/20 active:scale-98"
                 >
                   <FaSignOutAlt />
-                  <span>Log Out Citizen Session</span>
+                  <span>Log Out Session</span>
                 </button>
               </div>
             </motion.div>
@@ -485,16 +492,7 @@ const MobileCitizenNav = () => {
         )}
       </AnimatePresence>
 
-      {/* 1. Daily Eco Spin & Win Wheel Modal */}
-      <DailySpinWheelModal
-        isOpen={showSpinWheel}
-        onClose={() => setShowSpinWheel(false)}
-        onRewardWon={(pts) => {
-          window.dispatchEvent(new CustomEvent('refresh-wallet-points', { detail: { points: pts } }));
-        }}
-      />
-
-      {/* 2. AI Waste & Item Scanner Modal */}
+      {/* 1. AI Waste & Item Scanner Modal */}
       <AIWasteScannerModal 
         isOpen={showAiScanner} 
         onClose={() => setShowAiScanner(false)} 
@@ -503,27 +501,13 @@ const MobileCitizenNav = () => {
         }}
       />
 
-      {/* 3. Official Green Impact Certificate Modal */}
+      {/* 2. Official Green Impact Certificate Modal */}
       <GreenCertificateModal
         isOpen={showGreenCert}
         onClose={() => setShowGreenCert(false)}
         totalWeight={user?.totalRecycledKg || 142}
         totalCO2={user?.co2Reduced || 355}
         points={walletPoints}
-      />
-
-      {/* 4. Shareable 9:16 Social Story Modal */}
-      <EcoStoryModal
-        isOpen={showEcoStory}
-        onClose={() => setShowEcoStory(false)}
-        user={user}
-        stats={{
-          walletPoints: walletPoints,
-          totalRecycledKg: user?.totalRecycledKg || 142,
-          co2Reduced: user?.co2Reduced || 355,
-          treesSaved: Math.max(1, Math.round((user?.totalRecycledKg || 142) * 0.08)),
-          totalPickups: user?.totalPickups || 8
-        }}
       />
     </>
   );

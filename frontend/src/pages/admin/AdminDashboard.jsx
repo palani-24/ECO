@@ -5,15 +5,17 @@ import MobileAdminDashboard from '../../components/MobileAdminDashboard';
 import api from '../../utils/api';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
+import { useDistrict } from '../../context/DistrictContext';
 import { CardSkeleton } from '../../components/LoadingSkeleton';
 import { 
   FaRecycle, FaUsers, FaTruck, FaClipboardCheck, 
   FaCoins, FaCheck, FaTimes, FaTools, FaComments, FaReply, 
   FaPaperPlane, FaUserShield, FaShieldAlt, FaChartLine, FaCheckCircle, 
-  FaExclamationTriangle, FaArrowRight, FaClock, FaStar, FaBolt
+  FaExclamationTriangle, FaArrowRight, FaClock, FaStar, FaBolt, FaMapMarkerAlt
 } from 'react-icons/fa';
 
 const AdminDashboard = () => {
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const { addToast } = useToast();
   const { realtimeData } = useSocket() || {};
   const [analytics, setAnalytics] = useState(null);
@@ -201,10 +203,19 @@ const AdminDashboard = () => {
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2.5">
+                <button
+                  type="button"
+                  onClick={() => openDistrictModal()}
+                  className="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold flex items-center space-x-2 cursor-pointer transition active:scale-95 shadow-sm"
+                >
+                  <FaMapMarkerAlt className="text-emerald-400" />
+                  <span>District: {currentDistrict.name}</span>
+                  <span className="text-[10px] bg-emerald-500/20 px-1.5 py-0.2 rounded font-black text-emerald-300">38 TN</span>
+                </button>
                 <span className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold flex items-center space-x-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-                  <span>Operational Status: 100% Active</span>
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>TN SWM: 100% Active</span>
                 </span>
               </div>
             </div>

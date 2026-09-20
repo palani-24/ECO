@@ -680,7 +680,7 @@ const Login = () => {
                   type="button"
                   disabled={loading || isBiometricScanning}
                   onClick={handleBiometricUnlock}
-                  className="w-full py-2.5 px-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 text-slate-200 text-xs font-bold transition flex items-center justify-between group active:scale-[0.98] cursor-pointer"
+                  className="w-full py-2.5 px-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 text-slate-200 text-xs font-bold transition flex items-center justify-between group active:scale-[0.98] cursor-pointer shadow-md"
                 >
                   <div className="flex items-center space-x-2.5">
                     <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20">
@@ -688,41 +688,15 @@ const Login = () => {
                     </div>
                     <div className="text-left">
                       <span className="text-xs font-black block">
-                        {isBiometricScanning ? 'Scanning Biometrics...' : `1-Tap Biometric Demo`}
+                        {isBiometricScanning ? 'Scanning Touch ID...' : `1-Tap Biometric Instant Unlock`}
                       </span>
-                      <span className="text-[9px] text-slate-400 font-medium">Touch ID / Face ID simulation</span>
+                      <span className="text-[9px] text-slate-400 font-medium">Touch ID / Fast Pass for {activePreset.name}</span>
                     </div>
                   </div>
                   <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold">
                     Fast Pass ⚡
                   </span>
                 </button>
-              </div>
-
-              {/* 5. 1-CLICK INSTANT DEMO ACCOUNTS BAR */}
-              <div className="pt-2 border-t border-slate-800">
-                <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-1.5 px-0.5">
-                  <span>⚡ Instant 1-Click Access:</span>
-                  <span className="text-emerald-400 font-mono">Auto Login</span>
-                </div>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {Object.keys(ROLE_PRESETS).map((key) => {
-                    const r = ROLE_PRESETS[key];
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        disabled={loading}
-                        onClick={() => handleFastRoleDemo(key)}
-                        className="py-1.5 px-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 text-slate-300 text-[10px] font-bold transition flex flex-col items-center justify-center active:scale-95 cursor-pointer"
-                        title={`1-Click Login as ${r.name}`}
-                      >
-                        <span className="text-xs">{r.icon}</span>
-                        <span className="font-extrabold truncate w-full text-center">{r.name}</span>
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
 
               {/* 6. SIGNUP PROMOTION BANNER */}

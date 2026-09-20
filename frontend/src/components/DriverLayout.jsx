@@ -7,7 +7,7 @@ import MobileDriverNav from './MobileDriverNav';
 
 const DriverLayout = ({ children, hideFooter = false }) => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
       {/* 💻 Desktop Top Navbar */}
       <div className="hidden md:block">

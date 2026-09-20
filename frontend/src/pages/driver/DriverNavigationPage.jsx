@@ -80,13 +80,13 @@ const DriverNavigationPage = () => {
       <div className="space-y-6 max-w-7xl mx-auto pb-12">
           
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-5 sm:p-6 rounded-3xl text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <FaCompass className="text-emerald-400 h-5 w-5" />
+                <FaCompass className="text-white h-5 w-5" />
                 <h2 className="text-xl sm:text-2xl font-black text-white">AI Multi-Stop Navigation & GPS</h2>
               </div>
-              <p className="text-xs text-slate-400 font-medium">Smart route sequencing, EV energy conservation, and live turn-by-turn guidance.</p>
+              <p className="text-xs text-emerald-100 font-medium">Smart route sequencing, EV energy conservation, and live turn-by-turn guidance.</p>
             </div>
 
             <div className="flex items-center space-x-2.5 shrink-0">

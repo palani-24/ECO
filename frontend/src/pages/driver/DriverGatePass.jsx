@@ -114,19 +114,19 @@ const DriverGatePass = () => {
         {/* Right Display: Official Digital QR Pass Card */}
         <div className="lg:col-span-2 space-y-6">
           {passGenerated && (
-            <div className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border-2 border-emerald-500/40 rounded-3xl p-8 text-white shadow-2xl space-y-6 relative overflow-hidden">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="bg-white dark:bg-slate-900 border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-8 text-slate-900 dark:text-white shadow-md space-y-6 relative overflow-hidden">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 bg-emerald-500 text-slate-950 rounded-2xl flex items-center justify-center font-black">
+                  <div className="h-10 w-10 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black shadow-sm">
                     <FaLeaf className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-base tracking-wide text-white">OFFICIAL UNLOADING ENTRY MANIFEST</h3>
-                    <p className="text-[10px] text-emerald-400 font-mono font-bold">{currentPassCode}</p>
+                    <h3 className="font-extrabold text-base tracking-wide text-slate-900 dark:text-white">OFFICIAL UNLOADING ENTRY MANIFEST</h3>
+                    <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">{currentPassCode}</p>
                   </div>
                 </div>
 
-                <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-black uppercase px-3 py-1 rounded-full flex items-center space-x-1">
+                <span className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase px-3 py-1 rounded-full flex items-center space-x-1">
                   <FaCheckCircle />
                   <span>GATE APPROVED</span>
                 </span>
@@ -134,53 +134,53 @@ const DriverGatePass = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 {/* Simulated SVG QR Code */}
-                <div className="bg-white p-5 rounded-2xl shadow-inner flex flex-col items-center justify-center space-y-2">
-                  <svg viewBox="0 0 100 100" className="w-48 h-48">
-                    <rect x="5" y="5" width="28" height="28" fill="none" stroke="#0f172a" strokeWidth="4" />
-                    <rect x="11" y="11" width="16" height="16" fill="#0f172a" />
-                    <rect x="67" y="5" width="28" height="28" fill="none" stroke="#0f172a" strokeWidth="4" />
-                    <rect x="73" y="11" width="16" height="16" fill="#0f172a" />
-                    <rect x="5" y="67" width="28" height="28" fill="none" stroke="#0f172a" strokeWidth="4" />
-                    <rect x="11" y="73" width="16" height="16" fill="#0f172a" />
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 p-5 rounded-2xl shadow-inner flex flex-col items-center justify-center space-y-2">
+                  <svg viewBox="0 0 100 100" className="w-44 h-44">
+                    <rect x="5" y="5" width="28" height="28" fill="none" stroke="#059669" strokeWidth="4" />
+                    <rect x="11" y="11" width="16" height="16" fill="#059669" />
+                    <rect x="67" y="5" width="28" height="28" fill="none" stroke="#059669" strokeWidth="4" />
+                    <rect x="73" y="11" width="16" height="16" fill="#059669" />
+                    <rect x="5" y="67" width="28" height="28" fill="none" stroke="#059669" strokeWidth="4" />
+                    <rect x="11" y="73" width="16" height="16" fill="#059669" />
                     <rect x="40" y="8" width="8" height="8" fill="#10b981" />
-                    <rect x="50" y="18" width="8" height="8" fill="#0f172a" />
+                    <rect x="50" y="18" width="8" height="8" fill="#059669" />
                     <rect x="40" y="40" width="20" height="20" fill="#10b981" />
-                    <rect x="68" y="40" width="8" height="8" fill="#0f172a" />
-                    <rect x="78" y="78" width="12" height="12" fill="#0f172a" />
+                    <rect x="68" y="40" width="8" height="8" fill="#059669" />
+                    <rect x="78" y="78" width="12" height="12" fill="#059669" />
                   </svg>
-                  <p className="text-[11px] font-mono font-extrabold text-slate-900 tracking-widest">{currentPassCode}</p>
+                  <p className="text-[11px] font-mono font-extrabold text-slate-800 dark:text-slate-200 tracking-widest">{currentPassCode}</p>
                 </div>
 
                 {/* Manifest Information Grid */}
-                <div className="space-y-4 text-xs">
-                  <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                <div className="space-y-3.5 text-xs">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-2xl space-y-1">
                     <span className="text-[10px] text-slate-400 font-bold uppercase flex items-center space-x-1">
-                      <FaMapMarkerAlt className="text-emerald-400" />
+                      <FaMapMarkerAlt className="text-emerald-500" />
                       <span>DESTINATION PLANT</span>
                     </span>
-                    <p className="font-extrabold text-white text-sm">{selectedHub}</p>
+                    <p className="font-extrabold text-slate-900 dark:text-white text-sm">{selectedHub}</p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-2xl space-y-1">
                       <span className="text-[10px] text-slate-400 font-bold uppercase flex items-center space-x-1">
-                        <FaWeight className="text-amber-400" />
+                        <FaWeight className="text-amber-500" />
                         <span>NET LOAD WEIGHT</span>
                       </span>
-                      <p className="font-extrabold text-emerald-400 text-sm">{wasteWeight} kg</p>
+                      <p className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">{wasteWeight} kg</p>
                     </div>
-                    <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-2xl space-y-1">
                       <span className="text-[10px] text-slate-400 font-bold uppercase flex items-center space-x-1">
-                        <FaClock className="text-sky-400" />
+                        <FaClock className="text-sky-500" />
                         <span>ENTRY WINDOW</span>
                       </span>
-                      <p className="font-extrabold text-white text-sm">11:30 - 12:00 PM</p>
+                      <p className="font-extrabold text-slate-800 dark:text-white text-sm">11:30 - 12:00 PM</p>
                     </div>
                   </div>
 
-                  <div className="p-3 bg-slate-900/80 border border-slate-800 rounded-xl space-y-1">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">DRIVER & VEHICLE</span>
-                    <p className="font-bold text-slate-200">{user?.name || 'Ramesh Kumar'} (Vehicle: TN-01-AX-9945)</p>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 rounded-2xl space-y-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">DRIVER & VEHICLE SPECIFICATION</span>
+                    <p className="font-bold text-slate-700 dark:text-slate-200">{user?.name || 'Driver Karthik'} (EV Fleet: TN-09-EV-2026)</p>
                   </div>
                 </div>
               </div>

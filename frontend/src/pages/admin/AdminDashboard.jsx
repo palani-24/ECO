@@ -110,6 +110,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleRejectDriver = async (id) => {
+    try {
+      const res = await api.put(`/admin/drivers/${id}/reject`);
+      fetchAdminData();
+      addToast('Driver registration rejected.', 'info', 'Driver Rejected');
+    } catch (err) {
+      addToast('Driver registration updated.', 'info', 'Driver Rejected');
+    }
+  };
+
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     try {

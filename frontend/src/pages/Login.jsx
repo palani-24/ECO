@@ -6,7 +6,7 @@ import { TAMIL_NADU_DISTRICTS } from '../context/DistrictContext';
 import { 
   FaEnvelope, FaLock, FaSignInAlt, FaEye, FaEyeSlash, 
   FaSpinner, FaPhoneAlt, FaCheckCircle, FaHeadset, FaShieldAlt, FaLeaf, FaUserPlus,
-  FaTruck, FaCoins, FaBuilding, FaSearch, FaArrowRight, FaClock, FaCheck
+  FaTruck, FaCoins, FaBuilding, FaMapMarkerAlt, FaCheck
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import DesktopCommandPalette from '../components/DesktopCommandPalette';
@@ -49,51 +49,9 @@ const ROLES = [
     icon: '👑',
     defaultPhone: '9876543210',
     defaultEmail: 'admin@ecoreward.com',
-    badge: 'Tamil Nadu 38-Dist Command',
+    badge: '38 Districts Command',
     activeStyle: 'bg-amber-50 text-amber-800 border-2 border-amber-500 shadow-sm font-black'
   }
-];
-
-const WASTE_STAGES = [
-  {
-    step: '01',
-    title: 'Doorstep Segregation',
-    tamil: 'குப்பை தரம் பிரித்தல்',
-    desc: 'Households separate recyclable plastic, metals, paper & e-waste into dedicated dry bins.',
-    stat: '74% Source Segregation',
-    icon: '🧴'
-  },
-  {
-    step: '02',
-    title: 'Smart EV Route Dispatch',
-    tamil: 'மின்சார வாகன சேகரிப்பு',
-    desc: 'Local municipal EV tipper is dispatched with live GPS tracking and Bluetooth digital scale.',
-    stat: '15.3K Daily EV Trips',
-    icon: '🚚'
-  },
-  {
-    step: '03',
-    title: 'Material Recovery Facility',
-    tamil: 'மறுசுழற்சி ஆலைக்கு அனுப்புதல்',
-    desc: 'Waste is weighed, shredded & baled at certified TNPCB Micro-Composting & MRF centers.',
-    stat: '8.2 Tons Saved / Day',
-    icon: '🏭'
-  },
-  {
-    step: '04',
-    title: 'Instant UPI Buyback',
-    tamil: 'உடனடி UPI பணம்',
-    desc: 'EcoPoints credited straight to wallet with 1-click transfer to GPay, PhonePe, or Paytm.',
-    stat: '₹250 / 500 Pts Payout',
-    icon: '💸'
-  }
-];
-
-const SCRAP_RATES = [
-  { material: 'Plastics & PET Bottles', rate: '₹18 / kg', pts: '+3 Pts', icon: '🧴' },
-  { material: 'Metals, Tins & Iron', rate: '₹34 / kg', pts: '+5 Pts', icon: '🥫' },
-  { material: 'E-Waste & Electronics', rate: '₹48 / kg', pts: '+10 Pts', icon: '💻' },
-  { material: 'Cardboard & Paper', rate: '₹14 / kg', pts: '+2 Pts', icon: '📦' }
 ];
 
 const VEHICLE_TYPES = [
@@ -112,7 +70,7 @@ const Login = ({ initialMode = 'signin' }) => {
   // Mode: 'signin' | 'signup'
   const [mode, setMode] = useState(initialMode);
 
-  // Role selector
+  // Active Role
   const [selectedRole, setSelectedRole] = useState('user');
 
   // Sign In inputs
@@ -122,7 +80,7 @@ const Login = ({ initialMode = 'signin' }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  // Sign In OTP
+  // OTP states
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpTimer, setOtpTimer] = useState(0);
@@ -140,9 +98,6 @@ const Login = ({ initialMode = 'signin' }) => {
   const [licenseNumber, setLicenseNumber] = useState('');
   const [officerDesignation, setOfficerDesignation] = useState('Sanitary Inspector / SWM In-Charge');
   const [agreeTerms, setAgreeTerms] = useState(true);
-
-  // Interactive Stage selection on PC
-  const [activeStage, setActiveStage] = useState(0);
 
   // Status
   const [error, setError] = useState('');
@@ -329,7 +284,7 @@ const Login = ({ initialMode = 'signin' }) => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-emerald-50/70 via-slate-50 to-teal-50/60 text-slate-900 flex flex-col font-sans overflow-x-hidden selection:bg-emerald-500/20">
       
-      {/* Decorative Luminous Color Orbs for PC Background */}
+      {/* Decorative Luminous Color Orbs for Background */}
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-400/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -380,142 +335,77 @@ const Login = ({ initialMode = 'signin' }) => {
         </div>
       </header>
 
-      {/* Main Content Area - PC Split-Screen Layout */}
-      <main className="relative z-10 flex-1 flex items-center justify-center p-3.5 sm:p-6 py-5 sm:py-8 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+      {/* Main Content Area - Clean Desktop Split Layout */}
+      <main className="relative z-10 flex-1 flex items-center justify-center p-3.5 sm:p-6 py-6 sm:py-10 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center w-full">
           
-          {/* LEFT 7 COLUMNS: PC OPERATIONAL SHOWCASE & STORY */}
-          <div className="hidden lg:flex lg:col-span-7 flex-col justify-between space-y-5 p-2 xl:p-6">
+          {/* LEFT 6 COLUMNS: CLEAN, INSPIRING, CLUTTER-FREE BRANDING */}
+          <div className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-6 p-4 xl:p-8">
             
-            {/* Header Badge & Title */}
-            <div className="space-y-3">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs font-black uppercase tracking-wider">
-                <span>🏛️ Tamil Nadu Urban Local Bodies & SWM Rules 2016</span>
+            <div className="space-y-4">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs font-black uppercase tracking-wider shadow-xs">
+                <span>🏛️ Tamil Nadu Smart Waste Management 2026</span>
               </div>
+
               <h1 className="text-4xl xl:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-                Turn Recyclables into<br />
+                Recycle Smart.<br />Earn Rewards.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600">
-                  Instant UPI Cash.
+                  Zero-Waste Tamil Nadu.
                 </span>
               </h1>
-              <p className="text-sm text-slate-600 max-w-xl leading-relaxed font-medium">
-                Tamil Nadu's smart solid waste management network. Book doorstep collections with Bluetooth weighing scales, monitor live EV tipper routes, and cash out EcoPoints to your UPI wallet.
+
+              <p className="text-base text-slate-600 leading-relaxed font-medium max-w-lg">
+                Connect with doorstep EV collections, certified municipal recycling facilities, and instant UPI scrap buyback rewards across all 38 districts.
               </p>
             </div>
 
-            {/* 4-Stage Interactive Waste Lifecycle Tabs */}
-            <div className="space-y-2.5 bg-white/90 border border-emerald-500/20 rounded-3xl p-4 shadow-sm backdrop-blur-md">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
-                  How The Green Loop Works:
-                </span>
-                <span className="text-[10px] font-mono text-emerald-700 font-bold">
-                  Step {activeStage + 1} of 4
-                </span>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2">
-                {WASTE_STAGES.map((s, idx) => {
-                  const isActive = activeStage === idx;
-                  return (
-                    <button
-                      key={s.step}
-                      type="button"
-                      onClick={() => setActiveStage(idx)}
-                      className={`p-2.5 rounded-2xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-1 ${
-                        isActive
-                          ? 'bg-emerald-600 text-white shadow-md scale-[1.02]'
-                          : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="text-base">{s.icon}</span>
-                        <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-emerald-200' : 'text-slate-400'}`}>
-                          {s.step}
-                        </span>
-                      </div>
-                      <span className="text-[11px] font-black leading-tight truncate w-full">
-                        {s.title}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Active Stage Detail Banner */}
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between">
+            {/* 3 Clear, High-Value Highlights (Clean & Essential) */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center space-x-3.5 p-3.5 bg-white/80 border border-emerald-500/20 rounded-2xl shadow-xs">
+                <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 text-base shrink-0">
+                  <FaTruck />
+                </div>
                 <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs font-black text-emerald-900">
-                      {WASTE_STAGES[activeStage].title}
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200/70 text-emerald-800">
-                      {WASTE_STAGES[activeStage].tamil}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-600 font-medium pt-0.5">
-                    {WASTE_STAGES[activeStage].desc}
-                  </p>
+                  <span className="text-sm font-black text-slate-900 block">Free Doorstep EV Pickups</span>
+                  <span className="text-xs text-slate-500 font-medium">Scheduled collection with digital Bluetooth scales.</span>
                 </div>
-                <div className="text-right shrink-0 pl-3">
-                  <span className="text-xs font-black text-emerald-700 font-mono block">
-                    {WASTE_STAGES[activeStage].stat}
-                  </span>
-                  <span className="text-[9px] text-slate-400 uppercase font-bold">Official Stat</span>
+              </div>
+
+              <div className="flex items-center space-x-3.5 p-3.5 bg-white/80 border border-teal-500/20 rounded-2xl shadow-xs">
+                <div className="p-2.5 rounded-xl bg-teal-100 text-teal-700 text-base shrink-0">
+                  <FaCoins />
+                </div>
+                <div>
+                  <span className="text-sm font-black text-slate-900 block">Instant UPI Cashout</span>
+                  <span className="text-xs text-slate-500 font-medium">Scrap buyback converted directly to GPay, PhonePe or Paytm.</span>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3.5 p-3.5 bg-white/80 border border-cyan-500/20 rounded-2xl shadow-xs">
+                <div className="p-2.5 rounded-xl bg-cyan-100 text-cyan-700 text-base shrink-0">
+                  <FaBuilding />
+                </div>
+                <div>
+                  <span className="text-sm font-black text-slate-900 block">38 Districts SWM Integration</span>
+                  <span className="text-xs text-slate-500 font-medium">Directly synchronized with Tamil Nadu Municipal Local Bodies.</span>
                 </div>
               </div>
             </div>
 
-            {/* Today's Official Scrap Buyback Rates Widget */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 px-1">
-                <span>💰 Official Scrap Buyback Rates Today</span>
-                <span className="text-[10px] font-mono text-emerald-700">Live TN Benchmark</span>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2.5 text-xs">
-                {SCRAP_RATES.map((sr) => (
-                  <div key={sr.material} className="p-3 bg-white/90 border border-slate-200/90 rounded-2xl shadow-xs space-y-0.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">{sr.icon}</span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                        {sr.pts}
-                      </span>
-                    </div>
-                    <span className="text-sm font-black text-slate-900 block pt-1">{sr.rate}</span>
-                    <span className="text-[10px] text-slate-500 font-medium truncate block">{sr.material}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Live Stats Counters */}
-            <div className="grid grid-cols-4 gap-2.5 text-center text-xs pt-1">
-              <div className="p-3 bg-white/80 border border-slate-200 rounded-2xl shadow-xs">
-                <span className="text-lg font-black text-emerald-600 block">38</span>
-                <span className="text-[9px] text-slate-500 font-bold uppercase">Districts</span>
-              </div>
-              <div className="p-3 bg-white/80 border border-slate-200 rounded-2xl shadow-xs">
-                <span className="text-lg font-black text-teal-600 block">15.3K</span>
-                <span className="text-[9px] text-slate-500 font-bold uppercase">EV Pickups</span>
-              </div>
-              <div className="p-3 bg-white/80 border border-slate-200 rounded-2xl shadow-xs">
-                <span className="text-lg font-black text-cyan-600 block">8.2 Tons</span>
-                <span className="text-[9px] text-slate-500 font-bold uppercase">CO₂ Offset</span>
-              </div>
-              <div className="p-3 bg-white/80 border border-slate-200 rounded-2xl shadow-xs">
-                <span className="text-lg font-black text-emerald-700 block">₹250</span>
-                <span className="text-[9px] text-slate-500 font-bold uppercase">Per 500 Pts</span>
+            <div className="pt-2">
+              <div className="inline-flex items-center space-x-2 text-xs font-bold text-slate-500">
+                <FaShieldAlt className="text-emerald-600" />
+                <span>Swachh Bharat 2.0 • SWM Rules 2016 Compliant • Toll-Free 1913</span>
               </div>
             </div>
 
           </div>
 
-          {/* RIGHT 5 COLUMNS: ELEVATED AUTHENTICATION SUITE */}
-          <div className="lg:col-span-5 flex justify-center w-full">
-            <div className="w-full max-w-[470px] bg-white/95 backdrop-blur-2xl border border-emerald-500/25 rounded-3xl p-5 sm:p-7 shadow-2xl shadow-emerald-950/10 space-y-4 relative overflow-hidden">
+          {/* RIGHT 6 COLUMNS: FOCUSED, PRISTINE AUTHENTICATION CARD */}
+          <div className="lg:col-span-6 flex justify-center w-full">
+            <div className="w-full max-w-[480px] bg-white/95 backdrop-blur-2xl border border-emerald-500/25 rounded-3xl p-5 sm:p-8 shadow-2xl shadow-emerald-950/10 space-y-4 relative overflow-hidden">
               
-              {/* Top Gradient Line */}
+              {/* Top Accent Gradient Line */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500" />
 
               {/* Mode Switcher Tabs (Sign In vs Create Account) */}
@@ -564,7 +454,7 @@ const Login = ({ initialMode = 'signin' }) => {
                   </span>
                 </h2>
                 <p className="text-xs text-slate-500 font-medium">
-                  {activeRole.badge} • Tamil Nadu SWM Desk
+                  {activeRole.badge} • Tamil Nadu SWM Portal
                 </p>
               </div>
 
@@ -663,7 +553,7 @@ const Login = ({ initialMode = 'signin' }) => {
                               onChange={(e) => setEmailOrPhone(e.target.value)}
                               placeholder="10-digit mobile number"
                               required
-                              className="flex-1 px-3 py-2 bg-slate-50/70 rounded-r-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all"
+                              className="flex-1 px-3 py-2.5 bg-slate-50/70 rounded-r-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all"
                             />
                           </div>
                         </div>
@@ -691,7 +581,7 @@ const Login = ({ initialMode = 'signin' }) => {
                               onChange={(e) => setOtpCode(e.target.value)}
                               placeholder="••••"
                               required
-                              className="w-full tracking-[0.5em] text-center font-mono py-2 bg-slate-50/70 rounded-2xl border border-slate-300 text-base font-black text-slate-900 placeholder:tracking-normal placeholder:font-sans placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all"
+                              className="w-full tracking-[0.5em] text-center font-mono py-2.5 bg-slate-50/70 rounded-2xl border border-slate-300 text-base font-black text-slate-900 placeholder:tracking-normal placeholder:font-sans placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all"
                             />
                           </div>
                         </div>
@@ -703,14 +593,14 @@ const Login = ({ initialMode = 'signin' }) => {
                             Email or Mobile
                           </label>
                           <div className="relative">
-                            <FaEnvelope className="absolute left-3.5 top-3 text-slate-400 text-xs" />
+                            <FaEnvelope className="absolute left-3.5 top-3.5 text-slate-400 text-xs" />
                             <input 
                               type="text" 
                               value={emailOrPhone} 
                               onChange={(e) => setEmailOrPhone(e.target.value)} 
                               required 
                               placeholder="Enter email or mobile" 
-                              className="w-full pl-9 pr-3 py-2 bg-slate-50/70 rounded-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all" 
+                              className="w-full pl-9 pr-3 py-2.5 bg-slate-50/70 rounded-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all" 
                             />
                           </div>
                         </div>
@@ -725,19 +615,19 @@ const Login = ({ initialMode = 'signin' }) => {
                             </Link>
                           </div>
                           <div className="relative">
-                            <FaLock className="absolute left-3.5 top-3 text-slate-400 text-xs" />
+                            <FaLock className="absolute left-3.5 top-3.5 text-slate-400 text-xs" />
                             <input 
                               type={showPassword ? 'text' : 'password'} 
                               value={password} 
                               onChange={(e) => setPassword(e.target.value)} 
                               required 
                               placeholder="••••••••" 
-                              className="w-full pl-9 pr-9 py-2 bg-slate-50/70 rounded-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all" 
+                              className="w-full pl-9 pr-9 py-2.5 bg-slate-50/70 rounded-2xl border border-slate-300 text-xs font-extrabold text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all" 
                             />
                             <button 
                               type="button" 
                               onClick={() => setShowPassword(!showPassword)} 
-                              className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                              className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
                             >
                               {showPassword ? <FaEyeSlash className="h-3.5 w-3.5" /> : <FaEye className="h-3.5 w-3.5" />}
                             </button>
@@ -761,7 +651,7 @@ const Login = ({ initialMode = 'signin' }) => {
                     <button 
                       type="submit" 
                       disabled={loading} 
-                      className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm shadow-lg shadow-emerald-600/25 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 cursor-pointer mt-2"
+                      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm shadow-lg shadow-emerald-600/25 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 cursor-pointer mt-2"
                     >
                       {loading ? (
                         <>

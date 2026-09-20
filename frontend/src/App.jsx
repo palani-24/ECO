@@ -8,7 +8,6 @@ import { DistrictProvider } from './context/DistrictContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import ErrorBoundary from './components/ErrorBoundary';
-import SupportChatWidget from './components/SupportChatWidget';
 import PWAInstallBanner from './components/PWAInstallBanner';
 
 // Resilient chunk loader with automatic cache busting on Vercel deployments
@@ -82,6 +81,8 @@ const MunicipalityDashboard = lazyWithRetry(() => import('./pages/municipality/M
 const MunicipalityHeatmap = lazyWithRetry(() => import('./pages/municipality/MunicipalityHeatmap'));
 const MunicipalityGrievances = lazyWithRetry(() => import('./pages/municipality/MunicipalityGrievances'));
 const ReportIllegalDump = lazyWithRetry(() => import('./pages/user/ReportIllegalDump'));
+const CitizenSupportHub = lazyWithRetry(() => import('./pages/user/CitizenSupportHub'));
+const MunicipalitySupportHub = lazyWithRetry(() => import('./pages/municipality/MunicipalitySupportHub'));
 
 function App() {
   return (
@@ -92,7 +93,6 @@ function App() {
             <LanguageProvider>
               <DistrictProvider>
                 <SocketProvider>
-                <SupportChatWidget />
                 <PWAInstallBanner />
                 <React.Suspense fallback={
                   <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
@@ -187,6 +187,22 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['user', 'municipality', 'admin']}>
                     <ReportIllegalDump />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/support" 
+                element={
+                  <ProtectedRoute allowedRoles={['user', 'admin']}>
+                    <CitizenSupportHub />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/user/support" 
+                element={
+                  <ProtectedRoute allowedRoles={['user', 'admin']}>
+                    <CitizenSupportHub />
                   </ProtectedRoute>
                 } 
               />
@@ -443,6 +459,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['municipality', 'admin']}>
                   <MunicipalityGrievances />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/municipality/support" 
+              element={
+                <ProtectedRoute allowedRoles={['municipality', 'admin']}>
+                  <MunicipalitySupportHub />
                 </ProtectedRoute>
               } 
             />

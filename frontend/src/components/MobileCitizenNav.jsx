@@ -7,7 +7,7 @@ import {
   FaCamera, FaCertificate, FaBuilding, 
   FaExclamationTriangle, FaTrophy, FaPlus,
   FaMapMarkerAlt, FaChevronRight, FaPhoneAlt, FaChartLine,
-  FaMapPin, FaShieldAlt
+  FaMapPin, FaShieldAlt, FaHeadset
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useDistrict } from '../context/DistrictContext';
@@ -503,6 +503,29 @@ const MobileCitizenNav = () => {
                         ISO
                       </span>
                     </button>
+
+                    {/* 6. Municipal Command & Support Hub */}
+                    <button 
+                      onClick={() => handleNavigate('/municipality/support')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all ${
+                        isCurrent('/municipality/support')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center">
+                          <FaHeadset className="text-sm" />
+                        </div>
+                        <div>
+                          <span className="text-xs block">Command & Support Hub</span>
+                          <span className="text-[10px] text-slate-400 font-normal">SWM facility & technical desk</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-400 font-black">
+                        DESK
+                      </span>
+                    </button>
                   </div>
                 ) : (
                   /* ================= CITIZEN ONLY 5 CORE OPTIONS ================= */
@@ -586,6 +609,29 @@ const MobileCitizenNav = () => {
                       </div>
                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-400 font-black">
                         AI
+                      </span>
+                    </button>
+
+                    {/* 6. Citizen Support & Helpdesk Hub */}
+                    <button 
+                      onClick={() => handleNavigate('/support')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all ${
+                        isCurrent('/support')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold border border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                          <FaHeadset className="text-sm" />
+                        </div>
+                        <div>
+                          <span className="text-xs block">Helpdesk & Message Hub</span>
+                          <span className="text-[10px] text-slate-400 font-normal">Pickup help & 24/7 helpline</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
+                        HELP
                       </span>
                     </button>
                   </div>

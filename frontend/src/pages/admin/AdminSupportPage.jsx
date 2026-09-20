@@ -31,13 +31,31 @@ const AdminSupportPage = () => {
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
 
-  // Quick Canned Templates
-  const cannedTemplates = [
-    "Your pickup request has been verified and assigned to nearest driver.",
-    "EcoPoints have been credited to your wallet. Thank you for recycling!",
-    "Our driver is on the way to your doorstep. Please keep waste ready.",
-    "Thank you for contacting EcoReward Support. Your issue is resolved."
-  ];
+  // Quick Canned Templates by Role
+  const getCannedTemplates = (role) => {
+    if (role === 'driver') {
+      return [
+        "Roadside EV mobile recovery van dispatched to your coordinates.",
+        "Weighbridge QR gate pass approved. You may proceed to unload.",
+        "Customer doorstep unreachable verified. Stop marked skipped per protocol.",
+        "₹250 daily surge bonus credited to your driver wallet."
+      ];
+    }
+    if (role === 'municipality') {
+      return [
+        "Grievance sanitation squad mobilized, SLA response time updated.",
+        "MRF processing plant telematics gateway re-calibrated successfully.",
+        "Official TNPCB quarterly audit statement generated and sent.",
+        "Compactor GPS transponders re-aligned with GIS heatmap."
+      ];
+    }
+    return [
+      "Your pickup request has been verified and assigned to nearest driver.",
+      "EcoPoints have been credited to your wallet. Thank you for recycling!",
+      "Our driver is on the way to your doorstep. Please keep waste ready.",
+      "Thank you for contacting EcoReward Support. Your issue is resolved."
+    ];
+  };
 
   const fetchSupportMessages = async () => {
     setLoading(true);
@@ -288,6 +306,29 @@ const AdminSupportPage = () => {
               createdAt: new Date(Date.now() - 86400000).toISOString()
             }
           ]
+        },
+        {
+          userKey: 'M1',
+          user: { _id: 'M1', name: 'Tiruppur Municipal Officer', email: 'officer@tiruppur.gov.in', role: 'municipality', phone: '+91 421 2242000' },
+          senderRole: 'municipality',
+          latestMessage: {
+            _id: 'SUP105',
+            user: { _id: 'M1', name: 'Tiruppur Municipal Officer', email: 'officer@tiruppur.gov.in', role: 'municipality', phone: '+91 421 2242000' },
+            subject: 'MRF RESOURCE FACILITY BALER CAPACITY OVERLOAD',
+            message: 'Tiruppur SWRF baling unit experiencing capacity bottleneck. Technical support engineer requested for automated conveyor inspection.',
+            status: 'pending',
+            createdAt: new Date(Date.now() - 1800000).toISOString()
+          },
+          messages: [
+            {
+              _id: 'SUP105',
+              user: { _id: 'M1', name: 'Tiruppur Municipal Officer', email: 'officer@tiruppur.gov.in', role: 'municipality', phone: '+91 421 2242000' },
+              subject: 'MRF RESOURCE FACILITY BALER CAPACITY OVERLOAD',
+              message: 'Tiruppur SWRF baling unit experiencing capacity bottleneck. Technical support engineer requested for automated conveyor inspection.',
+              status: 'pending',
+              createdAt: new Date(Date.now() - 1800000).toISOString()
+            }
+          ]
         }
       ];
       fallbackUsers.forEach(u => map.set(u.userKey, u));
@@ -463,6 +504,34 @@ const AdminSupportPage = () => {
                     placeholder="Search users by name..."
                     className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-500"
                   />
+                </div>
+
+                {/* Role Filter Pills */}
+                <div className="flex items-center space-x-1 bg-slate-200/70 dark:bg-slate-800/80 p-1 rounded-xl text-[10px] font-bold">
+                  <button
+                    onClick={() => setRoleFilter('all')}
+                    className={`flex-1 py-1 rounded-lg text-center transition-all ${roleFilter === 'all' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm font-black' : 'text-slate-500'}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setRoleFilter('user')}
+                    className={`flex-1 py-1 rounded-lg text-center transition-all ${roleFilter === 'user' ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm font-black' : 'text-slate-500'}`}
+                  >
+                    👤 Citizen
+                  </button>
+                  <button
+                    onClick={() => setRoleFilter('driver')}
+                    className={`flex-1 py-1 rounded-lg text-center transition-all ${roleFilter === 'driver' ? 'bg-white dark:bg-slate-900 text-teal-600 dark:text-teal-400 shadow-sm font-black' : 'text-slate-500'}`}
+                  >
+                    🚛 Driver
+                  </button>
+                  <button
+                    onClick={() => setRoleFilter('municipality')}
+                    className={`flex-1 py-1 rounded-lg text-center transition-all ${roleFilter === 'municipality' ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm font-black' : 'text-slate-500'}`}
+                  >
+                    🏛️ Municipal
+                  </button>
                 </div>
 
                 {/* Status Pills */}
@@ -730,14 +799,14 @@ const AdminSupportPage = () => {
                   {/* Canned Responses Chips */}
                   <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
                     <span className="text-[9px] font-black text-slate-400 uppercase flex-shrink-0">⚡ Quick:</span>
-                    {cannedTemplates.map((template, idx) => (
+                    {getCannedTemplates(activeConversation?.senderRole).map((template, idx) => (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => setReplyText(template)}
                         className="px-2.5 py-1 bg-slate-100 hover:bg-emerald-500/10 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-emerald-500 text-[10px] font-bold rounded-lg border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-colors cursor-pointer"
                       >
-                        {template.substring(0, 24)}...
+                        {template.substring(0, 28)}...
                       </button>
                     ))}
                   </div>

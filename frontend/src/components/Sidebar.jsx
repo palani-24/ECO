@@ -42,9 +42,10 @@ const Sidebar = () => {
     { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
+    { path: '/support', label: 'Helpdesk & Messages', icon: FaComments, badge: 'HELP' },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding, badge: 'PRO' },
-    { path: '/profile', label: 'My Profile & Support', icon: FaUser },
+    { path: '/profile', label: 'My Profile', icon: FaUser },
   ];
 
   const driverLinks = [
@@ -54,6 +55,7 @@ const Sidebar = () => {
     { path: '/driver/battery-telematics', label: 'EV & Telematics', icon: FaLeaf },
     { path: '/driver/history', label: 'Pickup History', icon: FaHistory },
     { path: '/driver/earnings', label: 'Earnings & Incentives', icon: FaCoins },
+    { path: '/driver/support', label: 'Dispatch & SOS Hub', icon: FaComments, badge: 'SOS' },
     { path: '/driver/profile', label: 'Profile', icon: FaUser },
   ];
 
@@ -71,6 +73,7 @@ const Sidebar = () => {
     { path: '/municipality/dashboard', label: 'Command Center', icon: FaChartLine },
     { path: '/municipality/heatmap', label: 'GIS Heatmap', icon: FaMapPin, badge: 'LIVE' },
     { path: '/municipality/grievances', label: 'Citizen Grievances', icon: FaExclamationTriangle, badge: 'ALERT' },
+    { path: '/municipality/support', label: 'Command & Support Hub', icon: FaComments, badge: 'DESK' },
     { path: '/esg-portal', label: 'ESG Audit Portal', icon: FaBuilding, badge: 'ISO' },
     { path: '/leaderboard', label: 'Ward Leaderboard', icon: FaTrophy },
     { path: '/profile', label: 'Officer Profile', icon: FaUser },

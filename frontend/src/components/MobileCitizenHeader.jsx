@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaBell, FaSearch, FaQrcode, FaTimes, FaArrowLeft, FaMapMarkerAlt, FaChevronDown } from 'react-icons/fa';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { useDistrict } from '../context/DistrictContext';
 import { triggerHaptic } from '../utils/mobileNative';
 
@@ -16,9 +17,12 @@ const MobileCitizenHeader = ({
   onOpenMenu = () => {} 
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { lang, setLang } = useLanguage() || { lang: 'en', setLang: () => {} };
   const { currentDistrict, openDistrictModal } = useDistrict() || {};
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  const isMunicipality = user?.role === 'municipality' || window.location.pathname.startsWith('/municipality');
 
   return (
     <>
@@ -57,10 +61,10 @@ const MobileCitizenHeader = ({
             {/* App Title */}
             <div 
               className="flex items-center space-x-1.5 cursor-pointer" 
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate(isMunicipality ? '/municipality/dashboard' : '/dashboard')}
             >
               <span className="text-sm sm:text-base font-black tracking-wider uppercase">
-                {title || 'ECOREWARD'}
+                {title || (isMunicipality ? `${currentDistrict?.name || 'MUNICIPAL'} COMMAND` : 'ECOREWARD')}
               </span>
             </div>
           </div>

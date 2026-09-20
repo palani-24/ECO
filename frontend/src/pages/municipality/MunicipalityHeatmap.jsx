@@ -28,6 +28,7 @@ import 'leaflet/dist/leaflet.css';
 import api from '../../utils/api';
 import UserLayout from '../../components/UserLayout';
 import { useToast } from '../../context/ToastContext';
+import { useDistrict } from '../../context/DistrictContext';
 
 // Helper component to center map smoothly
 const MapRecenter = ({ center, zoom }) => {
@@ -71,26 +72,41 @@ const createCustomIcon = (type, label, isSelected) => {
 
 const MunicipalityHeatmap = () => {
   const { addToast } = useToast();
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const [points, setPoints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState('all'); // all, pickup, illegal_dump, fleet
   const [filterCategory, setFilterCategory] = useState('all');
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [mapCenter, setMapCenter] = useState([11.0168, 76.9558]); // Coimbatore Center
+  const [mapCenter, setMapCenter] = useState([currentDistrict?.lat || 11.0168, currentDistrict?.lng || 76.9558]);
   const [mapZoom, setMapZoom] = useState(13);
 
-  // Real Geographical Hotspot Nodes (Coimbatore / Tamil Nadu Wards)
+  // Sync center whenever user changes Tamil Nadu district
+  useEffect(() => {
+    if (currentDistrict?.lat && currentDistrict?.lng) {
+      setMapCenter([currentDistrict.lat, currentDistrict.lng]);
+    }
+  }, [currentDistrict]);
+
+  const cLat = currentDistrict?.lat || 11.0168;
+  const cLng = currentDistrict?.lng || 76.9558;
+  const regCode = currentDistrict?.regCode?.split('/')[0]?.trim() || 'TN-38';
+  const ward1 = currentDistrict?.sampleWards?.[0]?.ward || 'Ward 1 - Central';
+  const ward2 = currentDistrict?.sampleWards?.[1]?.ward || 'Ward 2 - West';
+  const ward3 = currentDistrict?.sampleWards?.[2]?.ward || 'Ward 3 - North';
+
+  // Dynamic Geographical Hotspot Nodes for the selected Tamil Nadu district
   const defaultGeoPoints = [
     {
       id: 'PT-101',
       type: 'pickup',
       category: 'Plastic',
       weightKg: 145.5,
-      ward: 'Ward 1 - Gandhipuram',
-      address: '7th Cross Cut Road, Gandhipuram Market, Coimbatore',
-      lat: 11.0185,
-      lng: 76.9620,
+      ward: ward1,
+      address: `Main Market Corridor, ${currentDistrict.name}`,
+      lat: +(cLat + 0.004).toFixed(4),
+      lng: +(cLng + 0.005).toFixed(4),
       intensity: 0.95,
       status: 'Active Hotspot',
       notes: 'High commercial PET bottles & LDPE packaging aggregation.'
@@ -100,10 +116,10 @@ const MunicipalityHeatmap = () => {
       type: 'illegal_dump',
       category: 'Mixed Garbage',
       severity: 'High Priority',
-      ward: 'Ward 2 - RS Puram',
-      address: 'West Club Road, Near Corporation Park, RS Puram',
-      lat: 11.0090,
-      lng: 76.9510,
+      ward: ward2,
+      address: `Corner Road near Corporation Park, ${currentDistrict.name}`,
+      lat: +(cLat - 0.006).toFixed(4),
+      lng: +(cLng - 0.004).toFixed(4),
       intensity: 0.88,
       status: 'Reported Spot',
       photoUrl: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=600&auto=format&fit=crop&q=80',
@@ -114,10 +130,10 @@ const MunicipalityHeatmap = () => {
       type: 'pickup',
       category: 'Paper',
       weightKg: 180.0,
-      ward: 'Ward 3 - Saibaba Colony',
-      address: 'NSR Road, Saibaba Colony Commercial Hub',
-      lat: 11.0280,
-      lng: 76.9460,
+      ward: ward3,
+      address: `Colony Commercial Hub, ${currentDistrict.name}`,
+      lat: +(cLat + 0.009).toFixed(4),
+      lng: +(cLng - 0.008).toFixed(4),
       intensity: 0.82,
       status: 'Active Hotspot',
       notes: 'Carton and newspaper bulk segregation center.'
@@ -127,55 +143,30 @@ const MunicipalityHeatmap = () => {
       type: 'fleet_truck',
       category: 'Compactor Fleet #4',
       driver: 'Karthik Raja (★ 4.9)',
-      vehicleNumber: 'TN-38-MUNI-8819',
-      ward: 'Ward 1 - Gandhipuram',
-      address: 'En Route to Cross Cut Road Hub',
-      lat: 11.0210,
-      lng: 76.9680,
+      vehicleNumber: `${regCode}-MUNI-8819`,
+      ward: ward1,
+      address: `En Route to ${currentDistrict.name} Central Hub`,
+      lat: +(cLat + 0.003).toFixed(4),
+      lng: +(cLng + 0.011).toFixed(4),
       load: '450 / 800 kg',
-      status: 'Collecting Waste',
-      speed: '24 km/h'
+      status: 'En Route',
+      speed: '28 km/h',
+      battery: '82%'
     },
     {
       id: 'PT-105',
-      type: 'pickup',
-      category: 'Metal',
-      weightKg: 210.0,
-      ward: 'Ward 4 - Peelamedu',
-      address: 'Avinashi Road, Peelamedu Industrial Zone',
-      lat: 11.0250,
-      lng: 77.0020,
-      intensity: 0.90,
-      status: 'Active Hotspot',
-      notes: 'Verified scrap metal and aluminum cans bulk stream.'
-    },
-    {
-      id: 'PT-106',
-      type: 'illegal_dump',
-      category: 'E-Waste & Debris',
-      severity: 'Critical Hazard',
-      ward: 'Ward 5 - Singanallur',
-      address: 'Trichy Road, Near Singanallur Bus Stand Area',
-      lat: 10.9980,
-      lng: 77.0210,
-      intensity: 0.92,
-      status: 'Reported Spot',
-      photoUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
-      description: 'Discarded electronic parts and broken CRT monitors.'
-    },
-    {
-      id: 'PT-107',
       type: 'fleet_truck',
-      category: 'EV Mini-Truck #2',
-      driver: 'Praveen Kumar (★ 4.8)',
-      vehicleNumber: 'TN-38-EV-4011',
-      ward: 'Ward 3 - Saibaba Colony',
-      address: 'Door-to-door organic collection',
-      lat: 11.0310,
-      lng: 76.9420,
-      load: '280 / 500 kg',
-      status: 'Doorstep Pickup',
-      speed: '18 km/h'
+      category: 'EV Tipper #2',
+      driver: 'Murugan S. (★ 4.8)',
+      vehicleNumber: `${regCode}-EV-4011`,
+      ward: ward2,
+      address: `Morning Doorstep Collection, ${currentDistrict.name}`,
+      lat: +(cLat - 0.003).toFixed(4),
+      lng: +(cLng - 0.007).toFixed(4),
+      load: '310 / 500 kg',
+      status: 'Collecting',
+      speed: '14 km/h',
+      battery: '68%'
     }
   ];
 
@@ -354,14 +345,22 @@ const MunicipalityHeatmap = () => {
               <div className="bg-slate-900/90 backdrop-blur-md text-white border border-slate-700 px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2 pointer-events-auto">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                 <span className="text-xs font-bold">
-                  Coimbatore Municipal Zone • {filteredPoints.length} Live Spatial Points
+                  {currentDistrict.corporation} • {filteredPoints.length} Live Spatial Nodes
                 </span>
               </div>
 
               <div className="flex items-center gap-2 pointer-events-auto">
                 <button
+                  onClick={openDistrictModal}
+                  className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-md text-xs font-black transition cursor-pointer flex items-center gap-1.5"
+                  title="Switch Tamil Nadu District"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>{currentDistrict.name}</span>
+                </button>
+                <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
-                  className="p-2.5 bg-white/95 hover:bg-white text-slate-800 rounded-xl shadow-md border border-slate-200 transition font-bold"
+                  className="p-2.5 bg-white/95 hover:bg-white text-slate-800 rounded-xl shadow-md border border-slate-200 transition font-bold cursor-pointer"
                   title={isFullscreen ? 'Exit Expand View' : 'Expand Big Map'}
                 >
                   {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}

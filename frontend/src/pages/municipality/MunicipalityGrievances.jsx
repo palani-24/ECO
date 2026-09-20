@@ -22,9 +22,11 @@ import {
 import api from '../../utils/api';
 import UserLayout from '../../components/UserLayout';
 import { useToast } from '../../context/ToastContext';
+import { useDistrict } from '../../context/DistrictContext';
 
 const MunicipalityGrievances = () => {
   const { addToast } = useToast();
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -101,14 +103,19 @@ const MunicipalityGrievances = () => {
     }
   };
 
+  const regCode = currentDistrict?.regCode?.split('/')[0]?.trim() || 'TN-38';
+  const ward1 = currentDistrict?.sampleWards?.[0]?.ward || 'Ward 1 - Central Zone';
+  const ward2 = currentDistrict?.sampleWards?.[1]?.ward || 'Ward 2 - West Zone';
+  const ward3 = currentDistrict?.sampleWards?.[2]?.ward || 'Ward 3 - North Zone';
+
   // Mock initial demo grievances if empty
   const displayReports = reports.length > 0 ? reports : [
     {
       _id: 'rep-001',
-      location: { address: 'Cross Cut Road, Gandhipuram Market Corner', ward: 'Ward 1 - Gandhipuram', lat: 11.0185, lng: 76.9620 },
+      location: { address: `Market Road Junction, ${currentDistrict.name}`, ward: ward1, lat: currentDistrict?.lat || 11.0185, lng: currentDistrict?.lng || 76.9620 },
       wasteType: 'Plastic Heap',
       estimatedSeverity: 'High',
-      description: 'Open illegal dump accumulating near vegetable market creating foul smell.',
+      description: `Open illegal dump accumulating near market area in ${currentDistrict.name}.`,
       status: 'reported',
       createdAt: new Date().toISOString(),
       photoUrl: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=600&auto=format&fit=crop&q=80',
@@ -117,13 +124,13 @@ const MunicipalityGrievances = () => {
     },
     {
       _id: 'rep-002',
-      location: { address: 'West Club Road, Near Park Gate, RS Puram', ward: 'Ward 2 - RS Puram', lat: 11.0090, lng: 76.9510 },
+      location: { address: `Near Corporation Park Gate, ${currentDistrict.name}`, ward: ward2, lat: (currentDistrict?.lat || 11.0090) - 0.005, lng: (currentDistrict?.lng || 76.9510) - 0.004 },
       wasteType: 'Mixed Garbage',
       estimatedSeverity: 'Critical Hazard',
-      description: 'Medical and electronic e-waste dumped by roadside.',
+      description: 'E-waste and plastic bottles dumped along roadside drainage.',
       status: 'assigned',
-      assignedTeam: 'Central Rapid Squad #2',
-      assignedVehicle: 'TN-38-MUNI-1044',
+      assignedTeam: `${currentDistrict.name} Rapid Squad #2`,
+      assignedVehicle: `${regCode}-MUNI-1044`,
       createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
       photoUrl: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
       reporter: { name: 'Priya Sundaram', phone: '9790145678' },
@@ -131,14 +138,14 @@ const MunicipalityGrievances = () => {
     },
     {
       _id: 'rep-003',
-      location: { address: 'Avinashi Road, Near PSG Bridge, Peelamedu', ward: 'Ward 4 - Peelamedu', lat: 11.0250, lng: 77.0020 },
+      location: { address: `Bridge Approach Corridor, ${currentDistrict.name}`, ward: ward3, lat: (currentDistrict?.lat || 11.0250) + 0.006, lng: (currentDistrict?.lng || 77.0020) + 0.005 },
       wasteType: 'Construction Debris',
       estimatedSeverity: 'Medium',
       description: 'Cement blocks and debris blocking pedestrian sidewalk.',
       status: 'cleaned',
       assignedTeam: 'Heavy Debris Hauler Unit',
       cleanedPhotoUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80',
-      resolutionNotes: 'Site completely cleared and sanitized.',
+      resolutionNotes: 'Site completely cleared and sanitized by Municipal sanitary team.',
       createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
       photoUrl: 'https://images.unsplash.com/photo-1526951521990-620dc14c214b?w=600&auto=format&fit=crop&q=80',
       reporter: { name: 'Ramesh Babu', phone: '9443219876' },
@@ -162,19 +169,28 @@ const MunicipalityGrievances = () => {
             </Link>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-800">
-                Citizen Illegal Dump Redressal Hub
+                {currentDistrict.corporation} • Citizen Grievances
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Review, triage, and dispatch municipal sanitation teams to citizen-reported waste spots.
+                Review, triage, and dispatch municipal sanitation teams across {currentDistrict.name} ({currentDistrict.tamilName}).
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <button
+              type="button"
+              onClick={openDistrictModal}
+              className="px-3.5 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl border border-emerald-300 text-xs font-black transition flex items-center gap-1.5 cursor-pointer"
+              title="Switch Tamil Nadu District"
+            >
+              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+              <span>{currentDistrict.name} (38 Districts)</span>
+            </button>
+            <button
               onClick={fetchReports}
               disabled={loading}
-              className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200 text-xs font-bold transition flex items-center gap-1.5"
+              className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh

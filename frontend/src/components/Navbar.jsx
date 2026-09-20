@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useDistrict } from '../context/DistrictContext';
 import MobileQRScannerModal from './MobileQRScannerModal';
+import DesktopCommandPalette from './DesktopCommandPalette';
 import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
@@ -33,6 +34,7 @@ const Navbar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showQRScanner, setShowQRScanner] = useState(false);
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
 
   // Toggle Dark Mode
   useEffect(() => {
@@ -105,6 +107,20 @@ const Navbar = () => {
                 </div>
 
                 <div className="hidden md:flex items-center space-x-3">
+                  {/* Global Command Palette Trigger (Ctrl + K) */}
+                  <button
+                    type="button"
+                    onClick={() => setShowCommandPalette(true)}
+                    className="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-slate-300/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer transition shadow-xs"
+                    title="Search Districts, Actions & Portals (Ctrl + K)"
+                  >
+                    <FaSearch className="text-emerald-500 text-xs" />
+                    <span className="text-[11px]">Search</span>
+                    <span className="text-[10px] font-mono font-bold bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
+                      Ctrl K
+                    </span>
+                  </button>
+
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
                     className="relative flex items-center p-1 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-slate-300/80 dark:border-slate-700/80 transition-all shadow-sm group"
@@ -429,6 +445,12 @@ const Navbar = () => {
         onScanSuccess={(data) => {
           addToast(`📷 QR Code Scanned: ${data.code} (${data.location})`, 'success', 'QR Verified');
         }}
+      />
+
+      {/* Desktop Command Palette (Ctrl + K) */}
+      <DesktopCommandPalette
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
       />
     </>
   );

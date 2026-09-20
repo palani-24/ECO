@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { SocketProvider } from './context/SocketContext';
 import { LanguageProvider } from './context/LanguageContext';
@@ -33,6 +33,34 @@ const Login = lazyWithRetry(() => import('./pages/Login'));
 const Signup = lazyWithRetry(() => import('./pages/Signup'));
 const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
+
+// Smart Root Gateway: Opens Sign In on mobile/PWA directly, or User Dashboard if logged in
+const RootGateway = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center space-y-3">
+        <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-xs font-bold text-slate-500">Loading EcoReward...</p>
+      </div>
+    );
+  }
+
+  if (user) {
+    if (user.role === 'admin') return <Navigate to="/admin" replace />;
+    if (user.role === 'driver') return <Navigate to="/driver" replace />;
+    if (user.role === 'municipality') return <Navigate to="/municipality/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const isMobile = window.innerWidth < 1024 || window.matchMedia('(display-mode: standalone)').matches;
+  if (isMobile) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <LandingPage />;
+};
 
 // User Pages
 const UserDashboard = lazyWithRetry(() => import('./pages/user/UserDashboard'));
@@ -102,7 +130,8 @@ function App() {
                 }>
                   <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<RootGateway />} />
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/signup" element={<Signup />} />

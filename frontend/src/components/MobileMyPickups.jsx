@@ -12,6 +12,7 @@ import { useSocket } from '../context/SocketContext';
 import MobileCitizenHeader from './MobileCitizenHeader';
 import MobileCitizenNav from './MobileCitizenNav';
 import DriverChatModal from './DriverChatModal';
+import LiveUberPickupTracker from './LiveUberPickupTracker';
 import GreenCertificateModal from './GreenCertificateModal';
 import api from '../utils/api';
 import { triggerHaptic } from '../utils/mobileNative';
@@ -111,95 +112,15 @@ const MobileMyPickups = () => {
 
       <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
 
-        {/* 2. ACTIVE PICKUP CARD (If active pickup exists) */}
+        {/* 2. LIVE UBER-STYLE PICKUP TRACKER */}
         {activePickup && (
-          <div className="p-4 rounded-3xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-500/30 shadow-sm space-y-3">
-            
-            {/* Card Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <h2 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                  Live Active Pickup
-                </h2>
-              </div>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase border border-emerald-500/30">
-                {activePickup.status || 'PENDING'}
-              </span>
-            </div>
-
-            {/* Driver & OTP Details */}
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                  {activePickup.driver?.user?.name ? `Driver ${activePickup.driver.user.name}` : 'Driver Assigned'}
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
-                  EV Green Fleet • {activePickup.wasteCategory || `${activePickup.estimatedWeight || 5} kg scrap`}
-                </p>
-              </div>
-
-              {/* OTP Code Display */}
-              <div className="text-right">
-                <span className="text-[9px] uppercase font-bold text-slate-400 block leading-tight">
-                  OTP Code
-                </span>
-                <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-wider">
-                  {activePickup.verificationCode || activePickup.otp || '4829'}
-                </span>
-              </div>
-            </div>
-
-            {/* 4-Step Progress Stepper */}
-            <div className="pt-2 border-t border-emerald-500/20">
-              <div className="grid grid-cols-4 gap-1 text-center">
-                <div className="space-y-1">
-                  <div className="h-1.5 rounded-full bg-emerald-500"></div>
-                  <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400">1. Booked</span>
-                </div>
-                <div className="space-y-1">
-                  <div className="h-1.5 rounded-full bg-emerald-500"></div>
-                  <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400">2. Assigned</span>
-                </div>
-                <div className="space-y-1">
-                  <div className={`h-1.5 rounded-full ${['accepted', 'en_route', 'in_progress', 'completed'].includes(activePickup.status) ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}></div>
-                  <span className="text-[9px] font-bold text-slate-500">3. En Route</span>
-                </div>
-                <div className="space-y-1">
-                  <div className={`h-1.5 rounded-full ${activePickup.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}></div>
-                  <span className="text-[9px] font-bold text-slate-500">4. Collected</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons: Chat with Driver & Call */}
-            <div className="flex items-center gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(20);
-                  setSelectedPickup(activePickup);
-                  setShowChat(true);
-                }}
-                className="flex-1 py-2 bg-white dark:bg-slate-900 rounded-xl text-xs font-black text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center space-x-1.5 shadow-sm active:scale-98 cursor-pointer"
-              >
-                <FaComments className="text-xs" />
-                <span>Chat Driver</span>
-              </button>
-
-              <a
-                href={`tel:${activePickup.driver?.user?.phone || '+919876543210'}`}
-                className="flex-1 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-sm active:scale-98 cursor-pointer"
-              >
-                <FaPhone className="text-xs" />
-                <span>Call Driver</span>
-              </a>
-            </div>
-
-          </div>
+          <LiveUberPickupTracker 
+            pickup={activePickup}
+            onOpenChat={() => {
+              setSelectedPickup(activePickup);
+              setShowChat(true);
+            }}
+          />
         )}
 
         {/* 3. FILTER CHIPS */}

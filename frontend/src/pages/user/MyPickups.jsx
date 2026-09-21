@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UserLayout from '../../components/UserLayout';
 import MobileMyPickups from '../../components/MobileMyPickups';
 import DriverLiveTrackingModal from '../../components/DriverLiveTrackingModal';
+import LiveUberPickupTracker from '../../components/LiveUberPickupTracker';
 import CarbonCertificateModal from '../../components/CarbonCertificateModal';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
@@ -139,6 +140,14 @@ const MyPickups = () => {
             </div>
           )}
 
+          {/* Live Uber/Swiggy-Style Doorstep Pickup Tracker */}
+          <div className="my-5">
+            <LiveUberPickupTracker 
+              pickup={trackingPickup || pickups.find(p => p.status !== 'completed' && p.status !== 'cancelled') || pickups[0]}
+              onOpenChat={() => setChatPickup(trackingPickup || pickups[0])}
+            />
+          </div>
+
           {loading ? (
             <TableSkeleton rows={6} />
           ) : (
@@ -193,8 +202,11 @@ const MyPickups = () => {
                           <td className="py-4 px-6 text-right flex items-center justify-end space-x-2">
                             {p.status !== 'completed' && p.status !== 'cancelled' && (
                               <button 
-                                onClick={() => setTrackingPickup(p)}
-                                className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 rounded-lg text-[10px] font-bold border border-amber-500/20 flex items-center space-x-1"
+                                onClick={() => {
+                                  setTrackingPickup(p);
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                className="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 rounded-lg text-[10px] font-bold border border-amber-500/20 flex items-center space-x-1 cursor-pointer"
                               >
                                 <FaTruck className="w-3 h-3 animate-bounce" />
                                 <span>Track Live GPS</span>

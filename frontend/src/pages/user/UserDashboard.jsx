@@ -14,6 +14,7 @@ import UPIPayoutModal from '../../components/UPIPayoutModal';
 import EcoStoryModal from '../../components/EcoStoryModal';
 import MobileEcoHome from '../../components/MobileEcoHome';
 import DailySpinWheelModal from '../../components/DailySpinWheelModal';
+import LiveUberPickupTracker from '../../components/LiveUberPickupTracker';
 import { triggerConfetti } from '../../utils/confetti';
 import { soundFx } from '../../utils/audioFeedback';
 import { triggerHaptic } from '../../utils/mobileNative';
@@ -446,6 +447,12 @@ const UserDashboard = () => {
 
           </div>
         </div>
+
+        {/* Live Uber/Swiggy-Style Doorstep Pickup Tracker */}
+        <LiveUberPickupTracker 
+          pickup={activePickup}
+          onOpenChat={() => setShowDriverChat(true)}
+        />
 
         {/* Dynamic 4-Metric Bento Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

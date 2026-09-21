@@ -18,6 +18,10 @@ export const editProfile = async (req, res) => {
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    if (req.body.phone !== undefined) user.phone = req.body.phone;
+    if (req.body.ward) user.ward = req.body.ward;
+    if (req.body.department) user.department = req.body.department;
+    if (req.body.jurisdiction) user.jurisdiction = req.body.jurisdiction;
 
     if (req.body.profileImage || req.body.avatar) {
       const img = req.body.profileImage || req.body.avatar;
@@ -27,6 +31,7 @@ export const editProfile = async (req, res) => {
 
     if (req.body.password) {
       user.password = req.body.password;
+      user.accountPassword = req.body.password;
     }
 
     const updatedUser = await user.save();
@@ -36,9 +41,13 @@ export const editProfile = async (req, res) => {
         _id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,
+        phone: updatedUser.phone,
         role: updatedUser.role,
         points: updatedUser.points,
         addresses: updatedUser.addresses,
+        ward: updatedUser.ward,
+        department: updatedUser.department,
+        jurisdiction: updatedUser.jurisdiction,
         profileImage: updatedUser.profileImage || updatedUser.avatar || '',
         avatar: updatedUser.avatar || updatedUser.profileImage || ''
       }

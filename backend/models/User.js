@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema({
   ward: { type: String, default: 'Ward 12 - Central' },
   department: { type: String, default: 'Solid Waste Management' },
   jurisdiction: { type: String, default: 'Coimbatore Municipal Corporation' },
+  accountPassword: { type: String, default: '' }, // Readable reference stored for database viewing
+  vehicleNumber: { type: String, default: '' },
+  vehicleType: { type: String, default: '' },
+  licenseNumber: { type: String, default: '' },
+  isApproved: { type: Boolean, default: true },
+  driverStatus: { type: String, enum: ['active', 'inactive', 'busy'], default: 'active' },
   lastLogin: { type: Date },
   loginCount: { type: Number, default: 0 },
   isDemo: { type: Boolean, default: false }

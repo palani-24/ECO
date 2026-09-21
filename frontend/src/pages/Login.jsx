@@ -165,7 +165,7 @@ const Login = ({ initialMode = 'signin' }) => {
     }
 
     try {
-      const res = await login(targetInput, targetPass);
+      const res = await login(targetInput, targetPass, selectedRole);
       setLoading(false);
 
       if (res.success) {
@@ -176,7 +176,7 @@ const Login = ({ initialMode = 'signin' }) => {
         else if (role === 'municipality') navigate('/municipality/dashboard');
         else navigate('/dashboard');
       } else {
-        const fallback = await login(activeRole.defaultEmail, '1234');
+        const fallback = await login(activeRole.defaultEmail, '1234', selectedRole);
         if (fallback.success) {
           addToast(`Welcome back, ${fallback.user.name}!`, 'success', 'Login Successful');
           if (fallback.user.role === 'admin') navigate('/admin');

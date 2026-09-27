@@ -27,8 +27,8 @@ const Navbar = () => {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved === 'dark';
-    // Default to Light Mode on first visit
-    return false;
+    // Default to Dark Mode so all cards, sidebar and hero banners match the flagship midnight eco theme
+    return true;
   });
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -74,7 +74,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-[#06121e]/85 backdrop-blur-xl border-b border-white/40 dark:border-slate-800/80 shadow-xs transition-colors duration-300">
+      <nav className="sticky top-0 z-50 bg-white/85 dark:bg-[#071518]/90 backdrop-blur-xl border-b border-slate-200/60 dark:border-emerald-500/20 shadow-sm transition-colors duration-300">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             

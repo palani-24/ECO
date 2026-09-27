@@ -462,12 +462,12 @@ const UserDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
           {/* Card 1: Wallet Balance & EcoPoints */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-emerald-500/40 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-emerald-500/40 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-emerald-400/80">
                 EcoPoints Balance
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border border-emerald-500/20 group-hover:scale-110 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border border-emerald-500/20 group-hover:scale-110 transition-transform shadow-xs">
                 <FaCoins />
               </div>
             </div>
@@ -492,12 +492,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 2: Active Pickup & Status */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-sky-500/40 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-sky-500/40 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-sky-400/80">
                 Active Doorstep Pickup
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-base border border-sky-500/20 group-hover:scale-110 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-base border border-sky-500/20 group-hover:scale-110 transition-transform shadow-xs">
                 <FaTruck />
               </div>
             </div>
@@ -552,12 +552,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-teal-500/40 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-teal-500/40 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-teal-400/80">
                 Carbon Diverted
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-base border border-teal-500/20 group-hover:scale-110 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-base border border-teal-500/20 group-hover:scale-110 transition-transform shadow-xs">
                 <FaLeaf />
               </div>
             </div>
@@ -590,12 +590,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 hover:border-amber-500/40 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-amber-500/40 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-amber-400/80">
                 Total Recycled
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border border-amber-500/20 group-hover:scale-110 transition-transform">
+              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border border-amber-500/20 group-hover:scale-110 transition-transform shadow-xs">
                 <FaAward />
               </div>
             </div>
@@ -749,7 +749,7 @@ const UserDashboard = () => {
             )}
 
             {/* Smart Scrap Value Estimator & Live Rates */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-5">
               
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center space-x-3">
@@ -859,7 +859,7 @@ const UserDashboard = () => {
             </div>
 
             {/* 4-Bin Waste Segregation Protocol Guide (Moved to Left Column for Perfect Height Balance) */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
@@ -914,7 +914,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Recent Activity Feed (Balanced in Left Column) */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-lg border border-teal-500/20">
@@ -1143,7 +1143,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Daily Green Streak & Quests */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
+            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-5">
               
               <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center space-x-3">

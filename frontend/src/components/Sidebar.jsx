@@ -144,38 +144,57 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Fixed Left Navigation) */}
-      <aside className="hidden md:flex w-64 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 md:min-h-[calc(100vh-4rem)] flex-col justify-between py-5 px-4 transition-colors duration-300">
-        <div className="space-y-6">
+      {/* Desktop Sidebar (Executive Glassmorphic Eco Navigation Panel) */}
+      <aside className="hidden md:flex w-64 xl:w-72 flex-shrink-0 sticky top-20 h-[calc(100vh-6rem)] rounded-3xl bg-slate-900/95 dark:bg-[#071817]/95 backdrop-blur-2xl border border-emerald-500/25 shadow-2xl shadow-emerald-950/40 flex-col justify-between p-4.5 text-white transition-all overflow-hidden select-none">
+        
+        <div className="space-y-4 flex-1 flex flex-col min-h-0">
           
-          {/* User Profile Quick Card */}
-          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
-            <img 
-              src={getAvatarUrl(user, user?.name)} 
-              onError={(e) => handleAvatarError(e, user?.name)}
-              alt={user?.name || 'User'} 
-              className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30"
-            />
-            <div className="flex-1 min-w-0">
-              <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1" title={user?.name}>
-                <span>{user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'User Profile'}</span>
-              </h4>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
-                <FaLeaf className="h-2.5 w-2.5" />
-                <span>Eco Warrior</span>
-              </span>
+          {/* User Profile Quick Executive Card */}
+          <div className="p-3.5 bg-gradient-to-br from-slate-950/80 to-emerald-950/50 border border-emerald-500/30 rounded-2xl flex flex-col gap-2.5 shadow-lg relative overflow-hidden group">
+            <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
+            
+            <div className="flex items-center space-x-3 relative z-10">
+              <div className="relative">
+                <img 
+                  src={getAvatarUrl(user, user?.name)} 
+                  onError={(e) => handleAvatarError(e, user?.name)}
+                  alt={user?.name || 'User'} 
+                  className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)] bg-slate-800"
+                />
+                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-slate-900 animate-pulse"></span>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h4 className="font-black text-white text-xs truncate leading-tight flex items-center space-x-1" title={user?.name}>
+                  <span>{user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}</span>
+                </h4>
+                <span className="text-[10px] text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
+                  <FaLeaf className="h-2.5 w-2.5 shrink-0" />
+                  <span className="capitalize">{user.role === 'customer' ? 'Eco Guardian' : `${user.role} Partner`}</span>
+                </span>
+              </div>
+
+              <div className="text-right shrink-0">
+                <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-black rounded-xl block border border-emerald-500/30 shadow-xs">
+                  {user.points || 0} pts
+                </span>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg block border border-emerald-500/20">
-                {user.points || 0} pts
-              </span>
+
+            {/* Mini Eco Level Tier Strip */}
+            <div className="pt-1.5 border-t border-emerald-500/15 flex items-center justify-between text-[10px] text-slate-300 font-bold">
+              <span className="text-emerald-300">Level 4 Citizen</span>
+              <span className="text-slate-400 font-mono">71% to Lvl 5</span>
+            </div>
+            <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-emerald-500/20">
+              <div className="bg-gradient-to-r from-emerald-400 to-teal-400 h-full rounded-full" style={{ width: '71%' }}></div>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1">
-            <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-2">
-              Main Menu
+          {/* Navigation Links (Scrollable if viewport is small) */}
+          <div className="flex-1 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-emerald-500/20">
+            <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400/70 px-3 block mb-1.5">
+              Portal Menu
             </span>
             {links.map((link, idx) => {
               const Icon = link.icon;
@@ -186,35 +205,47 @@ const Sidebar = () => {
                   to={link.path}
                   end={link.path.indexOf('?') === -1}
                   className={
-                    `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
+                    `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black transition-all duration-200 cursor-pointer ${
                       active
-                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 translate-x-1'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-emerald-600 dark:hover:text-emerald-400'
+                        ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/30 scale-[1.02]'
+                        : 'text-slate-300 hover:text-white hover:bg-white/5 hover:border-emerald-500/20 border border-transparent'
                     }`
                   }
                 >
                   <div className="flex items-center space-x-3">
-                    <Icon className="h-4 w-4 flex-shrink-0" />
+                    <Icon className={`h-4 w-4 flex-shrink-0 ${active ? 'text-slate-950' : 'text-emerald-400'}`} />
                     <span>{link.label}</span>
                   </div>
                   {link.badge && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black shadow-sm">
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black shadow-xs ${
+                      active 
+                        ? 'bg-slate-950 text-emerald-400' 
+                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                    }`}>
                       {link.badge}
                     </span>
                   )}
                 </NavLink>
               );
             })}
-          </nav>
+          </div>
         </div>
 
-        {/* Bottom Logout Button */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+        {/* Bottom District AQI & Logout Button */}
+        <div className="pt-3 border-t border-emerald-500/20 space-y-2 mt-auto">
+          <div className="flex items-center justify-between px-2 text-[10px] text-slate-400 font-bold">
+            <span className="flex items-center space-x-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span className="text-emerald-300 font-black">Live Eco Grid</span>
+            </span>
+            <span className="text-slate-400">Net Positive</span>
+          </div>
+
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-xs font-black transition-all border border-rose-200/50 dark:border-rose-800/50 cursor-pointer"
+            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-black transition-all border border-rose-500/30 cursor-pointer active:scale-98 shadow-sm"
           >
-            <FaSignOutAlt className="h-4 w-4" />
+            <FaSignOutAlt className="h-3.5 w-3.5" />
             <span>Logout Account</span>
           </button>
         </div>
@@ -228,11 +259,11 @@ const Sidebar = () => {
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="fixed inset-y-0 left-0 w-[85%] max-w-xs bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-5 space-y-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300 h-full"
+            className="fixed inset-y-0 left-0 w-[85%] max-w-xs bg-slate-900 border-r border-emerald-500/30 p-5 space-y-4 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300 h-full text-white"
           >
             
             {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
               <div className="flex items-center space-x-2.5">
                 <img 
                   src="/app-logo.png" 
@@ -240,17 +271,17 @@ const Sidebar = () => {
                   className="h-8 w-8 rounded-xl object-contain ring-1 ring-emerald-500/30 shadow-sm" 
                 />
                 <div>
-                  <span className="font-black text-slate-900 dark:text-white text-sm block leading-tight">
+                  <span className="font-black text-white text-sm block leading-tight">
                     EcoReward
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold capitalize">
+                  <span className="text-[10px] text-emerald-400 font-bold capitalize">
                     {user.role} Navigation
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsMobileDrawerOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
                 aria-label="Close navigation menu"
               >
                 <FaTimes className="h-4 w-4" />
@@ -258,23 +289,23 @@ const Sidebar = () => {
             </div>
 
             {/* Mobile User Profile Quick Card */}
-            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl flex items-center space-x-3 shadow-sm">
+            <div className="p-3.5 bg-gradient-to-br from-slate-950 to-emerald-950/60 border border-emerald-500/30 rounded-2xl flex items-center space-x-3 shadow-md">
               <img 
                 src={getAvatarUrl(user, user?.name)} 
                 onError={(e) => handleAvatarError(e, user?.name)}
                 alt={user?.name || 'User'} 
-                className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/40"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-400 shadow-sm"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate">
+                <h4 className="font-black text-white text-xs truncate">
                   {user?.name || 'User Profile'}
                 </h4>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
+                <span className="text-[10px] text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                   <FaLeaf className="h-2.5 w-2.5" />
                   <span className="capitalize">{user.role} Member</span>
                 </span>
               </div>
-              <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg border border-emerald-500/20 shrink-0">
+              <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-black rounded-lg border border-emerald-500/30 shrink-0">
                 {user.points || 0} pts
               </span>
             </div>
@@ -303,8 +334,8 @@ const Sidebar = () => {
 
             {/* Full Scrollable Navigation Links List for Mobile */}
             <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 scrollbar-thin">
-              <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-1">
-                All Available Options
+              <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400/70 px-3 block mb-1">
+                Portal Options
               </span>
               {links.map((link, idx) => {
                 const Icon = link.icon;
@@ -316,21 +347,23 @@ const Sidebar = () => {
                     onClick={() => setIsMobileDrawerOpen(false)}
                     end={link.path.indexOf('?') === -1}
                     className={
-                      `flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-extrabold transition-all duration-200 ${
+                      `flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-black transition-all duration-200 ${
                         active
-                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/30'
+                          : 'text-slate-300 hover:text-white hover:bg-white/5'
                       }`
                     }
                   >
                     <div className="flex items-center space-x-3">
-                      <div className={`p-1.5 rounded-xl ${active ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                      <div className={`p-1.5 rounded-xl ${active ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-emerald-400'}`}>
                         <Icon className="h-4 w-4 shrink-0" />
                       </div>
                       <span>{link.label}</span>
                     </div>
                     {link.badge && (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black">
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                        active ? 'bg-slate-950 text-emerald-400' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      }`}>
                         {link.badge}
                       </span>
                     )}
@@ -340,10 +373,10 @@ const Sidebar = () => {
             </div>
 
             {/* Mobile Footer Logout */}
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="pt-3 border-t border-emerald-500/20">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 font-black text-xs border border-rose-200/50 dark:border-rose-800/50 cursor-pointer active:scale-98 transition"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-black text-xs border border-rose-500/30 cursor-pointer active:scale-98 transition"
               >
                 <FaSignOutAlt className="h-4 w-4" />
                 <span>Logout Account</span>

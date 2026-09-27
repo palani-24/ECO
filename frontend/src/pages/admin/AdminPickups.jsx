@@ -122,7 +122,7 @@ const AdminPickups = () => {
 
   return (
     <AdminLayout title="Pickups Registry">
-      <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="space-y-6 w-full">
         
         {/* Banner */}
         <div className="bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">

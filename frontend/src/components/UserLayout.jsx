@@ -19,7 +19,7 @@ const UserLayout = ({ children, hideFooter = false }) => {
         <MobileCitizenHeader />
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 min-w-0">
+      <div className="flex-1 flex flex-col md:flex-row w-full px-3 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 min-w-0">
         
         {/* 💻 Desktop Sidebar Navigation */}
         <div className="hidden md:block">

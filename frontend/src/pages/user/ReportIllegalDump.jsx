@@ -209,7 +209,7 @@ const ReportIllegalDump = () => {
 
   return (
     <UserLayout title="Report Dumping" showBack={true}>
-      <div className="max-w-3xl mx-auto space-y-5 pb-20">
+      <div className="w-full space-y-5 pb-20">
         
         {/* Top Back Link */}
         <Link

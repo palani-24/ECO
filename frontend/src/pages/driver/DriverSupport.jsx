@@ -153,7 +153,7 @@ const DriverSupport = () => {
 
   return (
     <DriverLayout>
-      <div className="max-w-4xl mx-auto space-y-5 pb-12">
+      <div className="w-full space-y-5 pb-12">
         
         {/* Driver Operations Header */}
         <div className="bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden">

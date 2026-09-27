@@ -125,7 +125,7 @@ const AdminDrivers = () => {
 
   return (
     <AdminLayout title="Fleet & Driver Command">
-      <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="space-y-6 w-full">
         
         {/* Top Header Banner */}
         <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 border border-emerald-500/20 p-5 sm:p-6 rounded-3xl text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">

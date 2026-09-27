@@ -129,7 +129,7 @@ const MunicipalityDashboard = () => {
 
   return (
     <UserLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-8">
+      <div className="space-y-6 w-full pb-8">
         
         {/* Executive Frosted Glass Hero Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-6 sm:p-7 text-white shadow-xl backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">

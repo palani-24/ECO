@@ -361,7 +361,7 @@ const UserDashboard = () => {
       {/* 💻 DESKTOP WORKSPACE VIEW */}
       <div className="hidden md:block">
         <UserLayout>
-          <div className="space-y-6 max-w-7xl mx-auto pb-8">
+          <div className="space-y-6 w-full pb-8">
         
         {/* Modern Executive Hero Glass Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-900/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-6 sm:p-8 text-white shadow-xl backdrop-blur-xl">

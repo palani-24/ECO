@@ -36,7 +36,7 @@ const DriverQualityAudit = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
+      <div className="w-full px-3 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 flex flex-col md:flex-row min-w-0">
         <Sidebar />
 
         <main className="flex-1 p-6 md:p-8 pb-24 md:pb-8 space-y-6">

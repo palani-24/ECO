@@ -234,7 +234,7 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout title="User Management & Details Directory">
-      <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      <div className="space-y-6 w-full pb-12">
         
         {/* Top Executive Header Banner */}
         <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 border border-emerald-500/30 p-6 rounded-3xl text-white shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">

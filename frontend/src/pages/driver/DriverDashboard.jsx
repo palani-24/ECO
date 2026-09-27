@@ -277,7 +277,7 @@ const DriverDashboard = () => {
       {/* 💻 DESKTOP COCKPIT WORKSPACE */}
       <div className="hidden md:block">
         <DriverLayout>
-      <div className={`space-y-6 max-w-7xl mx-auto pb-8 transition-all ${daylightMode ? 'daylight-mode p-3' : ''}`}>
+      <div className={`space-y-6 w-full pb-8 transition-all ${daylightMode ? 'daylight-mode p-3' : ''}`}>
 
         {/* Executive Pilot Cockpit Glass Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-5 sm:p-6 text-white shadow-xl backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -249,7 +249,7 @@ const Profile = () => {
 
   return (
     <UserLayout>
-      <div className="space-y-5 max-w-4xl mx-auto">
+      <div className="space-y-5 w-full">
         
         {/* Header Hero Banner (Curved Glassmorphism Card) */}
         <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 border border-emerald-400/20">

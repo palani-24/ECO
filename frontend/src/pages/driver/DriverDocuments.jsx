@@ -17,7 +17,7 @@ const DriverDocuments = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
+      <div className="w-full px-3 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 flex flex-col md:flex-row min-w-0">
         <Sidebar />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
           <div className="flex justify-between items-center border-b border-slate-200/80 dark:border-slate-800 pb-4">

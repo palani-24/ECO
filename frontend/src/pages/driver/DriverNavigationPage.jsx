@@ -77,7 +77,7 @@ const DriverNavigationPage = () => {
 
   return (
     <DriverLayout>
-      <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      <div className="space-y-6 w-full pb-12">
           
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-5 sm:p-6 rounded-3xl text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

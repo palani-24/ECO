@@ -144,7 +144,7 @@ const CitizenSupportHub = () => {
 
   return (
     <UserLayout>
-      <div className="max-w-4xl mx-auto space-y-5 pb-10">
+      <div className="w-full space-y-5 pb-10">
         
         {/* Top Header Card */}
         <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden">

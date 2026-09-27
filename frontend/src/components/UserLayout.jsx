@@ -8,16 +8,16 @@ const UserLayout = ({ children, hideFooter = false }) => {
   return (
     <div className="relative min-h-screen bg-slate-50/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 Soft Ethereal Mountain Landscape Background from Login Page */}
+      {/* 🌄 Ambient Modern Eco Landscape Background */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-20"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-25"
         style={{
-          backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02)'
+          filter: 'brightness(1.02) saturate(1.05)'
         }}
       />
-      <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-slate-50/70 to-white/90 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-gradient-to-b from-white/80 via-slate-50/65 to-white/85 pointer-events-none z-0" />
 
       {/* 💻 Desktop Top Navbar */}
       <div className="relative z-20 hidden md:block">

@@ -627,7 +627,7 @@ const LandingPage = () => {
         onMouseMove={handleMouseMove}
         className="relative pt-8 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b border-white/40 dark:border-slate-800 transition-colors duration-300"
         style={{
-          backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -1620,7 +1620,7 @@ const LandingPage = () => {
         <div 
           className="relative rounded-[32px] p-10 sm:p-14 overflow-hidden border border-white/50 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 text-slate-900 dark:text-white"
           style={{
-            backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+            backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'

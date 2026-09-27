@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useSocket } from '../../context/SocketContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useDistrict } from '../../context/DistrictContext';
 import UserLayout from '../../components/UserLayout';
 import api from '../../utils/api';
 import GoogleRouteMap from '../../components/GoogleRouteMap';
@@ -91,6 +92,7 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const { t } = useLanguage() || { t: (k) => k };
+  const { currentDistrict } = useDistrict() || {};
 
   // Modals state
   const [showAiScanner, setShowAiScanner] = useState(false);
@@ -402,7 +404,7 @@ const UserDashboard = () => {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
                   <span className="text-[11px] font-bold text-slate-300">
-                    Chennai Live AQI: <span className="text-emerald-400 font-black">54 • Good & Clean Air 🍃</span> (31°C Sunny)
+                    {currentDistrict?.name || 'Coimbatore'} Live AQI: <span className="text-emerald-400 font-black">54 • Good & Clean Air 🍃</span> (29°C Pleasant)
                   </span>
                 </div>
               </div>

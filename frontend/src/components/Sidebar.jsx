@@ -157,8 +157,8 @@ const Sidebar = () => {
               className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/30"
             />
             <div className="flex-1 min-w-0">
-              <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1">
-                <span>{user?.name || 'User Profile'}</span>
+              <h4 className="font-extrabold text-slate-900 dark:text-white text-xs truncate flex items-center space-x-1" title={user?.name}>
+                <span>{user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'User Profile'}</span>
               </h4>
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                 <FaLeaf className="h-2.5 w-2.5" />

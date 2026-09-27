@@ -267,7 +267,9 @@ const Navbar = () => {
                         alt="User Avatar" 
                         className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40"
                       />
-                      <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[90px]">{user?.name || 'Driver'}</span>
+                      <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[140px]">
+                        {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'User'}
+                      </span>
                     </Link>
                   )}
 

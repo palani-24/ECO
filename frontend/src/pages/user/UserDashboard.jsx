@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -85,6 +86,7 @@ const UserDashboard = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const { realtimeData } = useSocket() || {};
+  const navigate = useNavigate();
 
   const [pickups, setPickups] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -277,7 +279,7 @@ const UserDashboard = () => {
     if (q.action === 'scanner') {
       setShowAiScanner(true);
     } else if (q.action === 'pickup') {
-      window.location.href = '/schedule-pickup';
+      navigate('/schedule-pickup');
       return;
     }
     setQuests(prev => prev.map(item => item.id === q.id ? { ...item, completed: true } : item));
@@ -415,7 +417,7 @@ const UserDashboard = () => {
               <motion.button
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => window.location.href = '/schedule-pickup'}
+                onClick={() => navigate('/schedule-pickup')}
                 className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center space-x-2 border border-emerald-300/40 cursor-pointer"
               >
                 <FaCalendarPlus className="h-4 w-4" />
@@ -512,15 +514,18 @@ const UserDashboard = () => {
                     {activePickup.driver?.vehicleNumber || 'Vehicle Assigned'} • Status: {activePickup.status}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-2 px-3 bg-sky-500/10 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20">
+                <Link
+                  to="/my-pickups"
+                  className="flex items-center justify-between py-2 px-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20 transition cursor-pointer"
+                >
                   <span className="flex items-center space-x-1.5">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span className="capitalize">{activePickup.status}</span>
+                    <span className="capitalize">{activePickup.status} • Track Live →</span>
                   </span>
                   {activePickup.otpCode && (
                     <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">OTP: {activePickup.otpCode}</span>
                   )}
-                </div>
+                </Link>
               </>
             ) : (
               <>
@@ -535,13 +540,13 @@ const UserDashboard = () => {
                     Ready to recycle scrap & earn rewards?
                   </span>
                 </div>
-                <a
-                  href="/schedule-pickup"
-                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/30 transition flex items-center justify-center space-x-1.5"
+                <Link
+                  to="/schedule-pickup"
+                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <FaCalendarPlus className="text-xs" />
                   <span>Schedule Pickup</span>
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -573,12 +578,15 @@ const UserDashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between py-2 px-3 bg-teal-500/10 text-teal-700 dark:text-teal-300 font-extrabold text-xs rounded-xl border border-teal-500/20">
+            <Link 
+              to="/redeem"
+              className="flex items-center justify-between py-2 px-3 bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 font-extrabold text-xs rounded-xl border border-teal-500/20 transition cursor-pointer"
+            >
               <span className="truncate">Reward Goal</span>
               <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-300">
-                11.5 kg to ₹250 Voucher
+                11.5 kg to ₹250 Voucher →
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
@@ -731,7 +739,7 @@ const UserDashboard = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => window.location.href = '/schedule-pickup'}
+                  onClick={() => navigate('/schedule-pickup')}
                   className="inline-flex items-center space-x-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 hover:scale-105 transition cursor-pointer"
                 >
                   <FaCalendarPlus className="h-4 w-4" />
@@ -839,7 +847,7 @@ const UserDashboard = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => window.location.href = `/schedule-pickup?category=${calcCategory}&weight=${calcWeight}`}
+                    onClick={() => navigate(`/schedule-pickup?category=${calcCategory}&weight=${calcWeight}`)}
                     className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5 shrink-0 cursor-pointer"
                   >
                     <span>Sell Scrap</span>
@@ -848,6 +856,156 @@ const UserDashboard = () => {
                 </div>
               </div>
 
+            </div>
+
+            {/* 4-Bin Waste Segregation Protocol Guide (Moved to Left Column for Perfect Height Balance) */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
+                    <FaTrashAlt />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-slate-900 dark:text-slate-100 text-sm uppercase tracking-wider">
+                      4-Bin Segregation Guide
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      Official Tamil Nadu Solid Waste Management Protocol
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                  Standard Protocol
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {Object.values(SEGREGATION_ITEMS).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedSegKey(item.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 border cursor-pointer ${
+                      selectedSegKey === item.id
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-500/30'
+                    }`}
+                  >
+                    <span>{item.icon}</span>
+                    <span>{item.name}</span>
+                  </button>
+                ))}
+              </div>
+
+              {SEGREGATION_ITEMS[selectedSegKey] && (
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                      {SEGREGATION_ITEMS[selectedSegKey].binName}
+                    </span>
+                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+                      {SEGREGATION_ITEMS[selectedSegKey].reward}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                    {SEGREGATION_ITEMS[selectedSegKey].instructions}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Recent Activity Feed (Balanced in Left Column) */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-lg border border-teal-500/20">
+                    <FaClock />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-slate-900 dark:text-slate-100 text-sm uppercase tracking-wider">
+                      Recent Activity & History
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      Your latest waste diversion logs & transactions
+                    </p>
+                  </div>
+                </div>
+                <Link to="/my-pickups" className="text-xs font-black text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 flex items-center space-x-1">
+                  <span>View All Pickups</span>
+                  <FaArrowRight className="text-[10px]" />
+                </Link>
+              </div>
+
+              <div className="space-y-2.5 text-xs">
+                {pickups && pickups.length > 0 ? (
+                  pickups.slice(0, 3).map((p, idx) => (
+                    <Link
+                      key={p._id || idx}
+                      to="/my-pickups"
+                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition group cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                          <FaTruck />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-slate-100 text-xs capitalize">
+                            {p.wasteType || 'Scrap Material'} Collection
+                          </p>
+                          <span className="text-[11px] text-slate-400">
+                            {p.estimatedWeight || 5} kg • {new Date(p.pickupDate || p.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full capitalize ${
+                          p.status === 'completed' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-sky-500/15 text-sky-600 dark:text-sky-400'
+                        }`}>
+                          {p.status}
+                        </span>
+                        {p.status === 'completed' && (
+                          <span className="block text-[11px] font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
+                            +{p.pointsAwarded || 50} pts
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <>
+                    <Link
+                      to="/my-pickups"
+                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
+                          <FaCheckCircle />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-slate-100 text-xs">Pickup Verified & Weighed</p>
+                          <span className="text-[11px] text-slate-400">12.5 kg Dry Waste • Verified</span>
+                        </div>
+                      </div>
+                      <span className="font-black text-emerald-600 dark:text-emerald-400 text-xs">+45 pts</span>
+                    </Link>
+
+                    <Link
+                      to="/schedule-pickup"
+                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-sky-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="h-9 w-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center text-sm">
+                          <FaTruck />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-slate-100 text-xs">Doorstep Recycling Fleet</p>
+                          <span className="text-[11px] text-slate-400">EV fleet available in your ward</span>
+                        </div>
+                      </div>
+                      <span className="font-black text-sky-600 dark:text-sky-400 text-xs">Book Now →</span>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
 
           </div>
@@ -974,8 +1132,8 @@ const UserDashboard = () => {
               <div className="flex items-center justify-between text-[11px] text-emerald-200/90 font-medium">
                 <span>Total Diverted: <strong className="text-white font-black">{totalKgNumber} kg</strong></span>
                 <button
-                  onClick={() => window.location.href = '/schedule-pickup'}
-                  className="font-black text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors"
+                  onClick={() => navigate('/schedule-pickup')}
+                  className="font-black text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <span>Water Tree with Scrap</span>
                   <FaChevronRight className="text-[9px]" />
@@ -1163,91 +1321,6 @@ const UserDashboard = () => {
                   </div>
                   <span className="text-base font-black text-white block">988 L</span>
                   <span className="text-[9px] text-slate-400">Conserved</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Household Segregation Quick Helper */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-black text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider flex items-center space-x-2">
-                  <FaTrashAlt className="text-emerald-500" />
-                  <span>4-Bin Segregation Guide</span>
-                </h4>
-                <span className="text-[10px] text-emerald-600 font-bold">Standard Protocol</span>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5">
-                {Object.values(SEGREGATION_ITEMS).map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedSegKey(item.id)}
-                    className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all flex items-center space-x-1 border cursor-pointer ${
-                      selectedSegKey === item.id
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
-                    }`}
-                  >
-                    <span>{item.icon}</span>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-
-              {SEGREGATION_ITEMS[selectedSegKey] && (
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-slate-900 dark:text-white text-[11px]">
-                      {SEGREGATION_ITEMS[selectedSegKey].binName}
-                    </span>
-                    <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">
-                      {SEGREGATION_ITEMS[selectedSegKey].reward}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
-                    {SEGREGATION_ITEMS[selectedSegKey].instructions}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Recent Activity Feed */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                <h4 className="font-black text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider flex items-center space-x-2">
-                  <FaClock className="text-emerald-500" />
-                  <span>Recent Activity</span>
-                </h4>
-                <a href="/my-pickups" className="text-[11px] text-emerald-600 font-bold hover:underline">
-                  View all
-                </a>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xs">
-                      <FaCheckCircle />
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-slate-100 text-[11px]">Pickup Verified & Weighed</p>
-                      <span className="text-[10px] text-slate-400">12.5 kg Dry Waste • Today</span>
-                    </div>
-                  </div>
-                  <span className="font-black text-emerald-600 text-xs">+45 pts</span>
-                </div>
-
-                <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <div className="flex items-center space-x-2.5">
-                    <div className="h-8 w-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center text-xs">
-                      <FaTruck />
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-slate-100 text-[11px]">Driver Dispatched</p>
-                      <span className="text-[10px] text-slate-400">EV Mini-Truck • 2.4 km away</span>
-                    </div>
-                  </div>
-                  <span className="font-black text-sky-600 text-xs">En Route</span>
                 </div>
               </div>
             </div>

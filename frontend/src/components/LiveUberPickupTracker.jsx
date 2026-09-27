@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaTruck, FaMapMarkerAlt, FaPhoneAlt, FaComments, FaCheckCircle, 
@@ -385,12 +386,12 @@ const LiveUberPickupTracker = ({
               <FaCheckCircle className="text-emerald-400 text-sm" />
               <span>Waste Picked Up: 8.5 kg • +180 EcoPoints Credited to Wallet!</span>
             </div>
-            <a 
-              href="/rewards" 
+            <Link 
+              to="/redeem" 
               className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black hover:bg-emerald-400 transition"
             >
               Redeem Rewards →
-            </a>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

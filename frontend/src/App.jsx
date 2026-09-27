@@ -171,6 +171,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/rewards" element={<Navigate to="/redeem" replace />} />
               <Route 
                 path="/esg-portal" 
                 element={

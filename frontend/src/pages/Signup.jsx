@@ -5,32 +5,26 @@ import { useToast } from '../context/ToastContext';
 import { TAMIL_NADU_DISTRICTS } from '../context/DistrictContext';
 import { 
   FaUser, FaEnvelope, FaPhoneAlt, FaEye, FaEyeSlash, 
-  FaSpinner, FaCheck, FaTruck, FaBuilding, FaBars, FaTimes,
-  FaMapMarkerAlt, FaCar, FaShieldAlt
+  FaSpinner, FaTruck, FaBars, FaTimes,
+  FaMapMarkerAlt, FaLock, FaUserPlus
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ROLES = [
+// In Registration: Citizen & Driver ONLY as explicitly requested!
+const REGISTRATION_ROLES = [
   {
     id: 'user',
     name: 'Citizen',
     icon: FaUser,
-    badge: 'Earn Rewards & Doorstep Pickup',
-    desc: 'Schedule free EV scrap pickups and earn instant UPI cash'
+    badge: 'Household & Community Recycler',
+    desc: 'Doorstep scrap pickup, smart scale weighing & instant cash'
   },
   {
     id: 'driver',
     name: 'Driver',
     icon: FaTruck,
-    badge: 'EV Fleet Partner',
-    desc: 'Route navigation, Bluetooth weighing & daily pickup earnings'
-  },
-  {
-    id: 'municipality',
-    name: 'Municipal',
-    icon: FaBuilding,
-    badge: 'SWM Ward Administration',
-    desc: 'Grievance resolution & zonal waste analytics portal'
+    badge: 'Green EV Fleet Partner',
+    desc: 'Route pickups, QR manifests & daily logistics incentives'
   }
 ];
 
@@ -47,19 +41,18 @@ const Signup = () => {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  // Role Selection
+  // Role Selection (Citizen or Driver ONLY)
   const [selectedRole, setSelectedRole] = useState('user');
 
   // Input states
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [districtId, setDistrictId] = useState('chennai');
+  const [districtId, setDistrictId] = useState('coimbatore');
   const [ward, setWard] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
 
   // Driver specific
@@ -72,7 +65,7 @@ const Signup = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const activeDistrict = TAMIL_NADU_DISTRICTS.find(d => d.id === districtId) || TAMIL_NADU_DISTRICTS[0];
-  const activeRole = ROLES.find(r => r.id === selectedRole) || ROLES[0];
+  const activeRole = REGISTRATION_ROLES.find(r => r.id === selectedRole) || REGISTRATION_ROLES[0];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,7 +112,7 @@ const Signup = () => {
       email: finalEmail,
       password,
       role: selectedRole,
-      ward: ward.trim() || `${activeDistrict.name} Central Ward`,
+      ward: ward.trim() || `${activeDistrict.name} Ward 01`,
       jurisdiction: activeDistrict.corporation || `${activeDistrict.name} Municipal Administration`,
       department: selectedRole === 'driver' ? 'Green Waste Logistics' : 'Solid Waste Management',
       address: {
@@ -144,7 +137,6 @@ const Signup = () => {
       if (res.success) {
         addToast(`Welcome to EcoReward, ${name}! Your account is ready.`, 'success', 'Account Registered');
         if (selectedRole === 'driver') navigate('/driver');
-        else if (selectedRole === 'municipality') navigate('/municipality/dashboard');
         else navigate('/dashboard');
       } else {
         setError(res.message || 'Registration failed. Mobile or email may already be in use.');
@@ -158,7 +150,7 @@ const Signup = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
       
-      {/* Background Mountain Landscape Artwork */}
+      {/* Background Ambient Modern Eco Landscape */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
@@ -170,8 +162,8 @@ const Signup = () => {
       {/* Atmospheric Soft Lighting Overlay */}
       <div className="fixed inset-0 bg-gradient-to-b from-sky-100/10 via-transparent to-slate-950/20 pointer-events-none z-0" />
 
-      {/* Top Navigation Bar Matching Aesthetic */}
-      <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-6 flex items-center justify-between">
+      {/* Top Navigation Bar Matching Reference Design */}
+      <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-5 flex items-center justify-between">
         
         {/* Brand / Logo */}
         <Link 
@@ -189,9 +181,9 @@ const Signup = () => {
         {/* Desktop Nav Items */}
         <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider text-slate-800">
           <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">HOME</Link>
-          <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">ABOUT</Link>
-          <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">SERVICE</Link>
-          <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">CONTACT</Link>
+          <Link to="/landing#about" className="hover:text-slate-950 transition-colors drop-shadow-xs">ABOUT</Link>
+          <Link to="/landing#features" className="hover:text-slate-950 transition-colors drop-shadow-xs">SERVICE</Link>
+          <Link to="/landing#contact" className="hover:text-slate-950 transition-colors drop-shadow-xs">CONTACT</Link>
           <Link
             to="/login"
             className="px-6 py-1.5 rounded-full border border-white/70 bg-white/30 backdrop-blur-md text-slate-800 font-bold text-sm tracking-wider shadow-sm hover:bg-white/50 hover:shadow transition-all"
@@ -220,13 +212,13 @@ const Signup = () => {
             className="md:hidden relative z-30 mx-6 mb-4 p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-xl flex flex-col space-y-4 text-center font-bold text-slate-800"
           >
             <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
-            <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>ABOUT</Link>
-            <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>SERVICE</Link>
-            <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>CONTACT</Link>
+            <Link to="/landing#about" onClick={() => setMobileMenuOpen(false)}>ABOUT</Link>
+            <Link to="/landing#features" onClick={() => setMobileMenuOpen(false)}>SERVICE</Link>
+            <Link to="/landing#contact" onClick={() => setMobileMenuOpen(false)}>CONTACT</Link>
             <Link
               to="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 px-4 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md"
+              className="py-2 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
             >
               LOGIN
             </Link>
@@ -235,54 +227,65 @@ const Signup = () => {
       </AnimatePresence>
 
       {/* Main Center Container */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-6 sm:py-10">
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-6 sm:py-8">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="w-full max-w-[480px]"
         >
-          {/* Frosted Glassmorphism Card */}
-          <div className="relative rounded-[32px] p-7 sm:p-10 backdrop-blur-2xl bg-white/20 border border-white/50 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.3)] overflow-hidden transition-all duration-300">
+          {/* Frosted Glassmorphism Card Matching Reference Image 3 */}
+          <div className="relative rounded-[32px] p-6 sm:p-9 backdrop-blur-2xl bg-white/40 border border-white/60 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.25)] overflow-hidden transition-all duration-300">
             
-            {/* Ambient Background Glow */}
-            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/30 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl pointer-events-none" />
+            {/* Close Button 'X' at Top Right (Navigates to Home like in Image 3) */}
+            <button
+              onClick={() => navigate('/landing')}
+              className="absolute top-5 right-5 p-2 rounded-xl text-slate-600 hover:text-slate-950 hover:bg-white/40 transition-colors z-20"
+              aria-label="Close to Home"
+            >
+              <FaTimes className="text-sm sm:text-base" />
+            </button>
 
-            {/* Header Title */}
-            <h1 className="relative text-2xl sm:text-3xl font-black tracking-wider text-slate-900 text-center mb-5 drop-shadow-xs">
-              CREATE ACCOUNT
-            </h1>
+            {/* Ambient Highlights */}
+            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/40 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Role Selection Tabs */}
-            <div className="mb-5">
-              <div className="flex items-center justify-between p-1 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40">
-                {ROLES.map((r) => {
-                  const Icon = r.icon;
-                  const isActive = selectedRole === r.id;
+            {/* Title Matching Reference Image 3 */}
+            <div className="text-center mb-5 relative z-10">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Registration
+              </h1>
+              <p className="text-xs text-slate-600 font-medium mt-1">
+                {activeRole.desc}
+              </p>
+            </div>
+
+            {/* Role Selection: Citizen & Driver ONLY */}
+            <div className="mb-5 relative z-10">
+              <div className="flex items-center p-1 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-2xs">
+                {REGISTRATION_ROLES.map((role) => {
+                  const Icon = role.icon;
+                  const isSelected = selectedRole === role.id;
                   return (
                     <button
-                      key={r.id}
+                      key={role.id}
                       type="button"
                       onClick={() => {
-                        setSelectedRole(r.id);
+                        setSelectedRole(role.id);
                         setError('');
                       }}
-                      className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
-                        isActive
-                          ? 'bg-white/90 text-slate-900 shadow-sm shadow-slate-900/10 scale-102 font-black'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-white/20'
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
+                        isSelected
+                          ? 'bg-emerald-600 text-white shadow-md font-black scale-102'
+                          : 'text-slate-700 hover:text-slate-950'
                       }`}
                     >
                       <Icon className="text-xs" />
-                      <span>{r.name}</span>
+                      <span>{role.name}</span>
                     </button>
                   );
                 })}
               </div>
-              <p className="text-[11px] text-center text-slate-700/80 font-medium mt-1.5">
-                Register as <span className="font-bold text-slate-900">{activeRole.name}</span> • {activeRole.badge}
-              </p>
             </div>
 
             {/* Error Message */}
@@ -290,14 +293,14 @@ const Signup = () => {
               <motion.div 
                 initial={{ opacity: 0, y: -5 }} 
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-950 text-xs font-semibold text-center backdrop-blur-sm"
+                className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-950 text-xs font-semibold text-center backdrop-blur-sm z-10"
               >
                 {error}
               </motion.div>
             )}
 
-            {/* Registration Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Registration Form with fields and right-side icons matching Image 3 */}
+            <form onSubmit={handleSubmit} className="space-y-3 relative z-10">
               
               {/* Full Name */}
               <div className="relative pt-1">
@@ -307,9 +310,9 @@ const Signup = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full Name"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
                 />
-                <FaUser className="absolute right-1 bottom-2.5 text-slate-700/80 text-sm pointer-events-none" />
+                <FaUser className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
               </div>
 
               {/* Mobile Number */}
@@ -321,9 +324,9 @@ const Signup = () => {
                   placeholder="Mobile Number (10 digits)"
                   required
                   maxLength={10}
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
                 />
-                <FaPhoneAlt className="absolute right-1 bottom-2.5 text-slate-700/80 text-sm pointer-events-none" />
+                <FaPhoneAlt className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
               </div>
 
               {/* Email Address */}
@@ -332,169 +335,154 @@ const Signup = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address"
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-8 transition-colors"
+                  placeholder="Email Address (optional)"
+                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
                 />
-                <FaEnvelope className="absolute right-1 bottom-2.5 text-slate-700/80 text-sm pointer-events-none" />
+                <FaEnvelope className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
               </div>
 
-              {/* District & Ward Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="relative">
-                  <select
-                    value={districtId}
-                    onChange={(e) => setDistrictId(e.target.value)}
-                    className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-sm outline-none transition-colors cursor-pointer"
-                  >
-                    {TAMIL_NADU_DISTRICTS.map((d) => (
-                      <option key={d.id} value={d.id} className="text-slate-900 bg-white">
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={ward}
-                    onChange={(e) => setWard(e.target.value)}
-                    placeholder="Ward / Street (optional)"
-                    className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-6 transition-colors"
-                  />
-                  <FaMapMarkerAlt className="absolute right-1 bottom-2.5 text-slate-700/80 text-xs pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Driver Special Fields */}
-              {selectedRole === 'driver' && (
-                <div className="space-y-3 pt-1 border-t border-white/30">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={vehicleNumber}
-                      onChange={(e) => setVehicleNumber(e.target.value)}
-                      placeholder="EV Vehicle Number (e.g. TN-38-EV-9945)"
-                      required
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-8 transition-colors"
-                    />
-                    <FaCar className="absolute right-1 bottom-2.5 text-slate-700/80 text-sm pointer-events-none" />
-                  </div>
+              {/* Citizen specific: District & Ward */}
+              {selectedRole === 'user' && (
+                <div className="grid grid-cols-2 gap-2 pt-1">
                   <div className="relative">
                     <select
-                      value={vehicleType}
-                      onChange={(e) => setVehicleType(e.target.value)}
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-xs outline-none transition-colors cursor-pointer"
+                      value={districtId}
+                      onChange={(e) => setDistrictId(e.target.value)}
+                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 font-semibold text-xs outline-none transition-all cursor-pointer"
                     >
-                      {VEHICLE_TYPES.map((t) => (
-                        <option key={t} value={t} className="text-slate-900 bg-white">
-                          {t}
+                      {TAMIL_NADU_DISTRICTS.map((d) => (
+                        <option key={d.id} value={d.id} className="text-slate-900 bg-white">
+                          {d.name}
                         </option>
                       ))}
                     </select>
                   </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={ward}
+                      onChange={(e) => setWard(e.target.value)}
+                      placeholder="Ward / Area"
+                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 placeholder:text-slate-500 font-semibold text-xs outline-none pr-7 transition-all"
+                    />
+                    <FaMapMarkerAlt className="absolute right-2.5 top-3.5 text-slate-500 text-xs pointer-events-none" />
+                  </div>
                 </div>
               )}
 
-              {/* Passwords */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                    className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-7 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-1 bottom-2.5 text-slate-700/80 hover:text-slate-950 text-xs"
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
+              {/* Driver specific: Vehicle Type & Plate Number */}
+              {selectedRole === 'driver' && (
+                <div className="space-y-2 pt-1">
+                  <div className="relative">
+                    <select
+                      value={vehicleType}
+                      onChange={(e) => setVehicleType(e.target.value)}
+                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 font-semibold text-xs outline-none transition-all cursor-pointer"
+                    >
+                      {VEHICLE_TYPES.map((v, i) => (
+                        <option key={i} value={v} className="text-slate-900 bg-white">
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={vehicleNumber}
+                      onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
+                      placeholder="Vehicle Registration Plate (e.g. TN-38-ECO-9945)"
+                      required
+                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-xs outline-none pr-8 uppercase tracking-wider transition-all"
+                    />
+                    <FaTruck className="absolute right-3 top-3.5 text-slate-500 text-xs pointer-events-none" />
+                  </div>
                 </div>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm Password"
-                    required
-                    className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700/80 font-medium text-sm outline-none pr-7 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-1 bottom-2.5 text-slate-700/80 hover:text-slate-950 text-xs"
-                  >
-                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
+              )}
+
+              {/* Password */}
+              <div className="relative pt-1">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password (min 4 chars)"
+                  required
+                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-14 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3.5 text-slate-500 hover:text-slate-800 text-xs"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
 
-              {/* Terms Checkbox */}
-              <label className="flex items-start space-x-2.5 pt-2 cursor-pointer select-none">
+              {/* Confirm Password */}
+              <div className="relative pt-1">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm Password"
+                  required
+                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-8 transition-all"
+                />
+                <FaLock className="absolute right-3.5 top-3.5 text-slate-500 text-xs pointer-events-none" />
+              </div>
+
+              {/* Agree to terms */}
+              <div className="flex items-center space-x-2 pt-1">
                 <input
                   type="checkbox"
+                  id="agreeTerms"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="sr-only"
+                  className="rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 h-4 w-4 cursor-pointer"
                 />
-                <div 
-                  className={`w-4 h-4 rounded mt-0.5 border flex items-center justify-center transition-all flex-shrink-0 ${
-                    agreeTerms 
-                      ? 'bg-slate-800 border-slate-800 text-white shadow-xs' 
-                      : 'border-slate-700/70 bg-white/40 hover:bg-white/60'
-                  }`}
-                >
-                  {agreeTerms && <FaCheck className="text-[9px]" />}
-                </div>
-                <span className="text-xs font-semibold text-slate-800 leading-tight">
-                  I agree to the <span className="underline">Terms of Service</span> & <span className="underline">Privacy Policy</span>
-                </span>
-              </label>
+                <label htmlFor="agreeTerms" className="text-xs text-slate-700 font-semibold cursor-pointer">
+                  I agree to the terms & conditions
+                </label>
+              </div>
 
-              {/* Gradient Submit Button */}
+              {/* Action Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#5a8ee5] via-[#4679d4] to-[#366ac3] hover:from-[#4b82dc] hover:to-[#2c5caa] text-white font-semibold text-base shadow-lg shadow-blue-500/30 hover:shadow-blue-500/45 transition-all duration-200 active:scale-[0.98] text-center flex items-center justify-center space-x-2 cursor-pointer mt-4"
+                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm tracking-wide shadow-md shadow-emerald-600/30 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60"
               >
                 {loading ? (
-                  <FaSpinner className="animate-spin text-lg" />
+                  <>
+                    <FaSpinner className="animate-spin text-sm" />
+                    <span>Registering...</span>
+                  </>
                 ) : (
-                  <span>Create Account</span>
+                  <>
+                    <FaUserPlus className="text-sm" />
+                    <span>Register as {activeRole.name}</span>
+                  </>
                 )}
               </button>
-
-              {/* Footer Switcher */}
-              <p className="text-center text-sm text-slate-800 font-medium pt-2 drop-shadow-xs">
-                Already have an Account?{' '}
-                <Link
-                  to="/login"
-                  className="font-bold text-slate-900 hover:underline ml-1"
-                >
-                  Sign In
-                </Link>
-              </p>
             </form>
 
-          </div>
-
-          {/* Bonus hint */}
-          <div className="mt-3 text-center">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/40 text-[11px] font-semibold text-slate-800 shadow-xs">
-              <span>🎁 Citizens receive <span className="font-bold text-emerald-800">50 Free Welcome Green Points</span></span>
+            {/* Bottom Link matching Image 3: Already have account? Login */}
+            <div className="text-center pt-4 mt-3 border-t border-slate-200/60 relative z-10">
+              <p className="text-xs text-slate-700 font-medium">
+                Already have account?{' '}
+                <Link to="/login" className="font-black text-emerald-800 hover:text-emerald-950 underline underline-offset-2">
+                  Login
+                </Link>
+              </p>
             </div>
-          </div>
 
+          </div>
         </motion.div>
       </main>
 
-      {/* Subtle Bottom Credit */}
-      <footer className="relative z-10 py-4 text-center text-xs font-semibold text-slate-700/80 drop-shadow-xs">
-        © 2026 EcoReward TN • Smart Waste Management & Clean Energy Initiative
+      {/* Modern Compact Footer */}
+      <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-slate-700/80">
+        <p>© 2026 EcoReward Platform • Tamil Nadu Smart Waste & EV Recycling Grid</p>
       </footer>
 
     </div>

@@ -13,7 +13,6 @@ import {
   FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal, FaUserPlus
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import api from '../utils/api';
 import { useSocket } from '../context/SocketContext';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
@@ -1660,8 +1659,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };

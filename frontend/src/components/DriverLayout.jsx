@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Footer from './Footer';
 import MobileDriverHeader from './MobileDriverHeader';
 import MobileDriverNav from './MobileDriverNav';
 
@@ -37,12 +36,6 @@ const DriverLayout = ({ children, hideFooter = false }) => {
         <MobileDriverNav />
       </div>
 
-      {/* 💻 Desktop Footer */}
-      {!hideFooter && (
-        <div className="hidden md:block">
-          <Footer />
-        </div>
-      )}
     </div>
   );
 };

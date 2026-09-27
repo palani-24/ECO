@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Footer from './Footer';
 import MobileAdminHeader from './MobileAdminHeader';
 import MobileAdminNav from './MobileAdminNav';
 
@@ -37,12 +36,6 @@ const AdminLayout = ({ children, hideFooter = false, title = 'Admin Console' }) 
         <MobileAdminNav />
       </div>
 
-      {/* 💻 Desktop Footer */}
-      {!hideFooter && (
-        <div className="hidden md:block">
-          <Footer />
-        </div>
-      )}
     </div>
   );
 };

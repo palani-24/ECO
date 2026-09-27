@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Footer from './Footer';
 import MobileCitizenHeader from './MobileCitizenHeader';
 import MobileCitizenNav from './MobileCitizenNav';
 
@@ -37,12 +36,6 @@ const UserLayout = ({ children, hideFooter = false }) => {
         <MobileCitizenNav />
       </div>
 
-      {/* 💻 Desktop Footer */}
-      {!hideFooter && (
-        <div className="hidden md:block">
-          <Footer />
-        </div>
-      )}
     </div>
   );
 };

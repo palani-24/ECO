@@ -144,56 +144,54 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Executive Glassmorphic Eco Navigation Panel) */}
-      <aside className="hidden md:flex w-64 xl:w-72 flex-shrink-0 sticky top-20 h-[calc(100vh-6rem)] rounded-3xl bg-slate-900/95 dark:bg-[#071817]/95 backdrop-blur-2xl border border-emerald-500/25 shadow-2xl shadow-emerald-950/40 flex-col justify-between p-4.5 text-white transition-all overflow-hidden select-none">
+      {/* Desktop Sidebar (Pristine White Executive Eco Navigation Panel) */}
+      <aside className="hidden md:flex w-64 xl:w-72 flex-shrink-0 sticky top-20 h-[calc(100vh-6rem)] rounded-3xl bg-white border border-slate-200/90 shadow-sm flex-col justify-between p-4.5 text-slate-800 transition-all overflow-hidden select-none">
         
         <div className="space-y-4 flex-1 flex flex-col min-h-0">
           
           {/* User Profile Quick Executive Card */}
-          <div className="p-3.5 bg-gradient-to-br from-slate-950/80 to-emerald-950/50 border border-emerald-500/30 rounded-2xl flex flex-col gap-2.5 shadow-lg relative overflow-hidden group">
-            <div className="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
-            
+          <div className="p-3.5 bg-slate-50/90 border border-slate-200/80 rounded-2xl flex flex-col gap-2.5 shadow-xs relative overflow-hidden group">
             <div className="flex items-center space-x-3 relative z-10">
               <div className="relative">
                 <img 
                   src={getAvatarUrl(user, user?.name)} 
                   onError={(e) => handleAvatarError(e, user?.name)}
                   alt={user?.name || 'User'} 
-                  className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.3)] bg-slate-800"
+                  className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/40 shadow-xs bg-white"
                 />
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-slate-900 animate-pulse"></span>
+                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse"></span>
               </div>
               
               <div className="flex-1 min-w-0">
-                <h4 className="font-black text-white text-xs truncate leading-tight flex items-center space-x-1" title={user?.name}>
+                <h4 className="font-black text-slate-900 text-xs truncate leading-tight flex items-center space-x-1" title={user?.name}>
                   <span>{user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}</span>
                 </h4>
-                <span className="text-[10px] text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
+                <span className="text-[10px] text-emerald-600 font-extrabold flex items-center space-x-1 pt-0.5">
                   <FaLeaf className="h-2.5 w-2.5 shrink-0" />
                   <span className="capitalize">{user.role === 'customer' ? 'Eco Guardian' : `${user.role} Partner`}</span>
                 </span>
               </div>
 
               <div className="text-right shrink-0">
-                <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-black rounded-xl block border border-emerald-500/30 shadow-xs">
+                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-xl block border border-emerald-500/25 shadow-xs">
                   {user.points || 0} pts
                 </span>
               </div>
             </div>
 
             {/* Mini Eco Level Tier Strip */}
-            <div className="pt-1.5 border-t border-emerald-500/15 flex items-center justify-between text-[10px] text-slate-300 font-bold">
-              <span className="text-emerald-300">Level 4 Citizen</span>
+            <div className="pt-1.5 border-t border-slate-200/70 flex items-center justify-between text-[10px] text-slate-600 font-bold">
+              <span className="text-emerald-700 font-extrabold">Level 4 Citizen</span>
               <span className="text-slate-400 font-mono">71% to Lvl 5</span>
             </div>
-            <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-emerald-500/20">
-              <div className="bg-gradient-to-r from-emerald-400 to-teal-400 h-full rounded-full" style={{ width: '71%' }}></div>
+            <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full" style={{ width: '71%' }}></div>
             </div>
           </div>
 
           {/* Navigation Links (Scrollable if viewport is small) */}
-          <div className="flex-1 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-emerald-500/20">
-            <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400/70 px-3 block mb-1.5">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-slate-200">
+            <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 block mb-1.5">
               Portal Menu
             </span>
             {links.map((link, idx) => {
@@ -207,20 +205,20 @@ const Sidebar = () => {
                   className={
                     `flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black transition-all duration-200 cursor-pointer ${
                       active
-                        ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-lg shadow-emerald-500/30 scale-[1.02]'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5 hover:border-emerald-500/20 border border-transparent'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 scale-[1.02]'
+                        : 'text-slate-600 hover:text-emerald-700 hover:bg-slate-100 border border-transparent'
                     }`
                   }
                 >
                   <div className="flex items-center space-x-3">
-                    <Icon className={`h-4 w-4 flex-shrink-0 ${active ? 'text-slate-950' : 'text-emerald-400'}`} />
+                    <Icon className={`h-4 w-4 flex-shrink-0 ${active ? 'text-white' : 'text-slate-400'}`} />
                     <span>{link.label}</span>
                   </div>
                   {link.badge && (
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black shadow-xs ${
                       active 
-                        ? 'bg-slate-950 text-emerald-400' 
-                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        ? 'bg-white/25 text-white' 
+                        : 'bg-emerald-50 text-emerald-700 border border-emerald-500/25'
                     }`}>
                       {link.badge}
                     </span>
@@ -232,18 +230,18 @@ const Sidebar = () => {
         </div>
 
         {/* Bottom District AQI & Logout Button */}
-        <div className="pt-3 border-t border-emerald-500/20 space-y-2 mt-auto">
-          <div className="flex items-center justify-between px-2 text-[10px] text-slate-400 font-bold">
+        <div className="pt-3 border-t border-slate-200/70 space-y-2 mt-auto">
+          <div className="flex items-center justify-between px-2 text-[10px] text-slate-500 font-bold">
             <span className="flex items-center space-x-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span className="text-emerald-300 font-black">Live Eco Grid</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+              <span className="text-emerald-600 font-black">Live Eco Grid</span>
             </span>
             <span className="text-slate-400">Net Positive</span>
           </div>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-black transition-all border border-rose-500/30 cursor-pointer active:scale-98 shadow-sm"
+            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-black transition-all border border-rose-200 cursor-pointer active:scale-98 shadow-xs"
           >
             <FaSignOutAlt className="h-3.5 w-3.5" />
             <span>Logout Account</span>
@@ -255,15 +253,15 @@ const Sidebar = () => {
       {isMobileDrawerOpen && (
         <div 
           onClick={() => setIsMobileDrawerOpen(false)}
-          className="md:hidden fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+          className="md:hidden fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="fixed inset-y-0 left-0 w-[85%] max-w-xs bg-slate-900 border-r border-emerald-500/30 p-5 space-y-4 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300 h-full text-white"
+            className="fixed inset-y-0 left-0 w-[85%] max-w-xs bg-white border-r border-slate-200 p-5 space-y-4 flex flex-col justify-between shadow-2xl animate-in slide-in-from-left duration-300 h-full text-slate-900"
           >
             
             {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
                 <img 
                   src="/app-logo.png" 
@@ -271,17 +269,17 @@ const Sidebar = () => {
                   className="h-8 w-8 rounded-xl object-contain ring-1 ring-emerald-500/30 shadow-sm" 
                 />
                 <div>
-                  <span className="font-black text-white text-sm block leading-tight">
+                  <span className="font-black text-slate-900 text-sm block leading-tight">
                     EcoReward
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-bold capitalize">
+                  <span className="text-[10px] text-emerald-600 font-bold capitalize">
                     {user.role} Navigation
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsMobileDrawerOpen(false)}
-                className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+                className="p-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
                 aria-label="Close navigation menu"
               >
                 <FaTimes className="h-4 w-4" />
@@ -289,23 +287,23 @@ const Sidebar = () => {
             </div>
 
             {/* Mobile User Profile Quick Card */}
-            <div className="p-3.5 bg-gradient-to-br from-slate-950 to-emerald-950/60 border border-emerald-500/30 rounded-2xl flex items-center space-x-3 shadow-md">
+            <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center space-x-3 shadow-xs">
               <img 
                 src={getAvatarUrl(user, user?.name)} 
                 onError={(e) => handleAvatarError(e, user?.name)}
                 alt={user?.name || 'User'} 
-                className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-400 shadow-sm"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-emerald-500/40 shadow-sm bg-white"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-black text-white text-xs truncate">
+                <h4 className="font-black text-slate-900 text-xs truncate">
                   {user?.name || 'User Profile'}
                 </h4>
-                <span className="text-[10px] text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
+                <span className="text-[10px] text-emerald-600 font-extrabold flex items-center space-x-1 pt-0.5">
                   <FaLeaf className="h-2.5 w-2.5" />
                   <span className="capitalize">{user.role} Member</span>
                 </span>
               </div>
-              <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-black rounded-lg border border-emerald-500/30 shrink-0">
+              <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-lg border border-emerald-500/25 shrink-0">
                 {user.points || 0} pts
               </span>
             </div>
@@ -316,7 +314,7 @@ const Sidebar = () => {
                 <NavLink
                   to="/schedule-pickup"
                   onClick={() => setIsMobileDrawerOpen(false)}
-                  className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center space-x-2 text-xs font-black hover:bg-emerald-500/20 transition"
+                  className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-500/30 text-emerald-700 flex items-center space-x-2 text-xs font-black hover:bg-emerald-100 transition"
                 >
                   <FaCalendarAlt className="text-xs shrink-0" />
                   <span className="truncate">Book Pickup</span>
@@ -324,7 +322,7 @@ const Sidebar = () => {
                 <NavLink
                   to="/redeem"
                   onClick={() => setIsMobileDrawerOpen(false)}
-                  className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-600 dark:text-teal-400 flex items-center space-x-2 text-xs font-black hover:bg-teal-500/20 transition"
+                  className="p-2.5 rounded-xl bg-teal-50 border border-teal-500/30 text-teal-700 flex items-center space-x-2 text-xs font-black hover:bg-teal-100 transition"
                 >
                   <FaCoins className="text-xs shrink-0" />
                   <span className="truncate">Redeem Cash</span>
@@ -334,7 +332,7 @@ const Sidebar = () => {
 
             {/* Full Scrollable Navigation Links List for Mobile */}
             <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 scrollbar-thin">
-              <span className="text-[9px] uppercase font-black tracking-widest text-emerald-400/70 px-3 block mb-1">
+              <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 block mb-1">
                 Portal Options
               </span>
               {links.map((link, idx) => {
@@ -349,20 +347,20 @@ const Sidebar = () => {
                     className={
                       `flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-black transition-all duration-200 ${
                         active
-                          ? 'bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 shadow-md shadow-emerald-500/30'
-                          : 'text-slate-300 hover:text-white hover:bg-white/5'
+                          ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25'
+                          : 'text-slate-700 hover:text-emerald-700 hover:bg-slate-100'
                       }`
                     }
                   >
                     <div className="flex items-center space-x-3">
-                      <div className={`p-1.5 rounded-xl ${active ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-emerald-400'}`}>
+                      <div className={`p-1.5 rounded-xl ${active ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
                         <Icon className="h-4 w-4 shrink-0" />
                       </div>
                       <span>{link.label}</span>
                     </div>
                     {link.badge && (
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                        active ? 'bg-slate-950 text-emerald-400' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        active ? 'bg-white/25 text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-500/25'
                       }`}>
                         {link.badge}
                       </span>
@@ -373,10 +371,10 @@ const Sidebar = () => {
             </div>
 
             {/* Mobile Footer Logout */}
-            <div className="pt-3 border-t border-emerald-500/20">
+            <div className="pt-3 border-t border-slate-100">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-black text-xs border border-rose-500/30 cursor-pointer active:scale-98 transition"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-black text-xs border border-rose-200 cursor-pointer active:scale-98 transition"
               >
                 <FaSignOutAlt className="h-4 w-4" />
                 <span>Logout Account</span>

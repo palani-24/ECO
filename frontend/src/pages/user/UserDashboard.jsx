@@ -365,37 +365,37 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Modern Executive Hero Glass Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-900/90 via-slate-900 to-teal-950/90 border border-emerald-500/30 p-6 sm:p-8 text-white shadow-xl backdrop-blur-xl">
+        {/* Modern Executive Hero White Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 text-slate-900 shadow-sm">
           {/* Subtle Ambient Glow Orbs */}
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             {/* User Greeting & Status */}
             <div className="flex items-center space-x-4">
               <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-0.5 shadow-lg shadow-emerald-950/50">
-                  <div className="w-full h-full rounded-2xl bg-slate-950/80 flex items-center justify-center text-3xl">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/20">
+                  <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center text-3xl">
                     🌱
                   </div>
                 </div>
-                <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full border border-slate-900 shadow-sm">
+                <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full border border-white shadow-xs">
                   LVL 4
                 </span>
               </div>
 
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                     Welcome back, {user?.name ? user.name.split(' ')[0] : 'Citizen'}! 👋
                   </h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-400/30">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-black border border-emerald-500/30">
                     Eco Guardian
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-emerald-100/80 font-medium max-w-xl">
+                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-xl">
                   Turn household scrap into verified environmental impact & instant rewards.
                 </p>
 
@@ -405,8 +405,8 @@ const UserDashboard = () => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <span className="text-[11px] font-bold text-slate-300">
-                    {currentDistrict?.name || 'Coimbatore'} Live AQI: <span className="text-emerald-400 font-black">54 • Good & Clean Air 🍃</span> (29°C Pleasant)
+                  <span className="text-[11px] font-bold text-slate-500">
+                    {currentDistrict?.name || 'Coimbatore'} Live AQI: <span className="text-emerald-600 font-black">54 • Good & Clean Air 🍃</span> (29°C Pleasant)
                   </span>
                 </div>
               </div>
@@ -418,7 +418,7 @@ const UserDashboard = () => {
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => navigate('/schedule-pickup')}
-                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center space-x-2 border border-emerald-300/40 cursor-pointer"
+                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
               >
                 <FaCalendarPlus className="h-4 w-4" />
                 <span>Schedule Pickup</span>
@@ -428,9 +428,9 @@ const UserDashboard = () => {
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setShowAiScanner(true)}
-                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-emerald-300 font-black text-xs border border-emerald-500/40 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-md backdrop-blur-md"
+                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-black text-xs border border-slate-300 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
               >
-                <FaCamera className="h-4 w-4 text-emerald-400" />
+                <FaCamera className="h-4 w-4 text-emerald-600" />
                 <span>AI Waste Scanner</span>
               </motion.button>
 
@@ -441,10 +441,10 @@ const UserDashboard = () => {
                   triggerHaptic(30);
                   setShowEcoStory(true);
                 }}
-                className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 hover:from-teal-500/30 hover:to-emerald-500/30 text-emerald-300 font-black text-xs border border-emerald-400/40 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-md backdrop-blur-md"
+                className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-50 hover:bg-teal-100 text-teal-700 font-black text-xs border border-teal-200 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 title="Generate 9:16 Instagram & WhatsApp Story Card"
               >
-                <FaLeaf className="h-4 w-4 text-emerald-400" />
+                <FaLeaf className="h-4 w-4 text-teal-600" />
                 <span>Eco Story</span>
               </motion.button>
             </div>
@@ -1014,27 +1014,27 @@ const UserDashboard = () => {
           <div className="lg:col-span-5 space-y-6">
             
             {/* Dynamic Virtual Tree Growth & Impact Progression Widget */}
-            <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 border-2 border-emerald-500/30 rounded-3xl p-5 sm:p-6 shadow-xl relative overflow-hidden text-white">
+            <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden text-slate-900">
               
               {/* Background ambient lighting */}
-              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/15 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
 
-              <div className="relative z-10 flex items-center justify-between pb-3 border-b border-emerald-500/20">
+              <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center text-lg shadow-inner">
+                  <div className="w-9 h-9 rounded-2xl bg-emerald-50 border border-emerald-500/30 text-emerald-600 flex items-center justify-center text-lg shadow-xs">
                     <FaSeedling className="animate-bounce" />
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-black text-white text-sm sm:text-base">
+                      <h3 className="font-black text-slate-900 text-sm sm:text-base">
                         {t('plantTree') || 'Virtual Tree Growth'}
                       </h3>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-black uppercase tracking-wider border border-emerald-400/30">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[9px] font-black uppercase tracking-wider border border-emerald-500/30">
                         {treeStage.stageTag}
                       </span>
                     </div>
-                    <p className="text-[11px] text-emerald-200/80 font-medium">
+                    <p className="text-[11px] text-slate-500 font-medium">
                       Grows with every kilogram you recycle
                     </p>
                   </div>
@@ -1045,21 +1045,21 @@ const UserDashboard = () => {
                     triggerHaptic(30);
                     setShowEcoStory(true);
                   }}
-                  className="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-xl text-[11px] font-black border border-emerald-500/30 transition flex items-center gap-1"
+                  className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-[11px] font-black border border-slate-200 transition flex items-center gap-1 shadow-xs cursor-pointer"
                 >
-                  <FaShareAlt className="text-[10px]" />
+                  <FaShareAlt className="text-[10px] text-emerald-600" />
                   <span>Story</span>
                 </button>
               </div>
 
               {/* Center Interactive Tree Canvas */}
-              <div className="relative z-10 my-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/60 p-4 rounded-2xl border border-emerald-500/20">
+              <div className="relative z-10 my-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
                 
                 {/* SVG Tree Stage Graphic */}
                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0">
-                  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_12px_rgba(16,185,129,0.4)]">
+                  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
                     {/* Ground Mound */}
-                    <ellipse cx="50" cy="88" rx="38" ry="8" fill="#14532d" opacity="0.6" />
+                    <ellipse cx="50" cy="88" rx="38" ry="8" fill="#14532d" opacity="0.4" />
                     <ellipse cx="50" cy="86" rx="28" ry="6" fill="#166534" />
                     
                     {treeStage.level === 1 && (
@@ -1103,9 +1103,9 @@ const UserDashboard = () => {
                 <div className="flex-1 space-y-2 text-center sm:text-left">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
                     <span className="text-lg">{treeStage.icon}</span>
-                    <h4 className="text-sm font-black text-white">{treeStage.name}</h4>
+                    <h4 className="text-sm font-black text-slate-900">{treeStage.name}</h4>
                   </div>
-                  <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
+                  <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
                     {treeStage.level === 5 
                       ? 'Congratulations! You have reached maximum tree maturity and diverted hundreds of kilograms.'
                       : `Recycle ${treeStage.remaining} kg more waste to evolve your tree to the next maturity rank.`}
@@ -1113,13 +1113,13 @@ const UserDashboard = () => {
 
                   {/* Growth Progress Bar */}
                   <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-bold text-emerald-300">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-600">
                       <span>Maturity Progress</span>
-                      <span>{treeStage.pct}%</span>
+                      <span className="text-emerald-700 font-black">{treeStage.pct}%</span>
                     </div>
-                    <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-emerald-500/30">
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                       <div 
-                        className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full rounded-full transition-all duration-500 shadow-[0_0_10px_#10b981]" 
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500 shadow-xs" 
                         style={{ width: `${treeStage.pct}%` }}
                       />
                     </div>
@@ -1129,11 +1129,11 @@ const UserDashboard = () => {
               </div>
 
               {/* Mini quick nudge */}
-              <div className="flex items-center justify-between text-[11px] text-emerald-200/90 font-medium">
-                <span>Total Diverted: <strong className="text-white font-black">{totalKgNumber} kg</strong></span>
+              <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                <span>Total Diverted: <strong className="text-slate-900 font-black">{totalKgNumber} kg</strong></span>
                 <button
                   onClick={() => navigate('/schedule-pickup')}
-                  className="font-black text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="font-black text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <span>Water Tree with Scrap</span>
                   <FaChevronRight className="text-[9px]" />
@@ -1270,56 +1270,56 @@ const UserDashboard = () => {
             </div>
 
             {/* Real-World Impact Equivalencies */}
-            <div className="bg-gradient-to-br from-emerald-900/30 via-slate-900 to-teal-950/40 border border-emerald-500/30 p-5 sm:p-6 rounded-3xl shadow-sm text-white space-y-4">
-              <div className="flex items-center justify-between border-b border-emerald-500/20 pb-3">
+            <div className="bg-white border border-slate-200/90 p-5 sm:p-6 rounded-3xl shadow-sm text-slate-900 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm border border-emerald-400/30">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm border border-emerald-500/30 shadow-xs">
                     <FaLeaf />
                   </div>
                   <div>
-                    <h3 className="font-black text-white text-sm">Real-World Equivalencies</h3>
-                    <p className="text-[10px] text-emerald-200/80">From your 35.3 kg CO₂ reduction</p>
+                    <h3 className="font-black text-slate-900 text-sm">Real-World Equivalencies</h3>
+                    <p className="text-[10px] text-slate-500">From your 35.3 kg CO₂ reduction</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-500/30">
                   Net Positive
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
-                  <div className="flex items-center space-x-1.5 text-sky-400 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center space-x-1.5 text-sky-600 text-xs mb-1">
                     <FaCarSide />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Car Travel</span>
                   </div>
-                  <span className="text-base font-black text-white block">145 km</span>
+                  <span className="text-base font-black text-slate-900 block">145 km</span>
                   <span className="text-[9px] text-slate-400">Gasoline offset</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
-                  <div className="flex items-center space-x-1.5 text-lime-400 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center space-x-1.5 text-lime-600 text-xs mb-1">
                     <FaSeedling />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Saplings</span>
                   </div>
-                  <span className="text-base font-black text-white block">2.8 Trees</span>
+                  <span className="text-base font-black text-slate-900 block">2.8 Trees</span>
                   <span className="text-[9px] text-slate-400">Nurtured 1 yr</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
-                  <div className="flex items-center space-x-1.5 text-amber-400 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center space-x-1.5 text-amber-600 text-xs mb-1">
                     <FaLightbulb />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Clean Power</span>
                   </div>
-                  <span className="text-base font-black text-white block">230 hrs</span>
+                  <span className="text-base font-black text-slate-900 block">230 hrs</span>
                   <span className="text-[9px] text-slate-400">LED power saved</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20">
-                  <div className="flex items-center space-x-1.5 text-cyan-400 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                  <div className="flex items-center space-x-1.5 text-teal-600 text-xs mb-1">
                     <FaWater />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Fresh Water</span>
                   </div>
-                  <span className="text-base font-black text-white block">988 L</span>
+                  <span className="text-base font-black text-slate-900 block">988 L</span>
                   <span className="text-[9px] text-slate-400">Conserved</span>
                 </div>
               </div>

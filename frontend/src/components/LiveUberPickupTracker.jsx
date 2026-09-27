@@ -138,29 +138,29 @@ const LiveUberPickupTracker = ({
   const pickupId = externalPickup?._id ? externalPickup._id.substring(0, 8).toUpperCase() : 'ECO-9945';
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 border border-emerald-500/25 p-5 sm:p-6 text-white shadow-2xl shadow-emerald-950/40 backdrop-blur-xl ${className}`}>
+    <div className={`relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 text-slate-900 shadow-sm ${className}`}>
       
       {/* Background Ambient Glow Orbs */}
-      <div className="absolute -top-16 -right-16 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -right-16 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Header: Live Badge + ETA + Interactive Demo Button */}
-      <div className="relative z-10 flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-slate-800/80">
+      <div className="relative z-10 flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-slate-100">
         <div className="flex items-center space-x-3">
-          <div className="relative flex items-center justify-center h-11 w-11 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+          <div className="relative flex items-center justify-center h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-500/25 shadow-xs">
             <FaTruck className="h-5 w-5 animate-pulse" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 animate-ping" />
+            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 animate-ping" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-900 flex items-center gap-1.5">
                 <span>Doorstep Pickup Tracker</span>
-                <span className={`px-2 py-0.5 text-[9px] font-black tracking-wider uppercase rounded-full border ${activeStage.badgeColor}`}>
+                <span className="px-2 py-0.5 text-[9px] font-black tracking-wider uppercase rounded-full border bg-emerald-50 text-emerald-700 border-emerald-500/30">
                   {activeStage.badge}
                 </span>
               </h3>
             </div>
-            <p className="text-xs text-slate-400 font-medium">
+            <p className="text-xs text-slate-500 font-medium">
               Order #{pickupId} • {wasteType} (~{estimatedWeight})
             </p>
           </div>
@@ -169,7 +169,7 @@ const LiveUberPickupTracker = ({
         {/* ETA & Interactive Demo Button */}
         <div className="flex items-center space-x-2">
           {currentStageIndex < 2 && (
-            <div className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center space-x-1.5 text-emerald-400 text-xs font-black">
+            <div className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-500/25 flex items-center space-x-1.5 text-emerald-700 text-xs font-black shadow-xs">
               <FaClock className="text-xs" />
               <span>ETA {etaCountdown} Mins</span>
             </div>
@@ -179,9 +179,9 @@ const LiveUberPickupTracker = ({
             onClick={handleRunDemo}
             disabled={isDemoRunning}
             title="Preview all 4 live pickup steps"
-            className="px-2.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold transition flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+            className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer disabled:opacity-50 shadow-xs"
           >
-            <FaPlay className="text-[10px] text-emerald-400" />
+            <FaPlay className="text-[10px] text-emerald-600" />
             <span className="hidden sm:inline">Simulate Flow</span>
           </button>
         </div>
@@ -192,9 +192,9 @@ const LiveUberPickupTracker = ({
         <div className="grid grid-cols-4 gap-2 relative">
           
           {/* Connecting Progress Line */}
-          <div className="absolute top-4 left-6 right-6 h-1 bg-slate-800/90 rounded-full z-0 overflow-hidden">
+          <div className="absolute top-4 left-6 right-6 h-1.5 bg-slate-100 rounded-full z-0 overflow-hidden">
             <motion.div 
-              className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 rounded-full"
+              className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${activeStage.progress}%` }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}
@@ -215,17 +215,17 @@ const LiveUberPickupTracker = ({
                 <div 
                   className={`h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                     isCurrent 
-                      ? 'bg-emerald-500 text-slate-950 ring-4 ring-emerald-500/25 shadow-lg shadow-emerald-500/50 scale-110' 
+                      ? 'bg-emerald-600 text-white ring-4 ring-emerald-500/20 shadow-md scale-110' 
                       : isPassed 
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' 
-                        : 'bg-slate-800 text-slate-500 border border-slate-700/50'
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-500/40' 
+                        : 'bg-slate-100 text-slate-400 border border-slate-200'
                   }`}
                 >
                   {isPassed ? <FaCheck className="text-xs" /> : idx + 1}
                 </div>
 
                 <span className={`mt-2 text-[10px] sm:text-xs font-bold truncate max-w-full ${
-                  isCurrent ? 'text-emerald-400 font-black' : isPassed ? 'text-slate-300' : 'text-slate-500'
+                  isCurrent ? 'text-emerald-700 font-black' : isPassed ? 'text-slate-700' : 'text-slate-400'
                 }`}>
                   {stage.title}
                 </span>
@@ -236,22 +236,22 @@ const LiveUberPickupTracker = ({
       </div>
 
       {/* Simulated Live Animated GPS Mini-Route Map */}
-      <div className="relative z-10 my-1 rounded-2xl bg-slate-950/90 border border-slate-800 p-4 overflow-hidden">
+      <div className="relative z-10 my-1 rounded-2xl bg-slate-50 border border-slate-200/80 p-4 overflow-hidden">
         
         {/* Animated Radar Background Grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] opacity-15 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none" />
 
         {/* Telematics Bar Top */}
-        <div className="relative z-10 flex items-center justify-between text-[11px] font-bold text-slate-400 pb-3 border-b border-slate-800/60">
+        <div className="relative z-10 flex items-center justify-between text-[11px] font-bold text-slate-500 pb-3 border-b border-slate-200/60">
           <div className="flex items-center space-x-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-slate-200">{activeStage.subtitle}</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-slate-700 font-semibold">{activeStage.subtitle}</span>
           </div>
-          <div className="flex items-center space-x-3 text-slate-400">
-            <span className="flex items-center gap-1 text-emerald-400">
+          <div className="flex items-center space-x-3 text-slate-500">
+            <span className="flex items-center gap-1 text-emerald-600 font-black">
               <FaBolt className="text-[10px]" /> Zero Emission EV
             </span>
-            <span className="hidden sm:inline font-mono text-slate-300">{liveSpeed} km/h</span>
+            <span className="hidden sm:inline font-mono text-slate-600 font-bold">{liveSpeed} km/h</span>
           </div>
         </div>
 
@@ -259,7 +259,7 @@ const LiveUberPickupTracker = ({
         <div className="relative py-7 px-4 sm:px-8">
           
           {/* Glowing Animated Highway Route */}
-          <div className="relative h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="relative h-2 w-full bg-slate-200 rounded-full overflow-hidden">
             <motion.div 
               className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 rounded-full"
               style={{ width: `${activeStage.progress}%` }}
@@ -269,10 +269,10 @@ const LiveUberPickupTracker = ({
 
           {/* Citizen Home Gate Marker (Left side) */}
           <div className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-            <div className="h-8 w-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shadow-lg">
+            <div className="h-8 w-8 rounded-full bg-white text-emerald-600 border border-emerald-500/40 flex items-center justify-center shadow-sm">
               <FaMapMarkerAlt className="h-4 w-4" />
             </div>
-            <span className="text-[9px] font-black text-emerald-400 mt-1 whitespace-nowrap bg-slate-900/90 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-[9px] font-black text-emerald-700 mt-1 whitespace-nowrap bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xs">
               Your Gate
             </span>
           </div>
@@ -283,21 +283,21 @@ const LiveUberPickupTracker = ({
             style={{ left: `calc(${Math.min(88, Math.max(12, activeStage.progress))}% - 16px)` }}
             transition={{ type: 'spring', stiffness: 60 }}
           >
-            <div className="relative h-9 w-9 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shadow-xl border-2 border-white animate-bounce">
+            <div className="relative h-9 w-9 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
               <FaTruck className="h-4 w-4" />
-              <div className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-400 border border-slate-950" />
+              <div className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-white" />
             </div>
-            <span className="text-[9px] font-black text-amber-300 mt-1 bg-slate-900/95 px-2 py-0.5 rounded-full border border-amber-500/30 whitespace-nowrap shadow-md">
+            <span className="text-[9px] font-black text-amber-800 mt-1 bg-white px-2 py-0.5 rounded-full border border-amber-300 whitespace-nowrap shadow-xs">
               {currentStageIndex === 3 ? 'Completed' : currentStageIndex === 2 ? 'At Doorstep' : `${etaCountdown} min`}
             </span>
           </motion.div>
 
           {/* Scrap Recycling Micro-Hub Destination (Right side) */}
           <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-            <div className="h-8 w-8 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center justify-center shadow-lg">
+            <div className="h-8 w-8 rounded-full bg-white text-teal-600 border border-teal-500/40 flex items-center justify-center shadow-sm">
               <FaLeaf className="h-4 w-4" />
             </div>
-            <span className="text-[9px] font-black text-cyan-400 mt-1 whitespace-nowrap bg-slate-900/90 px-1.5 py-0.5 rounded border border-cyan-500/20">
+            <span className="text-[9px] font-black text-teal-700 mt-1 whitespace-nowrap bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xs">
               Eco Hub
             </span>
           </div>
@@ -308,28 +308,28 @@ const LiveUberPickupTracker = ({
       <div className="relative z-10 mt-4 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         
         {/* Driver Profile (8 cols) */}
-        <div className="md:col-span-8 flex items-center justify-between p-3.5 rounded-2xl bg-slate-800/50 border border-slate-700/60">
+        <div className="md:col-span-8 flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-md">
-                <div className="h-full w-full rounded-2xl bg-slate-900 flex items-center justify-center text-lg font-black text-emerald-400">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-xs">
+                <div className="h-full w-full rounded-2xl bg-white flex items-center justify-center text-lg font-black text-emerald-600">
                   {driverName.charAt(0)}
                 </div>
               </div>
-              <div className="absolute -bottom-1 -right-1 p-0.5 bg-emerald-500 rounded-full text-slate-950 text-[10px]" title="Eco Verified Driver">
+              <div className="absolute -bottom-1 -right-1 p-0.5 bg-emerald-500 rounded-full text-white text-[10px]" title="Eco Verified Driver">
                 <FaCheckCircle />
               </div>
             </div>
 
             <div>
               <div className="flex items-center space-x-2">
-                <h4 className="text-sm font-black text-white">{driverName}</h4>
-                <div className="flex items-center text-amber-400 text-xs font-black">
+                <h4 className="text-sm font-black text-slate-900">{driverName}</h4>
+                <div className="flex items-center text-amber-500 text-xs font-black">
                   <FaStar className="mr-0.5 text-[10px]" /> 4.9
                 </div>
               </div>
-              <p className="text-xs text-slate-400 font-mono font-medium">
-                {vehicleNumber} • <span className="text-emerald-400">{vehicleType}</span>
+              <p className="text-xs text-slate-500 font-mono font-medium">
+                {vehicleNumber} • <span className="text-emerald-600 font-bold">{vehicleType}</span>
               </p>
             </div>
           </div>
@@ -338,7 +338,7 @@ const LiveUberPickupTracker = ({
           <div className="flex items-center space-x-2">
             <a 
               href={`tel:${driverPhone}`}
-              className="p-2.5 rounded-xl bg-slate-700/70 hover:bg-emerald-600 text-slate-200 hover:text-white border border-slate-600 transition flex items-center justify-center cursor-pointer shadow-sm"
+              className="p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center justify-center cursor-pointer shadow-xs"
               title="Direct Call Driver"
             >
               <FaPhoneAlt className="h-3.5 w-3.5" />
@@ -346,7 +346,7 @@ const LiveUberPickupTracker = ({
 
             <button 
               onClick={() => onOpenChat ? onOpenChat() : alert(`Starting Live In-App Chat with Driver: ${driverName}`)}
-              className="p-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/40 transition flex items-center justify-center cursor-pointer shadow-sm"
+              className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-500/30 transition flex items-center justify-center cursor-pointer shadow-xs"
               title="Live Chat with Driver"
             >
               <FaComments className="h-3.5 w-3.5" />
@@ -355,18 +355,18 @@ const LiveUberPickupTracker = ({
         </div>
 
         {/* Security Doorstep OTP Box (4 cols) */}
-        <div className="md:col-span-4 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-slate-800/50 border border-emerald-500/30 flex items-center justify-between">
+        <div className="md:col-span-4 p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-500/25 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">
+            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
               Doorstep Pickup OTP
             </span>
-            <span className="text-[11px] text-slate-400 font-medium">
+            <span className="text-[11px] text-slate-500 font-medium">
               Share upon driver arrival
             </span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-emerald-500/40 shadow-inner">
-            <span className="font-mono text-base font-black tracking-widest text-emerald-300">
+          <div className="px-3 py-1.5 rounded-xl bg-white border border-emerald-500/30 shadow-xs">
+            <span className="font-mono text-base font-black tracking-widest text-emerald-700">
               {otpCode}
             </span>
           </div>
@@ -380,15 +380,15 @@ const LiveUberPickupTracker = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="relative z-10 mt-3 p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-between text-xs"
+            className="relative z-10 mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-500/30 flex items-center justify-between text-xs"
           >
-            <div className="flex items-center space-x-2 text-emerald-300 font-bold">
-              <FaCheckCircle className="text-emerald-400 text-sm" />
+            <div className="flex items-center space-x-2 text-emerald-800 font-bold">
+              <FaCheckCircle className="text-emerald-600 text-sm" />
               <span>Waste Picked Up: 8.5 kg • +180 EcoPoints Credited to Wallet!</span>
             </div>
             <Link 
               to="/redeem" 
-              className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black hover:bg-emerald-400 transition"
+              className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-black hover:bg-emerald-500 transition shadow-xs"
             >
               Redeem Rewards →
             </Link>

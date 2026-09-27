@@ -27,8 +27,8 @@ const Navbar = () => {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved === 'dark';
-    // Default to Dark Mode so all cards, sidebar and hero banners match the flagship midnight eco theme
-    return true;
+    // Default to clean White Mode
+    return false;
   });
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);

@@ -10,7 +10,8 @@ import {
   FaPlay, FaPause, FaVolumeMute, FaVolumeUp, FaVideo, FaSearch,
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
-  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal, FaUserPlus
+  FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal, FaUserPlus,
+  FaBuilding, FaMapMarkerAlt, FaUsers, FaBolt, FaCoins, FaCity
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import api from '../utils/api';
@@ -501,6 +502,129 @@ const LandingPage = () => {
       icon: FaLightbulb,
       title: 'Smart Carbon Analytics',
       desc: 'Track your personal carbon offset statistics, daily eco tips, and household landfill savings.',
+    }
+  ];
+
+  // Tamil Nadu Live District Hubs
+  const TN_DISTRICT_HUBS = [
+    {
+      id: 'coimbatore',
+      name: 'Coimbatore',
+      tag: 'West Zone Corporation',
+      diversion: '98.4%',
+      pickupsToday: 342,
+      evFleet: 48,
+      status: 'Clean Grid Active',
+      color: 'from-emerald-500 to-teal-600',
+      landmark: 'Avinashi Road & RS Puram Ward 12'
+    },
+    {
+      id: 'chennai',
+      name: 'Chennai',
+      tag: 'Greater Chennai Corp',
+      diversion: '94.2%',
+      pickupsToday: 1120,
+      evFleet: 120,
+      status: 'Coastal Smart Hub',
+      color: 'from-blue-500 to-cyan-600',
+      landmark: 'Anna Nagar, T. Nagar & OMR Corridor'
+    },
+    {
+      id: 'madurai',
+      name: 'Madurai',
+      tag: 'Temple City Clean Grid',
+      diversion: '96.1%',
+      pickupsToday: 215,
+      evFleet: 34,
+      status: 'Zero-Landfill Grid',
+      color: 'from-amber-500 to-emerald-600',
+      landmark: 'Meenakshi Amman Buffer Zone'
+    },
+    {
+      id: 'trichy',
+      name: 'Tiruchirappalli',
+      tag: 'Central Basin Authority',
+      diversion: '97.5%',
+      pickupsToday: 184,
+      evFleet: 28,
+      status: 'River Clean Corridor',
+      color: 'from-teal-500 to-emerald-600',
+      landmark: 'Cauvery Waterfront & Srirangam'
+    },
+    {
+      id: 'salem_tiruppur',
+      name: 'Salem & Tiruppur',
+      tag: 'Textile Circular Grid',
+      diversion: '99.1%',
+      pickupsToday: 490,
+      evFleet: 62,
+      status: 'Closed Loop Circular',
+      color: 'from-indigo-500 to-teal-600',
+      landmark: 'Apparel Export Industrial Zone'
+    }
+  ];
+
+  const [activeDistrictHub, setActiveDistrictHub] = useState(TN_DISTRICT_HUBS[0]);
+
+  // Circular Economy Streams: From Trash to Treasure
+  const CIRCULAR_STREAMS = [
+    {
+      title: 'PET Plastic Bottles',
+      from: 'Post-Consumer Water & Beverage Bottles',
+      process: 'Optical Sorting, Cold Wash & Micro-Flaking',
+      to: '100% Recycled Polyester (rPET) Yarns & Fabrics',
+      impact: '2.5 kg CO₂ Diverted per kg',
+      icon: FaRecycle,
+      badge: 'High Demand'
+    },
+    {
+      title: 'E-Waste & Semiconductors',
+      from: 'Old Smartphones, Laptops & PCBs',
+      process: 'Electro-Static Separation & Pure Leaching',
+      to: '99.9% Pure Gold, Copper & Clean Silicon Wafers',
+      impact: 'Zero toxic heavy-metal landfill leaching',
+      icon: FaDesktop,
+      badge: 'Zero Leaching'
+    },
+    {
+      title: 'Corrugated Cardboard',
+      from: 'Delivery Boxes & Old Packaging',
+      process: 'Closed-Loop Hydro-Pulping & Re-Pressing',
+      to: 'Heavy-Duty Biodegradable Kraft Shipping Cartons',
+      impact: 'Conserves 17 Mature Trees per tonne',
+      icon: FaBox,
+      badge: '100% Recycled'
+    },
+    {
+      title: 'Aluminium & Non-Ferrous',
+      from: 'Beverage Cans, Foil & Metal Hardware',
+      process: 'Solar Smelting & Direct Ingot Casting',
+      to: 'Lightweight EV Chassis & Solar Panel Frames',
+      impact: 'Uses 95% Less Energy than Mining',
+      icon: FaAward,
+      badge: 'Infinite Cycles'
+    }
+  ];
+
+  // Bulk Enterprise & Community Drives
+  const COMMUNITY_SOLUTIONS = [
+    {
+      title: 'Gated Communities & RWAs',
+      badge: 'Apartment Societies',
+      desc: 'Schedule dedicated Sunday Scrap Mega-Drives for 500+ flats. Smart Bluetooth scale at society clubhouse, instant individual UPI cashback for residents, and society welfare prize funds.',
+      features: ['Resident Doorstep Pickup', 'Digital Soundbox UPI Alerts', 'Society Green Pride Trophy']
+    },
+    {
+      title: 'Tech Parks & IT Enterprises',
+      badge: 'Corporate ESG Compliance',
+      desc: 'Certified IT asset de-manufacturing with Serialized Destruction Slips, ISO 14001 legal compliance, and quarterly Scope 3 carbon credit audits ready for annual ESG reports.',
+      features: ['Data Sanitization Certificates', 'Quarterly Carbon Audits', 'Zero-E-Waste Campus Flag']
+    },
+    {
+      title: 'Schools & University Campuses',
+      badge: 'Educational Green Credits',
+      desc: 'Empower student sustainability clubs with Youth Green Passports, dedicated clean collection stations, sapling planting rewards, and campus recycling inter-college leaderboards.',
+      features: ['Youth Green Badges', 'Tree Sapling Funding', 'Student Campus Ambassadors']
     }
   ];
 
@@ -1375,6 +1499,232 @@ const LandingPage = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* CIRCULAR TRANSFORMATION PIPELINE: TRASH TO TREASURE */}
+          <div className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
+                Circular Material Journey
+              </span>
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                Where Does Your Waste Go?
+              </h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Trace how doorstep recyclables transform into closed-loop green industrial products with zero landfill leakage.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {CIRCULAR_STREAMS.map((stream, idx) => {
+                const Icon = stream.icon;
+                return (
+                  <div 
+                    key={idx} 
+                    className={`p-6 rounded-3xl border shadow-xl flex flex-col justify-between space-y-4 group transition-all hover:scale-102 ${
+                      isDarkMode 
+                        ? 'bg-[#091b2e] border-slate-800 hover:border-emerald-500/50' 
+                        : 'bg-white border-slate-200/90 hover:border-emerald-500/60 shadow-lg'
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl border border-emerald-500/20">
+                          <Icon />
+                        </div>
+                        <span className="text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          {stream.badge}
+                        </span>
+                      </div>
+                      
+                      <h4 className={`font-black text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                        {stream.title}
+                      </h4>
+                      
+                      <div className="space-y-2 text-xs">
+                        <div className="p-2.5 rounded-xl bg-slate-500/5 border border-slate-500/10">
+                          <span className="text-[9px] uppercase font-bold text-slate-400 block">Raw Scrap In:</span>
+                          <span className={`font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{stream.from}</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/15">
+                          <span className="text-[9px] uppercase font-bold text-emerald-600 block">Reborn Circular Product:</span>
+                          <span className={`font-bold ${isDarkMode ? 'text-emerald-300' : 'text-emerald-900'}`}>{stream.to}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-500/10 flex items-center justify-between text-[11px] font-mono font-bold text-emerald-600">
+                      <span>🌿 Impact</span>
+                      <span>{stream.impact}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* TAMIL NADU 38-DISTRICTS LIVE CIRCULAR GRID EXPLORER */}
+          <div className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
+                Statewide Circular Network
+              </span>
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                38 Districts Active Grid
+              </h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Click on any corporation hub to view live telematics, daily diversion metrics, and verified EV fleets.
+              </p>
+            </div>
+
+            {/* District Selector Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {TN_DISTRICT_HUBS.map((hub) => {
+                const isSelected = activeDistrictHub.id === hub.id;
+                return (
+                  <button
+                    key={hub.id}
+                    onClick={() => {
+                      setActiveDistrictHub(hub);
+                      playSciFiSound('click');
+                    }}
+                    className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 border cursor-pointer ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-md font-black scale-105'
+                        : isDarkMode
+                          ? 'bg-[#091b2e] text-slate-300 border-slate-800 hover:bg-[#0c1f35]'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <FaMapMarkerAlt className={isSelected ? 'text-white' : 'text-emerald-500'} />
+                    <span>{hub.name}</span>
+                    <span className="text-[10px] opacity-75 font-mono">({hub.diversion})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active District Spotlight Card */}
+            <div className={`p-8 sm:p-10 rounded-3xl border shadow-2xl relative overflow-hidden transition-all ${
+              isDarkMode ? 'bg-[#091b2e] border-emerald-500/30' : 'bg-white border-slate-200/90'
+            }`}>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-7 space-y-4">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span className="text-xs font-mono font-black uppercase tracking-wider text-emerald-600">
+                      {activeDistrictHub.tag} • {activeDistrictHub.status}
+                    </span>
+                  </div>
+                  
+                  <h3 className={`text-2xl sm:text-4xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    {activeDistrictHub.name} Municipal Zero-Waste Grid
+                  </h3>
+                  
+                  <p className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                    Serving resident welfare associations, commercial corridors, and institutional campuses around <span className="font-bold">{activeDistrictHub.landmark}</span>.
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-3 pt-2">
+                    <div className={`p-3.5 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block">Landfill Diversion</span>
+                      <span className="text-xl font-black text-emerald-600">{activeDistrictHub.diversion}</span>
+                    </div>
+                    <div className={`p-3.5 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block">Pickups Completed</span>
+                      <span className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{activeDistrictHub.pickupsToday}</span>
+                    </div>
+                    <div className={`p-3.5 rounded-2xl border ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                      <span className="text-[9px] uppercase font-bold text-slate-400 block">Active EV Tippers</span>
+                      <span className="text-xl font-black text-teal-600">{activeDistrictHub.evFleet}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 flex flex-col justify-center space-y-4">
+                  <div className={`p-5 rounded-2xl border space-y-2 ${isDarkMode ? 'bg-[#06121e] border-slate-800' : 'bg-emerald-50/70 border-emerald-500/20'}`}>
+                    <span className="text-xs font-black text-emerald-800 flex items-center gap-1.5">
+                      <FaCheckCircle className="text-emerald-600" />
+                      Doorstep Service Available Today
+                    </span>
+                    <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                      Zero-emission electric tippers are currently operating in this zone with average 35-minute arrival times.
+                    </p>
+                  </div>
+
+                  <Link
+                    to="/signup"
+                    onClick={() => playSciFiSound('click')}
+                    className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm text-center shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 transition-all hover:scale-102"
+                  >
+                    <span>Book Pickup in {activeDistrictHub.name}</span>
+                    <FaArrowRight />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* APARTMENT SOCIETIES & CORPORATE BULK DRIVES */}
+          <div className="space-y-12">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+                isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
+              }`}>
+                Institutional Partnerships
+              </span>
+              <h2 className={`text-3xl sm:text-5xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                Societies & Corporate ESG Drives
+              </h2>
+              <p className={`text-sm font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Customized large-scale recycling programs for apartments, IT parks, and educational institutions.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {COMMUNITY_SOLUTIONS.map((sol, idx) => (
+                <div 
+                  key={idx} 
+                  className={`p-7 rounded-3xl border shadow-xl flex flex-col justify-between space-y-6 ${
+                    isDarkMode ? 'bg-[#091b2e] border-slate-800' : 'bg-white border-slate-200/90 shadow-md'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <span className="text-[10px] font-mono font-black uppercase px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 inline-block">
+                      {sol.badge}
+                    </span>
+                    <h3 className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                      {sol.title}
+                    </h3>
+                    <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                      {sol.desc}
+                    </p>
+                    
+                    <ul className="space-y-2 pt-2 text-xs font-semibold">
+                      {sol.features.map((feat, fIdx) => (
+                        <li key={fIdx} className="flex items-center space-x-2 text-emerald-600">
+                          <FaCheck className="text-[10px]" />
+                          <span className={isDarkMode ? 'text-slate-300' : 'text-slate-700'}>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Link
+                    to="/signup"
+                    onClick={() => playSciFiSound('click')}
+                    className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold text-xs text-center border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-center space-x-2"
+                  >
+                    <span>Get Started</span>
+                    <FaArrowRight className="text-[10px]" />
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
 

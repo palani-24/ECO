@@ -6,11 +6,11 @@ import { TAMIL_NADU_DISTRICTS } from '../context/DistrictContext';
 import { 
   FaUser, FaEnvelope, FaPhoneAlt, FaEye, FaEyeSlash, 
   FaSpinner, FaTruck, FaBars, FaTimes,
-  FaMapMarkerAlt, FaLock, FaUserPlus
+  FaMapMarkerAlt, FaLock
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// In Registration: Citizen & Driver ONLY as explicitly requested!
+// In Registration: Citizen & Driver ONLY as strictly requested!
 const REGISTRATION_ROLES = [
   {
     id: 'user',
@@ -150,12 +150,12 @@ const Signup = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
       
-      {/* Background Ambient Modern Eco Landscape */}
+      {/* Background Mountain Vector Artwork Matching Reference Design */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
-          filter: 'brightness(0.98)'
+          backgroundImage: "url('/images/mountain_vector_auth_bg.jpg')",
+          filter: 'brightness(1.01)'
         }}
       />
 
@@ -163,7 +163,7 @@ const Signup = () => {
       <div className="fixed inset-0 bg-gradient-to-b from-sky-100/10 via-transparent to-slate-950/20 pointer-events-none z-0" />
 
       {/* Top Navigation Bar Matching Reference Design */}
-      <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-5 flex items-center justify-between">
+      <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-6 flex items-center justify-between">
         
         {/* Brand / Logo */}
         <Link 
@@ -218,7 +218,7 @@ const Signup = () => {
             <Link
               to="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
+              className="py-2 px-4 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md"
             >
               LOGIN
             </Link>
@@ -232,37 +232,23 @@ const Signup = () => {
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="w-full max-w-[480px]"
+          className="w-full max-w-[450px]"
         >
-          {/* Frosted Glassmorphism Card Matching Reference Image 3 */}
-          <div className="relative rounded-[32px] p-6 sm:p-9 backdrop-blur-2xl bg-white/40 border border-white/60 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.25)] overflow-hidden transition-all duration-300">
+          {/* Frosted Glassmorphism Card Matching Reference Image */}
+          <div className="relative rounded-[32px] p-7 sm:p-10 backdrop-blur-2xl bg-white/20 border border-white/50 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.3)] overflow-hidden transition-all duration-300">
             
-            {/* Close Button 'X' at Top Right (Navigates to Home like in Image 3) */}
-            <button
-              onClick={() => navigate('/landing')}
-              className="absolute top-5 right-5 p-2 rounded-xl text-slate-600 hover:text-slate-950 hover:bg-white/40 transition-colors z-20"
-              aria-label="Close to Home"
-            >
-              <FaTimes className="text-sm sm:text-base" />
-            </button>
-
             {/* Ambient Highlights */}
-            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/40 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/30 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Title Matching Reference Image 3 */}
-            <div className="text-center mb-5 relative z-10">
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                Registration
-              </h1>
-              <p className="text-xs text-slate-600 font-medium mt-1">
-                {activeRole.desc}
-              </p>
-            </div>
+            {/* Title: REGISTRATION */}
+            <h1 className="relative text-2xl sm:text-3xl font-black tracking-wider text-slate-900 text-center mb-5 drop-shadow-xs z-10">
+              REGISTRATION
+            </h1>
 
-            {/* Role Selection: Citizen & Driver ONLY */}
+            {/* Role Selection: Citizen & Driver ONLY (strictly adhering to user request) */}
             <div className="mb-5 relative z-10">
-              <div className="flex items-center p-1 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-2xs">
+              <div className="flex items-center justify-between p-1 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40">
                 {REGISTRATION_ROLES.map((role) => {
                   const Icon = role.icon;
                   const isSelected = selectedRole === role.id;
@@ -274,10 +260,10 @@ const Signup = () => {
                         setSelectedRole(role.id);
                         setError('');
                       }}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
+                      className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                         isSelected
-                          ? 'bg-emerald-600 text-white shadow-md font-black scale-102'
-                          : 'text-slate-700 hover:text-slate-950'
+                          ? 'bg-white/90 text-slate-900 shadow-sm font-black scale-102'
+                          : 'text-slate-700 hover:text-slate-950 hover:bg-white/20'
                       }`}
                     >
                       <Icon className="text-xs" />
@@ -286,6 +272,9 @@ const Signup = () => {
                   );
                 })}
               </div>
+              <p className="text-[10px] text-center text-slate-700 font-medium mt-1.5">
+                Register as <span className="font-bold text-slate-900">{activeRole.name}</span> • {activeRole.badge}
+              </p>
             </div>
 
             {/* Error Message */}
@@ -299,8 +288,8 @@ const Signup = () => {
               </motion.div>
             )}
 
-            {/* Registration Form with fields and right-side icons matching Image 3 */}
-            <form onSubmit={handleSubmit} className="space-y-3 relative z-10">
+            {/* Registration Form with minimalist line inputs */}
+            <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
               
               {/* Full Name */}
               <div className="relative pt-1">
@@ -310,9 +299,9 @@ const Signup = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full Name"
                   required
-                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
+                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaUser className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
+                <FaUser className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
               </div>
 
               {/* Mobile Number */}
@@ -324,9 +313,9 @@ const Signup = () => {
                   placeholder="Mobile Number (10 digits)"
                   required
                   maxLength={10}
-                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
+                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaPhoneAlt className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
+                <FaPhoneAlt className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
               </div>
 
               {/* Email Address */}
@@ -335,20 +324,20 @@ const Signup = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address (optional)"
-                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-9 transition-all"
+                  placeholder="Email Address"
+                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaEnvelope className="absolute right-3.5 top-4 text-slate-500 text-xs pointer-events-none" />
+                <FaEnvelope className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
               </div>
 
               {/* Citizen specific: District & Ward */}
               {selectedRole === 'user' && (
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-2 gap-3 pt-1">
                   <div className="relative">
                     <select
                       value={districtId}
                       onChange={(e) => setDistrictId(e.target.value)}
-                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 font-semibold text-xs outline-none transition-all cursor-pointer"
+                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-xs outline-none transition-colors cursor-pointer"
                     >
                       {TAMIL_NADU_DISTRICTS.map((d) => (
                         <option key={d.id} value={d.id} className="text-slate-900 bg-white">
@@ -363,21 +352,21 @@ const Signup = () => {
                       value={ward}
                       onChange={(e) => setWard(e.target.value)}
                       placeholder="Ward / Area"
-                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 placeholder:text-slate-500 font-semibold text-xs outline-none pr-7 transition-all"
+                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-xs outline-none pr-6 transition-colors"
                     />
-                    <FaMapMarkerAlt className="absolute right-2.5 top-3.5 text-slate-500 text-xs pointer-events-none" />
+                    <FaMapMarkerAlt className="absolute right-1 bottom-2.5 text-slate-700 text-xs pointer-events-none" />
                   </div>
                 </div>
               )}
 
               {/* Driver specific: Vehicle Type & Plate Number */}
               {selectedRole === 'driver' && (
-                <div className="space-y-2 pt-1">
+                <div className="space-y-3 pt-1">
                   <div className="relative">
                     <select
                       value={vehicleType}
                       onChange={(e) => setVehicleType(e.target.value)}
-                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3 text-slate-900 font-semibold text-xs outline-none transition-all cursor-pointer"
+                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-xs outline-none transition-colors cursor-pointer"
                     >
                       {VEHICLE_TYPES.map((v, i) => (
                         <option key={i} value={v} className="text-slate-900 bg-white">
@@ -391,11 +380,11 @@ const Signup = () => {
                       type="text"
                       value={vehicleNumber}
                       onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
-                      placeholder="Vehicle Registration Plate (e.g. TN-38-ECO-9945)"
+                      placeholder="Vehicle Plate (e.g. TN-38-ECO-9945)"
                       required
-                      className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-xs outline-none pr-8 uppercase tracking-wider transition-all"
+                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-xs outline-none pr-6 uppercase tracking-wider transition-colors"
                     />
-                    <FaTruck className="absolute right-3 top-3.5 text-slate-500 text-xs pointer-events-none" />
+                    <FaTruck className="absolute right-1 bottom-2.5 text-slate-700 text-xs pointer-events-none" />
                   </div>
                 </div>
               )}
@@ -408,12 +397,12 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password (min 4 chars)"
                   required
-                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-14 transition-all"
+                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-slate-500 hover:text-slate-800 text-xs"
+                  className="absolute right-1 bottom-2.5 text-slate-700 hover:text-slate-950 text-sm cursor-pointer"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -427,9 +416,9 @@ const Signup = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
                   required
-                  className="w-full bg-white/40 border border-slate-300/70 focus:border-emerald-600 focus:bg-white rounded-xl py-2.5 px-3.5 text-slate-900 placeholder:text-slate-500 font-semibold text-sm outline-none pr-8 transition-all"
+                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaLock className="absolute right-3.5 top-3.5 text-slate-500 text-xs pointer-events-none" />
+                <FaLock className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
               </div>
 
               {/* Agree to terms */}
@@ -439,18 +428,18 @@ const Signup = () => {
                   id="agreeTerms"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 h-4 w-4 cursor-pointer"
+                  className="rounded text-blue-600 focus:ring-blue-500 border-slate-400 h-4 w-4 cursor-pointer"
                 />
-                <label htmlFor="agreeTerms" className="text-xs text-slate-700 font-semibold cursor-pointer">
+                <label htmlFor="agreeTerms" className="text-xs text-slate-800 font-medium cursor-pointer">
                   I agree to the terms & conditions
                 </label>
               </div>
 
-              {/* Action Button */}
+              {/* Action Button (Frosted Rounded Pill Matching Image 1) */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm tracking-wide shadow-md shadow-emerald-600/30 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-500/80 via-blue-600/80 to-indigo-600/80 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60 border border-white/30 backdrop-blur-md"
               >
                 {loading ? (
                   <>
@@ -458,22 +447,20 @@ const Signup = () => {
                     <span>Registering...</span>
                   </>
                 ) : (
-                  <>
-                    <FaUserPlus className="text-sm" />
-                    <span>Register as {activeRole.name}</span>
-                  </>
+                  <span>Register as {activeRole.name}</span>
                 )}
               </button>
             </form>
 
-            {/* Bottom Link matching Image 3: Already have account? Login */}
-            <div className="text-center pt-4 mt-3 border-t border-slate-200/60 relative z-10">
-              <p className="text-xs text-slate-700 font-medium">
-                Already have account?{' '}
-                <Link to="/login" className="font-black text-emerald-800 hover:text-emerald-950 underline underline-offset-2">
-                  Login
-                </Link>
-              </p>
+            {/* Bottom Link: Already have an Account? Login */}
+            <div className="text-center pt-5 mt-2 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-slate-800 font-medium">
+              <span>Already have an Account?</span>
+              <Link 
+                to="/login" 
+                className="font-bold text-slate-900 hover:underline"
+              >
+                Login
+              </Link>
             </div>
 
           </div>

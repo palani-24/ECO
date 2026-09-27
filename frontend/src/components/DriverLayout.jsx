@@ -32,7 +32,7 @@ const DriverLayout = ({ children, hideFooter = false }) => {
       <div className="relative z-10 flex-1 flex flex-col md:flex-row w-full px-3 sm:px-6 lg:px-8 py-4 md:py-6 gap-6 min-w-0">
         
         {/* 💻 Desktop Sidebar Navigation */}
-        <div className="hidden md:block flex-shrink-0 sticky top-20 self-start w-72 xl:w-80">
+        <div className="hidden md:block flex-shrink-0 sticky top-16 self-start w-72 xl:w-80">
           <Sidebar />
         </div>
 

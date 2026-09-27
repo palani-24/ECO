@@ -6,22 +6,33 @@ import MobileCitizenNav from './MobileCitizenNav';
 
 const UserLayout = ({ children, hideFooter = false }) => {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="relative min-h-screen bg-slate-50/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
+      {/* 🌄 Soft Ethereal Mountain Landscape Background from Login Page */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-20"
+        style={{
+          backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+          backgroundAttachment: 'fixed',
+          filter: 'brightness(1.02)'
+        }}
+      />
+      <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-slate-50/70 to-white/90 pointer-events-none z-0" />
+
       {/* 💻 Desktop Top Navbar */}
-      <div className="hidden md:block">
+      <div className="relative z-20 hidden md:block">
         <Navbar />
       </div>
 
       {/* 📱 Mobile Unified Green App Header */}
-      <div className="block md:hidden">
+      <div className="relative z-20 block md:hidden">
         <MobileCitizenHeader />
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row w-full px-3 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 min-w-0">
+      <div className="relative z-10 flex-1 flex flex-col md:flex-row w-full px-3 sm:px-6 lg:px-8 py-3 md:py-6 gap-6 min-w-0">
         
         {/* 💻 Desktop Sidebar Navigation */}
-        <div className="hidden md:block flex-shrink-0 sticky top-20 self-start">
+        <div className="hidden md:block flex-shrink-0 sticky top-20 self-start w-72 xl:w-80">
           <Sidebar />
         </div>
 

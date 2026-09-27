@@ -452,10 +452,10 @@ const Profile = () => {
                 }}
                 className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
-                <option value="English">English</option>
-                <option value="Tamil">தமிழ் (Tamil)</option>
-                <option value="Hindi">हिंदी (Hindi)</option>
-                <option value="Spanish">Español (Spanish)</option>
+                <option value="English">English (US)</option>
+                <option value="UK">English (UK)</option>
+                <option value="Spanish">Spanish</option>
+                <option value="French">French</option>
               </select>
             </div>
 

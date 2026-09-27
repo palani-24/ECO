@@ -13,7 +13,6 @@ const STAGES = [
   {
     id: 'assigned',
     title: 'Driver Assigned',
-    tamil: 'ஓட்டுநர் நியமிக்கப்பட்டார்',
     subtitle: 'EV Fleet Driver accepted your doorstep pickup request',
     badge: 'ASSIGNED',
     badgeColor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -24,7 +23,6 @@ const STAGES = [
   {
     id: 'en_route',
     title: 'Driver En Route',
-    tamil: 'ஓட்டுநர் வந்து கொண்டுள்ளார்',
     subtitle: 'Driver is moving toward your location via Avinashi Road',
     badge: 'LIVE GPS',
     badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
@@ -35,7 +33,6 @@ const STAGES = [
   {
     id: 'arrived',
     title: 'Arrived at Doorstep',
-    tamil: 'வீட்டு வாசலில் உள்ளார்',
     subtitle: 'Driver has reached your gate. Please share your 4-digit OTP',
     badge: 'DOORSTEP',
     badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
@@ -46,7 +43,6 @@ const STAGES = [
   {
     id: 'completed',
     title: 'Weighed & Credited',
-    tamil: 'எடை சரிபார்க்கப்பட்டு புள்ளிகள் வரவு',
     subtitle: '8.5 kg waste verified! +180 EcoPts added to your green balance',
     badge: 'COMPLETED',
     badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
@@ -227,15 +223,10 @@ const LiveUberPickupTracker = ({
                   {isPassed ? <FaCheck className="text-xs" /> : idx + 1}
                 </div>
 
-                {/* Node Label */}
                 <span className={`mt-2 text-[10px] sm:text-xs font-bold truncate max-w-full ${
                   isCurrent ? 'text-emerald-400 font-black' : isPassed ? 'text-slate-300' : 'text-slate-500'
                 }`}>
                   {stage.title}
-                </span>
-
-                <span className="hidden sm:block text-[9px] text-slate-500 font-medium truncate max-w-full">
-                  {stage.tamil}
                 </span>
               </button>
             );

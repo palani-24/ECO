@@ -623,20 +623,29 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION WITH SCENIC MOUNTAIN GLASSMORPHISM */}
       <section 
         onMouseMove={handleMouseMove}
-        className={`relative pt-6 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b transition-colors duration-300 ${
-          isDarkMode 
-            ? 'bg-[#06121e] border-slate-800/80' 
-            : 'bg-gradient-to-b from-[#f0fdf4]/70 via-[#f8fafc] to-[#f0fdfa]/50 border-slate-200/80'
-        }`}
+        className="relative pt-8 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b border-white/40 dark:border-slate-800 transition-colors duration-300"
+        style={{
+          backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
+        {/* Soft Ambient Atmospheric Light / Frost Overlay */}
+        <div className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-slate-950/75 backdrop-blur-[2px]' 
+            : 'bg-gradient-to-b from-sky-100/25 via-white/30 to-white/70 backdrop-blur-[1px]'
+        }`} />
+
         {/* Particle Canvas Background */}
         {isDesktop && (
           <canvas 
             ref={canvasRef} 
-            className="absolute inset-0 pointer-events-none z-0"
+            className="absolute inset-0 pointer-events-none z-0 opacity-40"
           />
         )}
 
@@ -646,25 +655,30 @@ const LandingPage = () => {
         <div className={`absolute top-1/2 left-1/3 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-cyan-500/5' : 'bg-teal-300/15'}`}></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
+            {/* Left Hero Card - Frosted Glassmorphic Container */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="lg:col-span-7 space-y-6 text-center lg:text-left gpu-layer"
+              className={`lg:col-span-7 p-7 sm:p-10 rounded-[32px] border shadow-2xl backdrop-blur-2xl space-y-6 text-center lg:text-left transition-all ${
+                isDarkMode 
+                  ? 'bg-slate-900/65 border-white/10 text-white shadow-slate-950/50' 
+                  : 'bg-white/45 border-white/60 text-slate-900 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.18)]'
+              }`}
             >
               <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-sm transition-all ${
                 isDarkMode 
-                  ? 'bg-[#091b2e] border-emerald-500/30 text-emerald-400' 
-                  : 'bg-white/95 border-emerald-500/30 text-emerald-800 shadow-md shadow-emerald-500/10 backdrop-blur-md'
+                  ? 'bg-[#091b2e]/90 border-emerald-500/30 text-emerald-400' 
+                  : 'bg-white/80 border-emerald-500/30 text-emerald-800 shadow-md shadow-emerald-500/10 backdrop-blur-md'
               }`}>
                 <img src="/app-logo.png" alt="EcoReward Emblem" className="h-5 w-auto object-contain" />
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
                 <span>CIRCULAR ECO LOGISTICS v4.0</span>
               </div>
 
-              <h1 className={`text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] ${
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] ${
                 isDarkMode ? 'text-white' : 'text-slate-900'
               }`}>
                 AI-Powered <br />
@@ -673,17 +687,17 @@ const LandingPage = () => {
                 </span>
               </h1>
               
-              <p className={`text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-600'
+              <p className={`text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed ${
+                isDarkMode ? 'text-slate-300' : 'text-slate-700'
               }`}>
-                Transform household recyclables into instant cash & eco vouchers. Scan waste with neural camera recognition, schedule doorstep pickups, track drivers live, and help build a zero-landfill future!
+                Transform household recyclables into instant cash & eco vouchers across all 38 districts of Tamil Nadu. Scan waste with neural camera recognition, schedule doorstep EV pickups, track drivers live, and help build a zero-landfill future!
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <Link 
                   to="/signup" 
                   onClick={() => playSciFiSound('click')}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/25 ring-2 ring-emerald-400/30 hover:shadow-emerald-500/40 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/25 ring-2 ring-emerald-400/30 hover:shadow-emerald-500/40 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base cursor-pointer"
                 >
                   <span>Get Started Free</span>
                   <FaArrowRight className="h-4 w-4" />
@@ -694,10 +708,10 @@ const LandingPage = () => {
                     playSciFiSound('click');
                     setShowVideoModal(true);
                   }}
-                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl border font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-sm ${
+                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl border font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-sm cursor-pointer ${
                     isDarkMode 
-                      ? 'bg-[#091b2e] text-white border-slate-700 hover:bg-[#0c1f35]' 
-                      : 'bg-white/95 hover:bg-emerald-50 text-slate-800 border-slate-300/90 hover:border-emerald-400 shadow-md shadow-slate-200/50 backdrop-blur-md'
+                      ? 'bg-[#091b2e]/80 text-white border-slate-700 hover:bg-[#0c1f35]' 
+                      : 'bg-white/80 hover:bg-white text-slate-800 border-white/60 hover:border-emerald-400 shadow-md backdrop-blur-md'
                   }`}
                 >
                   <FaVideo className="text-emerald-500 h-4 w-4" />
@@ -705,13 +719,13 @@ const LandingPage = () => {
                 </button>
               </div>
 
-              <div className={`pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3.5 text-xs font-medium ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-600'
+              <div className={`pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 text-xs font-medium ${
+                isDarkMode ? 'text-slate-400' : 'text-slate-700'
               }`}>
                 <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
                   isDarkMode 
                     ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
                 }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span className="font-semibold">100% Free Account</span>
@@ -719,7 +733,7 @@ const LandingPage = () => {
                 <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
                   isDarkMode 
                     ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
                 }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span className="font-semibold">Instant UPI Cashback</span>
@@ -727,7 +741,7 @@ const LandingPage = () => {
                 <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
                   isDarkMode 
                     ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/90 border-emerald-500/25 text-slate-800 shadow-sm shadow-emerald-500/5 backdrop-blur-md hover:border-emerald-400'
+                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
                 }`}>
                   <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
                   <span className="font-semibold">Zero Landfill Mission</span>
@@ -735,17 +749,17 @@ const LandingPage = () => {
               </div>
             </motion.div>
 
-            {/* Neural Scanner HUD Card */}
+            {/* Neural Scanner HUD Card - Frosted Glass Container */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-5 flex justify-center relative gpu-layer"
             >
-              <div className={`relative w-full max-w-[480px] border p-6 rounded-3xl shadow-2xl space-y-5 transition-all ${
+              <div className={`relative w-full max-w-[480px] p-6 sm:p-7 rounded-[32px] border shadow-2xl space-y-5 backdrop-blur-2xl transition-all ${
                 isDarkMode 
-                  ? 'bg-[#091b2e]/95 border-emerald-500/40 shadow-emerald-500/10' 
-                  : 'bg-white/95 backdrop-blur-2xl border-2 border-emerald-500/30 shadow-[0_25px_60px_-15px_rgba(16,185,129,0.18)] ring-1 ring-emerald-500/10'
+                  ? 'bg-slate-900/70 border-white/15 shadow-slate-950/60' 
+                  : 'bg-white/45 border-white/60 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.2)]'
               }`}>
                 
                 <div className={`flex items-center justify-between pb-3 border-b ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
@@ -846,17 +860,19 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* IMPACT COUNTERS BAR */}
-      <section className={`py-10 border-b ${
-        isDarkMode ? 'bg-[#081728] text-slate-100 border-slate-800/80' : 'bg-[#f8fafc] text-slate-900 border-slate-200/80'
+      {/* IMPACT COUNTERS BAR WITH FROSTED GLASS */}
+      <section className={`py-10 border-b backdrop-blur-xl ${
+        isDarkMode ? 'bg-[#081728]/90 text-slate-100 border-slate-800' : 'bg-white/60 text-slate-900 border-white/40'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {impactStats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className={`p-5 rounded-2xl border shadow-md flex items-center space-x-3.5 transition-all ${
-                  isDarkMode ? 'bg-[#091b2e] border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200/80 hover:border-emerald-500/50'
+                <div key={i} className={`p-5 rounded-2xl border shadow-md flex items-center space-x-3.5 backdrop-blur-md transition-all hover:scale-102 ${
+                  isDarkMode 
+                    ? 'bg-[#091b2e]/80 border-slate-800 hover:border-emerald-500/50' 
+                    : 'bg-white/70 border-white/60 shadow-sm hover:border-emerald-400 hover:bg-white/90'
                 }`}>
                   <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
                     <Icon />
@@ -1600,26 +1616,48 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FINAL CALL TO ACTION BANNER */}
+      {/* FINAL CALL TO ACTION BANNER WITH MOUNTAIN GLASSMORPHISM */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12 sm:mb-0">
-        <div className="relative rounded-3xl p-10 sm:p-14 overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <div 
+          className="relative rounded-[32px] p-10 sm:p-14 overflow-hidden border border-white/50 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 text-slate-900 dark:text-white"
+          style={{
+            backgroundImage: "url('/images/mountain_landscape_bg.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          {/* Frosted Glass Overlay */}
+          <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/70 backdrop-blur-md pointer-events-none" />
+
           <div className="space-y-3 text-center md:text-left z-10">
-            <span className="px-3.5 py-1 rounded-full bg-white/20 text-white text-[10px] font-mono font-bold uppercase tracking-widest backdrop-blur">
+            <span className="px-3.5 py-1.5 rounded-full bg-white/60 dark:bg-white/10 text-slate-900 dark:text-white text-[11px] font-mono font-bold uppercase tracking-widest backdrop-blur-md border border-white/60 shadow-xs inline-block">
               Join 25,800+ Eco Citizens ♻️
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight">Recycle Today, Reward Tomorrow.</h2>
-            <p className="text-xs sm:text-sm text-emerald-100 max-w-xl font-medium">
-              Start earning points and cash rewards while building a zero-landfill future.
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
+              Recycle Today, Reward Tomorrow.
+            </h2>
+            <p className="text-xs sm:text-base text-slate-700 dark:text-slate-300 max-w-xl font-semibold">
+              Turn recyclables into UPI cash and rewards across all 38 districts of Tamil Nadu.
             </p>
           </div>
-          <Link 
-            to="/signup" 
-            onClick={() => playSciFiSound('click')}
-            className="z-10 px-8 py-4 bg-white text-emerald-950 font-black text-sm rounded-2xl hover:bg-emerald-50 transition-all shadow-2xl hover:scale-105 flex items-center space-x-2 flex-shrink-0"
-          >
-            <span>Create Free Account</span>
-            <FaArrowRight />
-          </Link>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3 z-10 flex-shrink-0">
+            <Link 
+              to="/signup" 
+              onClick={() => playSciFiSound('click')}
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white font-black text-sm rounded-2xl hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center space-x-2"
+            >
+              <span>Create Free Account</span>
+              <FaArrowRight />
+            </Link>
+            <Link 
+              to="/login" 
+              className="w-full sm:w-auto px-6 py-4 bg-white/70 hover:bg-white text-slate-900 font-bold text-sm rounded-2xl border border-white/70 backdrop-blur-md transition-all shadow-sm text-center"
+            >
+              Sign In
+            </Link>
+          </div>
         </div>
       </section>
 

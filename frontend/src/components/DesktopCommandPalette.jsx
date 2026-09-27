@@ -55,7 +55,6 @@ const DesktopCommandPalette = ({ isOpen, onClose }) => {
   // Filtered districts
   const matchedDistricts = TAMIL_NADU_DISTRICTS.filter(d => 
     d.name.toLowerCase().includes(q) || 
-    (d.tamilName && d.tamilName.includes(q)) ||
     (d.corporation && d.corporation.toLowerCase().includes(q))
   ).slice(0, 5);
 
@@ -158,7 +157,7 @@ const DesktopCommandPalette = ({ isOpen, onClose }) => {
                         <FaMapMarkerAlt className="text-xs" />
                       </div>
                       <div>
-                        <span className="font-extrabold">{d.name} ({d.tamilName})</span>
+                        <span className="font-extrabold">{d.name}</span>
                         <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
                           {d.corporation || `${d.name} District Administration`}
                         </span>

@@ -157,7 +157,7 @@ const MunicipalityDashboard = () => {
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-emerald-100/80 font-medium max-w-xl">
-                Real-time solid waste telemetry, GIS fleet tracking, citizen grievance triage, and ISO 14001 ESG balance sheet for {currentDistrict.name} ({currentDistrict.tamilName}).
+                Real-time solid waste telemetry, GIS fleet tracking, citizen grievance triage, and ISO 14001 ESG balance sheet for {currentDistrict.name}.
               </p>
             </div>
           </div>

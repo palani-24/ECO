@@ -114,11 +114,12 @@ export const registerUser = async (req, res) => {
  * @access  Public
  */
 export const loginUser = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, emailOrPhone, password, role } = req.body;
 
   try {
-    const cleanInput = (email || '').trim().toLowerCase();
-    const cleanPhone = (email || '').trim().replace(/\D/g, '');
+    const rawInput = (email || emailOrPhone || '').trim();
+    const cleanInput = rawInput.toLowerCase();
+    const cleanPhone = rawInput.replace(/\D/g, '');
 
     let user = await User.findOne({
       $or: [

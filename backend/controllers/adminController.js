@@ -100,11 +100,183 @@ export const getAdminAnalytics = async (req, res) => {
   }
 };
 
-// Get All Users
+// Get All Users with optional role and search filtering
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: 'user' }).select('-password').sort({ createdAt: -1 });
-    res.json({ success: true, data: users });
+    const { role, search } = req.query;
+    const query = {};
+    if (role && role !== 'all') {
+      query.role = role;
+    }
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+        { ward: { $regex: search, $options: 'i' } },
+        { department: { $regex: search, $options: 'i' } },
+        { jurisdiction: { $regex: search, $options: 'i' } },
+        { vehicleNumber: { $regex: search, $options: 'i' } }
+      ];
+    }
+    const users = await User.find(query).select('-password').sort({ createdAt: -1 });
+    res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Create User by Admin with all details
+export const createUser = async (req, res) => {
+  try {
+    const { 
+      name, email, password, phone, role, points, 
+      ward, department, jurisdiction, vehicleNumber, 
+      vehicleType, licenseNumber, addresses, isApproved, driverStatus 
+    } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User with this email already exists' });
+    }
+
+    const rawPassword = password || '1234';
+    const user = new User({
+      name,
+      email,
+      password: rawPassword,
+      accountPassword: rawPassword,
+      phone: phone || '',
+      role: role || 'user',
+      points: points !== undefined ? Number(points) : (role === 'user' ? 1000 : 0),
+      ward: ward || 'Ward 12 - Central Zone',
+      department: department || (role === 'driver' ? 'Green Waste Logistics' : role === 'municipality' ? 'Solid Waste & ESG Directorate' : 'Solid Waste Management'),
+      jurisdiction: jurisdiction || 'Coimbatore Municipal Corporation',
+      vehicleNumber: vehicleNumber || '',
+      vehicleType: vehicleType || '',
+      licenseNumber: licenseNumber || '',
+      isApproved: isApproved !== undefined ? isApproved : true,
+      driverStatus: driverStatus || 'active',
+      addresses: Array.isArray(addresses) && addresses.length > 0 ? addresses : [{
+        street: req.body.street || 'Main Road',
+        city: req.body.city || 'Coimbatore',
+        state: req.body.state || 'Tamil Nadu',
+        zipCode: req.body.zipCode || '641012',
+        isDefault: true
+      }]
+    });
+
+    await user.save();
+
+    // If driver, sync to Driver model as well
+    if (user.role === 'driver') {
+      await Driver.create({
+        user: user._id,
+        name: user.name,
+        phone: user.phone,
+        licenseNumber: user.licenseNumber || 'TN38-TEMP',
+        vehicleNumber: user.vehicleNumber || 'TN-38-EV-0001',
+        vehicleType: user.vehicleType || 'Electric Tipper',
+        isApproved: true,
+        status: 'active',
+        totalPickupsCount: 0,
+        currentCoordinates: { lat: 11.0168, lng: 76.9558 }
+      });
+    }
+
+    const sanitizedUser = await User.findById(user._id).select('-password');
+    res.status(201).json({ success: true, message: 'User created successfully with all details', data: sanitizedUser });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update User Details by Admin
+export const updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const {
+      name, email, phone, role, password, points,
+      ward, department, jurisdiction, vehicleNumber,
+      vehicleType, licenseNumber, addresses, isApproved, driverStatus
+    } = req.body;
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone !== undefined) user.phone = phone;
+    if (role) user.role = role;
+    if (points !== undefined) user.points = Number(points);
+    if (ward) user.ward = ward;
+    if (department) user.department = department;
+    if (jurisdiction) user.jurisdiction = jurisdiction;
+    if (vehicleNumber !== undefined) user.vehicleNumber = vehicleNumber;
+    if (vehicleType !== undefined) user.vehicleType = vehicleType;
+    if (licenseNumber !== undefined) user.licenseNumber = licenseNumber;
+    if (isApproved !== undefined) user.isApproved = isApproved;
+    if (driverStatus !== undefined) user.driverStatus = driverStatus;
+
+    if (addresses && Array.isArray(addresses)) {
+      user.addresses = addresses;
+    } else if (req.body.street) {
+      user.addresses = [{
+        street: req.body.street,
+        city: req.body.city || 'Coimbatore',
+        state: req.body.state || 'Tamil Nadu',
+        zipCode: req.body.zipCode || '641012',
+        isDefault: true
+      }];
+    }
+
+    if (password) {
+      user.password = password;
+      user.accountPassword = password;
+    }
+
+    await user.save();
+
+    // Sync driver if role is driver
+    if (user.role === 'driver') {
+      let drv = await Driver.findOne({ user: user._id });
+      if (drv) {
+        drv.name = user.name;
+        drv.phone = user.phone;
+        drv.vehicleNumber = user.vehicleNumber;
+        drv.vehicleType = user.vehicleType;
+        drv.licenseNumber = user.licenseNumber;
+        drv.status = user.driverStatus || 'active';
+        drv.isApproved = user.isApproved;
+        await drv.save();
+      }
+    }
+
+    const updatedUser = await User.findById(user._id).select('-password');
+    res.json({ success: true, message: 'User details updated successfully', data: updatedUser });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete User by Admin
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    if (user.role === 'admin' && user.email === 'admin@ecoreward.com') {
+      return res.status(400).json({ success: false, message: 'Cannot delete primary Admin account' });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    if (user.role === 'driver') {
+      await Driver.findOneAndDelete({ user: user._id });
+    }
+
+    res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

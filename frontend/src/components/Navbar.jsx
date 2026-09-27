@@ -70,11 +70,11 @@ const Navbar = () => {
   };
 
   // Determine if current page is the public Landing page
-  const isLandingPage = location.pathname === '/';
+  const isLandingPage = location.pathname === '/' || location.pathname === '/landing';
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#06121e]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors duration-300">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-[#06121e]/85 backdrop-blur-xl border-b border-white/40 dark:border-slate-800/80 shadow-xs transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
@@ -213,43 +213,8 @@ const Navbar = () => {
                     >
                       <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-xs shrink-0" />
                       <span className="max-w-[120px] truncate">{currentDistrict.name}</span>
-                      <span className="text-[10px] opacity-75 font-normal">({currentDistrict.tamilName})</span>
                     </button>
                   )}
-
-                  {/* Language Switcher Segmented Pill */}
-                  <div className="relative flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
-                    <button
-                      onClick={() => {
-                        triggerHaptic(25);
-                        setLang('en');
-                        addToast('🌐 Switched to English', 'info', 'Language Updated');
-                      }}
-                      className={`px-2 py-0.5 rounded-lg transition-all ${
-                        lang === 'en' 
-                          ? 'bg-emerald-600 text-white shadow-sm font-black' 
-                          : 'text-slate-600 dark:text-slate-300 hover:text-emerald-500'
-                      }`}
-                      title="Switch to English"
-                    >
-                      EN
-                    </button>
-                    <button
-                      onClick={() => {
-                        triggerHaptic(25);
-                        setLang('ta');
-                        addToast('🌐 தமிழுக்கு மாற்றப்பட்டது', 'info', 'மொழி புதுப்பிக்கப்பட்டது');
-                      }}
-                      className={`px-2 py-0.5 rounded-lg transition-all ${
-                        lang === 'ta' 
-                          ? 'bg-emerald-600 text-white shadow-sm font-black' 
-                          : 'text-slate-600 dark:text-slate-300 hover:text-emerald-500'
-                      }`}
-                      title="தமிழுக்கு மாறுக"
-                    >
-                      தமிழ்
-                    </button>
-                  </div>
 
                   {/* Mobile Camera QR Scanner Trigger */}
                   <button

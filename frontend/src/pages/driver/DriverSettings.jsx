@@ -156,8 +156,6 @@ const DriverSettings = () => {
                   <span className="font-black text-slate-900 dark:text-white">App Language</span>
                   <select value={language} onChange={(e) => setLanguage(e.target.value)} className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-xs">
                     <option value="English">English</option>
-                    <option value="Tamil">தமிழ் (Tamil)</option>
-                    <option value="Hindi">हिंदी (Hindi)</option>
                   </select>
                 </div>
 

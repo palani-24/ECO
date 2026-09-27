@@ -87,18 +87,7 @@ const MobileCitizenHeader = ({
                 <FaChevronDown className="text-[7px] opacity-75 shrink-0" />
               </button>
             )}
-            {/* Language Toggle */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (setLang) setLang(lang === 'ta' ? 'en' : 'ta');
-              }}
-              className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/20 hover:bg-white/30 text-white border border-white/25 uppercase cursor-pointer transition active:scale-95"
-              title="Switch Language"
-            >
-              {lang === 'ta' ? 'தமிழ்' : 'EN'}
-            </button>
+
 
             {/* Notification Bell */}
             <button 

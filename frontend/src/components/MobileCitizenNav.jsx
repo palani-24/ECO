@@ -360,9 +360,6 @@ const MobileCitizenNav = () => {
                         <span className="text-xs font-black text-slate-900 dark:text-white truncate">
                           {currentDistrict.name}
                         </span>
-                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                          {currentDistrict.tamilName}
-                        </span>
                       </div>
                       <p className="text-[9px] text-slate-400 truncate">
                         {currentDistrict.corporation}

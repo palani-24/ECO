@@ -218,18 +218,7 @@ const MobileEcoHome = ({
 
           {/* Right Controls: Language Selector & Notifications */}
           <div className="flex items-center space-x-1.5">
-            {/* Language Toggle Pill */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (setLang) setLang(lang === 'ta' ? 'en' : 'ta');
-              }}
-              className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/20 hover:bg-white/30 text-white border border-white/20 uppercase cursor-pointer"
-              title="Switch Language"
-            >
-              {lang === 'ta' ? 'தமிழ்' : 'EN'}
-            </button>
+
 
             {/* Notification Bell with Red Badge */}
             <button 
@@ -392,7 +381,7 @@ const MobileEcoHome = ({
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-black uppercase tracking-wider block">
-                  {currentDistrict.name} ({currentDistrict.tamilName})
+                  {currentDistrict.name}
                 </span>
                 <span className="px-1.5 py-0.5 bg-emerald-400 text-slate-950 text-[9px] font-black rounded-full uppercase">
                   ACTIVE

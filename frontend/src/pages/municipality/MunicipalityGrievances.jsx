@@ -172,7 +172,7 @@ const MunicipalityGrievances = () => {
                 {currentDistrict.corporation} • Citizen Grievances
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Review, triage, and dispatch municipal sanitation teams across {currentDistrict.name} ({currentDistrict.tamilName}).
+                Review, triage, and dispatch municipal sanitation teams across {currentDistrict.name}.
               </p>
             </div>
           </div>

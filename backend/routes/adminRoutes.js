@@ -2,6 +2,9 @@ import express from 'express';
 import {
   getAdminAnalytics,
   getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
   getAllDrivers,
   approveDriver,
   getAllPickups,
@@ -28,6 +31,9 @@ router.use(authorize('admin'));
 
 router.get('/analytics', getAdminAnalytics);
 router.get('/users', getAllUsers);
+router.post('/users', createUser);
+router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
 router.get('/drivers', getAllDrivers);
 router.put('/drivers/:id/approve', approveDriver);
 router.get('/pickups', getAllPickups);

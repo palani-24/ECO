@@ -46,7 +46,7 @@ const MyPickups = () => {
   const [chatPickup, setChatPickup] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([
-    { sender: 'driver', text: 'Hello! I am on my way for your waste pickup. / வணக்கம்! சேகரிக்க வந்து கொண்டு இருக்கிறேன்.', time: '10:15 AM' }
+    { sender: 'driver', text: 'Hello! I am on my way for your waste pickup.', time: '10:15 AM' }
   ]);
 
   const handleSendMessage = (e) => {
@@ -451,18 +451,18 @@ const MyPickups = () => {
                   ))}
                 </div>
 
-                {/* Preset Tamil / English Quick Buttons */}
+                {/* Preset Quick Buttons */}
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   <button 
                     type="button"
-                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'கதவு அருகே பை வைத்துள்ளேன் (Left bag near security gate)', time: 'Just now' }])}
+                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'Left bag near security gate', time: 'Just now' }])}
                     className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
                   >
                     📍 Left at Gate
                   </button>
                   <button 
                     type="button"
-                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'நான் வீட்டில் உள்ளேன் (I am at home)', time: 'Just now' }])}
+                    onClick={() => setChatMessages(prev => [...prev, { sender: 'user', text: 'I am at home and available', time: 'Just now' }])}
                     className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold"
                   >
                     🏠 I am at Home

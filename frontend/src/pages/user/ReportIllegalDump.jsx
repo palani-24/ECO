@@ -474,7 +474,7 @@ const ReportIllegalDump = () => {
                   >
                     {districts.map(d => (
                       <option key={d.id} value={d.id}>
-                        {d.name} ({d.tamilName}) • {d.corporation}
+                        {d.name} • {d.corporation}
                       </option>
                     ))}
                   </select>

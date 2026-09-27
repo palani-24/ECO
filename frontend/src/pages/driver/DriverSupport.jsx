@@ -162,7 +162,7 @@ const DriverSupport = () => {
               <div className="flex items-center space-x-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-400/25 border border-emerald-300/40 text-[10px] font-black uppercase tracking-wider text-emerald-100 flex items-center space-x-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping inline-block" />
-                  <span>Driver Operations • ஓட்டுநர் உதவி மையம்</span>
+                  <span>Driver Operations & Support Hub</span>
                 </span>
                 <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
                   Fleet Pilot ID #D-{user?._id?.slice(-4) || '9945'}

@@ -206,49 +206,41 @@ export const analyzeWasteImage = async (imagePath, claimedCategory, claimedWeigh
 };
 
 /**
- * Intelligent Multilingual Natural Language Response Engine
- * Supports Tamil, Tanglish (e.g. 'vanakam', 'plastic rate enna'), and English
+ * Natural Language Response Engine
+ * Supports standard English waste recycling inquiries
  */
 export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
   const q = (userMessage || '').toLowerCase().trim();
   const name = userContext.name ? userContext.name.split(' ')[0] : 'Citizen';
   const points = userContext.points ?? 100;
 
-  // 1. Tamil / Tanglish Greetings
-  if (q === 'vanakam' || q === 'vanakkam' || q.includes('வணக்கம்') || q.includes('namaste') || q.includes('namaskaram')) {
+  // 1. Greetings
+  if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ') || q === 'vanakkam' || q === 'namaste') {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `வணக்கம் ${name}! 🙏 Vanakkam! Naan ungaloda 24/7 EcoBot AI Assistant. Household scrap pickup schedule panna, today's scrap rates check panna, illana ungaloda ${points} EcoPoints-ah UPI-la cash-ah convert panna naan ungalukku help panren. Enna query irukku sollunga! 🌱`
+      reply: `Hello ${name}! 👋 Welcome to EcoBot AI, your 24/7 smart recycling assistant. You currently have ${points} EcoPoints in your wallet. How can I assist you with waste scheduling, scrap rates, or rewards today?`
     };
   }
 
-  if (q.includes('epdi irukinga') || q.includes('how are you') || q.includes('nallam')) {
+  if (q.includes('how are you') || q.includes('nallam') || q.includes('fine')) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `Naan romba nalla irukken, thanks for asking ${name}! 😊 Neenga epdi irukinga? Innaiku unga veetla scrap recycle panni EcoPoints earn panna ready-ah? Enna waste irukku unga kitta (Plastics, Paper, Metal, E-Waste)?`
+      reply: `I am doing great, thank you for asking ${name}! 😊 Ready to schedule recycling or check today's scrap buyback rates? Let me know what items you have ready (Plastics, Paper, Metal, Glass, or E-Waste).`
     };
   }
 
-  if (q === 'hi' || q === 'hello' || q === 'hey' || q.startsWith('hi ') || q.startsWith('hello ')) {
+  if (q.includes('thanks') || q.includes('thank you') || q.includes('nandri')) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `Hello ${name}! 👋 Great to connect with you! I am EcoBot AI. You currently have ${points} EcoPoints in your wallet. How can I assist your recycling today?`
+      reply: `Glad to help you, ${name}! 💚 Together we create a cleaner and greener environment. Feel free to ask any other questions anytime!`
     };
   }
 
-  if (q.includes('nandri') || q.includes('thanks') || q.includes('thank you')) {
-    return {
-      success: true,
-      source: 'ecobot-nlp-engine',
-      reply: `Ungalukku help pannadhula romba magizhchi, ${name}! 💚 Together we make our planet greener. Any other queries na eppo vena en kitta kelunga!`
-    };
-  }
-
-  // 2. Scrap Rates & Pricing (Tamil/Tanglish/English)
-  if (q.includes('rate') || q.includes('price') || q.includes('vila') || q.includes('evlo') || q.includes('point') || q.includes('cash') || q.includes('rupee')) {
+  // 2. Scrap Rates & Pricing
+  if (q.includes('rate') || q.includes('price') || q.includes('cost') || q.includes('point') || q.includes('cash') || q.includes('rupee')) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
@@ -257,34 +249,33 @@ export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
   }
 
   // 3. Pickup Booking & Scheduling
-  if (q.includes('pickup') || q.includes('schedule') || q.includes('book') || q.includes('driver') || q.includes('slot') || q.includes('eppo') || q.includes('varuvanga')) {
+  if (q.includes('pickup') || q.includes('schedule') || q.includes('book') || q.includes('driver') || q.includes('slot')) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `🚛 **Doorstep Pickup Booking Process:**\n1. Quick Actions-la 'Book Pickup' click pannunga.\n2. Waste category & approximate weight choose pannunga.\n3. Convenient morning or evening slot select pannunga.\nOur EV truck driver arrives at your doorstep with a calibrated Bluetooth digital scale to weigh and credit points immediately!`
+      reply: `🚛 **Doorstep Pickup Booking Process:**\n1. Click 'Book Pickup' from the dashboard quick actions.\n2. Choose your waste category and approximate weight.\n3. Select a convenient morning or evening time slot.\nOur EV truck driver will arrive at your doorstep with a calibrated digital scale to weigh and credit points immediately!`
     };
   }
 
-  // 4. Waste Types & Segregation (Tamil/Tanglish/English - matches "ethana type wast iruku", "waste types", "bins")
+  // 4. Waste Types & Segregation
   if (
-    q.includes('type') || q.includes('ethana') || q.includes('vagai') || q.includes('vaga') ||
-    q.includes('wast') || q.includes('waste') || q.includes('kuppa') || q.includes('kuppai') ||
-    q.includes('bin') || q.includes('segregat') || q.includes('battery') || q.includes('bulb') ||
-    q.includes('food') || q.includes('plastic')
+    q.includes('type') || q.includes('types') || q.includes('category') ||
+    q.includes('wast') || q.includes('waste') || q.includes('bin') || q.includes('segregat') ||
+    q.includes('battery') || q.includes('bulb') || q.includes('food') || q.includes('plastic')
   ) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `♻️ **Namma Platform-la 4 Main Waste Categories & 5 Recyclables irukku:**\n\n📌 **4-Bin Color Coding:**\n• 🟢 **Green Bin (Wet / Organic)**: Food waste, fruit peels, compostable items.\n• 🔵 **Blue Bin (Dry Recyclables)**: Clean plastic bottles, paper, cardboard, metal cans, glass.\n• 🔴 **Red Bin (Hazardous)**: Batteries, chargers, CFL bulbs, chemical containers.\n• 🟡 **Yellow Bin (Sanitary)**: Sanitary napkins, medical bandages.\n\n💰 **Doorstep Pickup Recyclables (Cash & Points):**\n1. Plastics (₹18/kg + 3 pts)\n2. Paper / Cardboard (₹14/kg + 2 pts)\n3. Scrap Metal / Iron (₹34/kg + 5 pts)\n4. E-Waste / Electronics (₹48/kg + 10 pts)\n5. Glass Bottles (₹6/kg + 1 pt)\n\nEndha waste unga kitta irukku, ${name}? Schedule Pickup panna ready-ah?`
+      reply: `♻️ **Waste Categories & Segregation Guide:**\n\n📌 **4-Bin Color Coding:**\n• 🟢 **Green Bin (Wet / Organic)**: Food waste, fruit peels, compostable items.\n• 🔵 **Blue Bin (Dry Recyclables)**: Clean plastic bottles, paper, cardboard, metal cans, glass.\n• 🔴 **Red Bin (Hazardous)**: Batteries, chargers, CFL bulbs, chemical containers.\n• 🟡 **Yellow Bin (Sanitary)**: Sanitary napkins, medical bandages.\n\n💰 **Doorstep Pickup Recyclables (Cash & Points):**\n1. Plastics (₹18/kg + 3 pts)\n2. Paper / Cardboard (₹14/kg + 2 pts)\n3. Scrap Metal / Iron (₹34/kg + 5 pts)\n4. E-Waste / Electronics (₹48/kg + 10 pts)\n5. Glass Bottles (₹6/kg + 1 pt)\n\nWhich materials do you have ready to recycle today, ${name}?`
     };
   }
 
   // 5. Tree Planting & Certificate
-  if (q.includes('tree') || q.includes('maram') || q.includes('plant') || q.includes('certificat')) {
+  if (q.includes('tree') || q.includes('plant') || q.includes('certificat')) {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `🌳 **Plant a Real Native Tree:**\nYou can redeem 500 EcoPoints from your wallet (Current: ${points} pts) to sponsor a real geo-tagged native sapling (Neem, Teak, Pungan) planted in Tamil Nadu Green Mission reserves. You receive a verified e-Certificate with GPS coordinates!`
+      reply: `🌳 **Plant a Real Native Tree:**\nYou can redeem 500 EcoPoints from your wallet (Current: ${points} pts) to sponsor a real geo-tagged native sapling (Neem, Teak, Pongamia) planted in green reserves. You will receive a verified e-Certificate with GPS coordinates!`
     };
   }
 
@@ -293,7 +284,7 @@ export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `💸 **Instant UPI Bank Payout:**\n1. Dashboard Quick Actions-la 'Instant UPI' click pannunga.\n2. Enter your UPI ID (e.g. yourname@okaxis, 9876543210@paytm).\n3. 500 EcoPoints = ₹250 instant bank transfer via NPCI/UPI within 30 seconds!`
+      reply: `💸 **Instant UPI Bank Payout:**\n1. Click 'Instant UPI' in the dashboard quick actions.\n2. Enter your UPI ID (e.g. username@okaxis, 9876543210@paytm).\n3. 500 EcoPoints = ₹250 instant bank transfer via NPCI/UPI within 30 seconds!`
     };
   }
 
@@ -302,7 +293,7 @@ export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `🔐 **Pickup Handover OTP:**\nDriver unga doorstep-kku vandhavudan, ungaloda active pickup card-la display aagura 4-digit Handover OTP-ah driver kitta sollunga. Weight verify aana udane unga wallet-la EcoPoints instant-ah credit aagidum!`
+      reply: `🔐 **Pickup Handover OTP:**\nWhen the driver arrives at your doorstep, show the 4-digit Handover OTP displayed on your active pickup tracking card. Once verified, EcoPoints will be credited to your wallet instantly!`
     };
   }
 
@@ -311,7 +302,7 @@ export const generateIntelligentEcoReply = (userMessage, userContext = {}) => {
     return {
       success: true,
       source: 'ecobot-nlp-engine',
-      reply: `🛡️ **Human Support Escalation:**\nTop header-la 'EcoReward Support Team' tab click panni human officer-kku direct-ah message anupalaam, illana unga active order card-la irukka 'Call Driver / Admin' button use pannalaam!`
+      reply: `🛡️ **Support Escalation:**\nNavigate to the Helpdesk & Support tab to message a support officer directly, or click the 'Call Driver / Admin' button on your active pickup order card.`
     };
   }
 
@@ -337,8 +328,10 @@ export const generateConversationalAIResponse = async (userMessage, userContext 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
       const systemPrompt = `You are EcoBot AI, the friendly, highly intelligent 24/7 Smart Waste Management & Recycling assistant for the EcoReward platform.
 You are chatting with user "${userName}" (Wallet points: ${userPoints}, Role: ${userContext.role || 'citizen'}).
-You understand English, Tamil, and Tanglish (Tamil in English letters, like "vanakam", "epdi irukinga", "plastic rate enna", "pickup book pannanum").
-If the user greets or queries in Tamil or Tanglish, reply warmly in friendly Tanglish or Tamil with helpful emojis.
+Respond professionally and concisely in English with helpful emojis.
+Scrap rates: Plastics ₹18/kg (+3 pts), Cardboard ₹14/kg (+2 pts), Metals ₹34/kg (+5 pts), E-Waste ₹48/kg (+10 pts), Glass ₹6/kg (+1 pt).
+500 EcoPoints = ₹250 instant UPI transfer to GPay/PhonePe or can plant a real geo-tagged tree.
+Keep replies concise, friendly, and practical (2-4 sentences or clear bullet points).`;
 Scrap rates: Plastics ₹18/kg (+3 pts), Cardboard ₹14/kg (+2 pts), Metals ₹34/kg (+5 pts), E-Waste ₹48/kg (+10 pts), Glass ₹6/kg (+1 pt).
 500 EcoPoints = ₹250 instant UPI transfer to GPay/PhonePe or can plant a real geo-tagged tree in Tamil Nadu.
 Keep replies concise, friendly, and practical (2-4 sentences or clear bullet points).`;

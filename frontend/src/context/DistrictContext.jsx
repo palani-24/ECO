@@ -8,7 +8,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'chennai',
     name: 'Chennai',
-    tamilName: 'சென்னை',
     corporation: 'Greater Chennai Corporation',
     headquarters: 'Ripon Building, Chennai',
     zones: 15,
@@ -32,7 +31,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'coimbatore',
     name: 'Coimbatore',
-    tamilName: 'கோயம்புத்தூர்',
     corporation: 'Coimbatore City Municipal Corporation',
     headquarters: 'Victoria Town Hall, Coimbatore',
     zones: 5,
@@ -56,7 +54,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'madurai',
     name: 'Madurai',
-    tamilName: 'மதுரை',
     corporation: 'Madurai City Municipal Corporation',
     headquarters: 'Arignar Anna Maligai, Madurai',
     zones: 5,
@@ -79,7 +76,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tiruchirappalli',
     name: 'Tiruchirappalli (Trichy)',
-    tamilName: 'திருச்சிராப்பள்ளி',
     corporation: 'Tiruchirappalli City Municipal Corporation',
     headquarters: 'Bharathidasan Salai, Cantonment, Trichy',
     zones: 5,
@@ -102,7 +98,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'salem',
     name: 'Salem',
-    tamilName: 'சேலம்',
     corporation: 'Salem City Municipal Corporation',
     headquarters: 'Salem Municipal Complex, Salem',
     zones: 4,
@@ -124,7 +119,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tirunelveli',
     name: 'Tirunelveli',
-    tamilName: 'திருநெல்வேலி',
     corporation: 'Tirunelveli City Municipal Corporation',
     headquarters: 'S.N. High Road, Tirunelveli',
     zones: 5,
@@ -146,7 +140,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tiruppur',
     name: 'Tiruppur',
-    tamilName: 'திருப்பூர்',
     corporation: 'Tiruppur City Municipal Corporation',
     headquarters: 'Mangalam Road, Tiruppur',
     zones: 4,
@@ -168,7 +161,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'erode',
     name: 'Erode',
-    tamilName: 'ஈரோடு',
     corporation: 'Erode City Municipal Corporation',
     headquarters: 'Meenatchisundaranar Road, Erode',
     zones: 4,
@@ -190,7 +182,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'vellore',
     name: 'Vellore',
-    tamilName: 'வேலூர்',
     corporation: 'Vellore City Municipal Corporation',
     headquarters: 'Infantry Road, Vellore',
     zones: 4,
@@ -212,7 +203,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'thanjavur',
     name: 'Thanjavur',
-    tamilName: 'தஞ்சாவூர்',
     corporation: 'Thanjavur City Municipal Corporation',
     headquarters: 'Kamarajar Road, Thanjavur',
     zones: 4,
@@ -234,7 +224,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'dindigul',
     name: 'Dindigul',
-    tamilName: 'திண்டுக்கல்',
     corporation: 'Dindigul City Municipal Corporation',
     headquarters: 'Palani Road, Dindigul',
     zones: 4,
@@ -256,7 +245,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'kanchipuram',
     name: 'Kanchipuram',
-    tamilName: 'காஞ்சிபுரம்',
     corporation: 'Kanchipuram City Municipal Corporation',
     headquarters: 'Annai Indira Gandhi Salai, Kanchipuram',
     zones: 4,
@@ -278,7 +266,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'chengalpattu',
     name: 'Chengalpattu',
-    tamilName: 'செங்கல்பட்டு',
     corporation: 'Tambaram Municipal Corporation & Chengalpattu',
     headquarters: 'GST Road, Tambaram / Chengalpattu',
     zones: 5,
@@ -300,7 +287,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'cuddalore',
     name: 'Cuddalore',
-    tamilName: 'கடலூர்',
     corporation: 'Cuddalore City Municipal Corporation',
     headquarters: 'Bharathi Road, Cuddalore',
     zones: 4,
@@ -321,7 +307,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'karur',
     name: 'Karur',
-    tamilName: 'கரூர்',
     corporation: 'Karur City Municipal Corporation',
     headquarters: 'Azad Road, Karur',
     zones: 4,
@@ -342,7 +327,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'virudhunagar',
     name: 'Virudhunagar',
-    tamilName: 'விருதுநகர்',
     corporation: 'Sivakasi Municipal Corporation & Virudhunagar',
     headquarters: 'Sivakasi / Virudhunagar Municipal Building',
     zones: 4,
@@ -363,7 +347,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'thoothukudi',
     name: 'Thoothukudi (Tuticorin)',
-    tamilName: 'தூத்துக்குடி',
     corporation: 'Thoothukudi City Municipal Corporation',
     headquarters: 'Palayamkottai Road, Thoothukudi',
     zones: 4,
@@ -384,7 +367,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'kanyakumari',
     name: 'Kanyakumari (Nagercoil)',
-    tamilName: 'கன்னியாகுமரி',
     corporation: 'Nagercoil City Municipal Corporation',
     headquarters: 'Balamore Road, Nagercoil',
     zones: 4,
@@ -405,7 +387,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'krishnagiri',
     name: 'Krishnagiri (Hosur)',
-    tamilName: 'கிருஷ்ணகிரி',
     corporation: 'Hosur City Municipal Corporation & Krishnagiri',
     headquarters: 'Bagalur Road, Hosur',
     zones: 4,
@@ -426,7 +407,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'namakkal',
     name: 'Namakkal',
-    tamilName: 'நாமக்கல்',
     corporation: 'Namakkal City Municipal Corporation',
     headquarters: 'Mohanur Road, Namakkal',
     zones: 4,
@@ -447,7 +427,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'pudukkottai',
     name: 'Pudukkottai',
-    tamilName: 'புதுக்கோட்டை',
     corporation: 'Pudukkottai City Municipal Corporation',
     headquarters: 'Santhanathapuram, Pudukkottai',
     zones: 4,
@@ -468,7 +447,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'nilgiris',
     name: 'The Nilgiris (Ooty)',
-    tamilName: 'நீலகிரி',
     corporation: 'Udhagamandalam (Ooty) Municipality',
     headquarters: 'Commercial Road, Ooty',
     zones: 4,
@@ -489,7 +467,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'dharmapuri',
     name: 'Dharmapuri',
-    tamilName: 'தர்மபுரி',
     corporation: 'Dharmapuri Municipality',
     headquarters: 'Kandhasamy Vathiyar Street, Dharmapuri',
     zones: 3,
@@ -510,7 +487,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'ramanathapuram',
     name: 'Ramanathapuram',
-    tamilName: 'ராமநாதபுரம்',
     corporation: 'Ramanathapuram Municipality & Rameswaram',
     headquarters: 'Vandikkara Street, Ramanathapuram',
     zones: 3,
@@ -531,7 +507,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'sivaganga',
     name: 'Sivaganga',
-    tamilName: 'சிவகங்கை',
     corporation: 'Sivaganga & Karaikudi Municipality',
     headquarters: 'Koviloor Road, Karaikudi / Sivaganga',
     zones: 3,
@@ -552,7 +527,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'theni',
     name: 'Theni',
-    tamilName: 'தேனி',
     corporation: 'Theni Allinagaram Municipality',
     headquarters: 'Periyakulam Road, Theni',
     zones: 3,
@@ -573,7 +547,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tenkasi',
     name: 'Tenkasi',
-    tamilName: 'தென்காசி',
     corporation: 'Tenkasi & Courtallam Municipality',
     headquarters: 'Amman Sannathi Street, Tenkasi',
     zones: 3,
@@ -594,7 +567,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tiruvannamalai',
     name: 'Tiruvannamalai',
-    tamilName: 'திருவண்ணாமலை',
     corporation: 'Tiruvannamalai City Municipal Corporation',
     headquarters: 'Girivalam Path / Car Street, Tiruvannamalai',
     zones: 4,
@@ -615,7 +587,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'ranipet',
     name: 'Ranipet',
-    tamilName: 'ராணிப்பேட்டை',
     corporation: 'Ranipet & Walajapet Municipality',
     headquarters: 'MBTH Road, Ranipet',
     zones: 3,
@@ -636,7 +607,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tirupathur',
     name: 'Tirupathur',
-    tamilName: 'திருப்பத்தூர்',
     corporation: 'Tirupathur & Vaniyambadi Municipality',
     headquarters: 'Railway Station Road, Tirupathur',
     zones: 3,
@@ -657,7 +627,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tiruvallur',
     name: 'Tiruvallur',
-    tamilName: 'திருவள்ளூர்',
     corporation: 'Avadi Municipal Corporation & Tiruvallur',
     headquarters: 'JN Road, Tiruvallur / Avadi',
     zones: 4,
@@ -678,7 +647,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'tiruvarur',
     name: 'Tiruvarur',
-    tamilName: 'திருவாரூர்',
     corporation: 'Tiruvarur Municipality',
     headquarters: 'Panagal Road, Tiruvarur',
     zones: 3,
@@ -699,7 +667,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'nagapattinam',
     name: 'Nagapattinam',
-    tamilName: 'நாகப்பட்டினம்',
     corporation: 'Nagapattinam & Velankanni Municipality',
     headquarters: 'Public Office Road, Nagapattinam',
     zones: 3,
@@ -720,7 +687,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'mayiladuthurai',
     name: 'Mayiladuthurai',
-    tamilName: 'மயிலாடுதுறை',
     corporation: 'Mayiladuthurai Municipality',
     headquarters: 'Kutchery Road, Mayiladuthurai',
     zones: 3,
@@ -741,7 +707,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'ariyalur',
     name: 'Ariyalur',
-    tamilName: 'அரியலூர்',
     corporation: 'Ariyalur Municipality',
     headquarters: 'Market Street, Ariyalur',
     zones: 2,
@@ -762,7 +727,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'perambalur',
     name: 'Perambalur',
-    tamilName: 'பெரம்பலூர்',
     corporation: 'Perambalur Municipality',
     headquarters: 'Venkatesapuram, Perambalur',
     zones: 2,
@@ -783,7 +747,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'kallakurichi',
     name: 'Kallakurichi',
-    tamilName: 'கள்ளக்குறிச்சி',
     corporation: 'Kallakurichi Municipality',
     headquarters: 'Salem Main Road, Kallakurichi',
     zones: 2,
@@ -804,7 +767,6 @@ export const TAMIL_NADU_DISTRICTS = [
   {
     id: 'villupuram',
     name: 'Villupuram',
-    tamilName: 'விழுப்புரம்',
     corporation: 'Villupuram Municipality',
     headquarters: 'East Pondy Road, Villupuram',
     zones: 4,
@@ -855,7 +817,6 @@ export const DistrictProvider = ({ children }) => {
 
   const filteredDistricts = TAMIL_NADU_DISTRICTS.filter(d => 
     d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    d.tamilName.includes(searchQuery) ||
     d.corporation.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -919,7 +880,7 @@ export const DistrictProvider = ({ children }) => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search any of 38 TN Districts (e.g. Madurai, சென்னை, Salem)..."
+                    placeholder="Search any of 38 Districts (e.g. Madurai, Chennai, Salem)..."
                     className="w-full bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 outline-none"
                     autoFocus
                   />
@@ -969,9 +930,6 @@ export const DistrictProvider = ({ children }) => {
                               <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">
                                 {d.name}
                               </h4>
-                              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                                {d.tamilName}
-                              </span>
                             </div>
                             <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                               {d.corporation}

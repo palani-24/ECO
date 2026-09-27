@@ -150,10 +150,10 @@ const MunicipalitySupportHub = () => {
               <div className="flex items-center space-x-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-400/25 border border-emerald-300/40 text-[10px] font-black uppercase tracking-wider text-emerald-100 flex items-center space-x-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-300 animate-ping inline-block" />
-                  <span>Municipal Command • நகராட்சி ஆதரவு மையம்</span>
+                  <span>Municipal Command & Support</span>
                 </span>
                 <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
-                  {currentDistrict.name} ({currentDistrict.tamilName})
+                  {currentDistrict.name}
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight">

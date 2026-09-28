@@ -460,11 +460,11 @@ const UserDashboard = () => {
               </div>
 
               {/* Green EV Recycling Truck Graphic */}
-              <div className="hidden 2xl:block w-40 h-28 shrink-0 relative">
+              <div className="hidden xl:block w-36 lg:w-44 h-28 shrink-0 relative">
                 <img 
                   src="/images/eco_green_truck.jpg" 
                   alt="Green EV Waste Truck" 
-                  className="w-full h-full object-contain filter drop-shadow-md"
+                  className="w-full h-full object-contain filter drop-shadow-md rounded-2xl"
                 />
               </div>
             </div>

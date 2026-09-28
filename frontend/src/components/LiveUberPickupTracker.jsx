@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  FaTruck, FaMapMarkerAlt, FaPhoneAlt, FaComments, FaCheckCircle, 
-  FaClock, FaBolt, FaLeaf, FaStar, FaPlay, FaCheck, FaHome, FaShoppingCart
+  FaTruck, FaPhoneAlt, FaComments, FaClock, FaLeaf, FaStar, 
+  FaPlay, FaCheck, FaHome, FaShoppingCart
 } from 'react-icons/fa';
+import { MapContainer, TileLayer, Marker as LeafletMarker, Popup, Polyline, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { triggerConfetti } from '../utils/confetti';
 import { soundFx } from '../utils/audioFeedback';
+
+// Fix Leaflet default icon paths in Vite
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Real Coimbatore Avinashi Road Route Waypoints
+const COIMBATORE_ROUTE = [
+  [11.0168, 76.9558], // Your Gate (Lakshmi Mills / Race Course)
+  [11.0175, 76.9590],
+  [11.0188, 76.9635],
+  [11.0205, 76.9680], // Mid En Route
+  [11.0225, 76.9720],
+  [11.0250, 76.9760]  // Eco Hub (Peelamedu)
+];
 
 const STAGES = [
   {
@@ -16,7 +36,8 @@ const STAGES = [
     time: '10:12 AM',
     badge: 'ASSIGNED',
     progress: 25,
-    icon: FaCheck
+    icon: FaCheck,
+    coordsIndex: 0
   },
   {
     id: 'en_route',
@@ -25,7 +46,8 @@ const STAGES = [
     time: '10:18 AM',
     badge: 'LIVE GPS',
     progress: 62,
-    icon: FaTruck
+    icon: FaTruck,
+    coordsIndex: 3
   },
   {
     id: 'arrived',
@@ -34,7 +56,8 @@ const STAGES = [
     time: '--:--',
     badge: 'DOORSTEP',
     progress: 88,
-    icon: FaHome
+    icon: FaHome,
+    coordsIndex: 1
   },
   {
     id: 'completed',
@@ -43,9 +66,65 @@ const STAGES = [
     time: '--:--',
     badge: 'COMPLETED',
     progress: 100,
-    icon: FaShoppingCart
+    icon: FaShoppingCart,
+    coordsIndex: 5
   }
 ];
+
+// Custom HTML Markers for Leaflet
+const gateIcon = L.divIcon({
+  className: 'gate-marker',
+  html: `<div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="background:#ffffff; color:#059669; border:2.5px solid #10b981; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.18); font-size:17px;">
+            📍
+          </div>
+          <span style="background:#ffffff; color:#1e293b; font-weight:800; font-size:10px; padding:2px 8px; border-radius:999px; border:1px solid #cbd5e1; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin-top:3px; white-space:nowrap;">
+            Your Gate
+          </span>
+         </div>`,
+  iconSize: [60, 60],
+  iconAnchor: [30, 20]
+});
+
+const hubIcon = L.divIcon({
+  className: 'hub-marker',
+  html: `<div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="background:#ffffff; color:#059669; border:2.5px solid #10b981; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.18); font-size:17px;">
+            🍃
+          </div>
+          <span style="background:#ffffff; color:#1e293b; font-weight:800; font-size:10px; padding:2px 8px; border-radius:999px; border:1px solid #cbd5e1; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin-top:3px; white-space:nowrap;">
+            Eco Hub
+          </span>
+         </div>`,
+  iconSize: [60, 60],
+  iconAnchor: [30, 20]
+});
+
+const createTruckIcon = (etaCountdown) => L.divIcon({
+  className: 'truck-marker',
+  html: `<div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="background:#0f172a; color:#ffffff; font-weight:700; font-size:10px; padding:2px 8px; border-radius:999px; box-shadow:0 4px 10px rgba(0,0,0,0.25); margin-bottom:3px; white-space:nowrap; display:flex; align-items:center; gap:4px;">
+            <span style="color:#34d399; font-size:9px;">⏱</span> ${etaCountdown} min
+          </div>
+          <div style="background:#0f9f6e; color:#ffffff; border:2px solid #ffffff; width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(15,159,110,0.5); font-size:20px; position:relative;">
+            🚚
+            <span style="position:absolute; top:-2px; right:-2px; width:10px; height:10px; background:#f59e0b; border-radius:50%; border:2px solid #ffffff;"></span>
+          </div>
+         </div>`,
+  iconSize: [70, 70],
+  iconAnchor: [35, 45]
+});
+
+// Map Viewport Auto-Center Controller
+const MapController = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center && map) {
+      map.setView(center, map.getZoom(), { animate: true });
+    }
+  }, [center, map]);
+  return null;
+};
 
 const LiveUberPickupTracker = ({ 
   pickup: externalPickup = null,
@@ -58,6 +137,7 @@ const LiveUberPickupTracker = ({
   const [isDemoRunning, setIsDemoRunning] = useState(false);
 
   const activeStage = STAGES[currentStageIndex];
+  const driverCurrentPosition = COIMBATORE_ROUTE[activeStage.coordsIndex];
 
   useEffect(() => {
     if (externalPickup?.status) {
@@ -97,19 +177,19 @@ const LiveUberPickupTracker = ({
     setTimeout(() => {
       setCurrentStageIndex(1);
       soundFx.playScanBeep();
-    }, 2200);
+    }, 2400);
 
     setTimeout(() => {
       setCurrentStageIndex(2);
       soundFx.playScanBeep();
-    }, 5000);
+    }, 5200);
 
     setTimeout(() => {
       setCurrentStageIndex(3);
       soundFx.playSuccessChime();
       triggerConfetti({ count: 100 });
       setIsDemoRunning(false);
-    }, 7800);
+    }, 8000);
   };
 
   // Driver details
@@ -216,11 +296,11 @@ const LiveUberPickupTracker = ({
         </div>
       </div>
 
-      {/* Stylized Live GPS Route Map Container */}
-      <div className="relative my-2 rounded-2xl bg-white border border-slate-100 overflow-hidden shadow-xs">
+      {/* Real Interactive Leaflet GPS Map Container */}
+      <div className="relative my-2 rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-xs">
         
         {/* Telematics Bar Top */}
-        <div className="flex items-center justify-between text-xs font-semibold px-4 py-2.5 bg-[#f8fafc]/90 border-b border-slate-100">
+        <div className="flex items-center justify-between text-xs font-semibold px-4 py-2.5 bg-[#f8fafc] border-b border-slate-100 z-10 relative">
           <div className="flex items-center space-x-2">
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
             <span className="text-slate-800 font-bold">{activeStage.subtitle}</span>
@@ -233,82 +313,74 @@ const LiveUberPickupTracker = ({
           </div>
         </div>
 
-        {/* Map Canvas with City Streets Background & Glowing Route */}
-        <div className="relative h-44 sm:h-52 w-full overflow-hidden flex items-center justify-center">
-          {/* Real City Vector Map Image Background */}
-          <img 
-            src="/images/gps_city_map_bg.jpg" 
-            alt="Live GPS Navigation Map" 
-            className="absolute inset-0 w-full h-full object-cover opacity-75"
-          />
-
-          {/* Glowing Green Curved Highway Path SVG Overlay */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 800 200" preserveAspectRatio="none">
-            {/* Base Road Shadow */}
-            <path
-              d="M 60 140 Q 250 160, 420 130 T 740 135"
-              fill="none"
-              stroke="#cbd5e1"
-              strokeWidth="14"
-              strokeLinecap="round"
-            />
-            {/* Glowing Green Eco Route */}
-            <path
-              d="M 60 140 Q 250 160, 420 130 T 740 135"
-              fill="none"
-              stroke="#10b981"
-              strokeWidth="7"
-              strokeLinecap="round"
-            />
-            {/* Dashed Center Route Line */}
-            <path
-              d="M 60 140 Q 250 160, 420 130 T 740 135"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-              strokeLinecap="round"
-            />
-          </svg>
-
-          {/* Citizen Home Gate Marker (Left side) */}
-          <div className="absolute left-8 sm:left-14 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
-            <div className="h-10 w-10 rounded-full bg-white text-[#059669] border-2 border-[#10b981] flex items-center justify-center shadow-md">
-              <FaMapMarkerAlt className="h-5 w-5 text-[#059669]" />
-            </div>
-            <span className="text-[10px] font-black text-slate-800 mt-1 whitespace-nowrap bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-xs">
-              Your Gate
-            </span>
-          </div>
-
-          {/* Moving EV Tipper Vehicle on Route */}
-          <motion.div 
-            className="absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center"
-            style={{ left: `calc(${Math.min(84, Math.max(16, activeStage.progress))}% - 22px)` }}
-            transition={{ type: 'spring', stiffness: 50 }}
+        {/* Real Interactive Leaflet Map Canvas */}
+        <div className="relative h-56 sm:h-64 w-full z-0">
+          <MapContainer
+            center={driverCurrentPosition}
+            zoom={15}
+            scrollWheelZoom={false}
+            className="w-full h-full"
+            style={{ width: '100%', height: '100%' }}
           >
-            {/* 5 Min ETA Pill Tooltip on top of truck */}
-            <div className="px-2.5 py-0.5 bg-slate-900/95 text-white rounded-full text-[10px] font-bold flex items-center space-x-1 shadow-md mb-1 whitespace-nowrap">
-              <FaClock className="text-[9px] text-[#34d399]" />
-              <span>{etaCountdown} min</span>
-            </div>
+            {/* Clean, Bright, Pastel CartoDB Voyager Map Tiles */}
+            <TileLayer
+              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              maxZoom={19}
+            />
 
-            {/* Green Recycling EV Truck Icon */}
-            <div className="relative h-11 w-11 rounded-2xl bg-[#0f9f6e] text-white flex items-center justify-center shadow-xl border-2 border-white ring-2 ring-[#0f9f6e]/30">
-              <FaTruck className="h-5 w-5 text-white" />
-              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white" />
-            </div>
-          </motion.div>
+            <MapController center={driverCurrentPosition} />
 
-          {/* Scrap Recycling Micro-Hub Destination (Right side) */}
-          <div className="absolute right-8 sm:right-14 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
-            <div className="h-10 w-10 rounded-full bg-white text-[#059669] border-2 border-[#10b981] flex items-center justify-center shadow-md">
-              <FaLeaf className="h-5 w-5 text-[#059669]" />
-            </div>
-            <span className="text-[10px] font-black text-slate-800 mt-1 whitespace-nowrap bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-xs">
-              Eco Hub
-            </span>
-          </div>
+            {/* Road Route Polyline (Green Glowing Highway) */}
+            <Polyline
+              positions={COIMBATORE_ROUTE}
+              color="#059669"
+              weight={6}
+              opacity={0.9}
+              lineCap="round"
+            />
+            <Polyline
+              positions={COIMBATORE_ROUTE}
+              color="#34d399"
+              weight={2}
+              dashArray="6, 8"
+              opacity={1}
+            />
+
+            {/* Citizen Home Gate Marker (Lakshmi Mills / Avinashi Rd) */}
+            <LeafletMarker position={COIMBATORE_ROUTE[0]} icon={gateIcon}>
+              <Popup>
+                <div className="p-1 text-center font-sans">
+                  <p className="font-bold text-slate-900 text-xs">📍 Your Gate</p>
+                  <p className="text-[11px] text-slate-500">Avinashi Road, Coimbatore</p>
+                </div>
+              </Popup>
+            </LeafletMarker>
+
+            {/* Moving EV Green Truck Driver Marker */}
+            <LeafletMarker 
+              position={driverCurrentPosition} 
+              icon={createTruckIcon(etaCountdown)}
+            >
+              <Popup>
+                <div className="p-1 font-sans text-center">
+                  <p className="font-bold text-emerald-800 text-xs">🚚 {driverName}</p>
+                  <p className="text-[11px] text-slate-600">{vehicleNumber} • {liveSpeed} km/h</p>
+                  <p className="text-[10px] text-emerald-600 font-black mt-0.5">ETA: {etaCountdown} Mins</p>
+                </div>
+              </Popup>
+            </LeafletMarker>
+
+            {/* Destination Scrap Hub Marker (Peelamedu) */}
+            <LeafletMarker position={COIMBATORE_ROUTE[5]} icon={hubIcon}>
+              <Popup>
+                <div className="p-1 text-center font-sans">
+                  <p className="font-bold text-slate-900 text-xs">🍃 Eco Hub</p>
+                  <p className="text-[11px] text-slate-500">Central Waste Sorting Station</p>
+                </div>
+              </Popup>
+            </LeafletMarker>
+          </MapContainer>
         </div>
       </div>
 
@@ -316,7 +388,7 @@ const LiveUberPickupTracker = ({
       <div className="mt-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 items-stretch">
         
         {/* Driver Profile (8 cols) */}
-        <div className="md:col-span-8 flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#f0fdfa]/40 border border-slate-200/80">
+        <div className="md:col-span-8 flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#f0fdfa]/60 border border-slate-200/80">
           <div className="flex items-center space-x-3.5">
             <div className="relative">
               <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#10b981] shadow-xs">

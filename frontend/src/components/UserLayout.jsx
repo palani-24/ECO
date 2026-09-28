@@ -20,13 +20,13 @@ const UserLayout = ({ children, hideFooter = false }) => {
       {/* Subtle soft backdrop layer so text and cards remain crystal clear with sharp borders */}
       <div className="fixed inset-0 bg-white/10 dark:bg-slate-950/20 pointer-events-none z-0" />
 
-      {/* 💻 Desktop Top Navbar */}
-      <div className="relative z-20 hidden md:block">
+      {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 hidden md:block">
         <Navbar />
       </div>
 
-      {/* 📱 Mobile Unified Green App Header */}
-      <div className="relative z-20 block md:hidden">
+      {/* 📱 Mobile Unified Green App Header (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 block md:hidden">
         <MobileCitizenHeader />
       </div>
 

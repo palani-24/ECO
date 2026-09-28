@@ -19,13 +19,13 @@ const DriverLayout = ({ children, hideFooter = false }) => {
       />
       <div className="fixed inset-0 bg-gradient-to-b from-white/80 via-slate-50/65 to-white/85 pointer-events-none z-0" />
 
-      {/* 💻 Desktop Top Navbar */}
-      <div className="relative z-20 hidden md:block">
+      {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 hidden md:block">
         <Navbar />
       </div>
 
-      {/* 📱 Mobile Driver Green App Header */}
-      <div className="relative z-20 block md:hidden">
+      {/* 📱 Mobile Driver Green App Header (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 block md:hidden">
         <MobileDriverHeader />
       </div>
 

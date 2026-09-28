@@ -19,13 +19,13 @@ const AdminLayout = ({ children, hideFooter = false, title = 'Admin Console' }) 
       />
       <div className="fixed inset-0 bg-gradient-to-b from-white/80 via-slate-50/65 to-white/85 pointer-events-none z-0" />
 
-      {/* 💻 Desktop Top Navbar */}
-      <div className="relative z-20 hidden md:block">
+      {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 hidden md:block">
         <Navbar />
       </div>
 
-      {/* 📱 Mobile Admin Cyber Header */}
-      <div className="relative z-20 block md:hidden">
+      {/* 📱 Mobile Admin Cyber Header (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      <div className="sticky top-0 z-50 block md:hidden">
         <MobileAdminHeader title={title} />
       </div>
 

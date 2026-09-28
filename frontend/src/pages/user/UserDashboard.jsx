@@ -365,14 +365,14 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Modern Panoramic Eco Landscape Hero Banner */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 p-6 sm:p-8 text-slate-900 shadow-sm min-h-[170px] flex items-center">
+        {/* Modern Panoramic Eco Landscape Hero Banner with Crisp Border */}
+        <div className="relative overflow-hidden rounded-3xl bg-white/95 border-2 border-slate-300 p-6 sm:p-8 text-slate-900 shadow-xl shadow-slate-900/5 min-h-[170px] flex items-center">
           {/* Panoramic Eco City Landscape Background */}
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
             style={{ 
               backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
-              filter: 'brightness(1.05) saturate(1.1)'
+              filter: 'brightness(1.05) saturate(1.15)'
             }}
           />
           {/* Gentle translucent soft white gradient overlay */}
@@ -478,16 +478,16 @@ const UserDashboard = () => {
           onOpenChat={() => setShowDriverChat(true)}
         />
 
-        {/* Dynamic 4-Metric Bento Grid */}
+        {/* Dynamic 4-Metric Bento Grid with Crisp 2px Outlines */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
           {/* Card 1: Wallet Balance & EcoPoints */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-emerald-500/40 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-emerald-500 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-emerald-400/80">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-emerald-400/80">
                 EcoPoints Balance
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border border-emerald-500/20 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border-2 border-emerald-500/30 group-hover:scale-110 transition-transform shadow-xs">
                 <FaCoins />
               </div>
             </div>
@@ -504,7 +504,7 @@ const UserDashboard = () => {
             </div>
             <button
               onClick={() => setShowUpiPayout(true)}
-              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border border-emerald-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border-2 border-emerald-500/40 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaWallet className="text-xs" />
               <span>Redeem UPI Cash</span>
@@ -512,12 +512,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 2: Active Pickup & Status */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-sky-500/40 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-sky-500 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-sky-400/80">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-sky-400/80">
                 Active Doorstep Pickup
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-base border border-sky-500/20 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-base border-2 border-sky-500/30 group-hover:scale-110 transition-transform shadow-xs">
                 <FaTruck />
               </div>
             </div>
@@ -562,7 +562,7 @@ const UserDashboard = () => {
                 </div>
                 <Link
                   to="/schedule-pickup"
-                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border-2 border-sky-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
                 >
                   <FaCalendarPlus className="text-xs" />
                   <span>Schedule Pickup</span>
@@ -572,12 +572,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-teal-500/40 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-teal-500 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-teal-400/80">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-teal-400/80">
                 Carbon Diverted
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-base border border-teal-500/20 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-base border-2 border-teal-500/30 group-hover:scale-110 transition-transform shadow-xs">
                 <FaLeaf />
               </div>
             </div>
@@ -610,12 +610,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 shadow-md dark:shadow-emerald-950/20 flex flex-col justify-between space-y-4 hover:border-amber-500/40 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-amber-500 hover:-translate-y-0.5 transition-all group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-amber-400/80">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-amber-400/80">
                 Total Recycled
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border border-amber-500/20 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border-2 border-amber-500/30 group-hover:scale-110 transition-transform shadow-xs">
                 <FaAward />
               </div>
             </div>
@@ -632,7 +632,7 @@ const UserDashboard = () => {
             </div>
             <button
               onClick={() => setShowGreenCert(true)}
-              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border-2 border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaAward className="text-xs" />
               <span>Official Green Certificate</span>

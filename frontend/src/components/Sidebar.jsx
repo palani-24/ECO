@@ -149,11 +149,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Pristine White Executive Eco Navigation Panel) */}
-      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-sm flex flex-col justify-between p-3.5 text-slate-800 transition-all select-none">
+      {/* Desktop Sidebar (Pristine White Executive Eco Navigation Panel with Crisp Outlines) */}
+      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 shadow-xl shadow-slate-900/5 flex flex-col justify-between p-3.5 text-slate-800 transition-all select-none">
         
-        {/* User Profile Quick Executive Card (Shrink-0: Always stays top) */}
-        <div className="shrink-0 p-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl flex flex-col gap-2 shadow-2xs relative overflow-hidden group">
+        {/* User Profile Quick Executive Card with Crisp Border */}
+        <div className="shrink-0 p-3 bg-white border-2 border-slate-200 rounded-2xl flex flex-col gap-2 shadow-xs relative overflow-hidden group">
           <div className="flex items-center space-x-2.5 relative z-10">
             <div className="relative shrink-0">
               <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-emerald-500/25 overflow-hidden">
@@ -274,7 +274,7 @@ const Sidebar = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-2 p-2.5 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50 border border-emerald-500/20 rounded-2xl shadow-2xs space-y-1.5">
+            <div className="mt-2 p-2.5 bg-white border-2 border-slate-200 rounded-2xl shadow-xs space-y-1.5">
               <div className="flex items-center justify-between text-[10px]">
                 <div className="flex items-center gap-1.5 font-black text-emerald-900">
                   <FaLeaf className="h-3 w-3 text-emerald-600" />
@@ -285,11 +285,11 @@ const Sidebar = () => {
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-center pt-0.5">
-                <div className="bg-white/90 p-1.5 rounded-xl border border-slate-200/60 shadow-2xs">
+                <div className="bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-2xs">
                   <div className="text-xs font-black text-slate-900">333.6 kg</div>
                   <div className="text-[9px] font-bold text-slate-500">Recycled</div>
                 </div>
-                <div className="bg-white/90 p-1.5 rounded-xl border border-slate-200/60 shadow-2xs">
+                <div className="bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-2xs">
                   <div className="text-xs font-black text-emerald-600">500.4 kg</div>
                   <div className="text-[9px] font-bold text-slate-500">CO₂ Saved</div>
                 </div>
@@ -310,7 +310,7 @@ const Sidebar = () => {
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-black transition-all border border-rose-200 cursor-pointer active:scale-98 shadow-2xs"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-black transition-all border-2 border-rose-300 cursor-pointer active:scale-98 shadow-xs"
           >
             <FaSignOutAlt className="h-3.5 w-3.5" />
             <span>Logout Account</span>

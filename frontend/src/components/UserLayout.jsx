@@ -8,17 +8,17 @@ const UserLayout = ({ children, hideFooter = false }) => {
   return (
     <div className="relative min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 Bright, Clear, Vibrant Ambient Eco Landscape Background */}
+      {/* 🌄 User Custom Vibrant Wavy Landscape Background */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
+          backgroundImage: "url('/images/custom_eco_waves_bg.png')",
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.03) saturate(1.2)'
+          filter: 'brightness(1.02) saturate(1.15)'
         }}
       />
-      {/* Ultra light vignette overlay so cards pop while landscape stays vivid */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/30 pointer-events-none z-0" />
+      {/* Subtle soft backdrop layer so text and cards remain crystal clear with sharp borders */}
+      <div className="fixed inset-0 bg-white/10 dark:bg-slate-950/20 pointer-events-none z-0" />
 
       {/* 💻 Desktop Top Navbar */}
       <div className="relative z-20 hidden md:block">

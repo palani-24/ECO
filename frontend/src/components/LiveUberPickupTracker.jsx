@@ -203,12 +203,12 @@ const LiveUberPickupTracker = ({
   const pickupId = externalPickup?._id ? externalPickup._id.substring(0, 8).toUpperCase() : '6AB7D28F';
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-white border border-slate-100 p-6 sm:p-7 text-slate-800 shadow-sm ${className}`}>
+    <div className={`relative overflow-hidden rounded-3xl bg-white/95 backdrop-blur-sm border-2 border-slate-300 p-6 sm:p-7 text-slate-800 shadow-xl shadow-slate-900/5 ${className}`}>
       
       {/* Top Header: Badge, Title & Actions */}
-      <div className="flex items-center justify-between flex-wrap gap-4 pb-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-slate-100">
         <div className="flex items-center space-x-3.5">
-          <div className="h-12 w-12 rounded-2xl bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] flex items-center justify-center text-xl shadow-xs">
+          <div className="h-12 w-12 rounded-2xl bg-[#ecfdf5] text-[#059669] border-2 border-[#a7f3d0] flex items-center justify-center text-xl shadow-xs">
             <FaTruck className="h-5 w-5" />
           </div>
           <div>
@@ -228,7 +228,7 @@ const LiveUberPickupTracker = ({
 
         {/* ETA & Interactive Demo Button */}
         <div className="flex items-center space-x-2.5">
-          <div className="px-3.5 py-1.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] flex items-center space-x-1.5 text-[#059669] text-xs font-bold shadow-xs">
+          <div className="px-3.5 py-1.5 rounded-full bg-[#ecfdf5] border-2 border-[#a7f3d0] flex items-center space-x-1.5 text-[#059669] text-xs font-bold shadow-xs">
             <FaClock className="text-xs" />
             <span>ETA {etaCountdown} Mins</span>
           </div>
@@ -236,7 +236,7 @@ const LiveUberPickupTracker = ({
           <button
             onClick={handleRunDemo}
             disabled={isDemoRunning}
-            className="px-4 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs disabled:opacity-50"
+            className="px-4 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-300 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs disabled:opacity-50"
           >
             <FaPlay className="text-[10px] text-slate-800" />
             <span>Simulate Flow</span>
@@ -249,7 +249,7 @@ const LiveUberPickupTracker = ({
         <div className="grid grid-cols-4 gap-2 relative">
           
           {/* Connecting Cyan/Teal Progress Line */}
-          <div className="absolute top-5 left-10 right-10 h-1 bg-slate-100 rounded-full z-0 overflow-hidden">
+          <div className="absolute top-5 left-10 right-10 h-1.5 bg-slate-200 rounded-full z-0 overflow-hidden">
             <motion.div 
               className="h-full bg-gradient-to-r from-[#059669] via-[#0d9488] to-[#06b6d4] rounded-full"
               initial={{ width: 0 }}
@@ -273,10 +273,10 @@ const LiveUberPickupTracker = ({
                 <div 
                   className={`h-10 w-10 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                     isCurrent 
-                      ? 'bg-[#0f9f6e] text-white ring-4 ring-[#0f9f6e]/20 shadow-md scale-105' 
+                      ? 'bg-[#0f9f6e] text-white ring-4 ring-[#0f9f6e]/30 shadow-md scale-105' 
                       : isPassed 
                         ? 'bg-[#0f9f6e] text-white shadow-xs' 
-                        : 'bg-white text-slate-400 border border-slate-200 shadow-2xs'
+                        : 'bg-white text-slate-400 border-2 border-slate-300 shadow-2xs'
                   }`}
                 >
                   <Icon className="text-sm" />
@@ -296,11 +296,11 @@ const LiveUberPickupTracker = ({
         </div>
       </div>
 
-      {/* Real Interactive Leaflet GPS Map Container */}
-      <div className="relative my-2 rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-xs">
+      {/* Real Interactive Leaflet GPS Map Container with Crisp Outline */}
+      <div className="relative my-2 rounded-2xl bg-white border-2 border-slate-300 overflow-hidden shadow-sm">
         
         {/* Telematics Bar Top */}
-        <div className="flex items-center justify-between text-xs font-semibold px-4 py-2.5 bg-[#f8fafc] border-b border-slate-100 z-10 relative">
+        <div className="flex items-center justify-between text-xs font-semibold px-4 py-2.5 bg-[#f8fafc] border-b-2 border-slate-200 z-10 relative">
           <div className="flex items-center space-x-2">
             <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
             <span className="text-slate-800 font-bold">{activeStage.subtitle}</span>
@@ -314,7 +314,7 @@ const LiveUberPickupTracker = ({
         </div>
 
         {/* Real Interactive Leaflet Map Canvas */}
-        <div className="relative h-56 sm:h-64 w-full z-0">
+        <div className="relative h-60 sm:h-72 w-full z-0">
           <MapContainer
             center={driverCurrentPosition}
             zoom={15}
@@ -322,10 +322,10 @@ const LiveUberPickupTracker = ({
             className="w-full h-full"
             style={{ width: '100%', height: '100%' }}
           >
-            {/* Clean, Bright, Pastel CartoDB Voyager Map Tiles */}
+            {/* Free, Open, Clean Map Tiles (100% Free, Zero watermark, No API key required) */}
             <TileLayer
-              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxZoom={19}
             />
 
@@ -335,14 +335,14 @@ const LiveUberPickupTracker = ({
             <Polyline
               positions={COIMBATORE_ROUTE}
               color="#059669"
-              weight={6}
-              opacity={0.9}
+              weight={7}
+              opacity={0.95}
               lineCap="round"
             />
             <Polyline
               positions={COIMBATORE_ROUTE}
               color="#34d399"
-              weight={2}
+              weight={2.5}
               dashArray="6, 8"
               opacity={1}
             />
@@ -388,7 +388,7 @@ const LiveUberPickupTracker = ({
       <div className="mt-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 items-stretch">
         
         {/* Driver Profile (8 cols) */}
-        <div className="md:col-span-8 flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#f0fdfa]/60 border border-slate-200/80">
+        <div className="md:col-span-8 flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white/95 border-2 border-slate-300 shadow-sm">
           <div className="flex items-center space-x-3.5">
             <div className="relative">
               <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#10b981] shadow-xs">
@@ -417,7 +417,7 @@ const LiveUberPickupTracker = ({
           <div className="flex items-center space-x-2.5">
             <a 
               href={`tel:${driverPhone}`}
-              className="h-9 w-9 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center justify-center cursor-pointer shadow-xs"
+              className="h-9 w-9 rounded-full bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-300 transition flex items-center justify-center cursor-pointer shadow-xs"
               title="Call Driver"
             >
               <FaPhoneAlt className="h-3.5 w-3.5 text-slate-800" />
@@ -425,7 +425,7 @@ const LiveUberPickupTracker = ({
 
             <button 
               onClick={() => onOpenChat ? onOpenChat() : alert(`Starting Live In-App Chat with Driver: ${driverName}`)}
-              className="h-9 w-9 rounded-full bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] border border-[#a7f3d0] transition flex items-center justify-center cursor-pointer shadow-xs"
+              className="h-9 w-9 rounded-full bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] border-2 border-[#a7f3d0] transition flex items-center justify-center cursor-pointer shadow-xs"
               title="Chat with Driver"
             >
               <FaComments className="h-4 w-4" />
@@ -434,7 +434,7 @@ const LiveUberPickupTracker = ({
         </div>
 
         {/* Security Doorstep OTP Box (4 cols) */}
-        <div className="md:col-span-4 p-3.5 sm:p-4 rounded-2xl bg-[#ecfdf5] border border-[#a7f3d0] flex items-center justify-between">
+        <div className="md:col-span-4 p-3.5 sm:p-4 rounded-2xl bg-[#ecfdf5] border-2 border-[#10b981]/50 shadow-sm flex items-center justify-between">
           <div>
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-800 block">
               DOORSTEP PICKUP OTP

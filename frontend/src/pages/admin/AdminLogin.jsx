@@ -57,8 +57,8 @@ const AdminLogin = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
-          filter: 'brightness(0.92) contrast(1.05)'
+          backgroundImage: "url('/images/mountain_vector_auth_bg.jpg')",
+          filter: 'brightness(1.01)'
         }}
       />
 

@@ -38,7 +38,7 @@ const MobileDriverHeader = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#071518]/95 backdrop-blur-md text-slate-800 dark:text-slate-100 border-b-2 border-slate-200/90 dark:border-emerald-500/30 shadow-xs transition-colors duration-300">
         <div className="px-4 py-2.5 flex items-center justify-between">
           
           {/* Left: Back or Drawer Menu Button */}
@@ -50,7 +50,7 @@ const MobileDriverHeader = ({
                   triggerHaptic(20);
                   navigate(-1);
                 }}
-                className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 aria-label="Go back"
               >
                 <FaArrowLeft className="text-base" />
@@ -62,7 +62,7 @@ const MobileDriverHeader = ({
                   triggerHaptic(20);
                   window.dispatchEvent(new CustomEvent('toggle-mobile-driver-drawer'));
                 }}
-                className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 aria-label="Open Driver Operations Menu"
               >
                 <FaBars className="text-lg" />
@@ -74,14 +74,14 @@ const MobileDriverHeader = ({
               className="flex items-center space-x-2 cursor-pointer" 
               onClick={() => navigate('/driver')}
             >
-              <div className="w-8 h-8 rounded-xl bg-white/20 border border-white/25 flex items-center justify-center text-white shadow-inner">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-inner">
                 <FaTruck className="text-sm" />
               </div>
               <div className="leading-tight">
-                <span className="text-sm font-black tracking-wider uppercase block">
+                <span className="text-sm font-black tracking-wider uppercase block text-slate-900 dark:text-white">
                   ECOREWARD
                 </span>
-                <span className="text-[9px] font-mono text-emerald-100 font-bold uppercase tracking-wider block">
+                <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider block">
                   EV Fleet Driver
                 </span>
               </div>
@@ -98,19 +98,19 @@ const MobileDriverHeader = ({
                 triggerHaptic(25);
                 onToggleDuty();
               }}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide flex items-center space-x-1.5 transition-all shadow-sm active:scale-95 cursor-pointer border ${
+              className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide flex items-center space-x-1.5 transition-all shadow-2xs active:scale-95 cursor-pointer border ${
                 isOnline 
-                  ? 'bg-white/20 text-white border-white/30' 
-                  : 'bg-rose-500/30 text-rose-100 border-rose-400/40'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600' 
+                  : 'bg-rose-50 text-rose-700 border-rose-300 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-600'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-white animate-pulse' : 'bg-rose-300'}`}></span>
+              <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
               <span>{isOnline ? 'ON DUTY' : 'OFF DUTY'}</span>
             </button>
 
             {/* EV Battery Indicator */}
-            <div className="hidden sm:flex items-center space-x-1 px-2 py-1 rounded-lg bg-white/15 border border-white/20 text-[10px] font-mono font-bold text-white">
-              <FaBatteryThreeQuarters className="text-emerald-200" />
+            <div className="hidden sm:flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-mono font-bold text-slate-800 dark:text-slate-200">
+              <FaBatteryThreeQuarters className="text-emerald-600 dark:text-emerald-400" />
               <span>{batteryLevel}%</span>
             </div>
 
@@ -118,10 +118,10 @@ const MobileDriverHeader = ({
             <button
               type="button"
               onClick={handleToggleTheme}
-              className="p-2 rounded-xl bg-white/15 hover:bg-white/25 transition active:scale-95 cursor-pointer text-white flex items-center justify-center text-xs"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xs"
               title={theme === 'dark' ? 'Switch to Eco Daylight Theme' : 'Switch to Night Dark Mode'}
             >
-              {theme === 'dark' ? <FaSun className="text-amber-300 text-sm" /> : <FaMoon className="text-white text-sm" />}
+              {theme === 'dark' ? <FaSun className="text-amber-400 text-sm" /> : <FaMoon className="text-slate-700 text-sm" />}
             </button>
 
             {/* Notification Bell */}
@@ -131,18 +131,18 @@ const MobileDriverHeader = ({
                 triggerHaptic(20);
                 setShowNotificationModal(true);
               }}
-              className="relative p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+              className="relative p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
               aria-label="Driver Notifications"
             >
               <FaBell className="text-base" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-300 border border-emerald-700 rounded-full animate-ping"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full animate-ping"></span>
             </button>
           </div>
         </div>
 
         {title && (
-          <div className="px-4 pb-2.5 pt-0.5 flex items-center justify-between border-t border-white/15">
-            <h1 className="text-xs font-black text-white/95 tracking-wide flex items-center space-x-1.5">
+          <div className="px-4 pb-2 pt-0.5 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+            <h1 className="text-xs font-black text-slate-800 dark:text-slate-200 tracking-wide flex items-center space-x-1.5">
               <span>{title}</span>
             </h1>
           </div>

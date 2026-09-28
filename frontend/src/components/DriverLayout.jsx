@@ -8,16 +8,17 @@ const DriverLayout = ({ children, hideFooter = false }) => {
   return (
     <div className="relative min-h-screen bg-slate-50/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 Ambient Modern Eco Landscape Background */}
+      {/* 🌄 Scenic Mountain Vector Landscape Artwork (Matching First Image) */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-25"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
+          backgroundImage: "url('/images/mountain_vector_auth_bg.jpg')",
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02) saturate(1.05)'
+          filter: 'brightness(1.02) saturate(1.08)'
         }}
       />
-      <div className="fixed inset-0 bg-gradient-to-b from-white/80 via-slate-50/65 to-white/85 pointer-events-none z-0" />
+      {/* Atmospheric Soft Lighting Overlay so cards and text remain crystal clear */}
+      <div className="fixed inset-0 bg-gradient-to-b from-sky-100/15 via-white/10 to-slate-950/15 pointer-events-none z-0" />
 
       {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
       <div className="sticky top-0 z-50 hidden md:block">

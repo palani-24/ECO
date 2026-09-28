@@ -11,7 +11,8 @@ import { triggerHaptic, requestPushPermission } from '../utils/mobileNative';
 import { 
   FaRecycle, FaSun, FaMoon, FaBars, FaTimes, FaCoins, FaSignOutAlt, 
   FaSearch, FaBell, FaCogs, FaUserCircle, FaLeaf, FaGlobe, FaQrcode, FaArrowRight,
-  FaMapMarkerAlt
+  FaMapMarkerAlt, FaCalendarAlt, FaClipboardList, FaStore, FaTrophy, FaBuilding, 
+  FaExclamationTriangle, FaTruck, FaChartLine, FaUser, FaComments
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -47,6 +48,11 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
+  // Close menus on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname, location.search]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -64,9 +70,60 @@ const Navbar = () => {
   const getSettingsLink = () => {
     if (!user) return '/login';
     if (user.role === 'admin') return '/admin/settings';
-    if (user.role === 'driver') return '/driver';
-    if (user.role === 'municipality') return '/municipality/dashboard';
+    if (user.role === 'driver') return '/driver/settings';
+    if (user.role === 'municipality') return '/profile';
     return '/profile';
+  };
+
+  const getNavLinks = () => {
+    if (!user) return [];
+    if (user.role === 'admin') {
+      return [
+        { path: '/admin', label: 'Dashboard', icon: FaChartLine },
+        { path: '/admin/users', label: 'Users', icon: FaUser },
+        { path: '/admin/drivers', label: 'Drivers', icon: FaTruck },
+        { path: '/admin/pickups', label: 'Pickups', icon: FaClipboardList },
+        { path: '/admin/coupons', label: 'Coupons', icon: FaCoins },
+        { path: '/admin/support', label: 'Support Desk', icon: FaComments },
+        { path: '/admin/settings', label: 'Settings', icon: FaCogs },
+      ];
+    }
+    if (user.role === 'municipality') {
+      return [
+        { path: '/municipality/dashboard', label: 'Command Center', icon: FaChartLine },
+        { path: '/municipality/heatmap', label: 'GIS Heatmap', icon: FaMapMarkerAlt },
+        { path: '/municipality/grievances', label: 'Grievances', icon: FaExclamationTriangle },
+        { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding },
+        { path: '/leaderboard', label: 'Ward Leaderboard', icon: FaTrophy },
+        { path: '/municipality/support', label: 'Support Hub', icon: FaComments },
+        { path: '/profile', label: 'Officer Profile', icon: FaUser },
+      ];
+    }
+    if (user.role === 'driver') {
+      return [
+        { path: '/driver', label: 'Cockpit', icon: FaChartLine },
+        { path: '/driver/pickups', label: 'Pickups', icon: FaTruck },
+        { path: '/driver/gate-pass', label: 'Gate Pass', icon: FaQrcode },
+        { path: '/driver/battery-telematics', label: 'EV Telematics', icon: FaLeaf },
+        { path: '/driver/history', label: 'History', icon: FaClipboardList },
+        { path: '/driver/earnings', label: 'Earnings', icon: FaCoins },
+        { path: '/driver/support', label: 'SOS Hub', icon: FaComments },
+        { path: '/driver/profile', label: 'Profile', icon: FaUser },
+      ];
+    }
+    // Citizen
+    return [
+      { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
+      { path: '/schedule-pickup', label: 'Book Pickup', icon: FaCalendarAlt },
+      { path: '/my-pickups', label: 'My Pickups', icon: FaClipboardList },
+      { path: '/redeem', label: 'Wallet & UPI', icon: FaCoins },
+      { path: '/store', label: 'Eco-Store', icon: FaStore },
+      { path: '/report-dump', label: 'Report Dump', icon: FaExclamationTriangle },
+      { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
+      { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding },
+      { path: '/support', label: 'Helpdesk', icon: FaComments },
+      { path: '/profile', label: 'Profile', icon: FaUser },
+    ];
   };
 
   // Determine if current page is the public Landing page
@@ -268,9 +325,11 @@ const Navbar = () => {
 
                   {/* User Profile Avatar & Name with Caret */}
                   {user && (
-                    <Link 
-                      to={getSettingsLink()}
-                      className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
+                    <button 
+                      type="button"
+                      onClick={() => setIsOpen(prev => !prev)}
+                      className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity cursor-pointer"
+                      title="Toggle Portal Navigation Menu"
                     >
                       <div className="relative">
                         <img 
@@ -286,26 +345,31 @@ const Navbar = () => {
                           {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}
                         </span>
                         <span className="text-[10px] text-slate-500 font-semibold leading-none mt-0.5 flex items-center gap-0.5">
-                          <span>Eco Guardian</span>
+                          <span className="capitalize">{user.role || 'Citizen'}</span>
                           <span className="text-[9px]">⌵</span>
                         </span>
                       </div>
-                    </Link>
+                    </button>
                   )}
 
-                  {/* Mobile Side Menu Hamburger Drawer Toggle */}
+                  {/* Menu Hamburger Toggle */}
                   <button
+                    type="button"
                     onClick={() => {
-                      if (user) {
-                        window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
-                      } else {
-                        setIsOpen(!isOpen);
-                      }
+                      triggerHaptic(20);
+                      setIsOpen(prev => !prev);
+                      window.dispatchEvent(new CustomEvent('toggle-mobile-citizen-drawer'));
+                      window.dispatchEvent(new CustomEvent('toggle-mobile-driver-drawer'));
+                      window.dispatchEvent(new CustomEvent('toggle-mobile-admin-drawer'));
+                      window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
                     }}
-                    className="p-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
-                    aria-label="Open Menu"
+                    className={`p-2 rounded-xl text-white transition-all shadow-sm cursor-pointer active:scale-95 ${
+                      isOpen ? 'bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700'
+                    }`}
+                    aria-label="Toggle Portal Menu List"
+                    title="Menu List"
                   >
-                    <FaBars className="h-4 w-4" />
+                    {isOpen ? <FaTimes className="h-4 w-4" /> : <FaBars className="h-4 w-4" />}
                   </button>
 
                 </div>
@@ -313,6 +377,71 @@ const Navbar = () => {
             )}
 
           </div>
+
+          {/* AUTHENTICATED PORTAL DROP-DOWN / SLIDE-DOWN DRAWER MENU */}
+          {!isLandingPage && user && isOpen && (
+            <div className="py-4 px-3 sm:px-6 border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-[#071518]/98 backdrop-blur-xl shadow-2xl animate-fadeIn">
+              <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-start justify-between gap-4">
+                
+                {/* User Info Strip */}
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between gap-3 shrink-0 md:w-72 shadow-xs">
+                  <div className="flex items-center space-x-3">
+                    <img 
+                      src={getAvatarUrl(user, user?.name)} 
+                      onError={(e) => handleAvatarError(e, user?.name)}
+                      alt="Avatar" 
+                      className="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/40"
+                    />
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-black text-slate-900 dark:text-white truncate">
+                        {user?.name || 'Eco Member'}
+                      </h4>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold capitalize block">
+                        {user.role} Portal
+                      </span>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black rounded-lg border border-emerald-500/30 shrink-0">
+                    {user.points || 0} pts
+                  </span>
+                </div>
+
+                {/* Grid of Navigation Links */}
+                <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                  {getNavLinks().map((link, idx) => {
+                    const Icon = link.icon;
+                    const isActive = location.pathname === link.path;
+                    return (
+                      <Link
+                        key={idx}
+                        to={link.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`p-2.5 rounded-xl border flex items-center space-x-2 text-xs font-bold transition-all cursor-pointer ${
+                          isActive
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                            : 'bg-white dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-700/80'
+                        }`}
+                      >
+                        <Icon className={`text-sm shrink-0 ${isActive ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                        <span className="truncate">{link.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Logout Button */}
+                <div className="shrink-0 pt-2 md:pt-0">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 hover:bg-rose-100 font-black text-xs border border-rose-300 dark:border-rose-800 flex items-center justify-center space-x-2 cursor-pointer active:scale-95 transition"
+                  >
+                    <FaSignOutAlt className="text-xs" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* MOBILE LANDING PAGE SLIDE-DOWN DRAWER MENU */}
           {isLandingPage && isOpen && (

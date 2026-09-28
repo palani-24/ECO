@@ -45,11 +45,13 @@ const MobileDriverNav = () => {
     const handleOpenScale = () => setShowScaleModal(true);
 
     window.addEventListener('toggle-mobile-driver-drawer', handleToggleDrawer);
+    window.addEventListener('toggle-mobile-menu', handleToggleDrawer);
     window.addEventListener('open-driver-quick-verify', handleOpenVerify);
     window.addEventListener('open-driver-scale', handleOpenScale);
 
     return () => {
       window.removeEventListener('toggle-mobile-driver-drawer', handleToggleDrawer);
+      window.removeEventListener('toggle-mobile-menu', handleToggleDrawer);
       window.removeEventListener('open-driver-quick-verify', handleOpenVerify);
       window.removeEventListener('open-driver-scale', handleOpenScale);
     };

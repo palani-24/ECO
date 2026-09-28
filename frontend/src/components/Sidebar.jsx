@@ -42,6 +42,7 @@ const Sidebar = () => {
     { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
+    { path: '/report-dump', label: 'Report Roadside Dump', icon: FaExclamationTriangle, badge: 'ALERT' },
     { path: '/support', label: 'Helpdesk & Messages', icon: FaComments, badge: 'HELP' },
     { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
     { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding, badge: 'PRO' },
@@ -125,21 +126,16 @@ const Sidebar = () => {
 
   const mobileBottomItems = getMobileBottomItems();
 
-  // Strict Active Link Checker to prevent multiple items highlighting simultaneously
+  // Robust Active Link Checker handling query params and clean root routes
   const isLinkActive = (linkPath) => {
     const currentPath = location.pathname;
-    const currentSearch = location.search;
-    const fullCurrent = currentPath + currentSearch;
-
     if (linkPath.includes('?')) {
-      return fullCurrent === linkPath;
+      return (currentPath + location.search) === linkPath;
     }
-
-    if (currentSearch && currentSearch !== '?') {
-      return false;
+    if (['/dashboard', '/driver', '/admin', '/municipality/dashboard'].includes(linkPath)) {
+      return currentPath === linkPath;
     }
-
-    return currentPath === linkPath;
+    return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
   };
 
   const isDriver = user.role === 'driver';

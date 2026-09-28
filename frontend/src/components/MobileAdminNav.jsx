@@ -25,7 +25,11 @@ const MobileAdminNav = () => {
   useEffect(() => {
     const handleToggle = () => setShowDrawer(prev => !prev);
     window.addEventListener('toggle-mobile-admin-drawer', handleToggle);
-    return () => window.removeEventListener('toggle-mobile-admin-drawer', handleToggle);
+    window.addEventListener('toggle-mobile-menu', handleToggle);
+    return () => {
+      window.removeEventListener('toggle-mobile-admin-drawer', handleToggle);
+      window.removeEventListener('toggle-mobile-menu', handleToggle);
+    };
   }, []);
 
   const navItems = [

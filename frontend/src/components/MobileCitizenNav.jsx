@@ -7,7 +7,7 @@ import {
   FaCamera, FaCertificate, FaBuilding, 
   FaExclamationTriangle, FaTrophy, FaPlus,
   FaMapMarkerAlt, FaChevronRight, FaPhoneAlt, FaChartLine,
-  FaMapPin, FaShieldAlt, FaHeadset
+  FaMapPin, FaShieldAlt, FaHeadset, FaStore, FaFire
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useDistrict } from '../context/DistrictContext';
@@ -39,10 +39,12 @@ const MobileCitizenNav = () => {
     const handleScanner = () => setShowAiScanner(true);
 
     window.addEventListener('toggle-mobile-citizen-drawer', handleToggle);
+    window.addEventListener('toggle-mobile-menu', handleToggle);
     window.addEventListener('open-ai-scanner', handleScanner);
 
     return () => {
       window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
+      window.removeEventListener('toggle-mobile-menu', handleToggle);
       window.removeEventListener('open-ai-scanner', handleScanner);
     };
   }, []);
@@ -536,16 +538,40 @@ const MobileCitizenNav = () => {
                     </button>
                   </div>
                 ) : (
-                  /* ================= CITIZEN ONLY 5 CORE OPTIONS ================= */
+                  /* ================= CITIZEN COMPLETE MENU OPTIONS ================= */
                   <div className="space-y-2">
                     <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2 block">
-                      Citizen Services
+                      Citizen Portal Menu
                     </span>
 
-                    {/* 1. Book Scrap Pickup */}
+                    {/* 1. Citizen Dashboard */}
+                    <button 
+                      onClick={() => handleNavigate('/dashboard')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/dashboard')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                          <FaHome className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">Home Dashboard</span>
+                      </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
+                        LIVE
+                      </span>
+                    </button>
+
+                    {/* 2. Book Scrap Pickup */}
                     <button 
                       onClick={() => handleNavigate('/schedule-pickup')}
-                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/schedule-pickup')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
@@ -558,10 +584,14 @@ const MobileCitizenNav = () => {
                       </span>
                     </button>
 
-                    {/* 2. My Pickups & Tracking */}
+                    {/* 3. My Pickups & Tracking */}
                     <button 
                       onClick={() => handleNavigate('/my-pickups')}
-                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/my-pickups')
+                          ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300 font-black border border-sky-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center">
@@ -571,10 +601,14 @@ const MobileCitizenNav = () => {
                       </div>
                     </button>
 
-                    {/* 3. Wallet & UPI */}
+                    {/* 4. Wallet & UPI */}
                     <button 
                       onClick={() => handleNavigate('/redeem')}
-                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/redeem')
+                          ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-black border border-amber-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
@@ -582,9 +616,69 @@ const MobileCitizenNav = () => {
                         </div>
                         <span className="text-xs font-bold">EcoPoints Wallet & UPI</span>
                       </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-400 font-black">
+                        CASH
+                      </span>
                     </button>
 
-                    {/* 4. Report Illegal Dump */}
+                    {/* 5. Eco-Store */}
+                    <button 
+                      onClick={() => handleNavigate('/store')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/store')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                          <FaStore className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">Eco-Store Marketplace</span>
+                      </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
+                        NEW
+                      </span>
+                    </button>
+
+                    {/* 6. Leaderboard */}
+                    <button 
+                      onClick={() => handleNavigate('/leaderboard')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/leaderboard')
+                          ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 font-black border border-amber-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                          <FaTrophy className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">Ward Leaderboard</span>
+                      </div>
+                    </button>
+
+                    {/* 7. ESG Corporate Portal */}
+                    <button 
+                      onClick={() => handleNavigate('/esg-portal')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/esg-portal')
+                          ? 'bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 font-black border border-indigo-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                          <FaBuilding className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">TNPCB / ISO 14001 ESG</span>
+                      </div>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-black">
+                        PRO
+                      </span>
+                    </button>
+
+                    {/* 8. Report Illegal Dump */}
                     <button 
                       onClick={() => handleNavigate('/report-dump')}
                       className="w-full text-left p-3 rounded-2xl bg-rose-50/90 dark:bg-rose-950/40 backdrop-blur-md border border-rose-300/80 dark:border-rose-500/30 flex items-center justify-between cursor-pointer text-rose-700 dark:text-rose-300 active:scale-98 transition-all shadow-2xs"
@@ -600,7 +694,7 @@ const MobileCitizenNav = () => {
                       </span>
                     </button>
 
-                    {/* 5. AI Waste Scanner */}
+                    {/* 9. AI Waste Scanner */}
                     <button 
                       onClick={() => {
                         setShowDrawer(false);
@@ -620,7 +714,24 @@ const MobileCitizenNav = () => {
                       </span>
                     </button>
 
-                    {/* 6. Citizen Support & Helpdesk Hub */}
+                    {/* 10. Community Challenges */}
+                    <button 
+                      onClick={() => handleNavigate('/challenges')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/challenges')
+                          ? 'bg-orange-500/15 text-orange-700 dark:text-orange-300 font-black border border-orange-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center">
+                          <FaFire className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">Community Challenges</span>
+                      </div>
+                    </button>
+
+                    {/* 11. Citizen Support & Helpdesk Hub */}
                     <button 
                       onClick={() => handleNavigate('/support')}
                       className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
@@ -642,7 +753,25 @@ const MobileCitizenNav = () => {
                         HELP
                       </span>
                     </button>
+
+                    {/* 12. My Profile & Account */}
+                    <button 
+                      onClick={() => handleNavigate('/profile')}
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
+                        isCurrent('/profile')
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center">
+                          <FaUser className="text-sm" />
+                        </div>
+                        <span className="text-xs font-bold">My Profile & Addresses</span>
+                      </div>
+                    </button>
                   </div>
+
                 )}
 
                 {/* Direct Call to Municipal Sanitation Control Room */}

@@ -125,103 +125,76 @@ const MobileRedeemRewards = () => {
 
       <div className="px-4 py-4 space-y-4 max-w-lg mx-auto">
 
-        {/* 2. TITLE & CONNECTED BADGE */}
+        {/* 2. TITLE & SECURITY BADGE */}
         <div className="space-y-1">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-black text-slate-900 dark:text-white">
-              Redeem Points
+              Redeem & Payouts
             </h1>
-            <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-              ⚡ Eco Microservice Connected
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[10px] font-black text-emerald-800 border border-emerald-300">
+              🔒 256-Bit SSL Secured
             </span>
           </div>
-          <p className="text-xs text-slate-500 font-medium">
-            Exchange your points for green transit passes, real trees, smart utility bill rebates, and eco-deals.
+          <p className="text-xs text-slate-500 font-semibold">
+            Instant cashout to your bank account or claim verified green rewards.
           </p>
         </div>
 
-        {/* 3. QUICK ACTION BUTTONS */}
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(20);
-              setShowUPI(true);
-            }}
-            className="py-3 px-3 bg-emerald-600 text-white rounded-2xl font-black text-xs shadow-md active:scale-98 transition flex items-center justify-center space-x-1.5 cursor-pointer"
-          >
-            <FaExchangeAlt />
-            <span>Withdraw Cash (UPI)</span>
-          </button>
+        {/* 3. SECURE WALLET & CASHOUT CARD */}
+        <div className="p-4 bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-slate-300 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2.5">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-lg">
+                <FaCoins className="text-amber-500" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-black text-slate-400 block tracking-wider">
+                  Available Balance
+                </span>
+                <span className="text-base font-black text-slate-900">
+                  {points} EcoPoints
+                </span>
+              </div>
+            </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(20);
-              setShowKiosk(true);
-            }}
-            className="py-3 px-3 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-2xl font-black text-xs border border-slate-200 dark:border-slate-800 shadow-sm active:scale-98 transition flex items-center justify-center space-x-1.5 cursor-pointer"
-          >
-            <FaMapMarkedAlt className="text-emerald-600" />
-            <span>Smart Kiosks</span>
-          </button>
-        </div>
-
-        {/* 4. POINTS BALANCE PILL */}
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-500/25 flex items-center space-x-2.5">
-          <div className="text-xl">🪙</div>
-          <div>
-            <span className="text-base font-black text-emerald-700 dark:text-emerald-300">
-              {points} Points
-            </span>
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block">
-              Available balance for instant redemption
-            </span>
+            <div className="text-right">
+              <span className="text-[10px] uppercase font-black text-emerald-700 block tracking-wider">
+                Direct Cash Value
+              </span>
+              <span className="text-base font-black text-emerald-600">
+                ₹{Math.round(points * 0.25)}.00
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* 5. 4-METRIC IMPACT SUMMARY (Screenshot 2 Match) */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center text-lg">
-                🌳
-              </div>
-              <div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white">142+ Trees</h4>
-                <p className="text-[10px] text-slate-400 font-medium">Geo-tagged & Planted</p>
-              </div>
-            </div>
+          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(20);
+                setShowUPI(true);
+              }}
+              className="py-3 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-xs shadow-md border-2 border-emerald-600 active:scale-98 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <FaExchangeAlt />
+              <span>Withdraw Cash (UPI)</span>
+            </button>
 
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-sky-50 dark:bg-sky-950/40 text-sky-600 flex items-center justify-center text-lg">
-                🌊
-              </div>
-              <div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white">380 kg</h4>
-                <p className="text-[10px] text-slate-400 font-medium">Ocean Plastic Recovered</p>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(20);
+                setShowKiosk(true);
+              }}
+              className="py-3 px-3 bg-white text-slate-700 rounded-2xl font-black text-xs border-2 border-slate-300 shadow-2xs active:scale-98 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <FaMapMarkedAlt className="text-emerald-600" />
+              <span>Smart Kiosks</span>
+            </button>
+          </div>
 
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 flex items-center justify-center text-lg">
-                🚇
-              </div>
-              <div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white">1,250 km</h4>
-                <p className="text-[10px] text-slate-400 font-medium">Clean Metro Commute</p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 flex items-center justify-center text-lg">
-                ⚡
-              </div>
-              <div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white">₹1.8L+ Saved</h4>
-                <p className="text-[10px] text-slate-400 font-medium">Utility & Power Rebates</p>
-              </div>
-            </div>
+          <div className="text-[10px] text-center text-slate-500 font-bold bg-slate-50 py-1.5 rounded-xl border border-slate-200">
+            🛡️ Direct NPCI IMPS Payout • 0% Processing Fee • Instant Credit
           </div>
         </div>
 

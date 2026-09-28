@@ -278,92 +278,84 @@ const RedeemRewards = () => {
       <div className="hidden md:block">
         <UserLayout>
       <div className="space-y-6 pb-12">
-        {/* Top Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 p-6 rounded-3xl shadow-sm">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Redeem Points</h2>
-              {springBootActive ? (
-                <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800/40">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping mr-0.5" />
-                  <span>Spring Boot 3 Engine Active</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                  <FaServer className="text-slate-400 text-[9px]" />
-                  <span>Eco Microservice Connected</span>
-                </span>
-              )}
+        {/* Top Focused Payment & Payout Command Hub with Bank-Grade Security */}
+        <div className="bg-white/95 backdrop-blur-md border-2 border-slate-300 p-6 sm:p-7 rounded-3xl shadow-xl shadow-slate-900/5 space-y-4">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2.5">
+                <div className="h-10 w-10 rounded-2xl bg-emerald-50 text-emerald-600 border-2 border-emerald-200 flex items-center justify-center text-lg shadow-xs">
+                  <FaCoins className="text-amber-500" />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <span>Wallet Payout & Rewards</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase tracking-wider">
+                      NPCI 24x7
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                    Instant bank cashouts via UPI & verified civic green partner rewards
+                  </p>
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Exchange your points for green transit passes, real trees, smart utility bill rebates, and eco-deals.
-            </p>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={() => setShowUPIModal(true)}
-              className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-2xl shadow-sm flex items-center space-x-2 transition-transform active:scale-95 cursor-pointer"
-            >
-              <FaExchangeAlt />
-              <span>Withdraw Cash (UPI)</span>
-            </button>
+            {/* Wallet Cash Balance & Quick Cashout Action */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Cash Equivalent Pill */}
+              <div className="px-4 py-2 bg-emerald-50 border-2 border-emerald-200 rounded-2xl flex items-center space-x-3 shadow-2xs">
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-emerald-700 block">Available Cash</span>
+                  <span className="text-base font-black text-slate-900 leading-none">
+                    ₹{Math.round((user?.points || 0) * 0.25)}.00
+                  </span>
+                </div>
+                <div className="h-7 w-[1px] bg-emerald-200" />
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">EcoPoints</span>
+                  <span className="text-xs font-bold text-amber-600 leading-none">
+                    {user?.points || 0} pts
+                  </span>
+                </div>
+              </div>
 
-            <button
-              onClick={() => setShowKioskModal(true)}
-              className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-2xl flex items-center space-x-2 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
-            >
-              <FaMapMarkedAlt className="text-emerald-500" />
-              <span>Smart Kiosks</span>
-            </button>
+              {/* Main Primary Cashout Button with High-Security Look */}
+              <button
+                onClick={() => setShowUPIModal(true)}
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-2xl shadow-lg shadow-emerald-600/25 border-2 border-emerald-600 flex items-center space-x-2 transition-transform active:scale-95 cursor-pointer"
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Withdraw Cash (UPI)</span>
+              </button>
 
-            {/* Live Wallet Points Badge */}
-            <div className="flex items-center space-x-2 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-400 font-black rounded-2xl shadow-inner">
-              <FaCoins className="h-4 w-4 animate-bounce text-amber-500" />
-              <span className="text-sm">{user?.points || 0} Points</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Environmental Community Impact Metric Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gradient-to-r from-emerald-900/10 via-teal-900/10 to-sky-900/10 dark:from-slate-900 dark:to-slate-850 p-4 rounded-3xl border border-emerald-500/20 shadow-sm">
-          <div className="flex items-center space-x-3 p-2">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shadow-sm">
-              🌳
-            </div>
-            <div>
-              <span className="block text-sm font-black text-slate-900 dark:text-white">142+ Trees</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Geo-tagged & Planted</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 p-2">
-            <div className="w-10 h-10 rounded-2xl bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg shadow-sm">
-              🌊
-            </div>
-            <div>
-              <span className="block text-sm font-black text-slate-900 dark:text-white">380 kg</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Ocean Plastic Recovered</span>
+              <button
+                onClick={() => setShowKioskModal(true)}
+                className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-black text-xs rounded-2xl flex items-center space-x-2 border-2 border-slate-300 transition-colors cursor-pointer shadow-2xs"
+              >
+                <FaMapMarkedAlt className="text-emerald-600" />
+                <span>Smart Kiosks</span>
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 p-2">
-            <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shadow-sm">
-              🚇
+          {/* Bank-Grade Security & Trust Indicator Strip */}
+          <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-500">
+            <div className="flex items-center space-x-4">
+              <span className="flex items-center gap-1.5 text-slate-700">
+                <FaCheckCircle className="text-emerald-500 text-xs" />
+                <span>256-Bit Bank Grade SSL</span>
+              </span>
+              <span className="flex items-center gap-1.5 text-slate-700">
+                <FaCheckCircle className="text-emerald-500 text-xs" />
+                <span>Direct NPCI IMPS Rail</span>
+              </span>
+              <span className="hidden sm:flex items-center gap-1.5 text-slate-700">
+                <FaCheckCircle className="text-emerald-500 text-xs" />
+                <span>0% Processing Fee</span>
+              </span>
             </div>
-            <div>
-              <span className="block text-sm font-black text-slate-900 dark:text-white">1,250 km</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Clean Metro Commuting</span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3 p-2">
-            <div className="w-10 h-10 rounded-2xl bg-teal-100 dark:bg-teal-950/80 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg shadow-sm">
-              ⚡
-            </div>
-            <div>
-              <span className="block text-sm font-black text-slate-900 dark:text-white">₹1.8L+ Saved</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Utility & Power Rebates</span>
+            <div className="text-[11px] font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200">
+              Guaranteed Rate: 4 EcoPoints = ₹1.00 Direct Bank Credit
             </div>
           </div>
         </div>
@@ -456,79 +448,81 @@ const RedeemRewards = () => {
                   return (
                     <div
                       key={item.id || item.key}
-                      className={`p-5 rounded-3xl border transition-all duration-200 flex flex-col justify-between h-full relative overflow-hidden ${
+                      className={`p-5 sm:p-6 rounded-3xl border-2 transition-all duration-200 flex flex-col justify-between h-full relative overflow-hidden shadow-sm hover:shadow-md ${
                         isMystery
-                          ? 'bg-gradient-to-br from-purple-950/40 via-slate-900 to-indigo-950/40 border-purple-500/40 hover:border-purple-400 shadow-md sm:col-span-2'
+                          ? 'bg-purple-50/80 border-purple-300 hover:border-purple-500 sm:col-span-2'
                           : isEcoFeatured && item.key === 'tree_planting'
-                          ? 'bg-gradient-to-br from-emerald-950/30 to-slate-900 border-emerald-500/40 hover:border-emerald-500 shadow-md sm:col-span-2'
-                          : 'bg-white dark:bg-slate-900 border-slate-200/70 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm'
+                          ? 'bg-emerald-50/80 border-emerald-400 hover:border-emerald-600 sm:col-span-2'
+                          : 'bg-white/95 border-slate-300 hover:border-emerald-500'
                       }`}
                     >
                       {/* Top Meta info */}
-                      <div className="space-y-2">
+                      <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
                           <span className="text-2xl">{item.icon}</span>
                           <div className="flex items-center space-x-1.5">
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white text-slate-700 border border-slate-200 shadow-2xs">
                               {item.badge || item.provider}
                             </span>
                             {item.stock && item.stock < 200 && (
-                              <span className="text-[10px] text-amber-500 font-bold">Few Left</span>
+                              <span className="text-[10px] text-amber-600 font-extrabold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                Few Left
+                              </span>
                             )}
                           </div>
                         </div>
 
                         <div className="space-y-1">
-                          <h4 className="font-extrabold text-slate-900 dark:text-white text-sm leading-snug">
+                          <h4 className="font-black text-slate-900 text-sm leading-snug">
                             {item.title}
                           </h4>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
+                          <p className="text-[11px] text-slate-600 font-medium leading-relaxed line-clamp-2">
                             {item.description}
                           </p>
                         </div>
 
                         {/* Impact Tag */}
                         {item.impactDescription && (
-                          <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/30 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
-                            <FaLeaf className="text-[9px]" />
+                          <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl bg-white border border-emerald-200 text-emerald-700 text-[10px] font-black shadow-2xs">
+                            <FaLeaf className="text-[9px] text-emerald-600" />
                             <span>{item.impactDescription}</span>
                           </div>
                         )}
 
                         {/* Input requirement if applicable */}
                         {item.requiresInput && (
-                          <div className="pt-2">
+                          <div className="pt-1.5">
                             <input
                               type="text"
                               value={itemInputs[item.key] || ''}
                               onChange={e => handleInputChange(item.key, e.target.value)}
                               placeholder={item.inputPlaceholder || 'Enter identifier'}
-                              className="w-full px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                              className="w-full px-3 py-2 rounded-xl border-2 border-slate-300 bg-white text-slate-900 text-xs font-semibold focus:outline-none focus:border-emerald-500 shadow-2xs"
                             />
                           </div>
                         )}
                       </div>
 
                       {/* Footer & Action */}
-                      <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-200/80">
                         <div className="flex items-center space-x-1">
                           <FaCoins className="text-amber-500 text-xs" />
-                          <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">
-                            {item.pointsCost} <span className="text-[10px] font-medium text-slate-400">pts</span>
+                          <span className="text-sm font-black text-emerald-700">
+                            {item.pointsCost} <span className="text-[10px] font-bold text-slate-400">pts</span>
                           </span>
                         </div>
 
                         <button
                           onClick={() => handleRedeemItem(item)}
                           disabled={processLoading || !canAfford}
-                          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 cursor-pointer disabled:cursor-not-allowed ${
+                          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 cursor-pointer disabled:cursor-not-allowed border-2 ${
                             isMystery
-                              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-md active:scale-95'
+                              ? 'bg-purple-600 hover:bg-purple-500 border-purple-600 text-white shadow-md active:scale-95'
                               : isEcoFeatured
-                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md active:scale-95'
+                              ? 'bg-emerald-600 hover:bg-emerald-500 border-emerald-600 text-white shadow-md active:scale-95'
                               : canAfford
-                              ? 'bg-primary-600 hover:bg-primary-500 text-white shadow-sm active:scale-95'
-                              : 'bg-slate-200 dark:bg-slate-800 text-slate-400 opacity-60'
+                              ? 'bg-emerald-600 hover:bg-emerald-500 border-emerald-600 text-white shadow-sm active:scale-95'
+                              : 'bg-slate-100 text-slate-400 border-slate-200 opacity-60'
                           }`}
                         >
                           {isMystery ? <FaDice /> : null}
@@ -552,13 +546,13 @@ const RedeemRewards = () => {
 
           {/* Right Col: Interactive My Claims & Codes */}
           <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
+            <div className="bg-white/95 backdrop-blur-md border-2 border-slate-300 p-6 rounded-3xl shadow-xl shadow-slate-900/5 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-black text-slate-900 dark:text-white flex items-center space-x-2 text-sm">
-                  <FaGift className="text-emerald-500" />
+                <h3 className="font-black text-slate-900 flex items-center space-x-2 text-sm">
+                  <FaGift className="text-emerald-600" />
                   <span>My Claims & Codes</span>
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200">
                   {redemptions.length} claimed
                 </span>
               </div>
@@ -567,20 +561,20 @@ const RedeemRewards = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => setClaimsFilter('all')}
-                  className={`flex-1 py-1 text-[11px] font-bold rounded-xl border transition-colors ${
+                  className={`flex-1 py-1.5 text-[11px] font-black rounded-xl border-2 transition-colors cursor-pointer ${
                     claimsFilter === 'all'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-600 dark:text-emerald-400'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                      ? 'bg-emerald-50 border-emerald-400 text-emerald-700'
+                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
                   }`}
                 >
                   All History
                 </button>
                 <button
                   onClick={() => setClaimsFilter('active')}
-                  className={`flex-1 py-1 text-[11px] font-bold rounded-xl border transition-colors ${
+                  className={`flex-1 py-1.5 text-[11px] font-black rounded-xl border-2 transition-colors cursor-pointer ${
                     claimsFilter === 'active'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-600 dark:text-emerald-400'
-                      : 'border-slate-200 dark:border-slate-800 text-slate-400'
+                      ? 'bg-emerald-50 border-emerald-400 text-emerald-700'
+                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
                   }`}
                 >
                   Active Codes
@@ -605,21 +599,21 @@ const RedeemRewards = () => {
                     return (
                       <div
                         key={claim._id || claim.id || idx}
-                        className="p-4 bg-slate-50/70 dark:bg-slate-850/50 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-2.5 transition-all hover:border-emerald-500/40"
+                        className="p-4 bg-slate-50 rounded-2xl border-2 border-slate-200 space-y-2.5 transition-all hover:border-emerald-500/50 shadow-2xs"
                       >
                         <div className="flex justify-between items-start gap-2">
                           <div className="space-y-0.5">
-                            <h5 className="font-extrabold text-xs text-slate-900 dark:text-slate-200 leading-snug">
+                            <h5 className="font-black text-xs text-slate-900 leading-snug">
                               {title}
                             </h5>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                            <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider block">
                               {provider}
                             </span>
                           </div>
-                          <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                          <span className={`text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase border ${
                             claim.status === 'completed'
-                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
-                              : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400'
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                              : 'bg-amber-100 text-amber-800 border-amber-300'
                           }`}>
                             {claim.status || 'Active'}
                           </span>
@@ -627,10 +621,10 @@ const RedeemRewards = () => {
 
                         {/* Code box with Copy and QR Code trigger */}
                         {code && (
-                          <div className="flex items-center justify-between bg-white dark:bg-slate-900 px-3 py-2 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+                          <div className="flex items-center justify-between bg-white px-3 py-2 rounded-xl border-2 border-slate-200">
                             <div className="flex flex-col">
-                              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Voucher Code</span>
-                              <span className="text-[11px] font-mono font-black text-slate-800 dark:text-emerald-400 select-all">
+                              <span className="text-[9px] uppercase font-black text-slate-400 tracking-wider">Voucher Code</span>
+                              <span className="text-[11px] font-mono font-black text-slate-900 select-all">
                                 {code}
                               </span>
                             </div>

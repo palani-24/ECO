@@ -10,14 +10,14 @@ const UserLayout = ({ children, hideFooter = false }) => {
       
       {/* 🌄 Ambient Modern Eco Landscape Background */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-25"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-40"
         style={{
-          backgroundImage: "url('/images/eco_portal_ambient_bg.jpg')",
+          backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02) saturate(1.05)'
+          filter: 'brightness(1.05) saturate(1.15)'
         }}
       />
-      <div className="fixed inset-0 bg-gradient-to-b from-white/80 via-slate-50/65 to-white/85 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-gradient-to-b from-white/75 via-[#f0fdf4]/50 to-white/85 pointer-events-none z-0" />
 
       {/* 💻 Desktop Top Navbar */}
       <div className="relative z-20 hidden md:block">

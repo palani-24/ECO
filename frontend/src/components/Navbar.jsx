@@ -183,105 +183,108 @@ const Navbar = () => {
             ) : (
               
               /* DASHBOARD HEADER LAYOUT */
-              <div className="flex-1 flex items-center justify-between ml-2 sm:ml-6 min-w-0">
+              <div className="flex-1 flex items-center justify-between ml-3 sm:ml-6 min-w-0">
                 
-                {/* Desktop Search Bar */}
-                <div className="hidden sm:relative sm:block w-44 md:w-60">
-                  <FaSearch className="absolute left-3 top-2.5 text-slate-400 text-[11px]" />
+                {/* Desktop Search Bar (Rounded Pill matching screenshot) */}
+                <div className="hidden sm:relative sm:block w-56 md:w-72 lg:w-80">
+                  <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 text-xs" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search... (Ctrl + K)"
-                    className="w-full pl-8 pr-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all border border-transparent dark:border-slate-700"
+                    placeholder="Search anything... (Ctrl + K)"
+                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 dark:bg-slate-800 rounded-full text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all border border-slate-200/80 dark:border-slate-700 shadow-2xs"
                   />
                 </div>
 
                 {/* Header Right Action Controls */}
-                <div className="flex items-center space-x-1.5 sm:space-x-2.5 ml-auto">
+                <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
                   
-                  {/* Tamil Nadu 38-District Selector Button */}
-                  {currentDistrict && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        triggerHaptic(20);
-                        if (openDistrictModal) openDistrictModal();
-                      }}
-                      className="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-500/30 text-xs font-black cursor-pointer active:scale-95 transition"
-                      title="Select Tamil Nadu District (38 Districts)"
-                    >
-                      <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-xs shrink-0" />
-                      <span className="max-w-[120px] truncate">{currentDistrict.name}</span>
-                    </button>
-                  )}
+                  {/* Tamil Nadu District Selector Pill Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHaptic(20);
+                      if (openDistrictModal) openDistrictModal();
+                    }}
+                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 rounded-full border border-slate-200/90 dark:border-slate-700 text-xs font-bold cursor-pointer active:scale-95 transition shadow-2xs"
+                    title="Select Location (38 Districts)"
+                  >
+                    <FaMapMarkerAlt className="text-slate-800 dark:text-emerald-400 text-xs shrink-0" />
+                    <span className="truncate">{currentDistrict?.name || 'Coimbatore'}</span>
+                    <span className="text-[10px] text-slate-500">⌵</span>
+                  </button>
 
-                  {/* Mobile Camera QR Scanner Trigger */}
+                  {/* QR Scan Button (Green Soft Pill) */}
                   <button
                     onClick={() => {
                       triggerHaptic(40);
                       setShowQRScanner(true);
                     }}
-                    className="p-2 sm:px-2.5 sm:py-1.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/30 rounded-xl text-xs font-black border border-emerald-500/30 flex items-center space-x-1 transition-all"
+                    className="px-3 py-1.5 bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] rounded-xl text-xs font-bold border border-[#a7f3d0] flex items-center space-x-1.5 transition-all shadow-2xs cursor-pointer"
                     title="Scan QR Code"
                   >
-                    <FaQrcode className="h-3.5 w-3.5 text-emerald-500" />
-                    <span className="hidden sm:inline">QR Scan</span>
+                    <FaQrcode className="h-3.5 w-3.5 text-[#059669]" />
+                    <span className="hidden sm:inline font-black">QR Scan</span>
                   </button>
 
-                  {/* Notifications Bell */}
+                  {/* Notifications Bell with Red Badge "1" */}
                   {user && (
                     <button 
                       onClick={() => {
                         triggerHaptic(30);
                         requestPushPermission(addToast);
                       }}
-                      className="p-2 sm:p-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-500 rounded-xl text-xs relative transition-colors"
+                      className="p-2 bg-slate-100/90 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 rounded-full text-xs relative transition-colors cursor-pointer shadow-2xs"
                       title="Notifications"
                     >
-                      <FaBell className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      <span className="absolute top-1 right-1 h-2 w-2 bg-emerald-500 rounded-full animate-ping"></span>
+                      <FaBell className="h-3.5 w-3.5 text-slate-700 dark:text-slate-200" />
+                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-rose-500 text-white rounded-full text-[8px] font-black flex items-center justify-center ring-2 ring-white">
+                        1
+                      </span>
                     </button>
                   )}
 
-                  {/* Dark Mode Toggle */}
+                  {/* Light / Dark Mode Toggle Pill */}
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-1.5 sm:px-2.5 sm:py-1 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-sm flex items-center space-x-1.5 text-xs transition-all"
-                    aria-label="Toggle Dark Mode"
+                    className="p-1 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-2xs flex items-center space-x-1 text-xs transition-all cursor-pointer"
+                    aria-label="Toggle Theme"
                     title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
                   >
-                    {darkMode ? <FaSun className="h-3.5 w-3.5 text-amber-400" /> : <FaMoon className="h-3.5 w-3.5 text-slate-700" />}
-                    <span className="hidden sm:inline text-[10px] font-mono font-bold">{darkMode ? 'Dark' : 'Light'}</span>
+                    <div className="flex items-center space-x-1 px-1.5 py-0.5">
+                      <span className="text-[11px] flex items-center gap-1 font-bold bg-[#fefce8] text-[#854d0e] px-2 py-0.5 rounded-full border border-[#fef08a] shadow-2xs">
+                        <FaSun className="h-2.5 w-2.5 text-amber-500" />
+                        <span>Light</span>
+                      </span>
+                      <span className="p-1 rounded-full text-slate-400">
+                        <FaMoon className="h-2.5 w-2.5" />
+                      </span>
+                    </div>
                   </button>
 
-                  {/* User Profile Avatar & Name */}
+                  {/* User Profile Avatar & Name with Caret */}
                   {user && (
                     <Link 
                       to={getSettingsLink()}
-                      className="flex items-center space-x-2 pl-1.5 sm:pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
+                      className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
                     >
                       <img 
                         src={getAvatarUrl(user, user?.name)} 
                         onError={(e) => handleAvatarError(e, user?.name)}
                         alt="User Avatar" 
-                        className="h-7 w-7 rounded-full object-cover ring-2 ring-emerald-500/40"
+                        className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/40 shadow-xs"
                       />
-                      <span className="font-extrabold text-slate-900 dark:text-white text-xs hidden md:inline truncate max-w-[140px]">
-                        {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'User'}
-                      </span>
+                      <div className="hidden lg:flex flex-col text-left">
+                        <span className="font-black text-slate-900 dark:text-white text-xs leading-none">
+                          {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-semibold leading-none mt-0.5 flex items-center gap-0.5">
+                          <span>Eco Guardian</span>
+                          <span className="text-[9px]">⌵</span>
+                        </span>
+                      </div>
                     </Link>
-                  )}
-
-                  {/* Desktop Logout Button */}
-                  {user && (
-                    <button 
-                      onClick={handleLogout}
-                      className="hidden sm:flex p-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors border border-rose-200/50 dark:border-rose-800/50"
-                      title="Logout"
-                    >
-                      <FaSignOutAlt className="h-4 w-4" />
-                    </button>
                   )}
 
                   {/* Mobile Side Menu Hamburger Drawer Toggle */}

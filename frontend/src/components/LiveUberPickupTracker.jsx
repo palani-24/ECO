@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaTruck, FaMapMarkerAlt, FaPhoneAlt, FaComments, FaCheckCircle, 
-  FaClock, FaShieldAlt, FaBolt, FaLeaf, FaCoins, FaWeightHanging, 
-  FaQrcode, FaArrowRight, FaRoute, FaStar, FaVolumeUp, FaShareAlt,
-  FaCheck, FaPlay, FaSyncAlt, FaTimes
+  FaClock, FaBolt, FaLeaf, FaStar, FaPlay, FaCheck, FaHome, FaShoppingCart
 } from 'react-icons/fa';
 import { triggerConfetti } from '../utils/confetti';
 import { soundFx } from '../utils/audioFeedback';
@@ -14,61 +12,53 @@ const STAGES = [
   {
     id: 'assigned',
     title: 'Driver Assigned',
-    subtitle: 'EV Fleet Driver accepted your doorstep pickup request',
+    subtitle: 'Driver accepted your pickup request',
+    time: '10:12 AM',
     badge: 'ASSIGNED',
-    badgeColor: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    etaMin: 12,
     progress: 25,
-    icon: '📋'
+    icon: FaCheck
   },
   {
     id: 'en_route',
     title: 'Driver En Route',
     subtitle: 'Driver is moving toward your location via Avinashi Road',
+    time: '10:18 AM',
     badge: 'LIVE GPS',
-    badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-    etaMin: 5,
-    progress: 68,
-    icon: '🚚'
+    progress: 62,
+    icon: FaTruck
   },
   {
     id: 'arrived',
     title: 'Arrived at Doorstep',
     subtitle: 'Driver has reached your gate. Please share your 4-digit OTP',
+    time: '--:--',
     badge: 'DOORSTEP',
-    badgeColor: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-    etaMin: 0,
-    progress: 92,
-    icon: '🔔'
+    progress: 88,
+    icon: FaHome
   },
   {
     id: 'completed',
     title: 'Weighed & Credited',
-    subtitle: '8.5 kg waste verified! +180 EcoPts added to your green balance',
+    subtitle: '8.5 kg waste verified! +180 EcoPoints added to green wallet',
+    time: '--:--',
     badge: 'COMPLETED',
-    badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
-    etaMin: 0,
     progress: 100,
-    icon: '🎉'
+    icon: FaShoppingCart
   }
 ];
 
 const LiveUberPickupTracker = ({ 
   pickup: externalPickup = null,
   onOpenChat = null,
-  onViewMap = null,
   className = '' 
 }) => {
-  // Current active stage
   const [currentStageIndex, setCurrentStageIndex] = useState(1); // Default to 'Driver En Route'
   const [etaCountdown, setEtaCountdown] = useState(5);
   const [liveSpeed, setLiveSpeed] = useState(24);
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [isDemoRunning, setIsDemoRunning] = useState(false);
 
   const activeStage = STAGES[currentStageIndex];
 
-  // Map external status to stage index if provided
   useEffect(() => {
     if (externalPickup?.status) {
       const s = externalPickup.status.toLowerCase();
@@ -79,31 +69,26 @@ const LiveUberPickupTracker = ({
     }
   }, [externalPickup?.status]);
 
-  // Live ETA and speed micro-fluctuation for realism
   useEffect(() => {
     if (currentStageIndex === 1) {
       const interval = setInterval(() => {
-        setLiveSpeed(prev => 20 + Math.floor(Math.random() * 8));
+        setLiveSpeed(prev => 22 + Math.floor(Math.random() * 5));
         setEtaCountdown(prev => (prev > 1 ? prev - 1 : 1));
-      }, 8000);
+      }, 9000);
       return () => clearInterval(interval);
     }
   }, [currentStageIndex]);
 
-  // Handle stage change manually or via simulation
   const handleSelectStage = (index) => {
     setCurrentStageIndex(index);
-    if (soundEnabled) {
-      if (index === 3) {
-        soundFx.playSuccessChime();
-        triggerConfetti({ count: 90 });
-      } else {
-        soundFx.playScanBeep();
-      }
+    if (index === 3) {
+      soundFx.playSuccessChime();
+      triggerConfetti({ count: 90 });
+    } else {
+      soundFx.playScanBeep();
     }
   };
 
-  // Run full automated demo walkthrough
   const handleRunDemo = () => {
     setIsDemoRunning(true);
     setCurrentStageIndex(0);
@@ -112,98 +97,91 @@ const LiveUberPickupTracker = ({
     setTimeout(() => {
       setCurrentStageIndex(1);
       soundFx.playScanBeep();
-    }, 2500);
+    }, 2200);
 
     setTimeout(() => {
       setCurrentStageIndex(2);
       soundFx.playScanBeep();
-    }, 5500);
+    }, 5000);
 
     setTimeout(() => {
       setCurrentStageIndex(3);
       soundFx.playSuccessChime();
       triggerConfetti({ count: 100 });
       setIsDemoRunning(false);
-    }, 8500);
+    }, 7800);
   };
 
   // Driver details
-  const driverName = externalPickup?.driver?.name || externalPickup?.assignedDriver?.name || 'Palani (Fleet Driver)';
+  const driverName = externalPickup?.driver?.name || externalPickup?.assignedDriver?.name || 'Palani Driver';
   const driverPhone = externalPickup?.driver?.phone || '+91 93610 99771';
-  const vehicleNumber = externalPickup?.driver?.vehicleNumber || 'TN-38-PL-9971';
-  const vehicleType = externalPickup?.driver?.vehicleType || 'Electric Auto-rickshaw (EV)';
-  const otpCode = externalPickup?.otpCode || '8419';
+  const vehicleNumber = externalPickup?.driver?.vehicleNumber || 'TN-01-AX-9945';
+  const vehicleType = externalPickup?.driver?.vehicleType || 'E-Rickshaw Tipper (EV)';
+  const otpCode = externalPickup?.otpCode || '4829';
   const wasteType = externalPickup?.wasteType || 'Plastics & E-Waste';
-  const estimatedWeight = externalPickup?.estimatedWeight || '8.5 kg';
-  const pickupId = externalPickup?._id ? externalPickup._id.substring(0, 8).toUpperCase() : 'ECO-9945';
+  const estimatedWeight = externalPickup?.estimatedWeight || '8';
+  const pickupId = externalPickup?._id ? externalPickup._id.substring(0, 8).toUpperCase() : '6AB7D28F';
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 text-slate-900 shadow-sm ${className}`}>
+    <div className={`relative overflow-hidden rounded-3xl bg-white border border-slate-100 p-6 sm:p-7 text-slate-800 shadow-sm ${className}`}>
       
-      {/* Background Ambient Glow Orbs */}
-      <div className="absolute -top-16 -right-16 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Top Header: Live Badge + ETA + Interactive Demo Button */}
-      <div className="relative z-10 flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-slate-100">
-        <div className="flex items-center space-x-3">
-          <div className="relative flex items-center justify-center h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-500/25 shadow-xs">
-            <FaTruck className="h-5 w-5 animate-pulse" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-emerald-500 animate-ping" />
+      {/* Top Header: Badge, Title & Actions */}
+      <div className="flex items-center justify-between flex-wrap gap-4 pb-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="h-12 w-12 rounded-2xl bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0] flex items-center justify-center text-xl shadow-xs">
+            <FaTruck className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-900 flex items-center gap-1.5">
-                <span>Doorstep Pickup Tracker</span>
-                <span className="px-2 py-0.5 text-[9px] font-black tracking-wider uppercase rounded-full border bg-emerald-50 text-emerald-700 border-emerald-500/30">
-                  {activeStage.badge}
-                </span>
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-900">
+                Doorstep Pickup Tracker
               </h3>
+              <span className="px-2.5 py-0.5 text-[10px] font-black tracking-wider uppercase rounded-full bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0]">
+                LIVE GPS
+              </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">
-              Order #{pickupId} • {wasteType} (~{estimatedWeight})
+            <p className="text-xs text-slate-500 font-semibold mt-0.5">
+              Order #{pickupId} - {wasteType} (~{estimatedWeight})
             </p>
           </div>
         </div>
 
         {/* ETA & Interactive Demo Button */}
-        <div className="flex items-center space-x-2">
-          {currentStageIndex < 2 && (
-            <div className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-500/25 flex items-center space-x-1.5 text-emerald-700 text-xs font-black shadow-xs">
-              <FaClock className="text-xs" />
-              <span>ETA {etaCountdown} Mins</span>
-            </div>
-          )}
+        <div className="flex items-center space-x-2.5">
+          <div className="px-3.5 py-1.5 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] flex items-center space-x-1.5 text-[#059669] text-xs font-bold shadow-xs">
+            <FaClock className="text-xs" />
+            <span>ETA {etaCountdown} Mins</span>
+          </div>
 
           <button
             onClick={handleRunDemo}
             disabled={isDemoRunning}
-            title="Preview all 4 live pickup steps"
-            className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold transition flex items-center space-x-1 cursor-pointer disabled:opacity-50 shadow-xs"
+            className="px-4 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-xs disabled:opacity-50"
           >
-            <FaPlay className="text-[10px] text-emerald-600" />
-            <span className="hidden sm:inline">Simulate Flow</span>
+            <FaPlay className="text-[10px] text-slate-800" />
+            <span>Simulate Flow</span>
           </button>
         </div>
       </div>
 
-      {/* Interactive Step Timeline (Uber / Swiggy Style) */}
-      <div className="relative z-10 py-5">
+      {/* 4-Step Milestone Progress Bar */}
+      <div className="relative py-5">
         <div className="grid grid-cols-4 gap-2 relative">
           
-          {/* Connecting Progress Line */}
-          <div className="absolute top-4 left-6 right-6 h-1.5 bg-slate-100 rounded-full z-0 overflow-hidden">
+          {/* Connecting Cyan/Teal Progress Line */}
+          <div className="absolute top-5 left-10 right-10 h-1 bg-slate-100 rounded-full z-0 overflow-hidden">
             <motion.div 
-              className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-full"
+              className="h-full bg-gradient-to-r from-[#059669] via-[#0d9488] to-[#06b6d4] rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${activeStage.progress}%` }}
-              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
             />
           </div>
 
           {STAGES.map((stage, idx) => {
-            const isPassed = idx <= currentStageIndex;
+            const isPassed = idx < currentStageIndex;
             const isCurrent = idx === currentStageIndex;
+            const Icon = stage.icon;
 
             return (
               <button
@@ -213,21 +191,24 @@ const LiveUberPickupTracker = ({
               >
                 {/* Node Circle */}
                 <div 
-                  className={`h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                  className={`h-10 w-10 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                     isCurrent 
-                      ? 'bg-emerald-600 text-white ring-4 ring-emerald-500/20 shadow-md scale-110' 
+                      ? 'bg-[#0f9f6e] text-white ring-4 ring-[#0f9f6e]/20 shadow-md scale-105' 
                       : isPassed 
-                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-500/40' 
-                        : 'bg-slate-100 text-slate-400 border border-slate-200'
+                        ? 'bg-[#0f9f6e] text-white shadow-xs' 
+                        : 'bg-white text-slate-400 border border-slate-200 shadow-2xs'
                   }`}
                 >
-                  {isPassed ? <FaCheck className="text-xs" /> : idx + 1}
+                  <Icon className="text-sm" />
                 </div>
 
-                <span className={`mt-2 text-[10px] sm:text-xs font-bold truncate max-w-full ${
-                  isCurrent ? 'text-emerald-700 font-black' : isPassed ? 'text-slate-700' : 'text-slate-400'
+                <span className={`mt-2.5 text-xs font-bold truncate max-w-full ${
+                  isCurrent ? 'text-slate-900 font-extrabold' : isPassed ? 'text-slate-800 font-bold' : 'text-slate-400 font-medium'
                 }`}>
                   {stage.title}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium mt-0.5">
+                  {stage.time}
                 </span>
               </button>
             );
@@ -235,89 +216,115 @@ const LiveUberPickupTracker = ({
         </div>
       </div>
 
-      {/* Simulated Live Animated GPS Mini-Route Map */}
-      <div className="relative z-10 my-1 rounded-2xl bg-slate-50 border border-slate-200/80 p-4 overflow-hidden">
+      {/* Stylized Live GPS Route Map Container */}
+      <div className="relative my-2 rounded-2xl bg-white border border-slate-100 overflow-hidden shadow-xs">
         
-        {/* Animated Radar Background Grid */}
-        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none" />
-
         {/* Telematics Bar Top */}
-        <div className="relative z-10 flex items-center justify-between text-[11px] font-bold text-slate-500 pb-3 border-b border-slate-200/60">
+        <div className="flex items-center justify-between text-xs font-semibold px-4 py-2.5 bg-[#f8fafc]/90 border-b border-slate-100">
           <div className="flex items-center space-x-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-slate-700 font-semibold">{activeStage.subtitle}</span>
+            <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+            <span className="text-slate-800 font-bold">{activeStage.subtitle}</span>
           </div>
-          <div className="flex items-center space-x-3 text-slate-500">
-            <span className="flex items-center gap-1 text-emerald-600 font-black">
-              <FaBolt className="text-[10px]" /> Zero Emission EV
+          <div className="flex items-center space-x-3 text-slate-600">
+            <span className="flex items-center gap-1.5 text-[#059669] font-bold">
+              <FaLeaf className="text-xs" /> Zero Emission EV
             </span>
-            <span className="hidden sm:inline font-mono text-slate-600 font-bold">{liveSpeed} km/h</span>
+            <span className="font-mono text-slate-700 font-bold">{liveSpeed} km/h</span>
           </div>
         </div>
 
-        {/* Route Animation Track */}
-        <div className="relative py-7 px-4 sm:px-8">
-          
-          {/* Glowing Animated Highway Route */}
-          <div className="relative h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 rounded-full"
-              style={{ width: `${activeStage.progress}%` }}
-              transition={{ duration: 0.5 }}
+        {/* Map Canvas with City Streets Background & Glowing Route */}
+        <div className="relative h-44 sm:h-52 w-full overflow-hidden flex items-center justify-center">
+          {/* Real City Vector Map Image Background */}
+          <img 
+            src="/images/gps_city_map_bg.jpg" 
+            alt="Live GPS Navigation Map" 
+            className="absolute inset-0 w-full h-full object-cover opacity-75"
+          />
+
+          {/* Glowing Green Curved Highway Path SVG Overlay */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 800 200" preserveAspectRatio="none">
+            {/* Base Road Shadow */}
+            <path
+              d="M 60 140 Q 250 160, 420 130 T 740 135"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="14"
+              strokeLinecap="round"
             />
-          </div>
+            {/* Glowing Green Eco Route */}
+            <path
+              d="M 60 140 Q 250 160, 420 130 T 740 135"
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="7"
+              strokeLinecap="round"
+            />
+            {/* Dashed Center Route Line */}
+            <path
+              d="M 60 140 Q 250 160, 420 130 T 740 135"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeDasharray="6 6"
+              strokeLinecap="round"
+            />
+          </svg>
 
           {/* Citizen Home Gate Marker (Left side) */}
-          <div className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-            <div className="h-8 w-8 rounded-full bg-white text-emerald-600 border border-emerald-500/40 flex items-center justify-center shadow-sm">
-              <FaMapMarkerAlt className="h-4 w-4" />
+          <div className="absolute left-8 sm:left-14 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
+            <div className="h-10 w-10 rounded-full bg-white text-[#059669] border-2 border-[#10b981] flex items-center justify-center shadow-md">
+              <FaMapMarkerAlt className="h-5 w-5 text-[#059669]" />
             </div>
-            <span className="text-[9px] font-black text-emerald-700 mt-1 whitespace-nowrap bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xs">
+            <span className="text-[10px] font-black text-slate-800 mt-1 whitespace-nowrap bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-xs">
               Your Gate
             </span>
           </div>
 
-          {/* Moving EV Tipper Vehicle (Interpolates along track) */}
+          {/* Moving EV Tipper Vehicle on Route */}
           <motion.div 
-            className="absolute top-1/2 -translate-y-1/2 z-20 flex flex-col items-center"
-            style={{ left: `calc(${Math.min(88, Math.max(12, activeStage.progress))}% - 16px)` }}
-            transition={{ type: 'spring', stiffness: 60 }}
+            className="absolute top-1/2 -translate-y-1/2 z-30 flex flex-col items-center"
+            style={{ left: `calc(${Math.min(84, Math.max(16, activeStage.progress))}% - 22px)` }}
+            transition={{ type: 'spring', stiffness: 50 }}
           >
-            <div className="relative h-9 w-9 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg border-2 border-white animate-bounce">
-              <FaTruck className="h-4 w-4" />
-              <div className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-white" />
+            {/* 5 Min ETA Pill Tooltip on top of truck */}
+            <div className="px-2.5 py-0.5 bg-slate-900/95 text-white rounded-full text-[10px] font-bold flex items-center space-x-1 shadow-md mb-1 whitespace-nowrap">
+              <FaClock className="text-[9px] text-[#34d399]" />
+              <span>{etaCountdown} min</span>
             </div>
-            <span className="text-[9px] font-black text-amber-800 mt-1 bg-white px-2 py-0.5 rounded-full border border-amber-300 whitespace-nowrap shadow-xs">
-              {currentStageIndex === 3 ? 'Completed' : currentStageIndex === 2 ? 'At Doorstep' : `${etaCountdown} min`}
-            </span>
+
+            {/* Green Recycling EV Truck Icon */}
+            <div className="relative h-11 w-11 rounded-2xl bg-[#0f9f6e] text-white flex items-center justify-center shadow-xl border-2 border-white ring-2 ring-[#0f9f6e]/30">
+              <FaTruck className="h-5 w-5 text-white" />
+              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white" />
+            </div>
           </motion.div>
 
           {/* Scrap Recycling Micro-Hub Destination (Right side) */}
-          <div className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex flex-col items-center z-10">
-            <div className="h-8 w-8 rounded-full bg-white text-teal-600 border border-teal-500/40 flex items-center justify-center shadow-sm">
-              <FaLeaf className="h-4 w-4" />
+          <div className="absolute right-8 sm:right-14 top-1/2 -translate-y-1/2 flex flex-col items-center z-20">
+            <div className="h-10 w-10 rounded-full bg-white text-[#059669] border-2 border-[#10b981] flex items-center justify-center shadow-md">
+              <FaLeaf className="h-5 w-5 text-[#059669]" />
             </div>
-            <span className="text-[9px] font-black text-teal-700 mt-1 whitespace-nowrap bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xs">
+            <span className="text-[10px] font-black text-slate-800 mt-1 whitespace-nowrap bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-xs">
               Eco Hub
             </span>
           </div>
         </div>
       </div>
 
-      {/* Driver Card + Doorstep OTP + Quick Actions Bar */}
-      <div className="relative z-10 mt-4 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+      {/* Driver Card + Doorstep OTP Bar */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-12 gap-3.5 items-stretch">
         
         {/* Driver Profile (8 cols) */}
-        <div className="md:col-span-8 flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-          <div className="flex items-center space-x-3">
+        <div className="md:col-span-8 flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-[#f0fdfa]/40 border border-slate-200/80">
+          <div className="flex items-center space-x-3.5">
             <div className="relative">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-xs">
-                <div className="h-full w-full rounded-2xl bg-white flex items-center justify-center text-lg font-black text-emerald-600">
-                  {driverName.charAt(0)}
-                </div>
-              </div>
-              <div className="absolute -bottom-1 -right-1 p-0.5 bg-emerald-500 rounded-full text-white text-[10px]" title="Eco Verified Driver">
-                <FaCheckCircle />
+              <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-[#10b981] shadow-xs">
+                <img 
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" 
+                  alt="Palani Driver" 
+                  className="h-full w-full object-cover"
+                />
               </div>
             </div>
 
@@ -328,73 +335,50 @@ const LiveUberPickupTracker = ({
                   <FaStar className="mr-0.5 text-[10px]" /> 4.9
                 </div>
               </div>
-              <p className="text-xs text-slate-500 font-mono font-medium">
-                {vehicleNumber} • <span className="text-emerald-600 font-bold">{vehicleType}</span>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                {vehicleNumber} • <span className="text-[#059669] font-bold">{vehicleType}</span>
               </p>
             </div>
           </div>
 
           {/* Quick Call & Chat Buttons */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <a 
               href={`tel:${driverPhone}`}
-              className="p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 transition flex items-center justify-center cursor-pointer shadow-xs"
-              title="Direct Call Driver"
+              className="h-9 w-9 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center justify-center cursor-pointer shadow-xs"
+              title="Call Driver"
             >
-              <FaPhoneAlt className="h-3.5 w-3.5" />
+              <FaPhoneAlt className="h-3.5 w-3.5 text-slate-800" />
             </a>
 
             <button 
               onClick={() => onOpenChat ? onOpenChat() : alert(`Starting Live In-App Chat with Driver: ${driverName}`)}
-              className="p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-500/30 transition flex items-center justify-center cursor-pointer shadow-xs"
-              title="Live Chat with Driver"
+              className="h-9 w-9 rounded-full bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] border border-[#a7f3d0] transition flex items-center justify-center cursor-pointer shadow-xs"
+              title="Chat with Driver"
             >
-              <FaComments className="h-3.5 w-3.5" />
+              <FaComments className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* Security Doorstep OTP Box (4 cols) */}
-        <div className="md:col-span-4 p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-500/25 flex items-center justify-between">
+        <div className="md:col-span-4 p-3.5 sm:p-4 rounded-2xl bg-[#ecfdf5] border border-[#a7f3d0] flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
-              Doorstep Pickup OTP
+            <span className="text-[11px] font-black uppercase tracking-wider text-slate-800 block">
+              DOORSTEP PICKUP OTP
             </span>
             <span className="text-[11px] text-slate-500 font-medium">
               Share upon driver arrival
             </span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-white border border-emerald-500/30 shadow-xs">
-            <span className="font-mono text-base font-black tracking-widest text-emerald-700">
+          <div>
+            <span className="font-mono text-2xl font-black tracking-wider text-[#065f46]">
               {otpCode}
             </span>
           </div>
         </div>
       </div>
-
-      {/* Completion Banner (shown on Completed Stage) */}
-      <AnimatePresence>
-        {currentStageIndex === 3 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="relative z-10 mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-500/30 flex items-center justify-between text-xs"
-          >
-            <div className="flex items-center space-x-2 text-emerald-800 font-bold">
-              <FaCheckCircle className="text-emerald-600 text-sm" />
-              <span>Waste Picked Up: 8.5 kg • +180 EcoPoints Credited to Wallet!</span>
-            </div>
-            <Link 
-              to="/redeem" 
-              className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-black hover:bg-emerald-500 transition shadow-xs"
-            >
-              Redeem Rewards →
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
     </div>
   );

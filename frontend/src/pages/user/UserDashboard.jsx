@@ -365,88 +365,108 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Modern Executive Hero White Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 text-slate-900 shadow-sm">
-          {/* Subtle Ambient Glow Orbs */}
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -bottom-24 -left-24 w-60 h-60 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Modern Panoramic Eco Landscape Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 p-6 sm:p-8 text-slate-900 shadow-sm min-h-[170px] flex items-center">
+          {/* Panoramic Eco City Landscape Background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
+            style={{ 
+              backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
+              filter: 'brightness(1.05) saturate(1.1)'
+            }}
+          />
+          {/* Gentle translucent soft white gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/30 pointer-events-none z-0" />
 
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="relative z-10 w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
             
-            {/* User Greeting & Status */}
-            <div className="flex items-center space-x-4">
-              <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 p-0.5 shadow-md shadow-emerald-500/20">
-                  <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center text-3xl">
-                    🌱
-                  </div>
+            {/* Left: Hand holding sprout + Welcome greeting + Chips row */}
+            <div className="flex items-center space-x-4 sm:space-x-5 max-w-2xl">
+              {/* Hand holding sprout asset with LVL 4 gold badge */}
+              <div className="relative shrink-0">
+                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md border-2 border-white bg-white">
+                  <img 
+                    src="/images/hand_holding_sprout.jpg" 
+                    alt="Eco Level 4 Sprout" 
+                    className="w-full h-full object-cover scale-105"
+                  />
                 </div>
-                <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full border border-white shadow-xs">
+                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white shadow-xs">
                   LVL 4
                 </span>
               </div>
 
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                    Welcome back, {user?.name ? user.name.split(' ')[0] : 'Citizen'}! 👋
-                  </h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-black border border-emerald-500/30">
-                    Eco Guardian
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-xl">
+              <div className="space-y-1.5">
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  Welcome back, <span className="text-[#059669]">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 font-semibold">
                   Turn household scrap into verified environmental impact & instant rewards.
                 </p>
 
-                {/* Ambient Real-time Chennai Air Quality Strip */}
-                <div className="flex items-center space-x-2 pt-1">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                {/* 4 Soft Pill Badges in a single row matching image */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="px-3 py-1 rounded-full bg-[#059669] text-white text-[11px] font-bold shadow-2xs flex items-center space-x-1">
+                    <span>🌿 Eco Guardian</span>
                   </span>
-                  <span className="text-[11px] font-bold text-slate-500">
-                    {currentDistrict?.name || 'Coimbatore'} Live AQI: <span className="text-emerald-600 font-black">54 • Good & Clean Air 🍃</span> (29°C Pleasant)
+                  <span className="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                    <span>🍃 {currentDistrict?.name || 'Coimbatore'} Live AQI: 54</span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/90 text-[#059669] text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                    <span>🌱 Good & Clean Air</span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                    <span>☀️ 29°C Pleasant</span>
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* High-Contrast Primary CTA Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <motion.button
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate('/schedule-pickup')}
-                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
-              >
-                <FaCalendarPlus className="h-4 w-4" />
-                <span>Schedule Pickup</span>
-              </motion.button>
+            {/* Right: Action Buttons + Green Collection Truck */}
+            <div className="flex items-center space-x-4 ml-auto">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/schedule-pickup')}
+                  className="px-5 py-3 rounded-2xl bg-[#0f9f6e] hover:bg-[#0b8259] text-white font-extrabold text-xs shadow-md shadow-[#0f9f6e]/30 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                >
+                  <FaCalendarPlus className="h-4 w-4" />
+                  <span>Schedule Pickup</span>
+                </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setShowAiScanner(true)}
-                className="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-black text-xs border border-slate-300 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
-              >
-                <FaCamera className="h-4 w-4 text-emerald-600" />
-                <span>AI Waste Scanner</span>
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowAiScanner(true)}
+                  className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-xs border border-slate-200/90 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                >
+                  <FaCamera className="h-4 w-4 text-[#059669]" />
+                  <span>AI Waste Scanner</span>
+                </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  triggerHaptic(30);
-                  setShowEcoStory(true);
-                }}
-                className="flex-1 sm:flex-initial px-4 py-3 rounded-2xl bg-teal-50 hover:bg-teal-100 text-teal-700 font-black text-xs border border-teal-200 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
-                title="Generate 9:16 Instagram & WhatsApp Story Card"
-              >
-                <FaLeaf className="h-4 w-4 text-teal-600" />
-                <span>Eco Story</span>
-              </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    triggerHaptic(30);
+                    setShowEcoStory(true);
+                  }}
+                  className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-xs border border-slate-200/90 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                >
+                  <FaLeaf className="h-4 w-4 text-[#059669]" />
+                  <span>Eco Story</span>
+                </motion.button>
+              </div>
+
+              {/* Green EV Recycling Truck Graphic */}
+              <div className="hidden 2xl:block w-40 h-28 shrink-0 relative">
+                <img 
+                  src="/images/eco_green_truck.jpg" 
+                  alt="Green EV Waste Truck" 
+                  className="w-full h-full object-contain filter drop-shadow-md"
+                />
+              </div>
             </div>
 
           </div>

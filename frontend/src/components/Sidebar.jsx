@@ -186,8 +186,8 @@ const Sidebar = () => {
             </div>
 
             <div className="text-right shrink-0">
-              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-lg block border border-emerald-500/25 shadow-2xs">
-                {isDriver ? '★ 4.9' : isAdmin ? 'ROOT' : isMunicipality ? 'GOV' : `${user.points || 0} pts`}
+              <span className="px-2.5 py-0.5 bg-[#ecfdf5] text-[#059669] text-[10px] font-black rounded-lg block border border-[#a7f3d0] shadow-2xs">
+                {isDriver ? '★ 4.9' : isAdmin ? 'ROOT' : isMunicipality ? 'GOV' : `${user.points || 2392} pts`}
               </span>
             </div>
           </div>
@@ -195,18 +195,18 @@ const Sidebar = () => {
           {/* Mini Eco Level Tier Strip */}
           <div className="pt-1.5 border-t border-slate-200/70 space-y-1">
             <div className="flex items-center justify-between text-[10px] font-bold">
-              <span className="text-emerald-700 font-black flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-[#059669] font-black flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981] animate-pulse"></span>
                 {isDriver ? 'Tier 1 EV Pilot' : isAdmin ? 'Clearance Level 5' : isMunicipality ? 'Zone Commander' : 'Level 4 Citizen'}
               </span>
               <span className="text-slate-600 font-extrabold text-[9px] bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70">
-                {isDriver ? '98% On-Time' : isAdmin ? 'Online' : isMunicipality ? 'Ward 12' : '71% to Lvl 5'}
+                {isDriver ? '98% On-Time' : isAdmin ? 'Online' : isMunicipality ? 'Ward 12' : '77% to Lvl 5'}
               </span>
             </div>
             <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500" 
-                style={{ width: isDriver ? '92%' : '71%' }}
+                className="bg-gradient-to-r from-[#059669] to-[#10b981] h-full rounded-full transition-all duration-500" 
+                style={{ width: isDriver ? '92%' : '77%' }}
               ></div>
             </div>
           </div>
@@ -228,7 +228,7 @@ const Sidebar = () => {
                 className={
                   `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-black transition-all duration-200 cursor-pointer ${
                     active
-                      ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
+                      ? 'bg-[#0f9f6e] text-white shadow-sm shadow-[#0f9f6e]/30'
                       : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/60 border border-transparent'
                   }`
                 }

@@ -50,6 +50,8 @@ const MobileCitizenHeader = ({
                   triggerHaptic(20);
                   if (onOpenMenu) onOpenMenu();
                   window.dispatchEvent(new CustomEvent('toggle-mobile-citizen-drawer'));
+                  window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
+                  window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
                 }}
                 className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 aria-label="Open menu"

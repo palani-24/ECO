@@ -201,6 +201,8 @@ const MobileEcoHome = ({
             onClick={() => {
               triggerHaptic(20);
               window.dispatchEvent(new CustomEvent('toggle-mobile-citizen-drawer'));
+              window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
+              window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
             }}
             className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer"
             aria-label="Open Citizen Portal Menu"

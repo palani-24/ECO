@@ -19,7 +19,7 @@ import AIWasteScannerModal from './AIWasteScannerModal';
 
 const MobileCitizenNav = () => {
   const { user, logout } = useAuth();
-  const { currentDistrict, openDistrictModal } = useDistrict();
+  const { currentDistrict, openDistrictModal } = useDistrict() || {};
   const navigate = useNavigate();
   const location = useLocation();
   const [showDrawer, setShowDrawer] = useState(false);
@@ -36,14 +36,20 @@ const MobileCitizenNav = () => {
   // Global listener for hamburger drawer toggle
   useEffect(() => {
     const handleToggle = () => setShowDrawer(prev => !prev);
+    const handleOpen = () => setShowDrawer(true);
+    const handleClose = () => setShowDrawer(false);
     const handleScanner = () => setShowAiScanner(true);
 
     window.addEventListener('toggle-mobile-citizen-drawer', handleToggle);
+    window.addEventListener('open-mobile-citizen-drawer', handleOpen);
+    window.addEventListener('close-mobile-citizen-drawer', handleClose);
     window.addEventListener('toggle-mobile-menu', handleToggle);
     window.addEventListener('open-ai-scanner', handleScanner);
 
     return () => {
       window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
+      window.removeEventListener('open-mobile-citizen-drawer', handleOpen);
+      window.removeEventListener('close-mobile-citizen-drawer', handleClose);
       window.removeEventListener('toggle-mobile-menu', handleToggle);
       window.removeEventListener('open-ai-scanner', handleScanner);
     };
@@ -255,35 +261,36 @@ const MobileCitizenNav = () => {
         </div>
       </nav>
 
-      {/* 🧭 Minimalist, Focused Slide-out Drawer Panel */}
-      <AnimatePresence>
-        {showDrawer && (
-          <>
-            {/* Backdrop */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowDrawer(false)}
-              className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm md:hidden"
-            />
+      {/* 🧭 Solid High-Priority Fixed Slide-out Side Menu Drawer Panel */}
+      {showDrawer && (
+        <div 
+          onClick={() => setShowDrawer(false)}
+          className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity duration-300"
+          style={{ position: 'fixed', inset: 0, zIndex: 99998 }}
+        />
+      )}
 
-            {/* Drawer Panel */}
-            <motion.div 
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="fixed inset-y-0 left-0 z-50 w-[84vw] max-w-[330px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col md:hidden border-r border-slate-200 dark:border-slate-800 overflow-hidden relative"
-            >
-              {/* 🎨 Eco Smart City Panoramic Background Illustration */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
-                style={{
-                  backgroundImage: "url('/images/mobile_drawer_bg.jpg')",
-                  filter: 'brightness(1.02) saturate(1.08)'
-                }}
-              />
+      <div 
+        className={`md:hidden fixed inset-y-0 left-0 w-[85vw] max-w-[325px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col border-r border-slate-200 dark:border-slate-800 overflow-hidden transition-transform duration-300 ease-out ${
+          showDrawer ? 'translate-x-0' : '-translate-x-full pointer-events-none'
+        }`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          zIndex: 99999,
+          height: '100dvh'
+        }}
+      >
+        {/* 🎨 Eco Smart City Panoramic Background Illustration */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
+          style={{
+            backgroundImage: "url('/images/mobile_drawer_bg.jpg')",
+            filter: 'brightness(1.02) saturate(1.08)'
+          }}
+        />
               {/* Soft Translucent Glassmorphic Overlay for Contrast & Readability */}
               <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/85 backdrop-blur-[2px] pointer-events-none z-0" />
 
@@ -325,13 +332,13 @@ const MobileCitizenNav = () => {
                     />
                     <div className="min-w-0 flex-1">
                       <h4 className="text-xs font-black text-slate-900 dark:text-white truncate">
-                        {user?.name || `${currentDistrict.name} Municipal Officer`}
+                        {user?.name || `${currentDistrict?.name || 'Coimbatore'} Municipal Officer`}
                       </h4>
                       <p className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold truncate">
-                        {currentDistrict.corporation}
+                        {currentDistrict?.corporation || 'Municipal Corporation'}
                       </p>
                       <span className="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 font-black inline-block mt-0.5">
-                        🏛️ {currentDistrict.wards} WARDS • ACTIVE
+                        🏛️ {currentDistrict?.wards || 100} WARDS • ACTIVE
                       </span>
                     </div>
                     <FaChevronRight className="text-slate-400 text-xs shrink-0" />
@@ -371,11 +378,11 @@ const MobileCitizenNav = () => {
                     <div className="min-w-0">
                       <div className="flex items-center space-x-1.5">
                         <span className="text-xs font-black text-slate-900 dark:text-white truncate">
-                          {currentDistrict.name}
+                          {currentDistrict?.name || 'Coimbatore'}
                         </span>
                       </div>
                       <p className="text-[9px] text-slate-400 truncate">
-                        {currentDistrict.corporation}
+                        {currentDistrict?.corporation || 'City Municipal Corporation'}
                       </p>
                     </div>
                   </div>
@@ -777,14 +784,14 @@ const MobileCitizenNav = () => {
                 {/* Direct Call to Municipal Sanitation Control Room */}
                 <div className="pt-2">
                   <a 
-                    href={`tel:${currentDistrict.helpline.split('/')[0].trim()}`}
+                    href={`tel:${(currentDistrict?.helpline || '1913').split('/')[0].trim()}`}
                     className="w-full p-3 rounded-2xl bg-white/90 dark:bg-emerald-950/60 backdrop-blur-md text-emerald-800 dark:text-emerald-300 border-2 border-emerald-500/30 flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaPhoneAlt className="text-emerald-600 dark:text-emerald-400 text-sm" />
                       <div>
-                        <span className="text-xs font-black block">{currentDistrict.name} Control Room</span>
-                        <span className="text-[10px] text-slate-500">{currentDistrict.helpline}</span>
+                        <span className="text-xs font-black block">{currentDistrict?.name || 'Coimbatore'} Control Room</span>
+                        <span className="text-[10px] text-slate-500">{currentDistrict?.helpline || '1913'}</span>
                       </div>
                     </div>
                     <span className="text-[9px] px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-black">
@@ -805,10 +812,7 @@ const MobileCitizenNav = () => {
                   <span>Log Out Session</span>
                 </button>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
 
       {/* AI Waste & Item Scanner Modal */}
       <AIWasteScannerModal 

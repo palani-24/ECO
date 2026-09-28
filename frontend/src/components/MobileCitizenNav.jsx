@@ -272,10 +272,21 @@ const MobileCitizenNav = () => {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="fixed inset-y-0 left-0 z-50 w-[84vw] max-w-[330px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col md:hidden border-r border-slate-200 dark:border-slate-800"
+              className="fixed inset-y-0 left-0 z-50 w-[84vw] max-w-[330px] bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl flex flex-col md:hidden border-r border-slate-200 dark:border-slate-800 overflow-hidden relative"
             >
+              {/* 🎨 Eco Smart City Panoramic Background Illustration */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
+                style={{
+                  backgroundImage: "url('/images/mobile_drawer_bg.jpg')",
+                  filter: 'brightness(1.02) saturate(1.08)'
+                }}
+              />
+              {/* Soft Translucent Glassmorphic Overlay for Contrast & Readability */}
+              <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/85 backdrop-blur-[2px] pointer-events-none z-0" />
+
               {/* Drawer Top Header */}
-              <div className="shrink-0 p-4 pb-3 border-b border-slate-100 dark:border-slate-800/80 space-y-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+              <div className="relative z-10 shrink-0 p-4 pb-3 border-b border-slate-100/90 dark:border-slate-800/80 space-y-3 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <img src="/app-logo.png" alt="Logo" className="h-7 w-auto object-contain" />
@@ -380,7 +391,7 @@ const MobileCitizenNav = () => {
               </div>
 
               {/* Streamlined Menu Options (Only 5 Essential Items per role) */}
-              <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 overscroll-contain">
+              <div className="relative z-10 flex-1 overflow-y-auto px-4 py-3 space-y-2 overscroll-contain">
                 
                 {isMunicipality ? (
                   /* ================= MUNICIPALITY ONLY 5 CORE OPTIONS ================= */
@@ -527,14 +538,14 @@ const MobileCitizenNav = () => {
                 ) : (
                   /* ================= CITIZEN ONLY 5 CORE OPTIONS ================= */
                   <div className="space-y-2">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 px-2 block">
+                    <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2 block">
                       Citizen Services
                     </span>
 
                     {/* 1. Book Scrap Pickup */}
                     <button 
                       onClick={() => handleNavigate('/schedule-pickup')}
-                      className="w-full text-left p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all"
+                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
@@ -550,7 +561,7 @@ const MobileCitizenNav = () => {
                     {/* 2. My Pickups & Tracking */}
                     <button 
                       onClick={() => handleNavigate('/my-pickups')}
-                      className="w-full text-left p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all"
+                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center">
@@ -563,7 +574,7 @@ const MobileCitizenNav = () => {
                     {/* 3. Wallet & UPI */}
                     <button 
                       onClick={() => handleNavigate('/redeem')}
-                      className="w-full text-left p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all"
+                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
@@ -576,7 +587,7 @@ const MobileCitizenNav = () => {
                     {/* 4. Report Illegal Dump */}
                     <button 
                       onClick={() => handleNavigate('/report-dump')}
-                      className="w-full text-left p-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 flex items-center justify-between cursor-pointer text-rose-700 dark:text-rose-300 active:scale-98 transition-all"
+                      className="w-full text-left p-3 rounded-2xl bg-rose-50/90 dark:bg-rose-950/40 backdrop-blur-md border border-rose-300/80 dark:border-rose-500/30 flex items-center justify-between cursor-pointer text-rose-700 dark:text-rose-300 active:scale-98 transition-all shadow-2xs"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-600 flex items-center justify-center">
@@ -596,7 +607,7 @@ const MobileCitizenNav = () => {
                         triggerHaptic(25);
                         setShowAiScanner(true);
                       }}
-                      className="w-full text-left p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all"
+                      className="w-full text-left p-3 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between cursor-pointer text-slate-800 dark:text-slate-200 active:scale-98 transition-all shadow-2xs"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center">
@@ -612,10 +623,10 @@ const MobileCitizenNav = () => {
                     {/* 6. Citizen Support & Helpdesk Hub */}
                     <button 
                       onClick={() => handleNavigate('/support')}
-                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all ${
+                      className={`w-full text-left p-3 rounded-2xl flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs ${
                         isCurrent('/support')
-                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-500/30'
-                          : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold border border-transparent'
+                          ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-black border border-emerald-500/40'
+                          : 'bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
@@ -624,7 +635,7 @@ const MobileCitizenNav = () => {
                         </div>
                         <div>
                           <span className="text-xs block">Helpdesk & Message Hub</span>
-                          <span className="text-[10px] text-slate-400 font-normal">Pickup help & 24/7 helpline</span>
+                          <span className="text-[10px] text-slate-500 font-normal">Pickup help & 24/7 helpline</span>
                         </div>
                       </div>
                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black">
@@ -638,13 +649,13 @@ const MobileCitizenNav = () => {
                 <div className="pt-2">
                   <a 
                     href={`tel:${currentDistrict.helpline.split('/')[0].trim()}`}
-                    className="w-full p-3 rounded-2xl bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 flex items-center justify-between cursor-pointer active:scale-98 transition-all"
+                    className="w-full p-3 rounded-2xl bg-white/90 dark:bg-emerald-950/60 backdrop-blur-md text-emerald-800 dark:text-emerald-300 border-2 border-emerald-500/30 flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
                       <FaPhoneAlt className="text-emerald-600 dark:text-emerald-400 text-sm" />
                       <div>
                         <span className="text-xs font-black block">{currentDistrict.name} Control Room</span>
-                        <span className="text-[10px] text-slate-400">{currentDistrict.helpline}</span>
+                        <span className="text-[10px] text-slate-500">{currentDistrict.helpline}</span>
                       </div>
                     </div>
                     <span className="text-[9px] px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-black">
@@ -656,7 +667,7 @@ const MobileCitizenNav = () => {
               </div>
 
               {/* Drawer Bottom: Log Out */}
-              <div className="shrink-0 p-4 pt-2 border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+              <div className="relative z-10 shrink-0 p-4 pt-2 border-t border-slate-100/80 dark:border-slate-800/80 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                 <button 
                   onClick={handleLogout}
                   className="w-full py-2.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black text-xs rounded-xl hover:bg-rose-500/20 transition flex items-center justify-center space-x-2 cursor-pointer border border-rose-500/20 active:scale-98"

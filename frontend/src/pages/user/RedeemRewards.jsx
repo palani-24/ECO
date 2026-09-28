@@ -4,6 +4,8 @@ import { useToast } from '../../context/ToastContext';
 import UserLayout from '../../components/UserLayout';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
 import RealPaymentGatewayModal from '../../components/RealPaymentGatewayModal';
+import RealQRScannerModal from '../../components/RealQRScannerModal';
+import BankWithdrawalModal from '../../components/BankWithdrawalModal';
 import { triggerConfetti } from '../../utils/confetti';
 import { soundFx } from '../../utils/audioFeedback';
 import { triggerHaptic } from '../../utils/mobileNative';
@@ -12,7 +14,8 @@ import {
   FaQrcode, FaShoppingBag, FaHistory, FaArrowDown, FaArrowUp, 
   FaTruck, FaLeaf, FaReceipt, FaPlus, FaTimes, FaCheck, FaSearch, 
   FaFilter, FaCreditCard, FaBolt, FaUniversity, FaMobileAlt,
-  FaFileInvoiceDollar, FaStore, FaWallet, FaPrint, FaShareAlt
+  FaFileInvoiceDollar, FaStore, FaWallet, FaPrint, FaShareAlt,
+  FaCamera
 } from 'react-icons/fa';
 
 // Curated Eco-Products (100% Derived from Recycled Waste or Zero-Waste Alternatives)
@@ -184,6 +187,8 @@ const RedeemRewards = () => {
 
   // Modals
   const [showUPIModal, setShowUPIModal] = useState(false);
+  const [showBankWithdrawModal, setShowBankWithdrawModal] = useState(false);
+  const [showRealQRScannerModal, setShowRealQRScannerModal] = useState(false);
   const [showScanPayModal, setShowScanPayModal] = useState(false);
   const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [selectedProductForGateway, setSelectedProductForGateway] = useState(null);
@@ -375,6 +380,50 @@ const RedeemRewards = () => {
     setTransactions(prev => [addedTxn, ...prev]);
   };
 
+  // Handle direct bank transfer / IMPS cashout success
+  const handleBankWithdrawSuccess = (withdrawData) => {
+    const amt = withdrawData.amount;
+    setWalletCash(prev => Math.max(0, prev - amt));
+    
+    const wthTxn = {
+      id: withdrawData.receipt.txnId || `TXN-${Math.floor(10000 + Math.random() * 90000)}`,
+      type: 'debit_payout',
+      title: `Bank Withdrawal: ${withdrawData.receipt.destination}`,
+      subtitle: `Transferred via ${withdrawData.receipt.mode} • Beneficiary: ${withdrawData.receipt.holderName}`,
+      amountRupees: amt,
+      points: amt * 4,
+      isCredit: false,
+      timestamp: 'Just now',
+      status: 'Completed',
+      mode: withdrawData.receipt.mode,
+      utr: withdrawData.receipt.utr
+    };
+    setTransactions(prev => [wthTxn, ...prev]);
+    addToast(`₹${amt}.00 transferred to your bank account successfully!`, 'success', 'Bank Credit Completed');
+  };
+
+  // Handle live camera QR merchant payment success
+  const handleRealQRPaySuccess = (payData) => {
+    const amt = payData.amount;
+    setWalletCash(prev => Math.max(0, prev - amt));
+
+    const qrTxn = {
+      id: payData.receipt.txnId || `TXN-${Math.floor(10000 + Math.random() * 90000)}`,
+      type: 'debit_merchant',
+      title: `QR Merchant Pay: ${payData.merchant.name}`,
+      subtitle: `Paid to ${payData.merchant.vpa} via Camera QR Scanner`,
+      amountRupees: amt,
+      points: amt * 4,
+      isCredit: false,
+      timestamp: 'Just now',
+      status: 'Completed',
+      mode: 'Live Camera QR Pay',
+      utr: payData.receipt.utr
+    };
+    setTransactions(prev => [qrTxn, ...prev]);
+    addToast(`₹${amt}.00 paid to ${payData.merchant.name}!`, 'success', 'QR Payment Sent');
+  };
+
   // Filtered Products
   const filteredProducts = useMemo(() => {
     return ECO_PRODUCTS.filter(p => {
@@ -472,33 +521,33 @@ const RedeemRewards = () => {
           {/* 4 Core Financial Transaction Action Pillars */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t-2 border-slate-100">
             
-            {/* Action 1: Instant Bank UPI Cashout */}
+            {/* Action 1: Instant Direct Bank & UPI Withdrawal */}
             <button
-              onClick={() => setShowUPIModal(true)}
+              onClick={() => setShowBankWithdrawModal(true)}
               className="p-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl border-2 border-emerald-600 shadow-md shadow-emerald-600/20 flex flex-col justify-between items-start transition cursor-pointer group active:scale-98"
             >
               <div className="flex items-center justify-between w-full">
-                <FaExchangeAlt className="text-base" />
+                <FaUniversity className="text-base" />
                 <span className="text-[9px] font-black bg-white/20 px-2 py-0.5 rounded-full">INSTANT</span>
               </div>
               <div className="text-left mt-2">
-                <div className="text-xs font-black">Withdraw Cash (UPI)</div>
-                <div className="text-[10px] text-emerald-100 font-medium">To GPay, PhonePe, Bank</div>
+                <div className="text-xs font-black">Withdraw to Bank / UPI</div>
+                <div className="text-[10px] text-emerald-100 font-medium">To SBI, HDFC, GPay, PhonePe</div>
               </div>
             </button>
 
-            {/* Action 2: Merchant Scan & Pay QR */}
+            {/* Action 2: Merchant Live Camera Scan & Pay QR */}
             <button
-              onClick={() => setShowScanPayModal(true)}
+              onClick={() => setShowRealQRScannerModal(true)}
               className="p-3.5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl border-2 border-slate-300 shadow-xs flex flex-col justify-between items-start transition cursor-pointer group active:scale-98"
             >
               <div className="flex items-center justify-between w-full">
-                <FaQrcode className="text-base text-emerald-600" />
-                <span className="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">ZERO FEE</span>
+                <FaCamera className="text-base text-emerald-600" />
+                <span className="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">LIVE CAMERA</span>
               </div>
               <div className="text-left mt-2">
                 <div className="text-xs font-black text-slate-900">Scan & Pay QR</div>
-                <div className="text-[10px] text-slate-500 font-semibold">Pay stores from wallet</div>
+                <div className="text-[10px] text-slate-500 font-semibold">Real optical camera scanner</div>
               </div>
             </button>
 
@@ -540,6 +589,50 @@ const RedeemRewards = () => {
               </div>
             </button>
 
+          </div>
+
+          {/* Linked Bank Account Details Strip (Real Banking Integration) */}
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50/90 via-slate-50 to-white border-2 border-emerald-200/90 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center space-x-3.5">
+              <div className="h-11 w-11 rounded-2xl bg-white border-2 border-emerald-300 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0 shadow-xs">
+                <FaUniversity className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-black text-slate-900">State Bank of India (SBI)</span>
+                  <span className="inline-flex items-center gap-1 text-[9px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                    <FaCheckCircle className="text-[8px]" /> PRIMARY LINKED A/C
+                  </span>
+                </div>
+                <div className="text-[11px] font-semibold text-slate-600 mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+                  <span>A/C: <strong className="font-mono text-slate-900">•••• •••• 4921</strong></span>
+                  <span className="text-slate-300">|</span>
+                  <span>IFSC: <strong className="font-mono text-slate-800">SBIN0001234</strong></span>
+                  <span className="text-slate-300">|</span>
+                  <span>Branch: <strong>Coimbatore Main Branch, TN</strong></span>
+                  <span className="text-slate-300">|</span>
+                  <span>Beneficiary: <strong>PALANI</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 w-full md:w-auto justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowBankWithdrawModal(true)}
+                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-sm border border-emerald-600 transition flex items-center space-x-1.5 cursor-pointer active:scale-98"
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Withdraw to this Bank</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowBankWithdrawModal(true)}
+                className="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 transition cursor-pointer"
+              >
+                Manage Banks
+              </button>
+            </div>
           </div>
 
           {/* Security & Bank Grade Assurance Bar */}
@@ -1058,79 +1151,22 @@ const RedeemRewards = () => {
           </div>
         )}
 
-        {/* Scan & Pay Merchant QR Modal */}
-        {showScanPayModal && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-            <div className="relative w-full max-w-md bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-7 text-slate-800 shadow-2xl">
-              <button
-                onClick={() => setShowScanPayModal(false)}
-                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
-              >
-                <FaTimes className="w-4 h-4" />
-              </button>
+        {/* Real Optical Camera QR Scanner & Merchant Pay Modal */}
+        <RealQRScannerModal
+          isOpen={showRealQRScannerModal}
+          onClose={() => setShowRealQRScannerModal(false)}
+          walletCash={walletCash}
+          onPaymentComplete={handleRealQRPaySuccess}
+        />
 
-              <div className="flex items-center space-x-3 pb-3 border-b-2 border-slate-100">
-                <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 text-xl">
-                  <FaQrcode />
-                </div>
-                <div>
-                  <h4 className="text-base font-black text-slate-900">Scan & Pay from Wallet</h4>
-                  <p className="text-xs text-slate-500 font-semibold">Pay any merchant or friend using Eco-Wallet balance</p>
-                </div>
-              </div>
-
-              <form onSubmit={handleProcessMerchantPay} className="space-y-4 pt-3">
-                <div className="p-3 bg-emerald-50/70 border-2 border-emerald-200 rounded-2xl flex justify-between items-center text-xs">
-                  <span className="text-emerald-800 font-bold">Wallet Cash Balance:</span>
-                  <span className="font-black text-slate-900 text-sm">₹{walletCash}.00</span>
-                </div>
-
-                <div>
-                  <label className="text-xs font-black text-slate-800 block mb-1">Merchant UPI / QR Handle:</label>
-                  <input
-                    type="text"
-                    value={merchantUpi}
-                    onChange={(e) => setMerchantUpi(e.target.value)}
-                    placeholder="e.g. greencafe@okaxis, shop@paytm"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-300 focus:border-emerald-500 rounded-xl text-xs font-bold text-slate-800 focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-black text-slate-800 block mb-1">Amount to Pay (₹):</label>
-                  <input
-                    type="number"
-                    value={merchantAmount}
-                    onChange={(e) => setMerchantAmount(e.target.value)}
-                    placeholder="120"
-                    max={walletCash}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-300 focus:border-emerald-500 rounded-xl text-xs font-black text-slate-900 focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div className="pt-2 flex items-center space-x-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowScanPayModal(false)}
-                    className="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-black text-xs rounded-2xl border-2 border-slate-300 transition cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isPayingMerchant || Number(merchantAmount) > walletCash}
-                    className="flex-2 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-2xl shadow-lg border-2 border-emerald-600 transition flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
-                  >
-                    <FaLock className="text-xs" />
-                    <span>{isPayingMerchant ? 'Processing Payment...' : `Pay ₹${merchantAmount} from Wallet`}</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        {/* Real Direct Bank Account (IMPS/NEFT) & UPI Withdrawal Modal */}
+        <BankWithdrawalModal
+          isOpen={showBankWithdrawModal}
+          onClose={() => setShowBankWithdrawModal(false)}
+          walletCash={walletCash}
+          userPoints={points}
+          onWithdrawalSuccess={handleBankWithdrawSuccess}
+        />
 
         {/* Bank UPI Cashout Modal (High-Security White Theme) */}
         <UPIPayoutModal

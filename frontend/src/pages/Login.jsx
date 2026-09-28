@@ -120,17 +120,17 @@ const Login = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
       
-      {/* Background Mountain Vector Artwork Matching Image 1 Exactly */}
+      {/* Background Luxury Curved Artwork */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/mountain_vector_auth_bg.jpg')",
-          filter: 'brightness(1.01)'
+          backgroundImage: "url('/images/white_ambient_curves_bg.png')",
+          filter: 'brightness(1.02)'
         }}
       />
 
       {/* Atmospheric Soft Lighting Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-b from-sky-100/10 via-transparent to-slate-950/20 pointer-events-none z-0" />
+      <div className="fixed inset-0 bg-gradient-to-b from-white/10 via-transparent to-slate-900/10 pointer-events-none z-0" />
 
       {/* Top Navigation Bar Matching Image 1 */}
       <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-6 flex items-center justify-between">

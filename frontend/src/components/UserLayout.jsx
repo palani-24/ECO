@@ -8,17 +8,17 @@ const UserLayout = ({ children, hideFooter = false }) => {
   return (
     <div className="relative min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 User Custom Vibrant Wavy Landscape Background */}
+      {/* 🌄 Scenic Mountain Vector Landscape Artwork (Matching First Image) */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/custom_eco_waves_bg.png')",
+          backgroundImage: "url('/images/mountain_vector_auth_bg.jpg')",
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02) saturate(1.15)'
+          filter: 'brightness(1.02) saturate(1.08)'
         }}
       />
-      {/* Subtle soft backdrop layer so text and cards remain crystal clear with sharp borders */}
-      <div className="fixed inset-0 bg-white/10 dark:bg-slate-950/20 pointer-events-none z-0" />
+      {/* Atmospheric Soft Lighting Overlay so cards and text remain crystal clear */}
+      <div className="fixed inset-0 bg-gradient-to-b from-sky-100/15 via-white/10 to-slate-950/15 pointer-events-none z-0" />
 
       {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
       <div className="sticky top-0 z-50 hidden md:block">

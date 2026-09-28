@@ -26,7 +26,7 @@ const MobileCitizenHeader = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#071518]/95 backdrop-blur-md text-slate-800 dark:text-slate-100 border-b-2 border-slate-200/90 dark:border-emerald-500/30 shadow-xs transition-colors duration-300">
         <div className="px-3.5 py-2.5 flex items-center justify-between">
           
           {/* Left: Back or Drawer Menu Button */}
@@ -38,7 +38,7 @@ const MobileCitizenHeader = ({
                   triggerHaptic(20);
                   navigate(-1);
                 }}
-                className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 aria-label="Go back"
               >
                 <FaArrowLeft className="text-base" />
@@ -51,25 +51,30 @@ const MobileCitizenHeader = ({
                   if (onOpenMenu) onOpenMenu();
                   window.dispatchEvent(new CustomEvent('toggle-mobile-citizen-drawer'));
                 }}
-                className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
                 aria-label="Open menu"
               >
                 <FaBars className="text-lg" />
               </button>
             )}
 
-            {/* App Title */}
+            {/* App Title with Logo Sprout */}
             <div 
-              className="flex items-center space-x-1.5 cursor-pointer" 
+              className="flex items-center space-x-2 cursor-pointer" 
               onClick={() => navigate(isMunicipality ? '/municipality/dashboard' : '/dashboard')}
             >
-              <span className="text-sm sm:text-base font-black tracking-wider uppercase">
+              <img 
+                src="/app-logo.png" 
+                alt="EcoReward Logo" 
+                className="h-7 w-auto object-contain" 
+              />
+              <span className="text-sm font-black tracking-wider uppercase text-slate-900 dark:text-white">
                 {title || (isMunicipality ? `${currentDistrict?.name || 'MUNICIPAL'} COMMAND` : 'ECOREWARD')}
               </span>
             </div>
           </div>
 
-          {/* Right Controls: District Pill + Language + Notification */}
+          {/* Right Controls: District Pill + Notification */}
           <div className="flex items-center space-x-1.5 sm:space-x-2">
             {/* Interactive Tamil Nadu District Selector Pill */}
             {currentDistrict && (
@@ -79,15 +84,14 @@ const MobileCitizenHeader = ({
                   triggerHaptic(20);
                   if (openDistrictModal) openDistrictModal();
                 }}
-                className="flex items-center space-x-1 px-2 py-1 rounded-full bg-black/20 hover:bg-black/30 text-white border border-white/20 text-[10px] font-black cursor-pointer active:scale-95 transition"
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-[10px] font-black cursor-pointer active:scale-95 transition"
                 title="Change Tamil Nadu District (38 Districts)"
               >
-                <FaMapMarkerAlt className="text-emerald-300 text-[10px] shrink-0" />
+                <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-[10px] shrink-0" />
                 <span className="max-w-[70px] sm:max-w-[100px] truncate">{currentDistrict.name}</span>
-                <FaChevronDown className="text-[7px] opacity-75 shrink-0" />
+                <FaChevronDown className="text-[7px] text-slate-400 shrink-0" />
               </button>
             )}
-
 
             {/* Notification Bell */}
             <button 
@@ -96,11 +100,11 @@ const MobileCitizenHeader = ({
                 triggerHaptic(20);
                 setShowNotificationModal(true);
               }}
-              className="relative p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer text-white"
+              className="relative p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"
               aria-label="Notifications"
             >
               <FaBell className="text-base" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 border border-emerald-700 rounded-full animate-pulse"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-900 animate-pulse"></span>
             </button>
           </div>
         </div>

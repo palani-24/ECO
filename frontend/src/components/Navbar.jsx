@@ -89,8 +89,8 @@ const Navbar = () => {
                 alt="EcoReward Official Logo" 
                 className="h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain shadow-sm group-hover:scale-105 transition-transform" 
               />
-              <div className="hidden xl:flex flex-col border-l border-slate-700/50 pl-2.5 ml-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500 dark:text-emerald-400 leading-none">EcoReward</span>
+              <div className="hidden sm:flex flex-col border-l border-slate-300 dark:border-slate-700/60 pl-2.5 ml-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 leading-none">EcoReward</span>
                 <span className="text-[8px] font-mono text-slate-500 dark:text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
               </div>
             </Link>
@@ -186,14 +186,17 @@ const Navbar = () => {
               <div className="flex-1 flex items-center justify-between ml-3 sm:ml-6 min-w-0">
                 
                 {/* Desktop Search Bar (Rounded Pill matching screenshot) */}
-                <div className="hidden sm:relative sm:block w-56 md:w-72 lg:w-80">
-                  <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 text-xs" />
+                <div 
+                  onClick={() => setShowCommandPalette(true)}
+                  className="hidden sm:relative sm:block w-56 md:w-72 lg:w-80 cursor-pointer group"
+                >
+                  <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 group-hover:text-emerald-500 text-xs transition-colors" />
                   <input
                     type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    readOnly
+                    onClick={() => setShowCommandPalette(true)}
                     placeholder="Search anything... (Ctrl + K)"
-                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 dark:bg-slate-800 rounded-full text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all border border-slate-200/80 dark:border-slate-700 shadow-2xs"
+                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 hover:bg-slate-200/60 dark:bg-slate-800 dark:hover:bg-slate-700/60 rounded-full text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all border border-slate-200/80 dark:border-slate-700 shadow-2xs cursor-pointer"
                   />
                 </div>
 
@@ -269,12 +272,15 @@ const Navbar = () => {
                       to={getSettingsLink()}
                       className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity"
                     >
-                      <img 
-                        src={getAvatarUrl(user, user?.name)} 
-                        onError={(e) => handleAvatarError(e, user?.name)}
-                        alt="User Avatar" 
-                        className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/40 shadow-xs"
-                      />
+                      <div className="relative">
+                        <img 
+                          src={getAvatarUrl(user, user?.name)} 
+                          onError={(e) => handleAvatarError(e, user?.name)}
+                          alt="User Avatar" 
+                          className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/50 shadow-xs"
+                        />
+                        <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1 ring-white"></span>
+                      </div>
                       <div className="hidden lg:flex flex-col text-left">
                         <span className="font-black text-slate-900 dark:text-white text-xs leading-none">
                           {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}

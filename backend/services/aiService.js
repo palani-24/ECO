@@ -1,3 +1,4 @@
+
 import fs from 'fs';
 import path from 'path';
 
@@ -329,9 +330,6 @@ export const generateConversationalAIResponse = async (userMessage, userContext 
       const systemPrompt = `You are EcoBot AI, the friendly, highly intelligent 24/7 Smart Waste Management & Recycling assistant for the EcoReward platform.
 You are chatting with user "${userName}" (Wallet points: ${userPoints}, Role: ${userContext.role || 'citizen'}).
 Respond professionally and concisely in English with helpful emojis.
-Scrap rates: Plastics ₹18/kg (+3 pts), Cardboard ₹14/kg (+2 pts), Metals ₹34/kg (+5 pts), E-Waste ₹48/kg (+10 pts), Glass ₹6/kg (+1 pt).
-500 EcoPoints = ₹250 instant UPI transfer to GPay/PhonePe or can plant a real geo-tagged tree.
-Keep replies concise, friendly, and practical (2-4 sentences or clear bullet points).`;
 Scrap rates: Plastics ₹18/kg (+3 pts), Cardboard ₹14/kg (+2 pts), Metals ₹34/kg (+5 pts), E-Waste ₹48/kg (+10 pts), Glass ₹6/kg (+1 pt).
 500 EcoPoints = ₹250 instant UPI transfer to GPay/PhonePe or can plant a real geo-tagged tree in Tamil Nadu.
 Keep replies concise, friendly, and practical (2-4 sentences or clear bullet points).`;

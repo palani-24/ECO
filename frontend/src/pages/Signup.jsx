@@ -150,17 +150,17 @@ const Signup = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
       
-      {/* Background Luxury Curved Artwork */}
+      {/* Background Hands Planting Seedling Artwork */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/white_ambient_curves_bg.png')",
-          filter: 'brightness(1.02)'
+          backgroundImage: "url('/images/eco_signup_bg.jpg')",
+          filter: 'brightness(0.96) contrast(1.02)'
         }}
       />
 
-      {/* Atmospheric Soft Lighting Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white/10 via-transparent to-slate-900/10 pointer-events-none z-0" />
+      {/* Atmospheric Soft Lighting / Vignette Overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/40 pointer-events-none z-0" />
 
       {/* Top Navigation Bar Matching Reference Design */}
       <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-6 flex items-center justify-between">
@@ -168,25 +168,25 @@ const Signup = () => {
         {/* Brand / Logo */}
         <Link 
           to="/landing" 
-          className="flex items-center space-x-2.5 text-slate-800 hover:text-slate-950 transition-colors drop-shadow-sm group"
+          className="flex items-center space-x-2.5 text-white hover:text-emerald-200 transition-colors drop-shadow-md group"
         >
-          <div className="w-8 h-8 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-emerald-300 shadow-sm group-hover:scale-105 transition-transform">
             🌱
           </div>
-          <span className="font-extrabold tracking-wider text-base sm:text-lg text-slate-800 drop-shadow-xs">
-            ECO<span className="text-emerald-700">REWARD</span>
+          <span className="font-extrabold tracking-wider text-base sm:text-lg text-white drop-shadow-sm">
+            ECO<span className="text-emerald-400">REWARD</span>
           </span>
         </Link>
 
         {/* Desktop Nav Items */}
-        <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider text-slate-800">
-          <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">HOME</Link>
-          <Link to="/landing#about" className="hover:text-slate-950 transition-colors drop-shadow-xs">ABOUT</Link>
-          <Link to="/landing#features" className="hover:text-slate-950 transition-colors drop-shadow-xs">SERVICE</Link>
-          <Link to="/landing#contact" className="hover:text-slate-950 transition-colors drop-shadow-xs">CONTACT</Link>
+        <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider text-white/90 drop-shadow-sm">
+          <Link to="/landing" className="hover:text-white transition-colors">HOME</Link>
+          <Link to="/landing#about" className="hover:text-white transition-colors">ABOUT</Link>
+          <Link to="/landing#features" className="hover:text-white transition-colors">SERVICE</Link>
+          <Link to="/landing#contact" className="hover:text-white transition-colors">CONTACT</Link>
           <Link
             to="/login"
-            className="px-6 py-1.5 rounded-full border border-white/70 bg-white/30 backdrop-blur-md text-slate-800 font-bold text-sm tracking-wider shadow-sm hover:bg-white/50 hover:shadow transition-all"
+            className="px-6 py-1.5 rounded-full border border-white/40 bg-white/20 backdrop-blur-md text-white font-bold text-sm tracking-wider shadow-sm hover:bg-white/30 hover:shadow transition-all"
           >
             LOGIN
           </Link>
@@ -195,7 +195,7 @@ const Signup = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl bg-white/30 backdrop-blur-md border border-white/50 text-slate-800 shadow-sm"
+          className="md:hidden p-2 rounded-xl bg-white/20 backdrop-blur-md border border-white/40 text-white shadow-sm"
           aria-label="Toggle Navigation"
         >
           {mobileMenuOpen ? <FaTimes className="text-lg" /> : <FaBars className="text-lg" />}
@@ -209,7 +209,7 @@ const Signup = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden relative z-30 mx-6 mb-4 p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-xl flex flex-col space-y-4 text-center font-bold text-slate-800"
+            className="md:hidden relative z-30 mx-6 mb-4 p-5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/20 shadow-xl flex flex-col space-y-4 text-center font-bold text-white"
           >
             <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
             <Link to="/landing#about" onClick={() => setMobileMenuOpen(false)}>ABOUT</Link>
@@ -218,7 +218,7 @@ const Signup = () => {
             <Link
               to="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-2 px-4 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md"
+              className="py-2 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
             >
               LOGIN
             </Link>
@@ -234,21 +234,21 @@ const Signup = () => {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="w-full max-w-[450px]"
         >
-          {/* Frosted Glassmorphism Card Matching Reference Image */}
-          <div className="relative rounded-[32px] p-7 sm:p-10 backdrop-blur-2xl bg-white/20 border border-white/50 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.3)] overflow-hidden transition-all duration-300">
+          {/* Frosted Glassmorphism Card */}
+          <div className="relative rounded-[32px] p-7 sm:p-9 backdrop-blur-xl bg-white/15 border border-white/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)] overflow-hidden transition-all duration-300">
             
             {/* Ambient Highlights */}
-            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/30 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
 
             {/* Title: REGISTRATION */}
-            <h1 className="relative text-2xl sm:text-3xl font-black tracking-wider text-slate-900 text-center mb-5 drop-shadow-xs z-10">
+            <h1 className="relative text-2xl sm:text-3xl font-black tracking-wider text-white text-center mb-5 drop-shadow-md z-10">
               REGISTRATION
             </h1>
 
             {/* Role Selection: Citizen & Driver ONLY (strictly adhering to user request) */}
             <div className="mb-5 relative z-10">
-              <div className="flex items-center justify-between p-1 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40">
+              <div className="flex items-center justify-between p-1 rounded-2xl bg-black/25 backdrop-blur-md border border-white/20">
                 {REGISTRATION_ROLES.map((role) => {
                   const Icon = role.icon;
                   const isSelected = selectedRole === role.id;
@@ -262,8 +262,8 @@ const Signup = () => {
                       }}
                       className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                         isSelected
-                          ? 'bg-white/90 text-slate-900 shadow-sm font-black scale-102'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-white/20'
+                          ? 'bg-white text-slate-900 shadow-md font-black scale-102'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <Icon className="text-xs" />
@@ -272,8 +272,8 @@ const Signup = () => {
                   );
                 })}
               </div>
-              <p className="text-[10px] text-center text-slate-700 font-medium mt-1.5">
-                Register as <span className="font-bold text-slate-900">{activeRole.name}</span> • {activeRole.badge}
+              <p className="text-[11px] text-center text-white/80 font-medium mt-2 drop-shadow-xs">
+                Register as <span className="font-bold text-white">{activeRole.name}</span> • {activeRole.badge}
               </p>
             </div>
 
@@ -282,7 +282,7 @@ const Signup = () => {
               <motion.div 
                 initial={{ opacity: 0, y: -5 }} 
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-950 text-xs font-semibold text-center backdrop-blur-sm z-10"
+                className="mb-4 p-3 rounded-xl bg-rose-500/30 border border-rose-400/50 text-white text-xs font-semibold text-center backdrop-blur-md z-10 shadow-sm"
               >
                 {error}
               </motion.div>
@@ -299,9 +299,9 @@ const Signup = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full Name"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaUser className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
+                <FaUser className="absolute right-1 bottom-2.5 text-white/70 text-sm pointer-events-none" />
               </div>
 
               {/* Mobile Number */}
@@ -313,9 +313,9 @@ const Signup = () => {
                   placeholder="Mobile Number (10 digits)"
                   required
                   maxLength={10}
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaPhoneAlt className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
+                <FaPhoneAlt className="absolute right-1 bottom-2.5 text-white/70 text-sm pointer-events-none" />
               </div>
 
               {/* Email Address */}
@@ -325,9 +325,9 @@ const Signup = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email Address"
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaEnvelope className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
+                <FaEnvelope className="absolute right-1 bottom-2.5 text-white/70 text-sm pointer-events-none" />
               </div>
 
               {/* Citizen specific: District & Ward */}
@@ -337,7 +337,7 @@ const Signup = () => {
                     <select
                       value={districtId}
                       onChange={(e) => setDistrictId(e.target.value)}
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-xs outline-none transition-colors cursor-pointer"
+                      className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white font-medium text-xs outline-none transition-colors cursor-pointer"
                     >
                       {TAMIL_NADU_DISTRICTS.map((d) => (
                         <option key={d.id} value={d.id} className="text-slate-900 bg-white">
@@ -352,9 +352,9 @@ const Signup = () => {
                       value={ward}
                       onChange={(e) => setWard(e.target.value)}
                       placeholder="Ward / Area"
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-xs outline-none pr-6 transition-colors"
+                      className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-xs outline-none pr-6 transition-colors"
                     />
-                    <FaMapMarkerAlt className="absolute right-1 bottom-2.5 text-slate-700 text-xs pointer-events-none" />
+                    <FaMapMarkerAlt className="absolute right-1 bottom-2.5 text-white/70 text-xs pointer-events-none" />
                   </div>
                 </div>
               )}
@@ -366,7 +366,7 @@ const Signup = () => {
                     <select
                       value={vehicleType}
                       onChange={(e) => setVehicleType(e.target.value)}
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 font-medium text-xs outline-none transition-colors cursor-pointer"
+                      className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white font-medium text-xs outline-none transition-colors cursor-pointer"
                     >
                       {VEHICLE_TYPES.map((v, i) => (
                         <option key={i} value={v} className="text-slate-900 bg-white">
@@ -382,9 +382,9 @@ const Signup = () => {
                       onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
                       placeholder="Vehicle Plate (e.g. TN-38-ECO-9945)"
                       required
-                      className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-xs outline-none pr-6 uppercase tracking-wider transition-colors"
+                      className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-xs outline-none pr-6 uppercase tracking-wider transition-colors"
                     />
-                    <FaTruck className="absolute right-1 bottom-2.5 text-slate-700 text-xs pointer-events-none" />
+                    <FaTruck className="absolute right-1 bottom-2.5 text-white/70 text-xs pointer-events-none" />
                   </div>
                 </div>
               )}
@@ -397,12 +397,12 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password (min 4 chars)"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-sm outline-none pr-8 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-1 bottom-2.5 text-slate-700 hover:text-slate-950 text-sm cursor-pointer"
+                  className="absolute right-1 bottom-2.5 text-white/70 hover:text-white text-sm cursor-pointer"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -416,9 +416,9 @@ const Signup = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm Password"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-sm outline-none pr-8 transition-colors"
                 />
-                <FaLock className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
+                <FaLock className="absolute right-1 bottom-2.5 text-white/70 text-sm pointer-events-none" />
               </div>
 
               {/* Agree to terms */}
@@ -428,18 +428,18 @@ const Signup = () => {
                   id="agreeTerms"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="rounded text-blue-600 focus:ring-blue-500 border-slate-400 h-4 w-4 cursor-pointer"
+                  className="rounded border-white/40 bg-white/20 text-emerald-500 focus:ring-emerald-400 h-4 w-4 cursor-pointer accent-emerald-500"
                 />
-                <label htmlFor="agreeTerms" className="text-xs text-slate-800 font-medium cursor-pointer">
+                <label htmlFor="agreeTerms" className="text-xs text-white/90 font-medium cursor-pointer">
                   I agree to the terms & conditions
                 </label>
               </div>
 
-              {/* Action Button (Frosted Rounded Pill Matching Image 1) */}
+              {/* Action Button (Frosted Rounded Pill) */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-500/80 via-blue-600/80 to-indigo-600/80 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60 border border-white/30 backdrop-blur-md"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500/90 via-teal-500/90 to-emerald-600/90 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-500/25 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60 border border-white/30 backdrop-blur-md"
               >
                 {loading ? (
                   <>
@@ -453,11 +453,11 @@ const Signup = () => {
             </form>
 
             {/* Bottom Link: Already have an Account? Login */}
-            <div className="text-center pt-5 mt-2 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-slate-800 font-medium">
+            <div className="text-center pt-5 mt-2 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-white/90 font-medium">
               <span>Already have an Account?</span>
               <Link 
                 to="/login" 
-                className="font-bold text-slate-900 hover:underline"
+                className="font-bold text-white hover:underline drop-shadow-sm ml-1"
               >
                 Login
               </Link>
@@ -468,7 +468,7 @@ const Signup = () => {
       </main>
 
       {/* Modern Compact Footer */}
-      <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-slate-700/80">
+      <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-white/75 drop-shadow-xs">
         <p>© 2026 EcoReward Platform • Tamil Nadu Smart Waste & EV Recycling Grid</p>
       </footer>
 

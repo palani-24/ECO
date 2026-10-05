@@ -120,43 +120,43 @@ const Login = () => {
   return (
     <div className="relative min-h-screen w-full flex flex-col justify-between overflow-x-hidden font-sans select-none">
       
-      {/* Background Luxury Curved Artwork */}
+      {/* Background Seedling & Nature Artwork matching user image */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
         style={{
-          backgroundImage: "url('/images/white_ambient_curves_bg.png')",
-          filter: 'brightness(1.02)'
+          backgroundImage: "url('/images/eco_sprout_auth_bg.jpg')",
+          filter: 'brightness(0.96) contrast(1.02)'
         }}
       />
 
-      {/* Atmospheric Soft Lighting Overlay */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white/10 via-transparent to-slate-900/10 pointer-events-none z-0" />
+      {/* Atmospheric Soft Lighting / Vignette Overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/35 pointer-events-none z-0" />
 
-      {/* Top Navigation Bar Matching Image 1 */}
+      {/* Top Navigation Bar */}
       <header className="relative z-20 w-full px-6 sm:px-12 md:px-16 py-6 flex items-center justify-between">
         
         {/* Brand / Logo */}
         <Link 
           to="/landing" 
-          className="flex items-center space-x-2.5 text-slate-800 hover:text-slate-950 transition-colors drop-shadow-sm group"
+          className="flex items-center space-x-2.5 text-white hover:text-emerald-200 transition-colors drop-shadow-md group"
         >
-          <div className="w-8 h-8 rounded-full bg-white/40 backdrop-blur-md border border-white/60 flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-emerald-300 shadow-sm group-hover:scale-105 transition-transform text-lg">
             🌱
           </div>
-          <span className="font-extrabold tracking-wider text-base sm:text-lg text-slate-800 drop-shadow-xs">
-            ECO<span className="text-emerald-700">REWARD</span>
+          <span className="font-extrabold tracking-wider text-base sm:text-lg text-white drop-shadow-sm">
+            ECO<span className="text-emerald-400">REWARD</span>
           </span>
         </Link>
 
-        {/* Desktop Nav Items Matching Image 1 */}
-        <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider text-slate-800">
-          <Link to="/landing" className="hover:text-slate-950 transition-colors drop-shadow-xs">HOME</Link>
-          <Link to="/landing#about" className="hover:text-slate-950 transition-colors drop-shadow-xs">ABOUT</Link>
-          <Link to="/landing#features" className="hover:text-slate-950 transition-colors drop-shadow-xs">SERVICE</Link>
-          <Link to="/landing#contact" className="hover:text-slate-950 transition-colors drop-shadow-xs">CONTACT</Link>
+        {/* Desktop Nav Items */}
+        <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider text-white/90 drop-shadow-sm">
+          <Link to="/landing" className="hover:text-white transition-colors">HOME</Link>
+          <Link to="/landing#about" className="hover:text-white transition-colors">ABOUT</Link>
+          <Link to="/landing#features" className="hover:text-white transition-colors">SERVICE</Link>
+          <Link to="/landing#contact" className="hover:text-white transition-colors">CONTACT</Link>
           <Link
             to="/login"
-            className="px-6 py-1.5 rounded-full border border-white/70 bg-white/30 backdrop-blur-md text-slate-800 font-bold text-sm tracking-wider shadow-sm hover:bg-white/50 hover:shadow transition-all"
+            className="px-6 py-1.5 rounded-full border border-white/40 bg-white/20 backdrop-blur-md text-white font-bold text-sm tracking-wider shadow-sm hover:bg-white/30 transition-all"
           >
             LOGIN
           </Link>
@@ -165,7 +165,7 @@ const Login = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-xl bg-white/30 backdrop-blur-md border border-white/50 text-slate-800 shadow-sm"
+          className="md:hidden p-2 rounded-xl bg-white/20 backdrop-blur-md border border-white/40 text-white shadow-sm"
           aria-label="Toggle Navigation"
         >
           {mobileMenuOpen ? <FaTimes className="text-lg" /> : <FaBars className="text-lg" />}
@@ -179,7 +179,7 @@ const Login = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden relative z-30 mx-6 mb-4 p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-xl flex flex-col space-y-4 text-center font-bold text-slate-800"
+            className="md:hidden relative z-30 mx-6 mb-4 p-5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-white/20 shadow-xl flex flex-col space-y-4 text-center font-bold text-white"
           >
             <Link to="/landing" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
             <Link to="/landing#about" onClick={() => setMobileMenuOpen(false)}>ABOUT</Link>
@@ -204,21 +204,21 @@ const Login = () => {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="w-full max-w-[420px]"
         >
-          {/* Frosted Glassmorphism Card Matching Reference Image 1 Exactly */}
-          <div className="relative rounded-[32px] p-7 sm:p-10 backdrop-blur-2xl bg-white/20 border border-white/50 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.3)] overflow-hidden transition-all duration-300">
+          {/* Frosted Glassmorphism Card Matching Reference Image Exactly */}
+          <div className="relative rounded-[32px] p-7 sm:p-9 backdrop-blur-xl bg-white/15 border border-white/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)] overflow-hidden transition-all duration-300">
             
-            {/* Ambient Highlights */}
-            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/30 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-blue-400/20 rounded-full blur-2xl pointer-events-none" />
+            {/* Ambient Highlights inside Card */}
+            <div className="absolute -top-20 -left-20 w-44 h-44 bg-white/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-20 -right-20 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Title Matching Image 1: LOGIN in bold uppercase */}
-            <h1 className="relative text-2xl sm:text-3xl font-black tracking-wider text-slate-900 text-center mb-6 drop-shadow-xs z-10">
-              LOGIN
+            {/* Title Matching Reference: Login in bold white font */}
+            <h1 className="relative text-3xl sm:text-4xl font-extrabold tracking-normal text-white text-center mb-6 drop-shadow-md z-10">
+              Login
             </h1>
 
             {/* Role Switcher Pills (Citizen, Driver, Municipal, Admin) */}
             <div className="mb-6 relative z-10">
-              <div className="flex items-center justify-between p-1 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40">
+              <div className="flex items-center justify-between p-1 rounded-2xl bg-black/20 backdrop-blur-md border border-white/20">
                 {ROLES.map((role) => {
                   const isSelected = selectedRole === role.id;
                   return (
@@ -228,8 +228,8 @@ const Login = () => {
                       onClick={() => handleRoleChange(role.id)}
                       className={`flex-1 py-1.5 px-1 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                         isSelected
-                          ? 'bg-white/90 text-slate-900 shadow-sm font-black scale-102'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-white/20'
+                          ? 'bg-white text-slate-900 shadow-md font-black scale-102'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <span className="text-xs leading-none">{role.icon}</span>
@@ -238,8 +238,8 @@ const Login = () => {
                   );
                 })}
               </div>
-              <p className="text-[10px] text-center text-slate-700 font-medium mt-1.5">
-                Signing into <span className="font-bold text-slate-900">{activeRole.name} Portal</span> • {activeRole.badge}
+              <p className="text-[11px] text-center text-white/80 font-medium mt-2 drop-shadow-xs">
+                Signing into <span className="font-bold text-white">{activeRole.name} Portal</span> • {activeRole.badge}
               </p>
             </div>
 
@@ -248,94 +248,91 @@ const Login = () => {
               <motion.div 
                 initial={{ opacity: 0, y: -5 }} 
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-950 text-xs font-semibold text-center backdrop-blur-sm z-10"
+                className="mb-4 p-3 rounded-xl bg-rose-500/30 border border-rose-400/50 text-white text-xs font-semibold text-center backdrop-blur-md z-10 shadow-sm"
               >
                 {error}
               </motion.div>
             )}
 
-            {/* Login Form with minimalist line inputs matching Image 1 */}
-            <form onSubmit={handleLoginSubmit} className="space-y-5 relative z-10">
+            {/* Login Form with Rounded Pill Inputs Matching Reference Image */}
+            <form onSubmit={handleLoginSubmit} className="space-y-4 relative z-10">
               
-              {/* Email / Mobile Line Input with Envelope Icon on the Right */}
-              <div className="relative pt-1">
+              {/* Username / Email Pill Input */}
+              <div className="relative">
                 <input
                   type="text"
                   value={emailOrPhone}
                   onChange={(e) => setEmailOrPhone(e.target.value)}
-                  placeholder="Email"
+                  placeholder="Username"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white rounded-full py-3 px-5 text-white placeholder:text-white/70 font-medium text-sm outline-none transition-all backdrop-blur-md shadow-inner"
                 />
-                <FaEnvelope className="absolute right-1 bottom-2.5 text-slate-700 text-sm pointer-events-none" />
               </div>
 
-              {/* Password Line Input with Eye Toggle on the Right */}
-              <div className="relative pt-1">
+              {/* Password Pill Input with Eye Toggle */}
+              <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
+                  placeholder="password"
                   required
-                  className="w-full bg-transparent border-0 border-b border-slate-700/60 focus:border-slate-950 pb-2 text-slate-900 placeholder:text-slate-700 font-medium text-sm outline-none pr-8 transition-colors"
+                  className="w-full bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white rounded-full py-3 px-5 pr-12 text-white placeholder:text-white/70 font-medium text-sm outline-none transition-all backdrop-blur-md shadow-inner"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-1 bottom-2.5 text-slate-700 hover:text-slate-950 text-sm cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-sm cursor-pointer transition-colors p-1"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
-              {/* Forgot Password Link right below password on the right side (matching Image 1) */}
-              <div className="flex justify-end -mt-3">
+              {/* Remember Me & Forgot Password Row Matching Reference Image */}
+              <div className="flex items-center justify-between text-xs text-white/90 px-1 pt-0.5">
+                <label htmlFor="rememberMe" className="flex items-center space-x-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded border-white/40 bg-white/20 text-emerald-600 focus:ring-emerald-400 h-3.5 w-3.5 cursor-pointer accent-emerald-500"
+                  />
+                  <span className="font-normal text-white/90">remember me</span>
+                </label>
                 <Link 
                   to="/forgot-password"
-                  className="text-xs text-slate-700 hover:text-slate-950 transition-colors font-normal"
+                  className="text-white/80 hover:text-white transition-colors hover:underline text-xs"
                 >
-                  Forgot <span className="font-bold">Password?</span>
+                  Forgot password
                 </Link>
               </div>
 
-              {/* Remember Me Checkbox (matching Image 1) */}
-              <div className="flex items-center space-x-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded text-blue-600 focus:ring-blue-500 border-slate-400 h-4 w-4 cursor-pointer"
-                />
-                <label htmlFor="rememberMe" className="text-xs text-slate-800 font-medium cursor-pointer">
-                  Remember Me
-                </label>
+              {/* Login Button (Solid White Pill with Black Text Matching Reference Image) */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 rounded-full bg-white hover:bg-white/90 active:scale-98 text-slate-900 font-bold text-sm tracking-wide shadow-xl shadow-black/25 flex items-center justify-center space-x-2 transition-all cursor-pointer disabled:opacity-60"
+                >
+                  {loading ? (
+                    <>
+                      <FaSpinner className="animate-spin text-slate-900 text-sm" />
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    <span>Login</span>
+                  )}
+                </button>
               </div>
-
-              {/* Login Button (Frosted Rounded Pill Matching Image 1) */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-500/80 via-blue-600/80 to-indigo-600/80 hover:from-blue-600 hover:to-indigo-700 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer disabled:opacity-60 border border-white/30 backdrop-blur-md"
-              >
-                {loading ? (
-                  <>
-                    <FaSpinner className="animate-spin text-sm" />
-                    <span>Signing In...</span>
-                  </>
-                ) : (
-                  <span>Login</span>
-                )}
-              </button>
             </form>
 
-            {/* Bottom Link Matching Image 1: Don't have an Account? Register */}
-            <div className="text-center pt-6 mt-2 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-slate-800 font-medium">
-              <span>Don't have an Account?</span>
+            {/* Bottom Link Matching Reference Image: Don't have an account? Register */}
+            <div className="text-center pt-5 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-white/90">
+              <span>Don't have an account?</span>
               <Link 
                 to="/signup" 
-                className="font-bold text-slate-900 hover:underline"
+                className="font-bold text-white hover:underline drop-shadow-sm"
               >
                 Register
               </Link>
@@ -346,7 +343,7 @@ const Login = () => {
       </main>
 
       {/* Modern Compact Footer */}
-      <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-slate-700/80">
+      <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-white/80 drop-shadow-sm">
         <p>© 2026 EcoReward Platform • Tamil Nadu Smart Waste & EV Recycling Grid</p>
       </footer>
 

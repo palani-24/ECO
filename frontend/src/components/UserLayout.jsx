@@ -1,29 +1,35 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import MobileCitizenHeader from './MobileCitizenHeader';
 import MobileCitizenNav from './MobileCitizenNav';
+import { getPageBackground } from '../utils/pageBackgrounds';
 
-const UserLayout = ({ children, hideFooter = false }) => {
+const UserLayout = ({ children, hideFooter = false, bgImage }) => {
+  const location = useLocation();
+  const bg = getPageBackground(location.pathname, bgImage);
+
   return (
     <div className="relative min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 Luxury Clean Curves Landscape Artwork */}
+      {/* 🌄 Unique Per-Page High-Res Landscape Artwork */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
+        key={bg.image}
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-all duration-700 ease-in-out"
         style={{
-          backgroundImage: "url('/images/white_ambient_curves_bg.png')",
+          backgroundImage: `url('${bg.image}')`,
           backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02) saturate(1.05)'
+          filter: bg.blur || 'brightness(1.02) saturate(1.05)'
         }}
       />
-      {/* 🔮 Ethereal Glassmorphism Mesh Ambient Glow Orbs */}
-      <div className="fixed top-[-10%] left-[15%] w-[500px] h-[500px] rounded-full bg-emerald-400/15 dark:bg-emerald-500/10 blur-[120px] pointer-events-none z-0" />
-      <div className="fixed top-[40%] right-[10%] w-[450px] h-[450px] rounded-full bg-teal-400/15 dark:bg-teal-500/10 blur-[130px] pointer-events-none z-0" />
-      <div className="fixed bottom-[-10%] left-[30%] w-[600px] h-[600px] rounded-full bg-sky-400/10 dark:bg-emerald-600/10 blur-[140px] pointer-events-none z-0" />
+      {/* 🔮 Ethereal Per-Page Ambient Glow Orbs */}
+      <div className={`fixed top-[-10%] left-[15%] w-[500px] h-[500px] rounded-full ${bg.orbs?.c1 || 'bg-emerald-400/15 dark:bg-emerald-500/10'} blur-[120px] pointer-events-none z-0 transition-colors duration-700`} />
+      <div className={`fixed top-[40%] right-[10%] w-[450px] h-[450px] rounded-full ${bg.orbs?.c2 || 'bg-teal-400/15 dark:bg-teal-500/10'} blur-[130px] pointer-events-none z-0 transition-colors duration-700`} />
+      <div className={`fixed bottom-[-10%] left-[30%] w-[600px] h-[600px] rounded-full ${bg.orbs?.c3 || 'bg-sky-400/10 dark:bg-emerald-600/10'} blur-[140px] pointer-events-none z-0 transition-colors duration-700`} />
       
       {/* Atmospheric Soft Lighting Overlay so cards and text remain crystal clear */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white/20 via-transparent to-slate-900/10 dark:to-slate-950/40 pointer-events-none z-0" />
+      <div className={`fixed inset-0 ${bg.overlay || 'bg-gradient-to-b from-white/20 via-transparent to-slate-900/10 dark:to-slate-950/40'} pointer-events-none z-0 transition-all duration-700`} />
 
       {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
       <div className="sticky top-0 z-50 hidden md:block">

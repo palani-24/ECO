@@ -131,7 +131,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#071518]/95 backdrop-blur-md border-b-2 border-slate-300 dark:border-emerald-500/30 shadow-md shadow-slate-900/5 transition-colors duration-300">
+      <nav className="sticky top-0 z-50 bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border-b border-white/60 dark:border-white/10 shadow-sm shadow-emerald-950/5 transition-colors duration-300">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             

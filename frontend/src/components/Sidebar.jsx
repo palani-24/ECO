@@ -145,11 +145,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Pristine White Executive Eco Navigation Panel with Crisp Outlines) */}
-      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 shadow-xl shadow-slate-900/5 flex flex-col justify-between p-3.5 text-slate-800 transition-all select-none">
+      {/* Desktop Sidebar (Clean Glassmorphic Executive Navigation Panel) */}
+      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-xl shadow-emerald-950/5 flex flex-col justify-between p-3.5 text-slate-800 dark:text-slate-100 transition-all select-none">
         
-        {/* User Profile Quick Executive Card with Crisp Border */}
-        <div className="shrink-0 p-3 bg-white border-2 border-slate-200 rounded-2xl flex flex-col gap-2 shadow-xs relative overflow-hidden group">
+        {/* User Profile Quick Executive Glass Card */}
+        <div className="shrink-0 p-3 bg-white/80 dark:bg-slate-800/60 backdrop-blur-md border border-white/90 dark:border-white/10 rounded-2xl flex flex-col gap-2 shadow-xs relative overflow-hidden group">
           <div className="flex items-center space-x-2.5 relative z-10">
             <div className="relative shrink-0">
               <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-emerald-500/25 overflow-hidden">
@@ -164,16 +164,16 @@ const Sidebar = () => {
                   <span>{(user?.name || (isDriver ? 'Driver' : 'User')).charAt(0).toUpperCase()}</span>
                 )}
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-white flex items-center justify-center">
+              <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 flex items-center justify-center">
                 <span className="h-1.5 w-1.5 rounded-full bg-white"></span>
               </span>
             </div>
             
             <div className="flex-1 min-w-0">
-              <h4 className="font-black text-slate-900 text-xs truncate leading-tight" title={user?.name}>
+              <h4 className="font-black text-slate-900 dark:text-white text-xs truncate leading-tight" title={user?.name}>
                 {user?.name?.replace(/\s*\([^)]*\)/g, '') || (isDriver ? 'Palani Driver' : 'Palani')}
               </h4>
-              <span className="text-[10px] text-emerald-600 font-extrabold flex items-center space-x-1 pt-0.5">
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center space-x-1 pt-0.5">
                 {isDriver ? <FaTruck className="h-2.5 w-2.5 shrink-0" /> : <FaLeaf className="h-2.5 w-2.5 shrink-0" />}
                 <span className="capitalize">
                   {isDriver ? 'EV Fleet Pilot' : isAdmin ? 'System Admin' : isMunicipality ? 'Ward Officer' : 'Eco Guardian'}
@@ -182,26 +182,26 @@ const Sidebar = () => {
             </div>
 
             <div className="text-right shrink-0">
-              <span className="px-2.5 py-0.5 bg-[#ecfdf5] text-[#059669] text-[10px] font-black rounded-lg block border border-[#a7f3d0] shadow-2xs">
+              <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg block border border-emerald-500/20 shadow-2xs">
                 {isDriver ? '★ 4.9' : isAdmin ? 'ROOT' : isMunicipality ? 'GOV' : `${user.points || 2392} pts`}
               </span>
             </div>
           </div>
 
           {/* Mini Eco Level Tier Strip */}
-          <div className="pt-1.5 border-t border-slate-200/70 space-y-1">
+          <div className="pt-1.5 border-t border-slate-200/50 dark:border-slate-700/50 space-y-1">
             <div className="flex items-center justify-between text-[10px] font-bold">
-              <span className="text-[#059669] font-black flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981] animate-pulse"></span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-black flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 {isDriver ? 'Tier 1 EV Pilot' : isAdmin ? 'Clearance Level 5' : isMunicipality ? 'Zone Commander' : 'Level 4 Citizen'}
               </span>
-              <span className="text-slate-600 font-extrabold text-[9px] bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70">
+              <span className="text-slate-600 dark:text-slate-400 font-extrabold text-[9px] bg-slate-100/80 dark:bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-200/60 dark:border-slate-700/60">
                 {isDriver ? '98% On-Time' : isAdmin ? 'Online' : isMunicipality ? 'Ward 12' : '77% to Lvl 5'}
               </span>
             </div>
-            <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-200/60 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-[#059669] to-[#10b981] h-full rounded-full transition-all duration-500" 
+                className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" 
                 style={{ width: isDriver ? '92%' : '77%' }}
               ></div>
             </div>
@@ -210,7 +210,7 @@ const Sidebar = () => {
 
         {/* Middle Scrollable Section (Links + Mini Stats Card: Smoothly scrolls if window is small) */}
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 my-2 space-y-1 scrollbar-thin scrollbar-thumb-slate-200">
-          <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 block mb-1">
+          <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-1">
             Portal Menu
           </span>
           {links.map((link, idx) => {
@@ -222,22 +222,22 @@ const Sidebar = () => {
                 to={link.path}
                 end={link.path.indexOf('?') === -1}
                 className={
-                  `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-black transition-all duration-200 cursor-pointer ${
+                  `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                     active
-                      ? 'bg-[#0f9f6e] text-white shadow-sm shadow-[#0f9f6e]/30'
-                      : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/60 border border-transparent'
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-transparent'
                   }`
                 }
               >
                 <div className="flex items-center space-x-2.5">
-                  <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
                   <span className="truncate">{link.label}</span>
                 </div>
                 {link.badge && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black shrink-0 ${
                     active 
                       ? 'bg-white/25 text-white' 
-                      : 'bg-emerald-50 text-emerald-700 border border-emerald-500/25'
+                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                   }`}>
                     {link.badge}
                   </span>
@@ -248,46 +248,46 @@ const Sidebar = () => {
 
           {/* Role-specific Mini Stats Card (Inside scrollable body, so it never pushes the logout button off!) */}
           {isDriver ? (
-            <div className="mt-2 p-2.5 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50 border border-emerald-500/20 rounded-2xl shadow-2xs space-y-1.5">
+            <div className="mt-2 p-2.5 bg-gradient-to-br from-emerald-50/80 via-white/80 to-teal-50/50 dark:from-slate-800/60 dark:to-slate-800/30 border border-emerald-500/20 rounded-2xl shadow-2xs space-y-1.5">
               <div className="flex items-center justify-between text-[10px]">
-                <div className="flex items-center gap-1.5 font-black text-emerald-900">
+                <div className="flex items-center gap-1.5 font-black text-emerald-900 dark:text-emerald-300">
                   <FaTruck className="h-3 w-3 text-emerald-600" />
                   <span>Fleet Telematics</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-[9px] font-black uppercase tracking-wider">
                   ONLINE
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-center pt-0.5">
-                <div className="bg-white/90 p-1.5 rounded-xl border border-slate-200/60 shadow-2xs">
-                  <div className="text-xs font-black text-slate-900">18 Done</div>
-                  <div className="text-[9px] font-bold text-slate-500">Pickups Today</div>
+                <div className="bg-white/80 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xs">
+                  <div className="text-xs font-black text-slate-900 dark:text-white">18 Done</div>
+                  <div className="text-[9px] font-bold text-slate-500 dark:text-slate-400">Pickups Today</div>
                 </div>
-                <div className="bg-white/90 p-1.5 rounded-xl border border-slate-200/60 shadow-2xs">
-                  <div className="text-xs font-black text-emerald-600">88% Batt</div>
-                  <div className="text-[9px] font-bold text-slate-500">EV Range 48km</div>
+                <div className="bg-white/80 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xs">
+                  <div className="text-xs font-black text-emerald-600 dark:text-emerald-400">88% Batt</div>
+                  <div className="text-[9px] font-bold text-slate-500 dark:text-slate-400">EV Range 48km</div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="mt-2 p-2.5 bg-white border-2 border-slate-200 rounded-2xl shadow-xs space-y-1.5">
+            <div className="mt-2 p-2.5 bg-white/70 dark:bg-slate-800/50 backdrop-blur-md border border-white/80 dark:border-white/10 rounded-2xl shadow-xs space-y-1.5">
               <div className="flex items-center justify-between text-[10px]">
-                <div className="flex items-center gap-1.5 font-black text-emerald-900">
+                <div className="flex items-center gap-1.5 font-black text-emerald-900 dark:text-emerald-300">
                   <FaLeaf className="h-3 w-3 text-emerald-600" />
                   <span>Eco Impact</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100/80 text-emerald-800 text-[9px] font-black uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase tracking-wider">
                   Verified
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-1.5 text-center pt-0.5">
-                <div className="bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-2xs">
-                  <div className="text-xs font-black text-slate-900">333.6 kg</div>
-                  <div className="text-[9px] font-bold text-slate-500">Recycled</div>
+                <div className="bg-slate-50/80 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xs">
+                  <div className="text-xs font-black text-slate-900 dark:text-white">333.6 kg</div>
+                  <div className="text-[9px] font-bold text-slate-500 dark:text-slate-400">Recycled</div>
                 </div>
-                <div className="bg-slate-50 p-1.5 rounded-xl border border-slate-200 shadow-2xs">
-                  <div className="text-xs font-black text-emerald-600">500.4 kg</div>
-                  <div className="text-[9px] font-bold text-slate-500">CO₂ Saved</div>
+                <div className="bg-slate-50/80 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xs">
+                  <div className="text-xs font-black text-emerald-600 dark:text-emerald-400">500.4 kg</div>
+                  <div className="text-[9px] font-bold text-slate-500 dark:text-slate-400">CO₂ Saved</div>
                 </div>
               </div>
             </div>
@@ -295,18 +295,18 @@ const Sidebar = () => {
         </div>
 
         {/* Bottom District AQI & Logout Button (ALWAYS pinned & visible at the bottom) */}
-        <div className="shrink-0 pt-2 border-t border-slate-200/70 space-y-1.5">
-          <div className="flex items-center justify-between px-2 text-[10px] text-slate-500 font-bold">
+        <div className="shrink-0 pt-2 border-t border-slate-200/50 dark:border-slate-700/50 space-y-1.5">
+          <div className="flex items-center justify-between px-2 text-[10px] text-slate-500 dark:text-slate-400 font-bold">
             <span className="flex items-center space-x-1.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-emerald-600 font-black">Live Eco Grid</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-black">Live Eco Grid</span>
             </span>
-            <span className="text-slate-400 font-medium">Net Positive</span>
+            <span className="text-slate-400 dark:text-slate-500 font-medium">Net Positive</span>
           </div>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-black transition-all border-2 border-rose-300 cursor-pointer active:scale-98 shadow-xs"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-xl bg-rose-50/80 hover:bg-rose-100/90 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 text-xs font-bold transition-all border border-rose-200/80 dark:border-rose-900/40 cursor-pointer active:scale-98 shadow-xs"
           >
             <FaSignOutAlt className="h-3.5 w-3.5" />
             <span>Logout Account</span>

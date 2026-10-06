@@ -365,8 +365,8 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Modern Panoramic Eco Landscape Hero Banner with Crisp Border */}
-        <div className="relative overflow-hidden rounded-3xl bg-white/95 border-2 border-slate-300 p-6 sm:p-8 text-slate-900 shadow-xl shadow-slate-900/5 min-h-[170px] flex items-center">
+        {/* Modern Panoramic Eco Landscape Hero Banner with Clean Glassmorphic Design */}
+        <div className="relative overflow-hidden rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl shadow-emerald-950/5 min-h-[170px] flex items-center">
           {/* Panoramic Eco City Landscape Background */}
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
@@ -375,8 +375,8 @@ const UserDashboard = () => {
               filter: 'brightness(1.05) saturate(1.15)'
             }}
           />
-          {/* Gentle translucent soft white gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/30 pointer-events-none z-0" />
+          {/* Gentle translucent soft glass gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/40 dark:from-slate-900/95 dark:via-slate-900/85 dark:to-slate-900/40 pointer-events-none z-0" />
 
           <div className="relative z-10 w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
             
@@ -384,38 +384,38 @@ const UserDashboard = () => {
             <div className="flex items-center space-x-4 sm:space-x-5 max-w-2xl">
               {/* Hand holding sprout asset with LVL 4 gold badge */}
               <div className="relative shrink-0">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md border-2 border-white bg-white">
+                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md border border-white/80 dark:border-slate-700 bg-white dark:bg-slate-800">
                   <img 
                     src="/images/hand_holding_sprout.jpg" 
                     alt="Eco Level 4 Sprout" 
                     className="w-full h-full object-cover scale-105"
                   />
                 </div>
-                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white shadow-xs">
+                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-xs">
                   LVL 4
                 </span>
               </div>
 
               <div className="space-y-1.5">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  Welcome back, <span className="text-[#059669]">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                  Welcome back, <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 font-semibold">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">
                   Turn household scrap into verified environmental impact & instant rewards.
                 </p>
 
-                {/* 4 Soft Pill Badges in a single row matching image */}
+                {/* 4 Soft Pill Badges in a single row */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="px-3 py-1 rounded-full bg-[#059669] text-white text-[11px] font-bold shadow-2xs flex items-center space-x-1">
+                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-xs flex items-center space-x-1">
                     <span>🌿 Eco Guardian</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                  <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-white/90 dark:border-slate-700 shadow-2xs flex items-center space-x-1">
                     <span>🍃 {currentDistrict?.name || 'Coimbatore'} Live AQI: 54</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-white/90 text-[#059669] text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/20 shadow-2xs flex items-center space-x-1">
                     <span>🌱 Good & Clean Air</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-white/90 text-slate-700 text-[11px] font-bold border border-slate-200/80 shadow-2xs flex items-center space-x-1">
+                  <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-white/90 dark:border-slate-700 shadow-2xs flex items-center space-x-1">
                     <span>☀️ 29°C Pleasant</span>
                   </span>
                 </div>
@@ -429,7 +429,7 @@ const UserDashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/schedule-pickup')}
-                  className="px-5 py-3 rounded-2xl bg-[#0f9f6e] hover:bg-[#0b8259] text-white font-extrabold text-xs shadow-md shadow-[#0f9f6e]/30 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xs shadow-md shadow-emerald-600/30 transition-all flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <FaCalendarPlus className="h-4 w-4" />
                   <span>Schedule Pickup</span>
@@ -439,9 +439,9 @@ const UserDashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowAiScanner(true)}
-                  className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-xs border border-slate-200/90 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                  className="px-5 py-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs border border-white/90 dark:border-slate-700 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
-                  <FaCamera className="h-4 w-4 text-[#059669]" />
+                  <FaCamera className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   <span>AI Waste Scanner</span>
                 </motion.button>
 
@@ -452,9 +452,9 @@ const UserDashboard = () => {
                     triggerHaptic(30);
                     setShowEcoStory(true);
                   }}
-                  className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-xs border border-slate-200/90 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+                  className="px-5 py-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs border border-white/90 dark:border-slate-700 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
-                  <FaLeaf className="h-4 w-4 text-[#059669]" />
+                  <FaLeaf className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Eco Story</span>
                 </motion.button>
               </div>
@@ -478,16 +478,16 @@ const UserDashboard = () => {
           onOpenChat={() => setShowDriverChat(true)}
         />
 
-        {/* Dynamic 4-Metric Bento Grid with Crisp 2px Outlines */}
+        {/* Dynamic 4-Metric Glass Bento Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
           {/* Card 1: Wallet Balance & EcoPoints */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-emerald-500 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-emerald-400/80">
                 EcoPoints Balance
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base border-2 border-emerald-500/30 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base border border-emerald-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaCoins />
               </div>
             </div>
@@ -504,7 +504,7 @@ const UserDashboard = () => {
             </div>
             <button
               onClick={() => setShowUpiPayout(true)}
-              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border-2 border-emerald-500/40 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
+              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border border-emerald-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaWallet className="text-xs" />
               <span>Redeem UPI Cash</span>
@@ -512,12 +512,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 2: Active Pickup & Status */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-sky-500 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-sky-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-sky-400/80">
                 Active Doorstep Pickup
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center text-base border-2 border-sky-500/30 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-base border border-sky-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaTruck />
               </div>
             </div>
@@ -562,7 +562,7 @@ const UserDashboard = () => {
                 </div>
                 <Link
                   to="/schedule-pickup"
-                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border-2 border-sky-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
+                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/25 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
                 >
                   <FaCalendarPlus className="text-xs" />
                   <span>Schedule Pickup</span>
@@ -572,12 +572,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-teal-500 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-teal-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-teal-400/80">
                 Carbon Diverted
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-500 flex items-center justify-center text-base border-2 border-teal-500/30 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-base border border-teal-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaLeaf />
               </div>
             </div>
@@ -610,12 +610,12 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
-          <div className="p-5 rounded-3xl bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border-2 border-slate-300 dark:border-emerald-500/30 shadow-xl shadow-slate-900/5 flex flex-col justify-between space-y-4 hover:border-amber-500 hover:-translate-y-0.5 transition-all group">
+          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-amber-400/80">
                 Total Recycled
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border-2 border-amber-500/30 group-hover:scale-110 transition-transform shadow-xs">
+              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base border border-amber-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaAward />
               </div>
             </div>
@@ -632,7 +632,7 @@ const UserDashboard = () => {
             </div>
             <button
               onClick={() => setShowGreenCert(true)}
-              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border-2 border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
+              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaAward className="text-xs" />
               <span>Official Green Certificate</span>
@@ -641,139 +641,18 @@ const UserDashboard = () => {
 
         </div>
 
-        {/* 2-Column Balanced Core Workspace */}
+        {/* 2-Column Balanced Core Bento Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left Column: Active Telematics & Scrap Market Estimator (7 Cols) */}
+          {/* Left Column: Scrap Market Estimator, 4-Bin Guide & Activity (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
-            
-            {/* Live Doorstep Telematics Tracking Card or Empty State */}
-            {activePickup ? (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
-                
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
-                      <FaRoute />
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                          Live Doorstep Telematics
-                        </h3>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 text-[9px] font-black uppercase tracking-wider flex items-center space-x-1 border border-emerald-500/30">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                          <span>GPS Live</span>
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                        Real-time EV coordinates & doorstep arrival tracking
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => setShowDriverChat(true)}
-                      className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold transition flex items-center space-x-1"
-                    >
-                      <FaComments className="text-xs" />
-                      <span>Chat</span>
-                    </button>
-                    {activePickup?.driver?.user?.phone && (
-                      <a
-                        href={`tel:${activePickup.driver.user.phone}`}
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 rounded-xl text-xs font-bold transition flex items-center space-x-1"
-                      >
-                        <FaPhone className="text-xs text-emerald-600" />
-                        <span>Call Driver</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Map View */}
-                <div className="relative h-[280px] sm:h-[320px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
-                  <GoogleRouteMap 
-                    driverName={activePickup?.driver?.user?.name || 'Assigned Driver'} 
-                    vehicleNumber={activePickup?.driver?.vehicleNumber || 'EV Collection Vehicle'}
-                    pickupAddress={activePickup?.address?.street ? `${activePickup.address.street}, ${activePickup.address.city || ''}` : 'Scheduled Address'}
-                    height="100%"
-                  />
-
-                  {/* Floating Telematics Pill */}
-                  <div className="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-white shadow-lg flex items-center space-x-2 text-xs pointer-events-none">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span className="font-bold text-[11px]">{activePickup.driver?.vehicleNumber || 'EV Green Fleet'} • Status: {activePickup.status}</span>
-                  </div>
-                </div>
-
-                {/* Connected Milestone Stepper */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/70 dark:border-slate-800">
-                  <div className="relative grid grid-cols-4 gap-2">
-                    <div className="absolute top-3 left-8 right-8 h-0.5 bg-slate-200 dark:bg-slate-700 -z-0 hidden sm:block"></div>
-                    <div className="absolute top-3 left-8 w-[62%] h-0.5 bg-emerald-500 -z-0 hidden sm:block"></div>
-
-                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shadow-sm">
-                        ✓
-                      </div>
-                      <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">1. Booked</span>
-                    </div>
-
-                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                      <div className={`w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-sm ${activePickup.status !== 'pending' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
-                        {activePickup.status !== 'pending' ? '✓' : '2'}
-                      </div>
-                      <span className={`text-[11px] font-black ${activePickup.status !== 'pending' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>2. Assigned</span>
-                    </div>
-
-                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                      <div className={`w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-md ${activePickup.status === 'in_transit' || activePickup.status === 'accepted' ? 'bg-amber-500 ring-4 ring-amber-500/20 animate-pulse' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
-                        3
-                      </div>
-                      <span className={`text-[11px] font-black ${activePickup.status === 'in_transit' || activePickup.status === 'accepted' ? 'text-amber-500' : 'text-slate-400'}`}>3. En Route</span>
-                    </div>
-
-                    <div className="flex flex-col items-center text-center space-y-1 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-400 flex items-center justify-center text-[10px] font-black">
-                        4
-                      </div>
-                      <span className="text-[11px] font-bold text-slate-400">4. Paid</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            ) : (
-              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 shadow-sm text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl mx-auto border border-emerald-500/20">
-                  <FaTruck />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-black text-slate-900 dark:text-white text-lg">
-                    No Active Pickups Scheduled
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto">
-                    Turn your recyclable paper, plastics, and scrap into instant EcoPoints & cash. Schedule a doorstep pickup anytime!
-                  </p>
-                </div>
-                <button
-                  onClick={() => navigate('/schedule-pickup')}
-                  className="inline-flex items-center space-x-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs shadow-lg shadow-emerald-500/20 hover:scale-105 transition cursor-pointer"
-                >
-                  <FaCalendarPlus className="h-4 w-4" />
-                  <span>Book Doorstep Pickup</span>
-                </button>
-              </div>
-            )}
 
             {/* Smart Scrap Value Estimator & Live Rates */}
-            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-5">
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-5">
               
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-lg border border-teal-500/20">
+                  <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg border border-teal-500/25">
                     <FaCalculator />
                   </div>
                   <div>
@@ -781,11 +660,11 @@ const UserDashboard = () => {
                       Live Scrap Buyback Calculator
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                      Real-time market rates across Chennai & Tamil Nadu recycling centers
+                      Real-time market rates across Coimbatore & Tamil Nadu recycling centers
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   Live Rates
                 </span>
               </div>
@@ -800,13 +679,13 @@ const UserDashboard = () => {
                       onClick={() => setCalcCategory(key)}
                       className={`p-2.5 rounded-2xl border text-left transition-all relative cursor-pointer ${
                         isSelected
-                          ? 'bg-emerald-500/10 border-emerald-500/50 ring-2 ring-emerald-500/40 shadow-sm'
-                          : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300'
+                          ? 'bg-emerald-500/15 border-emerald-500/50 ring-2 ring-emerald-500/30 shadow-xs'
+                          : 'bg-white/60 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-800 hover:border-emerald-500/30'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-lg">{item.icon}</span>
-                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                           ₹{item.ratePerKg}/kg
                         </span>
                       </div>
@@ -822,13 +701,13 @@ const UserDashboard = () => {
               </div>
 
               {/* Slider & Instant Calculation */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-5">
+              <div className="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/40 backdrop-blur-md border border-white/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-5">
                 <div className="w-full sm:w-1/2 space-y-2.5">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                       Estimated Weight:
                     </span>
-                    <span className="text-xs font-black px-2.5 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-500/30">
+                    <span className="text-xs font-black px-2.5 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-500/25">
                       {calcWeight} kg
                     </span>
                   </div>
@@ -849,7 +728,7 @@ const UserDashboard = () => {
                   </div>
                 </div>
 
-                <div className="w-full sm:w-1/2 flex items-center justify-between gap-3 p-3 bg-white dark:bg-slate-900 rounded-2xl border border-emerald-500/30 shadow-sm">
+                <div className="w-full sm:w-1/2 flex items-center justify-between gap-3 p-3 bg-white/80 dark:bg-slate-900/80 rounded-2xl border border-emerald-500/25 shadow-xs">
                   <div>
                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block">
                       Estimated Payout
@@ -858,7 +737,7 @@ const UserDashboard = () => {
                       <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
                         ₹{calcWeight * SCRAP_RATES[calcCategory].ratePerKg}
                       </span>
-                      <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                      <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
                         +{(calcWeight * SCRAP_RATES[calcCategory].ptsPerKg)} Pts
                       </span>
                     </div>
@@ -868,7 +747,7 @@ const UserDashboard = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate(`/schedule-pickup?category=${calcCategory}&weight=${calcWeight}`)}
-                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl shadow-sm transition flex items-center space-x-1.5 shrink-0 cursor-pointer"
+                    className="px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs rounded-xl shadow-xs transition flex items-center space-x-1.5 shrink-0 cursor-pointer"
                   >
                     <span>Sell Scrap</span>
                     <FaArrowRight className="text-[10px]" />
@@ -878,11 +757,11 @@ const UserDashboard = () => {
 
             </div>
 
-            {/* 4-Bin Waste Segregation Protocol Guide (Moved to Left Column for Perfect Height Balance) */}
-            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            {/* 4-Bin Waste Segregation Protocol Guide */}
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg border border-emerald-500/20">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/25">
                     <FaTrashAlt />
                   </div>
                   <div>
@@ -894,7 +773,7 @@ const UserDashboard = () => {
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+                <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   Standard Protocol
                 </span>
               </div>
@@ -906,8 +785,8 @@ const UserDashboard = () => {
                     onClick={() => setSelectedSegKey(item.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 border cursor-pointer ${
                       selectedSegKey === item.id
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-500/30'
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-transparent shadow-xs'
+                        : 'bg-white/60 dark:bg-slate-800/50 border-slate-200/70 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-emerald-500/30'
                     }`}
                   >
                     <span>{item.icon}</span>
@@ -917,7 +796,7 @@ const UserDashboard = () => {
               </div>
 
               {SEGREGATION_ITEMS[selectedSegKey] && (
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
+                <div className="p-4 rounded-2xl bg-white/60 dark:bg-slate-800/50 border border-white/80 dark:border-slate-800 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="font-extrabold text-slate-900 dark:text-white text-xs">
                       {SEGREGATION_ITEMS[selectedSegKey].binName}
@@ -933,11 +812,11 @@ const UserDashboard = () => {
               )}
             </div>
 
-            {/* Recent Activity Feed (Balanced in Left Column) */}
-            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            {/* Recent Activity Feed */}
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-lg border border-teal-500/20">
+                  <div className="w-10 h-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg border border-teal-500/25">
                     <FaClock />
                   </div>
                   <div>
@@ -961,10 +840,10 @@ const UserDashboard = () => {
                     <Link
                       key={p._id || idx}
                       to="/my-pickups"
-                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition group cursor-pointer"
+                      className="flex items-center justify-between p-3.5 bg-white/60 dark:bg-slate-800/40 hover:bg-emerald-500/10 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition group cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm group-hover:scale-110 transition-transform">
                           <FaTruck />
                         </div>
                         <div>
@@ -994,10 +873,10 @@ const UserDashboard = () => {
                   <>
                     <Link
                       to="/my-pickups"
-                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
+                      className="flex items-center justify-between p-3.5 bg-white/60 dark:bg-slate-800/40 hover:bg-emerald-500/10 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
+                        <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm">
                           <FaCheckCircle />
                         </div>
                         <div>
@@ -1010,7 +889,7 @@ const UserDashboard = () => {
 
                     <Link
                       to="/schedule-pickup"
-                      className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/40 hover:bg-sky-500/5 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
+                      className="flex items-center justify-between p-3.5 bg-white/60 dark:bg-slate-800/40 hover:bg-sky-500/10 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-100 dark:border-slate-800 transition cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="h-9 w-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center text-sm">
@@ -1030,31 +909,31 @@ const UserDashboard = () => {
 
           </div>
 
-          {/* Right Column: Green Streak, Quests & Equivalencies (5 Cols) */}
+          {/* Right Column: Virtual Tree, Green Streak, Quests & Equivalencies (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             
             {/* Dynamic Virtual Tree Growth & Impact Progression Widget */}
-            <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden text-slate-900">
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 relative overflow-hidden text-slate-900 dark:text-slate-100">
               
               {/* Background ambient lighting */}
-              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-teal-500/15 rounded-full blur-2xl pointer-events-none" />
 
-              <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-emerald-50 border border-emerald-500/30 text-emerald-600 flex items-center justify-center text-lg shadow-xs">
+                  <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shadow-xs">
                     <FaSeedling className="animate-bounce" />
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-black text-slate-900 text-sm sm:text-base">
+                      <h3 className="font-black text-slate-900 dark:text-white text-sm sm:text-base">
                         {t('plantTree') || 'Virtual Tree Growth'}
                       </h3>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[9px] font-black uppercase tracking-wider border border-emerald-500/30">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-wider border border-emerald-500/20">
                         {treeStage.stageTag}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 font-medium">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                       Grows with every kilogram you recycle
                     </p>
                   </div>
@@ -1065,15 +944,15 @@ const UserDashboard = () => {
                     triggerHaptic(30);
                     setShowEcoStory(true);
                   }}
-                  className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-[11px] font-black border border-slate-200 transition flex items-center gap-1 shadow-xs cursor-pointer"
+                  className="px-2.5 py-1 bg-white/80 dark:bg-slate-800 hover:bg-white text-slate-700 dark:text-slate-200 rounded-xl text-[11px] font-black border border-white/90 dark:border-slate-700 transition flex items-center gap-1 shadow-xs cursor-pointer"
                 >
-                  <FaShareAlt className="text-[10px] text-emerald-600" />
+                  <FaShareAlt className="text-[10px] text-emerald-600 dark:text-emerald-400" />
                   <span>Story</span>
                 </button>
               </div>
 
               {/* Center Interactive Tree Canvas */}
-              <div className="relative z-10 my-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+              <div className="relative z-10 my-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/60 dark:bg-slate-800/50 p-4 rounded-2xl border border-white/80 dark:border-slate-800">
                 
                 {/* SVG Tree Stage Graphic */}
                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0">
@@ -1123,9 +1002,9 @@ const UserDashboard = () => {
                 <div className="flex-1 space-y-2 text-center sm:text-left">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
                     <span className="text-lg">{treeStage.icon}</span>
-                    <h4 className="text-sm font-black text-slate-900">{treeStage.name}</h4>
+                    <h4 className="text-sm font-black text-slate-900 dark:text-white">{treeStage.name}</h4>
                   </div>
-                  <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
                     {treeStage.level === 5 
                       ? 'Congratulations! You have reached maximum tree maturity and diverted hundreds of kilograms.'
                       : `Recycle ${treeStage.remaining} kg more waste to evolve your tree to the next maturity rank.`}
@@ -1133,11 +1012,11 @@ const UserDashboard = () => {
 
                   {/* Growth Progress Bar */}
                   <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-bold text-slate-600">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-600 dark:text-slate-400">
                       <span>Maturity Progress</span>
-                      <span className="text-emerald-700 font-black">{treeStage.pct}%</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-black">{treeStage.pct}%</span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                       <div 
                         className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500 shadow-xs" 
                         style={{ width: `${treeStage.pct}%` }}
@@ -1149,11 +1028,11 @@ const UserDashboard = () => {
               </div>
 
               {/* Mini quick nudge */}
-              <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                <span>Total Diverted: <strong className="text-slate-900 font-black">{totalKgNumber} kg</strong></span>
+              <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                <span>Total Diverted: <strong className="text-slate-900 dark:text-white font-black">{totalKgNumber} kg</strong></span>
                 <button
                   onClick={() => navigate('/schedule-pickup')}
-                  className="font-black text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="font-black text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <span>Water Tree with Scrap</span>
                   <FaChevronRight className="text-[9px]" />
@@ -1163,9 +1042,9 @@ const UserDashboard = () => {
             </div>
 
             {/* Daily Green Streak & Quests */}
-            <div className="bg-white/95 dark:bg-[#0c1822]/95 backdrop-blur-xl border border-slate-200/80 dark:border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-md dark:shadow-emerald-950/20 space-y-5">
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-5">
               
-              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-orange-500 flex items-center justify-center text-lg border border-orange-500/30 shadow-inner">
                     <FaFire className="animate-pulse" />
@@ -1219,7 +1098,7 @@ const UserDashboard = () => {
                           ? 'ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900 font-black bg-emerald-500/10 border-emerald-500/40 shadow-sm'
                           : day.isDone
                           ? 'bg-gradient-to-b from-emerald-500/15 to-teal-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-xs' 
-                          : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400'
+                          : 'bg-white/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 text-slate-400'
                       }`}
                     >
                       <span className="text-[10px] font-black">{day.label}</span>
@@ -1253,7 +1132,7 @@ const UserDashboard = () => {
                       className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                         q.completed
                           ? 'bg-emerald-500/5 border-emerald-500/25'
-                          : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-emerald-500/30'
+                          : 'bg-white/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-emerald-500/30'
                       }`}
                     >
                       <div className="flex items-center space-x-3 min-w-0">
@@ -1277,7 +1156,7 @@ const UserDashboard = () => {
                       ) : (
                         <button
                           onClick={() => handleCompleteQuest(q)}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black rounded-xl shadow-xs transition shrink-0 cursor-pointer active:scale-95"
+                          className="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-[11px] font-black rounded-xl shadow-xs transition shrink-0 cursor-pointer active:scale-95"
                         >
                           Start
                         </button>
@@ -1290,56 +1169,56 @@ const UserDashboard = () => {
             </div>
 
             {/* Real-World Impact Equivalencies */}
-            <div className="bg-white border border-slate-200/90 p-5 sm:p-6 rounded-3xl shadow-sm text-slate-900 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 rounded-3xl shadow-lg shadow-emerald-950/5 text-slate-900 dark:text-slate-100 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm border border-emerald-500/30 shadow-xs">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-500/25 shadow-xs">
                     <FaLeaf />
                   </div>
                   <div>
-                    <h3 className="font-black text-slate-900 text-sm">Real-World Equivalencies</h3>
-                    <p className="text-[10px] text-slate-500">From your 35.3 kg CO₂ reduction</p>
+                    <h3 className="font-black text-slate-900 dark:text-white text-sm">Real-World Equivalencies</h3>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">From your 35.3 kg CO₂ reduction</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-500/30">
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   Net Positive
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center space-x-1.5 text-sky-600 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/40 border border-white/80 dark:border-slate-800">
+                  <div className="flex items-center space-x-1.5 text-sky-600 dark:text-sky-400 text-xs mb-1">
                     <FaCarSide />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Car Travel</span>
                   </div>
-                  <span className="text-base font-black text-slate-900 block">145 km</span>
+                  <span className="text-base font-black text-slate-900 dark:text-white block">145 km</span>
                   <span className="text-[9px] text-slate-400">Gasoline offset</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center space-x-1.5 text-lime-600 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/40 border border-white/80 dark:border-slate-800">
+                  <div className="flex items-center space-x-1.5 text-lime-600 dark:text-lime-400 text-xs mb-1">
                     <FaSeedling />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Saplings</span>
                   </div>
-                  <span className="text-base font-black text-slate-900 block">2.8 Trees</span>
+                  <span className="text-base font-black text-slate-900 dark:text-white block">2.8 Trees</span>
                   <span className="text-[9px] text-slate-400">Nurtured 1 yr</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center space-x-1.5 text-amber-600 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/40 border border-white/80 dark:border-slate-800">
+                  <div className="flex items-center space-x-1.5 text-amber-600 dark:text-amber-400 text-xs mb-1">
                     <FaLightbulb />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Clean Power</span>
                   </div>
-                  <span className="text-base font-black text-slate-900 block">230 hrs</span>
+                  <span className="text-base font-black text-slate-900 dark:text-white block">230 hrs</span>
                   <span className="text-[9px] text-slate-400">LED power saved</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                  <div className="flex items-center space-x-1.5 text-teal-600 text-xs mb-1">
+                <div className="p-3.5 rounded-2xl bg-white/60 dark:bg-slate-800/40 border border-white/80 dark:border-slate-800">
+                  <div className="flex items-center space-x-1.5 text-teal-600 dark:text-teal-400 text-xs mb-1">
                     <FaWater />
                     <span className="text-[9px] font-bold uppercase text-slate-400">Fresh Water</span>
                   </div>
-                  <span className="text-base font-black text-slate-900 block">988 L</span>
+                  <span className="text-base font-black text-slate-900 dark:text-white block">988 L</span>
                   <span className="text-[9px] text-slate-400">Conserved</span>
                 </div>
               </div>

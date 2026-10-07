@@ -449,25 +449,25 @@ const RedeemRewards = () => {
         {/* ========================================================================= */}
         {/* 1. EXECUTIVE ECO-WALLET & ONLINE TRANSACTIONS COMMAND CENTER             */}
         {/* ========================================================================= */}
-        <div className="p-6 sm:p-7 rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 shadow-xl shadow-slate-900/5 space-y-6">
+        <div className="p-6 sm:p-7 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-300 dark:border-slate-800 shadow-xl shadow-slate-900/5 space-y-6">
           
           {/* Top Row: Wallet Card Identity & Live Status */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
             <div className="space-y-1">
               <div className="flex items-center space-x-3">
-                <div className="h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 border-2 border-emerald-200 flex items-center justify-center text-xl shadow-xs">
+                <div className="h-11 w-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-2 border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-xl shadow-xs">
                   <FaCoins className="text-amber-500" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                       Eco-Wallet & Payments Hub
                     </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase tracking-wider">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 uppercase tracking-wider">
                       NPCI 24x7
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
                     Convert scrap earnings to cash, buy eco-products, or pay merchants online
                   </p>
                 </div>
@@ -477,21 +477,21 @@ const RedeemRewards = () => {
             {/* Dual Wallet Display (Available Cash + EcoPoints + Top Up) */}
             <div className="flex flex-wrap items-center gap-3">
               {/* Wallet Cash Balance Box */}
-              <div className="px-4 py-2.5 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex items-center space-x-3.5 shadow-xs">
+              <div className="px-4 py-2.5 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 border-2 border-emerald-300 dark:border-emerald-700/60 rounded-2xl flex items-center space-x-3.5 shadow-xs">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300 block">
                     Wallet Cash Balance
                   </span>
-                  <span className="text-xl font-black text-slate-900 leading-none">
+                  <span className="text-xl font-black text-slate-900 dark:text-white leading-none">
                     ₹{walletCash}.00
                   </span>
                 </div>
-                <div className="h-8 w-[1.5px] bg-emerald-200" />
+                <div className="h-8 w-[1.5px] bg-emerald-200 dark:bg-emerald-700" />
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 block">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 block">
                     EcoPoints
                   </span>
-                  <span className="text-sm font-black text-amber-600 leading-none">
+                  <span className="text-sm font-black text-amber-600 dark:text-amber-400 leading-none">
                     {points} pts
                   </span>
                 </div>
@@ -500,7 +500,7 @@ const RedeemRewards = () => {
               {/* 1-Click Convert Points to Cash Shortcut */}
               <button
                 onClick={() => setActiveTab('convert')}
-                className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-800 font-black text-xs rounded-2xl border-2 border-amber-300 transition flex items-center space-x-1.5 cursor-pointer shadow-2xs"
+                className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 text-amber-800 dark:text-amber-300 font-black text-xs rounded-2xl border-2 border-amber-300 dark:border-amber-700/60 transition flex items-center space-x-1.5 cursor-pointer shadow-2xs"
                 title="Convert points into cash balance"
               >
                 <FaBolt className="text-amber-500" />
@@ -519,7 +519,7 @@ const RedeemRewards = () => {
           </div>
 
           {/* 4 Core Financial Transaction Action Pillars */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t-2 border-slate-100">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t-2 border-slate-100 dark:border-slate-800">
             
             {/* Action 1: Instant Direct Bank & UPI Withdrawal */}
             <button
@@ -539,15 +539,15 @@ const RedeemRewards = () => {
             {/* Action 2: Merchant Live Camera Scan & Pay QR */}
             <button
               onClick={() => setShowRealQRScannerModal(true)}
-              className="p-3.5 bg-white hover:bg-slate-50 text-slate-800 rounded-2xl border-2 border-slate-300 shadow-xs flex flex-col justify-between items-start transition cursor-pointer group active:scale-98"
+              className="p-3.5 bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl border-2 border-slate-300 dark:border-slate-700 shadow-xs flex flex-col justify-between items-start transition cursor-pointer group active:scale-98"
             >
               <div className="flex items-center justify-between w-full">
-                <FaCamera className="text-base text-emerald-600" />
-                <span className="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">LIVE CAMERA</span>
+                <FaCamera className="text-base text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[9px] font-black bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">LIVE CAMERA</span>
               </div>
               <div className="text-left mt-2">
-                <div className="text-xs font-black text-slate-900">Scan & Pay QR</div>
-                <div className="text-[10px] text-slate-500 font-semibold">Real optical camera scanner</div>
+                <div className="text-xs font-black text-slate-900 dark:text-white">Scan & Pay QR</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Real optical camera scanner</div>
               </div>
             </button>
 
@@ -556,17 +556,17 @@ const RedeemRewards = () => {
               onClick={() => setActiveTab('store')}
               className={`p-3.5 rounded-2xl border-2 shadow-xs flex flex-col justify-between items-start transition cursor-pointer group active:scale-98 ${
                 activeTab === 'store' 
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800' 
-                  : 'bg-white hover:bg-slate-50 border-slate-300 text-slate-800'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300' 
+                  : 'bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center justify-between w-full">
-                <FaShoppingBag className="text-base text-emerald-600" />
-                <span className="text-[9px] font-black bg-white px-2 py-0.5 rounded-full border border-slate-200">ECO SHOP</span>
+                <FaShoppingBag className="text-base text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[9px] font-black bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">ECO SHOP</span>
               </div>
               <div className="text-left mt-2">
-                <div className="text-xs font-black text-slate-900">Buy Eco Products</div>
-                <div className="text-[10px] text-slate-500 font-semibold">Pay with wallet balance</div>
+                <div className="text-xs font-black text-slate-900 dark:text-white">Buy Eco Products</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Pay with wallet balance</div>
               </div>
             </button>
 
@@ -575,42 +575,42 @@ const RedeemRewards = () => {
               onClick={() => setActiveTab('passbook')}
               className={`p-3.5 rounded-2xl border-2 shadow-xs flex flex-col justify-between items-start transition cursor-pointer group active:scale-98 ${
                 activeTab === 'passbook' 
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800' 
-                  : 'bg-white hover:bg-slate-50 border-slate-300 text-slate-800'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300' 
+                  : 'bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center justify-between w-full">
-                <FaHistory className="text-base text-emerald-600" />
-                <span className="text-[9px] font-black bg-white px-2 py-0.5 rounded-full border border-slate-200">STATEMENT</span>
+                <FaHistory className="text-base text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[9px] font-black bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300">STATEMENT</span>
               </div>
               <div className="text-left mt-2">
-                <div className="text-xs font-black text-slate-900">Online Passbook</div>
-                <div className="text-[10px] text-slate-500 font-semibold">View transaction ledger</div>
+                <div className="text-xs font-black text-slate-900 dark:text-white">Online Passbook</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">View transaction ledger</div>
               </div>
             </button>
 
           </div>
 
           {/* Linked Bank Account Details Strip (Real Banking Integration) */}
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50/90 via-slate-50 to-white border-2 border-emerald-200/90 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50/90 via-slate-50 to-white dark:from-slate-850 dark:via-slate-850 dark:to-slate-900 border-2 border-emerald-200/90 dark:border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center space-x-3.5">
-              <div className="h-11 w-11 rounded-2xl bg-white border-2 border-emerald-300 text-emerald-700 flex items-center justify-center text-lg font-black shrink-0 shadow-xs">
+              <div className="h-11 w-11 rounded-2xl bg-white dark:bg-slate-800 border-2 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-lg font-black shrink-0 shadow-xs">
                 <FaUniversity className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs font-black text-slate-900">State Bank of India (SBI)</span>
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
+                  <span className="text-xs font-black text-slate-900 dark:text-white">State Bank of India (SBI)</span>
+                  <span className="inline-flex items-center gap-1 text-[9px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">
                     <FaCheckCircle className="text-[8px]" /> PRIMARY LINKED A/C
                   </span>
                 </div>
-                <div className="text-[11px] font-semibold text-slate-600 mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
-                  <span>A/C: <strong className="font-mono text-slate-900">•••• •••• 4921</strong></span>
-                  <span className="text-slate-300">|</span>
-                  <span>IFSC: <strong className="font-mono text-slate-800">SBIN0001234</strong></span>
-                  <span className="text-slate-300">|</span>
+                <div className="text-[11px] font-semibold text-slate-600 dark:text-slate-300 mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+                  <span>A/C: <strong className="font-mono text-slate-900 dark:text-white">•••• •••• 4921</strong></span>
+                  <span className="text-slate-300 dark:text-slate-600">|</span>
+                  <span>IFSC: <strong className="font-mono text-slate-800 dark:text-slate-200">SBIN0001234</strong></span>
+                  <span className="text-slate-300 dark:text-slate-600">|</span>
                   <span>Branch: <strong>Coimbatore Main Branch, TN</strong></span>
-                  <span className="text-slate-300">|</span>
+                  <span className="text-slate-300 dark:text-slate-600">|</span>
                   <span>Beneficiary: <strong>PALANI</strong></span>
                 </div>
               </div>
@@ -628,7 +628,7 @@ const RedeemRewards = () => {
               <button
                 type="button"
                 onClick={() => setShowBankWithdrawModal(true)}
-                className="px-3 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 transition cursor-pointer"
+                className="px-3 py-2 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl border border-slate-300 dark:border-slate-700 transition cursor-pointer"
               >
                 Manage Banks
               </button>
@@ -636,19 +636,19 @@ const RedeemRewards = () => {
           </div>
 
           {/* Security & Bank Grade Assurance Bar */}
-          <div className="px-4 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 flex flex-wrap items-center justify-between gap-3 text-[11px] font-bold text-slate-600">
+          <div className="px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border-2 border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-[11px] font-bold text-slate-600 dark:text-slate-300">
             <div className="flex items-center space-x-4">
-              <span className="flex items-center gap-1.5 text-slate-800 font-black">
-                <FaLock className="text-emerald-600" /> 256-Bit SSL Encrypted
+              <span className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-black">
+                <FaLock className="text-emerald-600 dark:text-emerald-400" /> 256-Bit SSL Encrypted
               </span>
-              <span className="flex items-center gap-1.5 text-slate-700">
+              <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                 <FaCheckCircle className="text-emerald-500" /> Direct NPCI IMPS Rail
               </span>
-              <span className="hidden sm:flex items-center gap-1.5 text-slate-700">
+              <span className="hidden sm:flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                 <FaCheckCircle className="text-emerald-500" /> 0% Transaction Surcharge
               </span>
             </div>
-            <div className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+            <div className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
               Guaranteed Value: 4 EcoPoints = ₹1.00 Cash
             </div>
           </div>
@@ -664,18 +664,18 @@ const RedeemRewards = () => {
           <div className="space-y-5">
             
             {/* Store Header & Search */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/95 backdrop-blur-md p-5 rounded-3xl border-2 border-slate-300 shadow-md shadow-slate-900/5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-5 rounded-3xl border-2 border-slate-300 dark:border-slate-800 shadow-md shadow-slate-900/5">
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-2">
-                  <FaStore className="text-emerald-600" />
-                  <h3 className="text-base font-black text-slate-900">
+                  <FaStore className="text-emerald-600 dark:text-emerald-400" />
+                  <h3 className="text-base font-black text-slate-900 dark:text-white">
                     Zero-Waste Green Market
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[10px] font-black text-emerald-800 border border-emerald-300">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[10px] font-black text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
                     6 Products Available
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 font-semibold">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
                   Buy certified eco-friendly household goods using your Eco-Wallet balance, UPI, or Cards
                 </p>
               </div>
@@ -688,7 +688,7 @@ const RedeemRewards = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border-2 border-slate-300 focus:border-emerald-500 rounded-xl text-xs font-bold text-slate-800 focus:outline-none shadow-2xs"
+                  className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 focus:border-emerald-500 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none shadow-2xs"
                 />
               </div>
             </div>
@@ -701,16 +701,16 @@ const RedeemRewards = () => {
                 return (
                   <div
                     key={product.id}
-                    className="p-5 rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 hover:border-emerald-500 transition-all shadow-md shadow-slate-900/5 flex flex-col justify-between space-y-4 group"
+                    className="p-5 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-300 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all shadow-md shadow-slate-900/5 flex flex-col justify-between space-y-4 group"
                   >
                     <div className="space-y-3">
                       {/* Product Badge & Eco Rating */}
                       <div className="flex items-center justify-between">
-                        <span className="text-3xl p-2 bg-slate-50 rounded-2xl border border-slate-200">
+                        <span className="text-3xl p-2 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                           {product.icon}
                         </span>
                         <div className="flex items-center space-x-1.5">
-                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                             {product.badge}
                           </span>
                           <span className="text-[10px] font-extrabold text-amber-500 flex items-center gap-0.5">
@@ -721,31 +721,31 @@ const RedeemRewards = () => {
 
                       {/* Product Name & Details */}
                       <div>
-                        <h4 className="text-sm font-black text-slate-900 leading-snug group-hover:text-emerald-700 transition">
+                        <h4 className="text-sm font-black text-slate-900 dark:text-white leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
                           {product.name}
                         </h4>
-                        <p className="text-[11px] text-emerald-700 font-extrabold mt-0.5">
+                        <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold mt-0.5">
                           {product.tagline}
                         </p>
-                        <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1 line-clamp-2">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed mt-1 line-clamp-2">
                           {product.description}
                         </p>
                       </div>
 
                       {/* Carbon Saved Strip */}
-                      <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-[10px] font-bold text-slate-600">
-                        <span className="flex items-center gap-1 text-emerald-700 font-black">
-                          <FaLeaf className="text-emerald-600" /> -{product.carbonSavedKg} kg CO₂
+                      <div className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                        <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-black">
+                          <FaLeaf className="text-emerald-600 dark:text-emerald-400" /> -{product.carbonSavedKg} kg CO₂
                         </span>
                         <span>🚚 {product.deliveryDays}</span>
                       </div>
                     </div>
 
                     {/* Price & Real Gateway Buy Action */}
-                    <div className="pt-3 border-t-2 border-slate-100 space-y-2">
+                    <div className="pt-3 border-t-2 border-slate-100 dark:border-slate-800 space-y-2">
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-lg font-black text-slate-900">₹{product.priceRupees}</span>
+                          <span className="text-lg font-black text-slate-900 dark:text-white">₹{product.priceRupees}</span>
                           <span className="text-[11px] text-slate-400 font-bold ml-1.5">or {product.pointsPrice} pts</span>
                         </div>
                         <span className="text-[10px] font-bold text-slate-400">
@@ -773,22 +773,22 @@ const RedeemRewards = () => {
         {/* TAB 2: ONLINE TRANSACTIONS & PASSBOOK LEDGER */}
         {activeTab === 'passbook' && (
           <div className="space-y-4">
-            <div className="p-6 rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 shadow-xl shadow-slate-900/5 space-y-4">
+            <div className="p-6 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-300 dark:border-slate-800 shadow-xl shadow-slate-900/5 space-y-4">
               
               {/* Passbook Header & Filters */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b-2 border-slate-100">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                    <FaFileInvoiceDollar className="text-emerald-600" />
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <FaFileInvoiceDollar className="text-emerald-600 dark:text-emerald-400" />
                     <span>Online Transactions Passbook</span>
                   </h3>
-                  <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
                     Click any transaction to view and print official bank payment receipts
                   </p>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                <div className="flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
                   {[
                     { id: 'all', label: `All (${transactions.length})` },
                     { id: 'credits', label: 'Credits (+)' },
@@ -799,8 +799,8 @@ const RedeemRewards = () => {
                       onClick={() => setPassbookFilter(f.id)}
                       className={`px-3 py-1 rounded-xl text-xs font-black transition cursor-pointer ${
                         passbookFilter === f.id
-                          ? 'bg-white text-emerald-800 shadow-xs'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-white dark:bg-slate-900 text-emerald-800 dark:text-emerald-300 shadow-xs'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                       }`}
                     >
                       {f.label}
@@ -815,31 +815,31 @@ const RedeemRewards = () => {
                   <div
                     key={txn.id}
                     onClick={() => setSelectedTxnReceipt(txn)}
-                    className="p-4 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-emerald-400 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-2xs cursor-pointer group"
+                    className="p-4 rounded-2xl bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-2xs cursor-pointer group"
                   >
                     <div className="flex items-center space-x-3.5">
                       <div className={`h-11 w-11 rounded-2xl flex items-center justify-center text-lg border-2 shrink-0 ${
                         txn.isCredit 
-                          ? 'bg-emerald-50 text-emerald-600 border-emerald-200' 
-                          : 'bg-rose-50 text-rose-600 border-rose-200'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' 
+                          : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800'
                       }`}>
                         {txn.isCredit ? <FaArrowDown /> : <FaArrowUp />}
                       </div>
 
                       <div className="space-y-0.5">
                         <div className="flex items-center space-x-2">
-                          <h5 className="text-xs font-black text-slate-900 group-hover:text-emerald-700 transition">
+                          <h5 className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition">
                             {txn.title}
                           </h5>
                           <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${
                             txn.isCredit
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                           }`}>
                             {txn.mode}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 font-medium">
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                           {txn.subtitle}
                         </p>
                         <span className="text-[10px] text-slate-400 font-bold block">
@@ -848,9 +848,9 @@ const RedeemRewards = () => {
                       </div>
                     </div>
 
-                    <div className="text-right shrink-0 w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                    <div className="text-right shrink-0 w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 dark:border-slate-800">
                       <span className={`text-base font-black ${
-                        txn.isCredit ? 'text-emerald-600' : 'text-slate-900'
+                        txn.isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white'
                       }`}>
                         {txn.isCredit ? '+' : '-'}₹{txn.amountRupees}.00
                       </span>
@@ -867,39 +867,39 @@ const RedeemRewards = () => {
 
         {/* TAB 3: INSTANT POINTS TO CASH CONVERTER */}
         {activeTab === 'convert' && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-md border-2 border-slate-300 shadow-xl shadow-slate-900/5 max-w-2xl mx-auto space-y-6">
+          <div className="p-6 sm:p-8 rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-2 border-slate-300 dark:border-slate-800 shadow-xl shadow-slate-900/5 max-w-2xl mx-auto space-y-6">
             <div className="text-center space-y-1">
-              <div className="inline-flex p-3 bg-amber-50 text-amber-500 rounded-2xl border-2 border-amber-200 text-2xl shadow-xs">
+              <div className="inline-flex p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-500 rounded-2xl border-2 border-amber-200 dark:border-amber-700/60 text-2xl shadow-xs">
                 <FaBolt />
               </div>
-              <h3 className="text-xl font-black text-slate-900">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white">
                 Points-to-Cash Instant Converter
               </h3>
-              <p className="text-xs text-slate-500 font-semibold">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
                 Exchange your verified EcoPoints directly into spendable Wallet Cash at a fixed 4:1 rate
               </p>
             </div>
 
             {/* Live Exchange Rate Box */}
-            <div className="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Available EcoPoints</span>
-                <span className="text-lg font-black text-slate-900">{points} Pts</span>
+                <span className="text-lg font-black text-slate-900 dark:text-white">{points} Pts</span>
               </div>
-              <div className="text-center px-4 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                <span className="text-[10px] font-black text-emerald-700">4 EcoPoints = ₹1.00 Cash</span>
+              <div className="text-center px-4 py-1.5 rounded-xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 shadow-2xs">
+                <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300">4 EcoPoints = ₹1.00 Cash</span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">Total Potential Cash</span>
-                <span className="text-lg font-black text-emerald-600">₹{Math.round(points * 0.25)}.00</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 block">Total Potential Cash</span>
+                <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">₹{Math.round(points * 0.25)}.00</span>
               </div>
             </div>
 
             {/* Interactive Points Slider */}
-            <div className="p-5 bg-white rounded-2xl border-2 border-slate-200 space-y-3">
+            <div className="p-5 bg-white dark:bg-slate-850 rounded-2xl border-2 border-slate-200 dark:border-slate-700 space-y-3">
               <div className="flex justify-between items-center text-xs font-black">
-                <span className="text-slate-700">Drag to Select Points to Convert:</span>
-                <span className="text-emerald-700 text-sm">
+                <span className="text-slate-700 dark:text-slate-200">Drag to Select Points to Convert:</span>
+                <span className="text-emerald-700 dark:text-emerald-400 text-sm">
                   {sliderPoints} Pts = ₹{Math.round(sliderPoints * 0.25)}.00 Cash
                 </span>
               </div>
@@ -931,7 +931,7 @@ const RedeemRewards = () => {
 
             {/* Quick Conversion Amount Presets */}
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-800 block">
+              <label className="text-xs font-black text-slate-800 dark:text-slate-200 block">
                 Or Choose Instant Preset:
               </label>
               <div className="grid grid-cols-4 gap-2.5">
@@ -946,10 +946,10 @@ const RedeemRewards = () => {
                     type="button"
                     onClick={() => handleConvertPoints(item.pts)}
                     disabled={item.pts > points || points <= 0}
-                    className="p-3 bg-white hover:bg-slate-50 disabled:opacity-40 border-2 border-slate-300 hover:border-emerald-500 rounded-2xl text-center transition cursor-pointer shadow-2xs active:scale-98"
+                    className="p-3 bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 disabled:opacity-40 border-2 border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl text-center transition cursor-pointer shadow-2xs active:scale-98"
                   >
-                    <div className="text-sm font-black text-slate-900">₹{item.cash}</div>
-                    <div className="text-[10px] text-slate-500 font-bold">{item.pts} Pts</div>
+                    <div className="text-sm font-black text-slate-900 dark:text-white">₹{item.cash}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">{item.pts} Pts</div>
                   </button>
                 ))}
               </div>
@@ -974,29 +974,29 @@ const RedeemRewards = () => {
 
         {/* Top-Up Wallet Modal */}
         {showTopUpModal && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-            <div className="relative w-full max-w-md bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-7 text-slate-800 shadow-2xl">
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-800 rounded-3xl p-6 sm:p-7 text-slate-800 dark:text-slate-100 shadow-2xl">
               <button
                 onClick={() => setShowTopUpModal(false)}
-                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
               >
                 <FaTimes className="w-4 h-4" />
               </button>
 
-              <div className="flex items-center space-x-3 pb-3 border-b-2 border-slate-100">
-                <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 text-xl">
+              <div className="flex items-center space-x-3 pb-3 border-b-2 border-slate-100 dark:border-slate-800">
+                <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-xl">
                   <FaWallet />
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-slate-900">Top Up Eco-Wallet Cash</h4>
-                  <p className="text-xs text-slate-500 font-semibold">Add money to your wallet balance instantly via UPI or Card</p>
+                  <h4 className="text-base font-black text-slate-900 dark:text-white">Top Up Eco-Wallet Cash</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Add money to your wallet balance instantly via UPI or Card</p>
                 </div>
               </div>
 
               <form onSubmit={handleProcessTopUp} className="space-y-4 pt-3">
                 {/* Preset Recharge Amounts */}
                 <div>
-                  <label className="text-xs font-black text-slate-800 block mb-1.5">Select Top-Up Amount:</label>
+                  <label className="text-xs font-black text-slate-800 dark:text-slate-200 block mb-1.5">Select Top-Up Amount:</label>
                   <div className="grid grid-cols-4 gap-2">
                     {['100', '250', '500', '1000'].map(amt => (
                       <button
@@ -1005,8 +1005,8 @@ const RedeemRewards = () => {
                         onClick={() => setTopUpAmount(amt)}
                         className={`p-2.5 rounded-xl border-2 text-xs font-black transition cursor-pointer ${
                           topUpAmount === amt
-                            ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-xs'
-                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-200 shadow-xs'
+                            : 'bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
                         ₹{amt}
@@ -1016,20 +1016,20 @@ const RedeemRewards = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-black text-slate-800 block mb-1">Or Enter Custom Amount (₹):</label>
+                  <label className="text-xs font-black text-slate-800 dark:text-slate-200 block mb-1">Or Enter Custom Amount (₹):</label>
                   <input
                     type="number"
                     value={topUpAmount}
                     onChange={(e) => setTopUpAmount(e.target.value)}
                     min={10}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border-2 border-slate-300 focus:border-emerald-500 rounded-xl text-xs font-black text-slate-900 focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 focus:border-emerald-500 rounded-xl text-xs font-black text-slate-900 dark:text-white focus:outline-none"
                     required
                   />
                 </div>
 
                 {/* Payment Rail */}
                 <div>
-                  <label className="text-xs font-black text-slate-800 block mb-1.5">Recharge Via:</label>
+                  <label className="text-xs font-black text-slate-800 dark:text-slate-200 block mb-1.5">Recharge Via:</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { id: 'upi', label: 'UPI Fast Rail' },
@@ -1042,8 +1042,8 @@ const RedeemRewards = () => {
                         onClick={() => setTopUpMethod(m.id)}
                         className={`p-2 rounded-xl border text-xs font-bold transition cursor-pointer text-center ${
                           topUpMethod === m.id
-                            ? 'bg-emerald-50 border-emerald-500 text-emerald-900 font-black'
-                            : 'bg-white border-slate-200 text-slate-600'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-200 font-black'
+                            : 'bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
                         }`}
                       >
                         {m.label}
@@ -1056,7 +1056,7 @@ const RedeemRewards = () => {
                   <button
                     type="button"
                     onClick={() => setShowTopUpModal(false)}
-                    className="flex-1 py-3 bg-white hover:bg-slate-50 text-slate-700 font-black text-xs rounded-2xl border-2 border-slate-300 transition cursor-pointer"
+                    className="flex-1 py-3 bg-white hover:bg-slate-50 dark:bg-slate-850 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs rounded-2xl border-2 border-slate-300 dark:border-slate-700 transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1076,47 +1076,47 @@ const RedeemRewards = () => {
 
         {/* Detailed Transaction Invoice Receipt Modal */}
         {selectedTxnReceipt && (
-          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-            <div className="relative w-full max-w-md bg-white border-2 border-slate-300 rounded-3xl p-6 sm:p-7 text-slate-800 shadow-2xl">
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-800 rounded-3xl p-6 sm:p-7 text-slate-800 dark:text-slate-100 shadow-2xl">
               <button
                 onClick={() => setSelectedTxnReceipt(null)}
-                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+                className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
               >
                 <FaTimes className="w-4 h-4" />
               </button>
 
-              <div className="text-center space-y-2 pb-4 border-b-2 border-slate-100">
+              <div className="text-center space-y-2 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
                 <div className={`h-12 w-12 mx-auto rounded-2xl flex items-center justify-center text-xl border-2 ${
                   selectedTxnReceipt.isCredit 
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200' 
-                    : 'bg-slate-50 text-slate-700 border-slate-200'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' 
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                 }`}>
                   <FaReceipt />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                     Official Payment Receipt
                   </span>
-                  <h4 className="text-2xl font-black text-slate-900 pt-1">
+                  <h4 className="text-2xl font-black text-slate-900 dark:text-white pt-1">
                     {selectedTxnReceipt.isCredit ? '+' : '-'}₹{selectedTxnReceipt.amountRupees}.00
                   </h4>
-                  <p className="text-xs text-slate-500 font-semibold">{selectedTxnReceipt.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">{selectedTxnReceipt.title}</p>
                 </div>
               </div>
 
               {/* Receipt Details Table */}
-              <div className="p-4 bg-slate-50 rounded-2xl border-2 border-slate-200 space-y-2.5 text-xs my-4">
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border-2 border-slate-200 dark:border-slate-700 space-y-2.5 text-xs my-4">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-semibold">Transaction ID:</span>
-                  <span className="font-mono font-bold text-slate-900">{selectedTxnReceipt.id}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold">Transaction ID:</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedTxnReceipt.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-semibold">Bank UTR Reference:</span>
-                  <span className="font-mono font-bold text-slate-900">{selectedTxnReceipt.utr || 'NPCI-984712093847'}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold">Bank UTR Reference:</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedTxnReceipt.utr || 'NPCI-984712093847'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-semibold">Payment Mode:</span>
-                  <span className="font-black text-emerald-700">{selectedTxnReceipt.mode}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-semibold">Payment Mode:</span>
+                  <span className="font-black text-emerald-700 dark:text-emerald-400">{selectedTxnReceipt.mode}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-semibold">Date & Time:</span>

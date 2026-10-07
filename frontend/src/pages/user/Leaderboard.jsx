@@ -130,14 +130,14 @@ const Leaderboard = () => {
         </div>
 
         {/* Tab Controls & Search */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveTab('individual')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'individual'
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
               }`}
             >
               <FaTrophy className="w-4 h-4 text-amber-400" />
@@ -145,10 +145,10 @@ const Leaderboard = () => {
             </button>
             <button
               onClick={() => setActiveTab('societies')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'societies'
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
               }`}
             >
               <FaUsers className="w-4 h-4" />
@@ -156,10 +156,10 @@ const Leaderboard = () => {
             </button>
             <button
               onClick={() => setActiveTab('badges')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === 'badges'
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
               }`}
             >
               <Award className="w-4 h-4" />
@@ -170,7 +170,7 @@ const Leaderboard = () => {
           <div className="flex items-center gap-2">
             <button 
               onClick={fetchLeaderboard}
-              className="p-2.5 rounded-xl bg-slate-50 text-slate-600 hover:text-emerald-600 border border-slate-200 text-xs transition"
+              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 text-xs transition cursor-pointer"
               title="Refresh Live Data"
             >
               <FaSyncAlt className={loading ? 'animate-spin' : ''} />
@@ -182,7 +182,7 @@ const Leaderboard = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search user name..."
-                className="pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-emerald-500 w-full sm:w-48"
+                className="pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 w-full sm:w-48"
               />
             </div>
           </div>
@@ -199,23 +199,23 @@ const Leaderboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
                 
                 {/* Rank 2 (Silver) */}
-                <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm order-2 md:order-1 flex flex-col items-center text-center space-y-3 relative">
-                  <span className="px-3 py-0.5 rounded-full bg-slate-200 text-slate-800 text-xs font-black shadow-xs">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm order-2 md:order-1 flex flex-col items-center text-center space-y-3 relative">
+                  <span className="px-3 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-black shadow-xs">
                     #2 Silver Recycler
                   </span>
                   <img 
                     src={getAvatarUrl(top3[1].avatar, top3[1].name)} 
                     onError={(e) => handleAvatarError(e, top3[1].name)}
                     alt={top3[1].name} 
-                    className="w-16 h-16 rounded-full object-cover ring-4 ring-slate-200 shadow-md" 
+                    className="w-16 h-16 rounded-full object-cover ring-4 ring-slate-200 dark:ring-slate-700 shadow-md" 
                   />
                   <div>
-                    <h3 className="font-extrabold text-slate-800 text-base">{top3[1].name}</h3>
-                    <p className="text-xs text-slate-400 font-bold">{top3[1].tier || 'Eco Hero'}</p>
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{top3[1].name}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">{top3[1].tier || 'Eco Hero'}</p>
                   </div>
-                  <div className="w-full p-2.5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-around text-xs font-bold">
-                    <span className="text-slate-600">{(top3[1].recycledKg || top3[1].points * 0.15).toFixed(1)} kg</span>
-                    <span className="text-emerald-600 font-black">+{(top3[1].points || 0).toLocaleString()} pts</span>
+                  <div className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 flex justify-around text-xs font-bold">
+                    <span className="text-slate-700 dark:text-slate-300">{(top3[1].recycledKg || top3[1].points * 0.15).toFixed(1)} kg</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">+{(top3[1].points || 0).toLocaleString()} pts</span>
                   </div>
                 </div>
 
@@ -243,23 +243,23 @@ const Leaderboard = () => {
                 </div>
 
                 {/* Rank 3 (Bronze) */}
-                <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm order-3 md:order-3 flex flex-col items-center text-center space-y-3 relative">
-                  <span className="px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-black border border-amber-200">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm order-3 md:order-3 flex flex-col items-center text-center space-y-3 relative">
+                  <span className="px-3 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-black border border-amber-200 dark:border-amber-800">
                     #3 Bronze Recycler
                   </span>
                   <img 
                     src={getAvatarUrl(top3[2].avatar, top3[2].name)} 
                     onError={(e) => handleAvatarError(e, top3[2].name)}
                     alt={top3[2].name} 
-                    className="w-16 h-16 rounded-full object-cover ring-4 ring-amber-200 shadow-md" 
+                    className="w-16 h-16 rounded-full object-cover ring-4 ring-amber-200 dark:ring-amber-900 shadow-md" 
                   />
                   <div>
-                    <h3 className="font-extrabold text-slate-800 text-base">{top3[2].name}</h3>
-                    <p className="text-xs text-slate-400 font-bold">{top3[2].tier || 'Planet Saver'}</p>
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base">{top3[2].name}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-bold">{top3[2].tier || 'Planet Saver'}</p>
                   </div>
-                  <div className="w-full p-2.5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-around text-xs font-bold">
-                    <span className="text-slate-600">{(top3[2].recycledKg || top3[2].points * 0.15).toFixed(1)} kg</span>
-                    <span className="text-emerald-600 font-black">+{(top3[2].points || 0).toLocaleString()} pts</span>
+                  <div className="w-full p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 flex justify-around text-xs font-bold">
+                    <span className="text-slate-700 dark:text-slate-300">{(top3[2].recycledKg || top3[2].points * 0.15).toFixed(1)} kg</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">+{(top3[2].points || 0).toLocaleString()} pts</span>
                   </div>
                 </div>
 
@@ -267,13 +267,13 @@ const Leaderboard = () => {
             )}
 
             {/* Real User Leaderboard Full List */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <h3 className="font-extrabold text-base text-slate-800 flex items-center gap-2">
-                  <FaTrophy className="w-4 h-4 text-emerald-600" />
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <FaTrophy className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   Real-Time Verified Eco-Warriors
                 </h3>
-                <span className="text-xs text-slate-400 font-semibold">Live Socket Sync Active</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Live Socket Sync Active</span>
               </div>
 
               <div className="space-y-2.5 pt-1">
@@ -284,16 +284,16 @@ const Leaderboard = () => {
                       key={item._id || idx}
                       className={`p-4 rounded-2xl flex items-center justify-between transition-all ${
                         isMe 
-                          ? 'bg-emerald-50 border-2 border-emerald-500/50 shadow-sm' 
-                          : 'bg-slate-50 hover:bg-slate-100/80 border border-slate-100'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500/50 shadow-sm' 
+                          : 'bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-750'
                       }`}
                     >
                       <div className="flex items-center gap-3.5">
                         <span className={`w-8 h-8 rounded-xl font-black text-xs flex items-center justify-center ${
                           item.rank === 1 ? 'bg-amber-400 text-slate-950' :
-                          item.rank === 2 ? 'bg-slate-300 text-slate-900' :
+                          item.rank === 2 ? 'bg-slate-300 dark:bg-slate-700 text-slate-900 dark:text-white' :
                           item.rank === 3 ? 'bg-amber-700 text-white' :
-                          'bg-slate-200 text-slate-700'
+                          'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}>
                           {item.rank}
                         </span>
@@ -306,21 +306,21 @@ const Leaderboard = () => {
                         />
 
                         <div>
-                          <h4 className="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                          <h4 className="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
                             <span>{item.name}</span>
                             {isMe && (
                               <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-black">YOU</span>
                             )}
                           </h4>
-                          <span className="text-xs text-slate-400 font-medium block">
+                          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
                             {item.badge || '🌱 Eco Citizen'} • {item.recycledKg || (item.points * 0.15).toFixed(1)} kg Verified
                           </span>
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <span className="text-base font-black text-emerald-700 block">+{(item.points || 0).toLocaleString()} pts</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.tier || 'Eco Warrior'}</span>
+                        <span className="text-base font-black text-emerald-600 dark:text-emerald-400 block">+{(item.points || 0).toLocaleString()} pts</span>
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{item.tier || 'Eco Warrior'}</span>
                       </div>
                     </div>
                   );
@@ -337,35 +337,35 @@ const Leaderboard = () => {
         {activeTab === 'societies' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredSocieties.map((soc) => (
-              <div key={soc.rank} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
+              <div key={soc.rank} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className={`w-8 h-8 rounded-xl text-xs font-black flex items-center justify-center ${
-                    soc.rank === 1 ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 text-slate-700'
+                    soc.rank === 1 ? 'bg-amber-400 text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                   }`}>
                     #{soc.rank}
                   </span>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-100">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800">
                     {soc.badge}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="font-black text-slate-800 text-base">{soc.name}</h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{soc.area} • {soc.members} Households</p>
+                  <h3 className="font-black text-slate-900 dark:text-white text-base">{soc.name}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{soc.area} • {soc.members} Households</p>
                 </div>
 
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 space-y-2 text-xs">
                   <div className="flex justify-between font-bold">
-                    <span className="text-slate-500">Total Waste:</span>
-                    <span className="text-slate-800 font-black">{(soc.totalKg || 0).toLocaleString()} KG</span>
+                    <span className="text-slate-500 dark:text-slate-400">Total Waste:</span>
+                    <span className="text-slate-900 dark:text-white font-black">{(soc.totalKg || 0).toLocaleString()} KG</span>
                   </div>
                   <div className="flex justify-between font-bold">
-                    <span className="text-slate-500">Purity Score:</span>
-                    <span className="text-emerald-600 font-black">{soc.purity}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Purity Score:</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">{soc.purity}</span>
                   </div>
-                  <div className="flex justify-between font-bold pt-1 border-t border-slate-200">
-                    <span className="text-slate-500">Reward Pool:</span>
-                    <span className="text-emerald-700 font-black">+{(soc.points || 0).toLocaleString()} pts</span>
+                  <div className="flex justify-between font-bold pt-1 border-t border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400">Reward Pool:</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">+{(soc.points || 0).toLocaleString()} pts</span>
                   </div>
                 </div>
               </div>
@@ -383,23 +383,23 @@ const Leaderboard = () => {
                 key={b.id} 
                 className={`rounded-3xl p-6 border transition flex items-start gap-4 ${
                   b.unlocked 
-                    ? 'bg-white border-slate-100 shadow-sm hover:shadow-md' 
-                    : 'bg-slate-50/80 border-dashed border-slate-200 opacity-60'
+                    ? 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md' 
+                    : 'bg-slate-50/80 dark:bg-slate-850/80 border-dashed border-slate-200 dark:border-slate-700 opacity-60'
                 }`}
               >
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0 border border-emerald-100 shadow-xs">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl flex-shrink-0 border border-emerald-100 dark:border-emerald-800 shadow-xs">
                   {b.icon}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-extrabold text-slate-800 text-sm">{b.name}</h4>
+                    <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">{b.name}</h4>
                     {b.unlocked ? (
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Unlocked</span>
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">Unlocked</span>
                     ) : (
-                      <span className="text-[10px] font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">Locked</span>
+                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full">Locked</span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">{b.desc}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{b.desc}</p>
                   <span className="text-[10px] font-bold text-slate-400 mt-2 block">
                     {b.unlocked ? `Achieved on ${b.date}` : `Progress: ${b.progress}`}
                   </span>

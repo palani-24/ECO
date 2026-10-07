@@ -131,7 +131,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/60 dark:bg-slate-900/65 backdrop-blur-2xl border-b border-white/85 dark:border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.95)] transition-colors duration-300">
+      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#0c1524]/95 backdrop-blur-xl border-b border-slate-200/90 dark:border-slate-800/90 shadow-2xs transition-colors duration-300">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
@@ -141,14 +141,12 @@ const Navbar = () => {
               className="flex items-center space-x-2.5 flex-shrink-0 group" 
               onClick={() => setIsOpen(false)}
             >
-              <img 
-                src="/app-logo.png" 
-                alt="EcoReward Official Logo" 
-                className="h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain shadow-sm group-hover:scale-105 transition-transform" 
-              />
-              <div className="hidden sm:flex flex-col border-l border-slate-300 dark:border-slate-700/60 pl-2.5 ml-1">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 leading-none">EcoReward</span>
-                <span className="text-[8px] font-mono text-slate-500 dark:text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-lg shadow-sm">
+                <FaLeaf className="transform -rotate-12" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white leading-none">ECOREWARD</span>
+                <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
               </div>
             </Link>
 
@@ -164,37 +162,12 @@ const Navbar = () => {
                 </div>
 
                 <div className="hidden md:flex items-center space-x-3">
-                  {/* Global Command Palette Trigger (Ctrl + K) */}
-                  <button
-                    type="button"
-                    onClick={() => setShowCommandPalette(true)}
-                    className="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-slate-300/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer transition shadow-xs"
-                    title="Search Districts, Actions & Portals (Ctrl + K)"
-                  >
-                    <FaSearch className="text-emerald-500 text-xs" />
-                    <span className="text-[11px]">Search</span>
-                    <span className="text-[10px] font-mono font-bold bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600">
-                      Ctrl K
-                    </span>
-                  </button>
-
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="relative flex items-center p-1 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800/90 dark:hover:bg-slate-800 border border-slate-300/80 dark:border-slate-700/80 transition-all shadow-sm group"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition"
                     title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
-                    aria-label="Toggle Theme"
                   >
-                    <div className="flex items-center space-x-1.5 px-2 py-0.5">
-                      <div className={`p-1 rounded-full transition-all duration-300 ${!darkMode ? 'bg-amber-400 text-slate-950 shadow-[0_0_10px_rgba(251,191,36,0.8)] scale-110' : 'text-slate-400 opacity-60'}`}>
-                        <FaSun className="h-3 w-3" />
-                      </div>
-                      <div className={`p-1 rounded-full transition-all duration-300 ${darkMode ? 'bg-emerald-400 text-slate-950 shadow-[0_0_10px_rgba(52,211,153,0.8)] scale-110' : 'text-slate-400 opacity-60'}`}>
-                        <FaMoon className="h-3 w-3" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider font-mono pr-1 text-slate-700 dark:text-slate-200">
-                        {darkMode ? 'Dark' : 'Light'}
-                      </span>
-                    </div>
+                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
                   </button>
 
                   {user ? (
@@ -218,137 +191,96 @@ const Navbar = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Mobile Header Controls */}
-                <div className="flex md:hidden items-center space-x-2">
-                  <button 
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-amber-400 shadow-sm transition-all"
-                    aria-label="Toggle Theme"
-                  >
-                    {darkMode ? <FaSun className="h-4 w-4 text-amber-400" /> : <FaMoon className="h-4 w-4 text-slate-700" />}
-                  </button>
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="p-2 rounded-xl bg-emerald-600 text-white font-bold"
-                    aria-label="Open Navigation Menu"
-                  >
-                    {isOpen ? <FaTimes className="h-4 w-4" /> : <FaBars className="h-4 w-4" />}
-                  </button>
-                </div>
               </>
             ) : (
               
               /* DASHBOARD HEADER LAYOUT */
               <div className="flex-1 flex items-center justify-between ml-3 sm:ml-6 min-w-0">
                 
-                {/* Desktop Search Bar (Rounded Pill matching screenshot) */}
+                {/* Desktop Search Bar */}
                 <div 
                   onClick={() => setShowCommandPalette(true)}
-                  className="hidden sm:relative sm:block w-56 md:w-72 lg:w-80 cursor-pointer group"
+                  className="hidden sm:relative sm:block w-64 md:w-80 lg:w-96 cursor-pointer group"
                 >
                   <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 group-hover:text-emerald-500 text-xs transition-colors" />
                   <input
                     type="text"
                     readOnly
                     onClick={() => setShowCommandPalette(true)}
-                    placeholder="Search anything... (Ctrl + K)"
-                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 hover:bg-slate-200/60 dark:bg-slate-800 dark:hover:bg-slate-700/60 rounded-full text-xs font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all border border-slate-200/80 dark:border-slate-700 shadow-2xs cursor-pointer"
+                    placeholder="Search pickups, points, locations, recyclables... (Ctrl + K)"
+                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 hover:bg-slate-200/60 dark:bg-slate-800/80 dark:hover:bg-slate-700/60 rounded-full text-xs font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all border border-slate-200/90 dark:border-slate-700 shadow-2xs cursor-pointer"
                   />
                 </div>
 
                 {/* Header Right Action Controls */}
                 <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
                   
-                  {/* Tamil Nadu District Selector Pill Button */}
+                  {/* Location Selector Pill */}
                   <button
                     type="button"
                     onClick={() => {
                       triggerHaptic(20);
                       if (openDistrictModal) openDistrictModal();
                     }}
-                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 rounded-full border border-slate-200/90 dark:border-slate-700 text-xs font-bold cursor-pointer active:scale-95 transition shadow-2xs"
+                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 rounded-full border border-slate-200/90 dark:border-slate-700 text-xs font-bold cursor-pointer active:scale-95 transition shadow-2xs"
                     title="Select Location (38 Districts)"
                   >
-                    <FaMapMarkerAlt className="text-slate-800 dark:text-emerald-400 text-xs shrink-0" />
+                    <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-xs shrink-0" />
                     <span className="truncate">{currentDistrict?.name || 'Coimbatore'}</span>
                     <span className="text-[10px] text-slate-500">⌵</span>
                   </button>
 
-                  {/* QR Scan Button (Green Soft Pill) */}
-                  <button
-                    onClick={() => {
-                      triggerHaptic(40);
-                      setShowQRScanner(true);
-                    }}
-                    className="px-3 py-1.5 bg-[#ecfdf5] hover:bg-[#d1fae5] text-[#059669] rounded-xl text-xs font-bold border border-[#a7f3d0] flex items-center space-x-1.5 transition-all shadow-2xs cursor-pointer"
-                    title="Scan QR Code"
+                  {/* Sun / Moon Theme Toggle Button */}
+                  <button 
+                    onClick={() => setDarkMode(!darkMode)}
+                    className="p-2 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all cursor-pointer shadow-2xs"
+                    aria-label="Toggle Theme"
+                    title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
                   >
-                    <FaQrcode className="h-3.5 w-3.5 text-[#059669]" />
-                    <span className="hidden sm:inline font-black">QR Scan</span>
+                    {darkMode ? (
+                      <FaSun className="h-3.5 w-3.5 text-amber-400 animate-spin-slow" />
+                    ) : (
+                      <FaMoon className="h-3.5 w-3.5 text-slate-700" />
+                    )}
                   </button>
 
-                  {/* Notifications Bell with Red Badge "1" */}
+                  {/* Notifications Bell with Red Badge "3" */}
                   {user && (
                     <button 
                       onClick={() => {
                         triggerHaptic(30);
                         requestPushPermission(addToast);
                       }}
-                      className="p-2 bg-slate-100/90 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 rounded-full text-xs relative transition-colors cursor-pointer shadow-2xs"
+                      className="p-2 bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 rounded-full text-xs relative transition-colors cursor-pointer shadow-2xs border border-slate-200/80 dark:border-slate-700"
                       title="Notifications"
                     >
                       <FaBell className="h-3.5 w-3.5 text-slate-700 dark:text-slate-200" />
-                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-rose-500 text-white rounded-full text-[8px] font-black flex items-center justify-center ring-2 ring-white">
-                        1
+                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-rose-500 text-white rounded-full text-[8px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                        3
                       </span>
                     </button>
                   )}
 
-                  {/* Light / Dark Mode Toggle Pill */}
-                  <button 
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="p-1 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-2xs flex items-center space-x-1 text-xs transition-all cursor-pointer"
-                    aria-label="Toggle Theme"
-                    title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
-                  >
-                    <div className="flex items-center space-x-1 px-1.5 py-0.5">
-                      <span className="text-[11px] flex items-center gap-1 font-bold bg-[#fefce8] text-[#854d0e] px-2 py-0.5 rounded-full border border-[#fef08a] shadow-2xs">
-                        <FaSun className="h-2.5 w-2.5 text-amber-500" />
-                        <span>Light</span>
-                      </span>
-                      <span className="p-1 rounded-full text-slate-400">
-                        <FaMoon className="h-2.5 w-2.5" />
-                      </span>
-                    </div>
-                  </button>
-
-                  {/* User Profile Avatar & Name with Caret */}
+                  {/* User Profile Pill matching screenshot: Palani Citizen Account ⌵ */}
                   {user && (
                     <button 
                       type="button"
                       onClick={() => setIsOpen(prev => !prev)}
-                      className="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-800 hover:opacity-90 transition-opacity cursor-pointer"
+                      className="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-white transition cursor-pointer shadow-2xs"
                       title="Toggle Portal Navigation Menu"
                     >
-                      <div className="relative">
-                        <img 
-                          src={getAvatarUrl(user, user?.name)} 
-                          onError={(e) => handleAvatarError(e, user?.name)}
-                          alt="User Avatar" 
-                          className="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/50 shadow-xs"
-                        />
-                        <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1 ring-white"></span>
+                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xs font-black shadow-xs ring-1 ring-emerald-500/40">
+                        <FaLeaf className="h-3 w-3" />
                       </div>
                       <div className="hidden lg:flex flex-col text-left">
                         <span className="font-black text-slate-900 dark:text-white text-xs leading-none">
                           {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-semibold leading-none mt-0.5 flex items-center gap-0.5">
-                          <span className="capitalize">{user.role || 'Citizen'}</span>
-                          <span className="text-[9px]">⌵</span>
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold leading-none mt-0.5">
+                          Citizen Account
                         </span>
                       </div>
+                      <span className="text-[10px] text-slate-400">⌵</span>
                     </button>
                   )}
 

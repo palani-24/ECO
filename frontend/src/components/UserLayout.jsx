@@ -22,27 +22,27 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
     : null;
 
   return (
-    <div className="relative min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="relative min-h-screen bg-[#f3f6fa] dark:bg-[#070e18] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🎬 Cinematic Background Image Layer */}
+      {/* 🎬 Background Image Layer (Subtle in light mode for max card readability, deep in dark mode) */}
       <div 
         key={bg.image}
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-all duration-700 ease-in-out"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-all duration-700 ease-in-out opacity-20 dark:opacity-35"
         style={{
           backgroundImage: `url('${bg.image}')`,
           backgroundAttachment: 'fixed',
-          filter: bg.blur || 'brightness(1.02) saturate(1.05)'
+          filter: bg.blur || 'brightness(1.0) saturate(1.1)'
         }}
       />
 
-      {/* 🌑 Cinematic Edge Vignette (dark outer, bright center) */}
+      {/* 🌑 Dual Theme Ambient Vignette Overlay */}
       {isCinematic ? (
         <div
-          className="fixed inset-0 pointer-events-none z-0 transition-all duration-700"
+          className="fixed inset-0 pointer-events-none z-0 transition-all duration-700 dark:block hidden"
           style={vignetteStyle}
         />
       ) : (
-        <div className={`fixed inset-0 ${bg.overlay || 'bg-gradient-to-b from-white/20 via-transparent to-slate-900/10 dark:to-slate-950/40'} pointer-events-none z-0 transition-all duration-700`} />
+        <div className={`fixed inset-0 ${bg.overlay || 'bg-gradient-to-b from-white/10 via-transparent to-slate-900/10 dark:to-slate-950/40'} pointer-events-none z-0 transition-all duration-700`} />
       )}
 
       {/* 🔮 Ambient Glow Orbs */}

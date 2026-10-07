@@ -180,42 +180,42 @@ const ESGCorporatePortal = () => {
         {/* 4-KPI ESG Key Metrics Row */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 text-xl font-bold">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 text-xl font-bold">
               <Leaf className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{data.co2OffsetTons} Tons</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{data.co2OffsetTons} Tons</div>
               <div className="text-[11px] font-bold text-slate-400 uppercase mt-0.5">CO₂ Carbon Abated</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0 text-xl font-bold">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center flex-shrink-0 text-xl font-bold">
               <Droplets className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{(data.waterConservedLiters || 48900).toLocaleString()} L</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{(data.waterConservedLiters || 48900).toLocaleString()} L</div>
               <div className="text-[11px] font-bold text-slate-400 uppercase mt-0.5">Fresh Water Saved</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xl font-bold">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 text-xl font-bold">
               <Zap className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{(data.cleanEnergyKwh || 12450).toLocaleString()} kWh</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{(data.cleanEnergyKwh || 12450).toLocaleString()} kWh</div>
               <div className="text-[11px] font-bold text-slate-400 uppercase mt-0.5">Clean Energy Conserved</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center flex-shrink-0 text-xl font-bold">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center flex-shrink-0 text-xl font-bold">
               <TreePine className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xl sm:text-2xl font-black text-slate-800">{data.treesSavedCount} Trees</div>
+              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{data.treesSavedCount} Trees</div>
               <div className="text-[11px] font-bold text-slate-400 uppercase mt-0.5">Forest Equivalent</div>
             </div>
           </div>
@@ -223,37 +223,37 @@ const ESGCorporatePortal = () => {
         </div>
 
         {/* Scope 1, 2, 3 Greenhouse Gas Protocol Section */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="font-extrabold text-base text-slate-800 flex items-center gap-2">
-                <Globe className="w-5 h-5 text-emerald-600" />
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Greenhouse Gas (GHG) Protocol Scope 1, 2 & 3 Ledger
               </h3>
               <p className="text-xs text-slate-400 mt-0.5">Verified carbon abatement methodology aligned with IPCC guidelines</p>
             </div>
-            <span className="px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full font-bold text-xs border border-emerald-200 self-start sm:self-auto">
+            <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 rounded-full font-bold text-xs border border-emerald-200 dark:border-emerald-800 self-start sm:self-auto">
               Diversion Rate: {data.landfillDiversionRate}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 space-y-2">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Scope 1 (Direct Emissions)</span>
-              <div className="text-base font-black text-slate-800">{data.scopeEmissions.scope1Direct}</div>
-              <p className="text-xs text-slate-500">Methane prevented from open dump decomposing.</p>
+              <div className="text-base font-black text-slate-900 dark:text-white">{data.scopeEmissions.scope1Direct}</div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Methane prevented from open dump decomposing.</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 space-y-2">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Scope 2 (Indirect Fleet)</span>
-              <div className="text-base font-black text-slate-800">{data.scopeEmissions.scope2Indirect}</div>
-              <p className="text-xs text-slate-500">Electric Vehicle (EV) tipper routing efficiency.</p>
+              <div className="text-base font-black text-slate-900 dark:text-white">{data.scopeEmissions.scope2Indirect}</div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Electric Vehicle (EV) tipper routing efficiency.</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 space-y-2">
-              <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block">Scope 3 (Avoided Product Life-cycle)</span>
-              <div className="text-base font-black text-emerald-900">{data.scopeEmissions.scope3Avoided}</div>
-              <p className="text-xs text-emerald-700">Virgin plastic & aluminum extraction avoided.</p>
+            <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 space-y-2">
+              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider block">Scope 3 (Avoided Product Life-cycle)</span>
+              <div className="text-base font-black text-emerald-900 dark:text-emerald-200">{data.scopeEmissions.scope3Avoided}</div>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400">Virgin plastic & aluminum extraction avoided.</p>
             </div>
           </div>
         </div>
@@ -262,43 +262,43 @@ const ESGCorporatePortal = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Left 2 Cols: UN SDG Alignment */}
-          <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
-            <h3 className="font-extrabold text-base text-slate-800 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-teal-600" />
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+            <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-teal-600 dark:text-teal-400" />
               United Nations Sustainable Development Goals (SDGs) Compliance
             </h3>
 
             <div className="space-y-3 pt-1">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-slate-800">SDG 11: Sustainable Cities & Communities</h4>
-                  <p className="text-xs text-slate-500">100% municipal ward waste segregation and zero roadside blackspots.</p>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">SDG 11: Sustainable Cities & Communities</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">100% municipal ward waste segregation and zero roadside blackspots.</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-black text-emerald-600 block">98% Met</span>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Achieved</span>
+                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 block">98% Met</span>
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded">Achieved</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-slate-800">SDG 12: Responsible Consumption & Production</h4>
-                  <p className="text-xs text-slate-500">Traceable circular economy lifecycle across 6 recyclable streams.</p>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">SDG 12: Responsible Consumption & Production</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Traceable circular economy lifecycle across 6 recyclable streams.</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-black text-emerald-600 block">94% Met</span>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Target Met</span>
+                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 block">94% Met</span>
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded">Target Met</span>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-slate-800">SDG 13: Climate Action (GHG Abatement)</h4>
-                  <p className="text-xs text-slate-500">Active carbon credit minting and verified industrial offset logs.</p>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">SDG 13: Climate Action (GHG Abatement)</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Active carbon credit minting and verified industrial offset logs.</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-black text-emerald-600 block">96% Met</span>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Gold Level</span>
+                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 block">96% Met</span>
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded">Gold Level</span>
                 </div>
               </div>
             </div>
@@ -319,13 +319,13 @@ const ESGCorporatePortal = () => {
             <div className="space-y-3 pt-2">
               <button
                 onClick={() => setShowBulkModal(true)}
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl text-xs font-extrabold transition shadow-lg"
+                className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-2xl text-xs font-extrabold transition shadow-lg cursor-pointer"
               >
                 + Schedule Bulk Pickup
               </button>
               <button
                 onClick={() => setShowCertModal(true)}
-                className="w-full py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition border border-white/20"
+                className="w-full py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition border border-white/20 cursor-pointer"
               >
                 View ISO 14001 Certificate
               </button>
@@ -338,20 +338,20 @@ const ESGCorporatePortal = () => {
 
       {/* Bulk Audit Scheduler Modal */}
       {showBulkModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200 dark:border-slate-800">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-800">Schedule Commercial Bulk Pickup</h3>
-              <button onClick={() => setShowBulkModal(false)} className="text-slate-400 p-1.5 rounded-full hover:bg-slate-100">✕</button>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Schedule Commercial Bulk Pickup</h3>
+              <button onClick={() => setShowBulkModal(false)} className="text-slate-400 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">✕</button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Waste Stream Category</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-200 block mb-1">Waste Stream Category</label>
                 <select 
                   value={bulkCategory} 
                   onChange={(e) => setBulkCategory(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-500"
                 >
                   <option>Bulk E-Waste & IT Equipment</option>
                   <option>Commercial Carton & Paper Scrap</option>
@@ -361,21 +361,21 @@ const ESGCorporatePortal = () => {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Estimated Quantity (Kg)</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-200 block mb-1">Estimated Quantity (Kg)</label>
                 <input 
                   type="number"
                   value={bulkWeightEst}
                   onChange={(e) => setBulkWeightEst(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Pickup Frequency</label>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-200 block mb-1">Pickup Frequency</label>
                 <select 
                   value={pickupFrequency} 
                   onChange={(e) => setPickupFrequency(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-500"
                 >
                   <option>One-Time On-Demand</option>
                   <option>Weekly Recurring</option>
@@ -385,13 +385,13 @@ const ESGCorporatePortal = () => {
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
-              <button onClick={() => setShowBulkModal(false)} className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+              <button onClick={() => setShowBulkModal(false)} className="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer">Cancel</button>
               <button 
                 onClick={() => {
                   addToast(`Bulk pickup request for ${bulkWeightEst} kg scheduled! Driver will contact for dispatch.`, 'success', 'Pickup Scheduled');
                   setShowBulkModal(false);
                 }}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition"
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
               >
                 Confirm Booking
               </button>

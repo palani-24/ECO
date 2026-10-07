@@ -6,7 +6,7 @@ import {
   FaClipboardList, FaChartLine, FaTruck, FaUsers, FaCogs, FaTicketAlt,
   FaCoins, FaTrophy, FaQuestionCircle, FaLeaf, FaClock, FaLock, FaComments, 
   FaStore, FaBars, FaTimes, FaRecycle, FaEllipsisH, FaBuilding,
-  FaMapPin, FaExclamationTriangle
+  FaMapPin, FaExclamationTriangle, FaCamera, FaGraduationCap
 } from 'react-icons/fa';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
@@ -39,14 +39,17 @@ const Sidebar = () => {
   const customerLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: FaChartLine },
     { path: '/schedule-pickup', label: 'Book a Pickup', icon: FaCalendarAlt, badge: 'FAST' },
+    { path: '/my-pickups?track=live', label: 'Live Tracking', icon: FaMapPin, badge: 'LIVE' },
     { path: '/my-pickups', label: 'My Pickups & History', icon: FaClipboardList },
     { path: '/redeem', label: 'Wallet & Points', icon: FaCoins },
     { path: '/store', label: 'Eco-Store', icon: FaStore, badge: 'NEW' },
+    { path: '/dashboard?action=scanner', label: 'Waste Scanner', icon: FaCamera, badge: 'AI' },
     { path: '/report-dump', label: 'Report Roadside Dump', icon: FaExclamationTriangle, badge: 'ALERT' },
-    { path: '/support', label: 'Helpdesk & Messages', icon: FaComments, badge: 'HELP' },
-    { path: '/leaderboard', label: 'Leaderboard', icon: FaTrophy },
-    { path: '/esg-portal', label: 'ESG Portal', icon: FaBuilding, badge: 'PRO' },
-    { path: '/profile', label: 'My Profile', icon: FaUser },
+    { path: '/challenges', label: 'Challenges & Leaderboard', icon: FaTrophy },
+    { path: '/support', label: 'Eco Education', icon: FaGraduationCap, badge: 'LEARN' },
+    { path: '/community', label: 'Community', icon: FaUsers },
+    { path: '/esg-portal', label: 'Carbon Footprint', icon: FaLeaf, badge: 'TRACK' },
+    { path: '/profile', label: 'Settings', icon: FaCogs },
   ];
 
   const driverLinks = [
@@ -145,11 +148,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Clean Bright Luminous Glassmorphic Navigation Panel) */}
-      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl glass-bright flex flex-col justify-between p-3.5 text-slate-800 dark:text-slate-100 transition-all select-none">
+      {/* Desktop Sidebar (Clean Dual-Theme High-Contrast Navigation Panel) */}
+      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white dark:bg-[#0c1524] border border-slate-200/90 dark:border-slate-800/90 shadow-sm flex flex-col justify-between p-3.5 text-slate-900 dark:text-slate-100 transition-all select-none">
         
-        {/* User Profile Quick Executive Glass Card */}
-        <div className="shrink-0 p-3 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/95 dark:border-white/15 rounded-2xl flex flex-col gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.03),inset_0_1px_1px_rgba(255,255,255,0.95)] relative overflow-hidden group">
+        {/* User Profile Quick Card */}
+        <div className="shrink-0 p-3 bg-slate-50/90 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-800 rounded-2xl flex flex-col gap-2 shadow-2xs relative overflow-hidden group">
           <div className="flex items-center space-x-2.5 relative z-10">
             <div className="relative shrink-0">
               <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-emerald-500/25 overflow-hidden">
@@ -183,32 +186,32 @@ const Sidebar = () => {
 
             <div className="text-right shrink-0">
               <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg block border border-emerald-500/20 shadow-2xs">
-                {isDriver ? '★ 4.9' : isAdmin ? 'ROOT' : isMunicipality ? 'GOV' : `${user.points || 2392} pts`}
+                {isDriver ? '★ 4.9' : isAdmin ? 'ROOT' : isMunicipality ? 'GOV' : '2634 pts'}
               </span>
             </div>
           </div>
 
           {/* Mini Eco Level Tier Strip */}
-          <div className="pt-1.5 border-t border-slate-200/50 dark:border-slate-700/50 space-y-1">
+          <div className="pt-1.5 border-t border-slate-200/80 dark:border-slate-800 space-y-1">
             <div className="flex items-center justify-between text-[10px] font-bold">
               <span className="text-emerald-600 dark:text-emerald-400 font-black flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                {isDriver ? 'Tier 1 EV Pilot' : isAdmin ? 'Clearance Level 5' : isMunicipality ? 'Zone Commander' : 'Level 4 Citizen'}
+                {isDriver ? 'Tier 1 EV Pilot' : isAdmin ? 'Clearance Level 5' : isMunicipality ? 'Zone Commander' : 'Level 6 Citizen'}
               </span>
-              <span className="text-slate-600 dark:text-slate-400 font-extrabold text-[9px] bg-slate-100/80 dark:bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-200/60 dark:border-slate-700/60">
-                {isDriver ? '98% On-Time' : isAdmin ? 'Online' : isMunicipality ? 'Ward 12' : '77% to Lvl 5'}
+              <span className="text-slate-600 dark:text-slate-400 font-extrabold text-[9px] bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                {isDriver ? '98% On-Time' : isAdmin ? 'Online' : isMunicipality ? 'Ward 12' : '777 to Level 7'}
               </span>
             </div>
-            <div className="w-full bg-slate-200/60 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-200/80 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
                 className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" 
-                style={{ width: isDriver ? '92%' : '77%' }}
+                style={{ width: isDriver ? '92%' : '78%' }}
               ></div>
             </div>
           </div>
         </div>
 
-        {/* Middle Scrollable Section (Links + Mini Stats Card: Smoothly scrolls if window is small) */}
+        {/* Middle Scrollable Section */}
         <div className="flex-1 min-h-0 overflow-y-auto pr-1 my-2 space-y-1 scrollbar-thin scrollbar-thumb-slate-200">
           <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-500 px-3 block mb-1">
             Portal Menu
@@ -224,20 +227,22 @@ const Sidebar = () => {
                 className={
                   `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                     active
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 border border-transparent'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent'
                   }`
                 }
               >
                 <div className="flex items-center space-x-2.5">
-                  <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
+                  <Icon className={`h-3.5 w-3.5 flex-shrink-0 ${active ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
                   <span className="truncate">{link.label}</span>
                 </div>
                 {link.badge && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black shrink-0 ${
                     active 
                       ? 'bg-white/25 text-white' 
-                      : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                      : link.badge === 'LIVE' || link.badge === 'ALERT'
+                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                      : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20'
                   }`}>
                     {link.badge}
                   </span>

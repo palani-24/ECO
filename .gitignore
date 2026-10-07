@@ -47,3 +47,4 @@ target/
 maven_bin/
 .mvn/
 bin/
+scratch/

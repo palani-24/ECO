@@ -7,14 +7,14 @@
 export const PAGE_BACKGROUNDS = {
   // 🌿 User / Citizen Routes
   '/dashboard': {
-    image: '/images/eco_portal_ambient_bg.jpg',
-    alt: 'Eco Dashboard Nature Landscape',
-    overlay: 'bg-gradient-to-b from-white/10 via-white/5 to-slate-900/20 dark:from-slate-950/30 dark:via-slate-950/15 dark:to-slate-950/45',
-    blur: 'brightness(1.05) saturate(1.15)',
+    image: '/images/cinematic_eco_dashboard_bg.jpg',
+    alt: 'Cinematic Eco Forest Dashboard Background',
+    overlay: 'bg-[radial-gradient(ellipse_at_center,_transparent_10%,_rgba(2,6,15,0.45)_60%,_rgba(2,6,15,0.75)_100%)]',
+    blur: 'brightness(0.88) saturate(1.3) contrast(1.08)',
     orbs: {
-      c1: 'bg-emerald-400/20 dark:bg-emerald-500/15',
-      c2: 'bg-teal-400/20 dark:bg-teal-500/15',
-      c3: 'bg-sky-400/15 dark:bg-emerald-600/15'
+      c1: 'bg-emerald-500/25 dark:bg-emerald-400/20',
+      c2: 'bg-teal-500/20 dark:bg-teal-400/18',
+      c3: 'bg-green-600/15 dark:bg-emerald-700/20'
     }
   },
   '/schedule-pickup': {

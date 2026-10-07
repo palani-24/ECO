@@ -10,10 +10,21 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
   const location = useLocation();
   const bg = getPageBackground(location.pathname, bgImage);
 
+  // Detect cinematic mode (overlay starts with bg-[radial-gradient or is raw CSS)
+  const isCinematic = bg.overlay?.startsWith('bg-[radial-gradient');
+
+  // Build inline vignette style for cinematic pages
+  const vignetteStyle = isCinematic
+    ? {
+        background:
+          'radial-gradient(ellipse at center, transparent 10%, rgba(2,6,15,0.45) 60%, rgba(2,6,15,0.78) 100%)',
+      }
+    : null;
+
   return (
     <div className="relative min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
-      {/* 🌄 Unique Per-Page High-Res Landscape Artwork */}
+      {/* 🎬 Cinematic Background Image Layer */}
       <div 
         key={bg.image}
         className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 transition-all duration-700 ease-in-out"
@@ -23,20 +34,28 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
           filter: bg.blur || 'brightness(1.02) saturate(1.05)'
         }}
       />
-      {/* 🔮 Ethereal Per-Page Ambient Glow Orbs */}
+
+      {/* 🌑 Cinematic Edge Vignette (dark outer, bright center) */}
+      {isCinematic ? (
+        <div
+          className="fixed inset-0 pointer-events-none z-0 transition-all duration-700"
+          style={vignetteStyle}
+        />
+      ) : (
+        <div className={`fixed inset-0 ${bg.overlay || 'bg-gradient-to-b from-white/20 via-transparent to-slate-900/10 dark:to-slate-950/40'} pointer-events-none z-0 transition-all duration-700`} />
+      )}
+
+      {/* 🔮 Ambient Glow Orbs */}
       <div className={`fixed top-[-10%] left-[15%] w-[500px] h-[500px] rounded-full ${bg.orbs?.c1 || 'bg-emerald-400/15 dark:bg-emerald-500/10'} blur-[120px] pointer-events-none z-0 transition-colors duration-700`} />
       <div className={`fixed top-[40%] right-[10%] w-[450px] h-[450px] rounded-full ${bg.orbs?.c2 || 'bg-teal-400/15 dark:bg-teal-500/10'} blur-[130px] pointer-events-none z-0 transition-colors duration-700`} />
       <div className={`fixed bottom-[-10%] left-[30%] w-[600px] h-[600px] rounded-full ${bg.orbs?.c3 || 'bg-sky-400/10 dark:bg-emerald-600/10'} blur-[140px] pointer-events-none z-0 transition-colors duration-700`} />
-      
-      {/* Atmospheric Soft Lighting Overlay so cards and text remain crystal clear */}
-      <div className={`fixed inset-0 ${bg.overlay || 'bg-gradient-to-b from-white/20 via-transparent to-slate-900/10 dark:to-slate-950/40'} pointer-events-none z-0 transition-all duration-700`} />
 
-      {/* 💻 Desktop Top Navbar (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      {/* 💻 Desktop Top Navbar */}
       <div className="sticky top-0 z-50 hidden md:block">
         <Navbar />
       </div>
 
-      {/* 📱 Mobile Unified Green App Header (Fixed / Sticky at Top - Does Not Move on Scroll) */}
+      {/* 📱 Mobile Header */}
       <div className="sticky top-0 z-50 block md:hidden">
         <MobileCitizenHeader />
       </div>
@@ -54,7 +73,7 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
         </main>
       </div>
 
-      {/* 📱 Mobile Unified Bottom 4-Tab Navigation & Slide-Out Drawer */}
+      {/* 📱 Mobile Bottom Nav */}
       <div className="block md:hidden">
         <MobileCitizenNav />
       </div>
@@ -64,3 +83,4 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
 };
 
 export default UserLayout;
+

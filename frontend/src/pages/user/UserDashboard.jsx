@@ -365,18 +365,18 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Modern Panoramic Eco Landscape Hero Banner with Clean Glassmorphic Design */}
-        <div className="relative overflow-hidden rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 sm:p-8 text-slate-900 dark:text-white shadow-xl shadow-emerald-950/5 min-h-[170px] flex items-center">
+        {/* Modern Panoramic Eco Landscape Hero Banner with Bright Glassmorphic Design */}
+        <div className="relative overflow-hidden rounded-3xl glass-bright p-6 sm:p-8 text-slate-900 dark:text-white min-h-[170px] flex items-center">
           {/* Panoramic Eco City Landscape Background */}
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
             style={{ 
               backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
-              filter: 'brightness(1.05) saturate(1.15)'
+              filter: 'brightness(1.08) saturate(1.2)'
             }}
           />
-          {/* Gentle translucent soft glass gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/40 dark:from-slate-900/95 dark:via-slate-900/85 dark:to-slate-900/40 pointer-events-none z-0" />
+          {/* Gentle translucent luminous soft glass gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/45 to-white/10 dark:from-slate-950/80 dark:via-slate-950/50 dark:to-transparent pointer-events-none z-0" />
 
           <div className="relative z-10 w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
             
@@ -384,14 +384,14 @@ const UserDashboard = () => {
             <div className="flex items-center space-x-4 sm:space-x-5 max-w-2xl">
               {/* Hand holding sprout asset with LVL 4 gold badge */}
               <div className="relative shrink-0">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-md border border-white/80 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-lg border border-white/95 dark:border-white/20 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md">
                   <img 
                     src="/images/hand_holding_sprout.jpg" 
                     alt="Eco Level 4 Sprout" 
                     className="w-full h-full object-cover scale-105"
                   />
                 </div>
-                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-xs">
+                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-sm">
                   LVL 4
                 </span>
               </div>
@@ -400,7 +400,7 @@ const UserDashboard = () => {
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                   Welcome back, <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-semibold">
                   Turn household scrap into verified environmental impact & instant rewards.
                 </p>
 
@@ -409,13 +409,13 @@ const UserDashboard = () => {
                   <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-xs flex items-center space-x-1">
                     <span>🌿 Eco Guardian</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-white/90 dark:border-slate-700 shadow-2xs flex items-center space-x-1">
+                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1">
                     <span>🍃 {currentDistrict?.name || 'Coimbatore'} Live AQI: 54</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/20 shadow-2xs flex items-center space-x-1">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30 shadow-2xs flex items-center space-x-1">
                     <span>🌱 Good & Clean Air</span>
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-white/90 dark:border-slate-700 shadow-2xs flex items-center space-x-1">
+                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1">
                     <span>☀️ 29°C Pleasant</span>
                   </span>
                 </div>
@@ -439,7 +439,7 @@ const UserDashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowAiScanner(true)}
-                  className="px-5 py-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs border border-white/90 dark:border-slate-700 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
+                  className="glass-bright-pill px-5 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-extrabold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
                   <FaCamera className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   <span>AI Waste Scanner</span>
@@ -452,7 +452,7 @@ const UserDashboard = () => {
                     triggerHaptic(30);
                     setShowEcoStory(true);
                   }}
-                  className="px-5 py-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-extrabold text-xs border border-white/90 dark:border-slate-700 transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
+                  className="glass-bright-pill px-5 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-extrabold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
                   <FaLeaf className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Eco Story</span>
@@ -482,7 +482,7 @@ const UserDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
           {/* Card 1: Wallet Balance & EcoPoints */}
-          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-emerald-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-emerald-400/80">
                 EcoPoints Balance
@@ -512,7 +512,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 2: Active Pickup & Status */}
-          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-sky-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-sky-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-sky-400/80">
                 Active Doorstep Pickup
@@ -572,7 +572,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 3: Carbon Diverted & Monthly Target */}
-          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-teal-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-teal-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-teal-400/80">
                 Carbon Diverted
@@ -610,7 +610,7 @@ const UserDashboard = () => {
           </div>
 
           {/* Card 4: Total Waste Recycled & Certificate */}
-          <div className="p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-lg shadow-emerald-950/5 flex flex-col justify-between space-y-4 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group">
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-amber-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-amber-400/80">
                 Total Recycled
@@ -648,7 +648,7 @@ const UserDashboard = () => {
           <div className="lg:col-span-7 space-y-6">
 
             {/* Smart Scrap Value Estimator & Live Rates */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-5">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 space-y-5">
               
               <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-4">
                 <div className="flex items-center space-x-3">
@@ -758,7 +758,7 @@ const UserDashboard = () => {
             </div>
 
             {/* 4-Bin Waste Segregation Protocol Guide */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-4">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/25">
@@ -813,7 +813,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Recent Activity Feed */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-4">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg border border-teal-500/25">
@@ -913,7 +913,7 @@ const UserDashboard = () => {
           <div className="lg:col-span-5 space-y-6">
             
             {/* Dynamic Virtual Tree Growth & Impact Progression Widget */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 relative overflow-hidden text-slate-900 dark:text-slate-100">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden text-slate-900 dark:text-slate-100">
               
               {/* Background ambient lighting */}
               <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
@@ -1042,7 +1042,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Daily Green Streak & Quests */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-lg shadow-emerald-950/5 space-y-5">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 space-y-5">
               
               <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center space-x-3">
@@ -1169,7 +1169,7 @@ const UserDashboard = () => {
             </div>
 
             {/* Real-World Impact Equivalencies */}
-            <div className="bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-5 sm:p-6 rounded-3xl shadow-lg shadow-emerald-950/5 text-slate-900 dark:text-slate-100 space-y-4">
+            <div className="glass-card p-5 sm:p-6 rounded-3xl text-slate-900 dark:text-slate-100 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-800/50 pb-3">
                 <div className="flex items-center space-x-2.5">
                   <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm border border-emerald-500/25 shadow-xs">

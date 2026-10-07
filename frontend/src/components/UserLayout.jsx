@@ -17,7 +17,7 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
   const vignetteStyle = isCinematic
     ? {
         background:
-          'radial-gradient(ellipse at center, transparent 10%, rgba(2,6,15,0.45) 60%, rgba(2,6,15,0.78) 100%)',
+          'radial-gradient(ellipse at center, transparent 20%, rgba(2,6,15,0.3) 65%, rgba(2,6,15,0.68) 100%)',
       }
     : null;
 

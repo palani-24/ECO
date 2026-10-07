@@ -145,11 +145,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Desktop Sidebar (Clean Glassmorphic Executive Navigation Panel) */}
-      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-xl shadow-emerald-950/5 flex flex-col justify-between p-3.5 text-slate-800 dark:text-slate-100 transition-all select-none">
+      {/* Desktop Sidebar (Clean Bright Luminous Glassmorphic Navigation Panel) */}
+      <aside className="w-full h-[calc(100vh-5.5rem)] rounded-3xl glass-bright flex flex-col justify-between p-3.5 text-slate-800 dark:text-slate-100 transition-all select-none">
         
         {/* User Profile Quick Executive Glass Card */}
-        <div className="shrink-0 p-3 bg-white/80 dark:bg-slate-800/60 backdrop-blur-md border border-white/90 dark:border-white/10 rounded-2xl flex flex-col gap-2 shadow-xs relative overflow-hidden group">
+        <div className="shrink-0 p-3 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/95 dark:border-white/15 rounded-2xl flex flex-col gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.03),inset_0_1px_1px_rgba(255,255,255,0.95)] relative overflow-hidden group">
           <div className="flex items-center space-x-2.5 relative z-10">
             <div className="relative shrink-0">
               <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-black flex items-center justify-center text-sm shadow-sm ring-2 ring-emerald-500/25 overflow-hidden">

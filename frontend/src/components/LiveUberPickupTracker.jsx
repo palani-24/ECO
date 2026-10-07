@@ -203,7 +203,7 @@ const LiveUberPickupTracker = ({
   const pickupId = externalPickup?._id ? externalPickup._id.substring(0, 8).toUpperCase() : '6AB7D28F';
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/80 dark:border-white/10 p-6 sm:p-7 text-slate-800 dark:text-slate-100 shadow-xl shadow-emerald-950/5 ${className}`}>
+    <div className={`relative overflow-hidden rounded-3xl glass-bright p-6 sm:p-7 text-slate-800 dark:text-slate-100 ${className}`}>
       
       {/* Top Header: Badge, Title & Actions */}
       <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">

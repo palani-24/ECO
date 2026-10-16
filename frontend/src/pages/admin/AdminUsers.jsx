@@ -25,7 +25,7 @@ const INITIAL_FORM_STATE = {
   name: '',
   email: '',
   phone: '',
-  password: '1234',
+  password: 'Eco@Secure2026!',
   role: 'user',
   points: 1000,
   ward: 'Ward 12 - Central Zone',
@@ -86,7 +86,7 @@ const AdminUsers = () => {
   };
 
   const copyCredentials = (u) => {
-    const credText = `Email: ${u.email} | Phone: ${u.phone || 'N/A'} | Password: ${u.accountPassword || '1234'} | Role: ${u.role}`;
+    const credText = `Email: ${u.email} | Phone: ${u.phone || 'N/A'} | Password: ${u.accountPassword || 'Eco@Secure2026!'} | Role: ${u.role}`;
     navigator.clipboard.writeText(credText);
     setCopiedId(u._id);
     addToast(`Credentials copied: ${u.email}`, 'info', 'Copied to Clipboard');
@@ -387,7 +387,7 @@ const AdminUsers = () => {
                   {filteredUsers.map((u) => {
                     const addr = u.addresses?.[0] || {};
                     const isPwdVisible = !!revealedPasswords[u._id];
-                    const rawPwd = u.accountPassword || '1234';
+                    const rawPwd = u.accountPassword || 'Eco@Secure2026!';
 
                     return (
                       <tr key={u._id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition">
@@ -605,7 +605,7 @@ const AdminUsers = () => {
                   <div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">Password Pin:</span>
                     <span className="font-mono font-black text-amber-600 dark:text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded-lg">
-                      {viewUser.accountPassword || '1234'}
+                      {viewUser.accountPassword || 'Eco@Secure2026!'}
                     </span>
                   </div>
                 </div>

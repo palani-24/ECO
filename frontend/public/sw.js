@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecoreward-v5-drawer-live';
+const CACHE_NAME = 'ecoreward-v6-secure-pwd';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post('/auth/login', { 
         email, 
         emailOrPhone: email, 
-        password: password || '1234', 
+        password: password || 'Eco@Secure2026!', 
         role 
       });
       if (res.data?.success) {

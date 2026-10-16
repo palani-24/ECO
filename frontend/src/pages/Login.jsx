@@ -62,7 +62,7 @@ const Login = () => {
 
   // Input states matching Image 1
   const [emailOrPhone, setEmailOrPhone] = useState('user@ecoreward.com');
-  const [password, setPassword] = useState('1234');
+  const [password, setPassword] = useState('Eco@Secure2026!');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -98,7 +98,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await login(emailOrPhone.trim(), password || '1234', selectedRole);
+      const res = await login(emailOrPhone.trim(), password || 'Eco@Secure2026!', selectedRole);
       setLoading(false);
 
       if (res.success) {
@@ -255,7 +255,7 @@ const Login = () => {
             )}
 
             {/* Login Form with Rounded Pill Inputs Matching Reference Image */}
-            <form onSubmit={handleLoginSubmit} className="space-y-4 relative z-10">
+            <form onSubmit={handleLoginSubmit} autoComplete="off" className="space-y-4 relative z-10">
               
               {/* Username / Email Pill Input */}
               <div className="relative">
@@ -275,7 +275,9 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="password"
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  data-lpignore="true"
                   required
                   className="w-full bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white rounded-full py-3 px-5 pr-12 text-white placeholder:text-white/70 font-medium text-sm outline-none transition-all backdrop-blur-md shadow-inner"
                 />

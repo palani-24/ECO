@@ -14,7 +14,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('admin@ecoreward.com');
-  const [password, setPassword] = useState('1234');
+  const [password, setPassword] = useState('Eco@Secure2026!');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const AdminLogin = () => {
         setError('Access Denied: Account lacks Municipal Admin HQ clearance privileges.');
       } else {
         // Fallback for seamless demo
-        const fallback = await login('admin@ecoreward.com', '1234', 'admin');
+        const fallback = await login('admin@ecoreward.com', 'Eco@Secure2026!', 'admin');
         if (fallback.success) {
           addToast('Authorized Demo Admin Access Granted', 'success', 'Welcome Admin HQ');
           navigate('/admin');
@@ -174,6 +174,8 @@ const AdminLogin = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Master Password"
+                  autoComplete="new-password"
+                  data-lpignore="true"
                   required
                   className="w-full bg-transparent border-0 border-b border-white/40 focus:border-white pb-2 text-white placeholder:text-white/70 font-medium text-base outline-none pr-8 transition-colors"
                 />
@@ -197,7 +199,7 @@ const AdminLogin = () => {
 
               <div className="text-center pt-2">
                 <span className="text-[11px] text-white/80 font-semibold">
-                  Demo clearance: Password is <span className="font-bold text-amber-300">1234</span>
+                  Demo clearance: Password is <span className="font-bold text-amber-300">Eco@Secure2026!</span>
                 </span>
               </div>
             </form>

@@ -15,6 +15,7 @@ import GreenCertificateModal from '../../components/GreenCertificateModal';
 import UPIPayoutModal from '../../components/UPIPayoutModal';
 import EcoStoryModal from '../../components/EcoStoryModal';
 import MobileEcoHome from '../../components/MobileEcoHome';
+import { setupMorningWasteReminder } from '../../utils/morningWasteReminder';
 import DailySpinWheelModal from '../../components/DailySpinWheelModal';
 import LiveUberPickupTracker from '../../components/LiveUberPickupTracker';
 import { triggerConfetti } from '../../utils/confetti';

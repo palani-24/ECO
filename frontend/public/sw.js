@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecoreward-v6-secure-pwd';
+const CACHE_NAME = 'ecoreward-v7-morning-reminder';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -77,4 +77,34 @@ self.addEventListener('fetch', (event) => {
         return caches.match(event.request);
       })
   );
+});
+
+
+// ==========================================
+// 🌅 MORNING 6:00 AM WASTE NOTIFICATION HANDLERS
+// ==========================================
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = event.notification.data?.url || '/schedule-pickup';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (let client of windowClients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          if ('navigate' in client) {
+            client.navigate(urlToOpen);
+          }
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SHOW_MORNING_WASTE_NOTIF') {
+    self.registration.showNotification(event.data.title, event.data.options);
+  }
 });

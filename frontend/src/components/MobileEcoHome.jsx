@@ -15,6 +15,13 @@ import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useDistrict } from '../context/DistrictContext';
 import MobileCitizenNav from './MobileCitizenNav';
+import { 
+  setupMorningWasteReminder, 
+  triggerMorningWasteNotification, 
+  isMorningReminderEnabled, 
+  setMorningReminderEnabled,
+  MORNING_NOTIF_CONTENT 
+} from '../utils/morningWasteReminder';
 import UPIPayoutModal from './UPIPayoutModal';
 import { triggerConfetti } from '../utils/confetti';
 import { triggerHaptic } from '../utils/mobileNative';
@@ -70,6 +77,8 @@ const MobileEcoHome = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showMorningWasteBanner, setShowMorningWasteBanner] = useState(false);
+  const [morningReminderActive, setMorningReminderActive] = useState(isMorningReminderEnabled());
 
   // Local fallback state if setters are not passed
   const [internalCat, setInternalCat] = useState(calcCategory);
@@ -320,6 +329,63 @@ const MobileEcoHome = ({
 
       {/* MAIN BODY CONTAINER */}
       <div className="px-4 py-3.5 space-y-4 max-w-lg mx-auto">
+
+        {/* 🌅 MORNING 6:00 AM WASTE REMINDER FLOATING CARD */}
+        <AnimatePresence>
+          {showMorningWasteBanner && (
+            <motion.div
+              initial={{ opacity: 0, y: -15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.98 }}
+              className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 text-white shadow-lg shadow-orange-500/20 border border-white/20 relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between relative z-10">
+                <div className="flex items-start space-x-2.5">
+                  <span className="text-2xl shrink-0 mt-0.5">🌅</span>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">காலை 6:00 AM குப்பை சேகரிப்பு</span>
+                      <span className="text-[10px] font-bold text-amber-200">Daily Alert</span>
+                    </div>
+                    <h4 className="text-xs font-black mt-1 leading-snug">
+                      இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வைக்கவும்! ♻️
+                    </h4>
+                    <p className="text-[10px] text-white/90 font-medium mt-0.5">
+                      எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும். Doorstep Pickup புக் செய்து EcoPoints ரொக்கப் பணம் பெறுங்கள்!
+                    </p>
+                    <div className="mt-2.5 flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic(20);
+                          navigate('/schedule-pickup');
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 font-black text-[11px] shadow-sm hover:bg-slate-100 active:scale-95 transition cursor-pointer"
+                      >
+                        Doorstep Pickup புக் செய்
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowMorningWasteBanner(false)}
+                        className="px-2.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white font-bold text-[10px] transition cursor-pointer"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowMorningWasteBanner(false)}
+                  className="text-white/80 hover:text-white p-1 cursor-pointer shrink-0"
+                  aria-label="Close"
+                >
+                  <FaTimes className="text-xs" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* 3. CITIZEN WALLET & UPI CASHOUT CARD */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2.5">
@@ -964,6 +1030,54 @@ const MobileEcoHome = ({
               </div>
 
               <div className="space-y-2 text-xs">
+
+                {/* 🌅 MORNING 6:00 AM WASTE REMINDER CARD */}
+                <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 rounded-2xl border border-amber-400/40 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-base">🌅</span>
+                      <div>
+                        <h4 className="text-xs font-black text-slate-900 dark:text-white leading-tight">காலை 6:00 AM குப்பை நினைவூட்டல்</h4>
+                        <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold block">Daily Waste Segregation & Doorstep Pickup</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !morningReminderActive;
+                        setMorningReminderActive(next);
+                        setMorningReminderEnabled(next);
+                        triggerHaptic(15);
+                      }}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer transition-all ${
+                        morningReminderActive 
+                          ? 'bg-emerald-500 text-white shadow-xs' 
+                          : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                      }`}
+                    >
+                      {morningReminderActive ? 'ON' : 'OFF'}
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                    காலை வணக்கம்! இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வெளியே வைக்கவும். எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும்! ♻️
+                  </p>
+
+                  <div className="pt-1.5 flex items-center justify-between border-t border-amber-200/60 dark:border-amber-900/40">
+                    <span className="text-[9px] text-slate-400 font-bold">அடுத்த அலாரம்: 6:00 AM</span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        triggerHaptic(25);
+                        setShowMorningWasteBanner(true);
+                        await triggerMorningWasteNotification({ isTest: true, addToast });
+                      }}
+                      className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white rounded-xl font-black text-[10px] flex items-center space-x-1 shadow-sm cursor-pointer"
+                    >
+                      <span>⚡ Test Notification Now</span>
+                    </button>
+                  </div>
+                </div>
                 <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-500/20">
                   <p className="font-bold text-slate-900 dark:text-white">🔔 Welcome to EcoReward!</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">Turn household scrap into EcoPoints & direct bank cash payouts.</p>

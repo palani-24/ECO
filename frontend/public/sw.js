@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecoreward-v3-bento';
+const CACHE_NAME = 'ecoreward-v5-drawer-live';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

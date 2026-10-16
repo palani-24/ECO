@@ -70,7 +70,6 @@ const MobileEcoHome = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [showCitizenDrawer, setShowCitizenDrawer] = useState(false);
 
   // Local fallback state if setters are not passed
   const [internalCat, setInternalCat] = useState(calcCategory);
@@ -199,19 +198,18 @@ const MobileEcoHome = ({
           {/* Hamburger Menu Icon */}
           <button 
             type="button" 
-            id="mobile-eco-hamburger-btn"
+            id="mobile-top-hamburger-btn"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               triggerHaptic(20);
-              setShowCitizenDrawer(true);
               window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
             }}
-            className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer"
-            aria-label="Open Citizen Portal Menu"
+            className="w-11 h-11 -ml-1 rounded-xl hover:bg-emerald-500/30 active:bg-emerald-500/50 transition-all flex items-center justify-center cursor-pointer text-white touch-manipulation"
+            aria-label="Open Navigation Menu"
             title="Open Menu"
           >
-            <FaBars className="text-lg" />
+            <FaBars className="text-xl pointer-events-none" />
           </button>
 
           {/* Center App Logo Title */}
@@ -943,7 +941,7 @@ const MobileEcoHome = ({
       </div>
 
       {/* 12. ELEVATED STICKY BOTTOM NAVIGATION BAR WITH CENTER FAB */}
-      <MobileCitizenNav isOpen={showCitizenDrawer} onClose={() => setShowCitizenDrawer(false)} />
+      <MobileCitizenNav />
 
       {/* NOTIFICATION MODAL */}
       <AnimatePresence>

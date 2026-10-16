@@ -17,13 +17,29 @@ import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 // Core Scanner Modal
 import AIWasteScannerModal from './AIWasteScannerModal';
 
-const MobileCitizenNav = () => {
+const MobileCitizenNav = ({ isOpen: propIsOpen, onClose: propOnClose }) => {
   const { user, logout } = useAuth();
   const { currentDistrict, openDistrictModal } = useDistrict() || {};
   const navigate = useNavigate();
   const location = useLocation();
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [internalDrawer, setInternalDrawer] = useState(false);
   const [showAiScanner, setShowAiScanner] = useState(false);
+
+  // Controlled or uncontrolled drawer state
+  const showDrawer = propIsOpen !== undefined ? propIsOpen : internalDrawer;
+  
+  const setShowDrawer = (val) => {
+    if (typeof val === 'function') {
+      setInternalDrawer(prev => {
+        const next = val(prev);
+        if (!next && propOnClose) propOnClose();
+        return next;
+      });
+    } else {
+      setInternalDrawer(val);
+      if (!val && propOnClose) propOnClose();
+    }
+  };
 
   // Check if current user / screen is in Municipality Authority Mode
   const isMunicipality = user?.role === 'municipality' || location.pathname.startsWith('/municipality');
@@ -31,38 +47,62 @@ const MobileCitizenNav = () => {
   // Close drawer on route change
   useEffect(() => {
     setShowDrawer(false);
+    if (propOnClose) propOnClose();
   }, [location.pathname, location.search]);
 
   // Global listener for hamburger drawer toggle
   useEffect(() => {
-    const handleToggle = () => setShowDrawer(prev => !prev);
-    const handleOpen = () => setShowDrawer(true);
-    const handleClose = () => setShowDrawer(false);
+    let lastToggle = 0;
+
+    const handleOpen = () => {
+      lastToggle = Date.now();
+      setShowDrawer(true);
+    };
+
+    const handleClose = () => {
+      lastToggle = Date.now();
+      setShowDrawer(false);
+      if (propOnClose) propOnClose();
+    };
+
+    const handleToggle = () => {
+      const now = Date.now();
+      if (now - lastToggle < 250) return; // Prevent double toggle in same tick!
+      lastToggle = now;
+      setShowDrawer(prev => !prev);
+    };
+
     const handleScanner = () => setShowAiScanner(true);
 
-    window.addEventListener('toggle-mobile-citizen-drawer', handleToggle);
     window.addEventListener('open-mobile-citizen-drawer', handleOpen);
+    window.addEventListener('open-mobile-menu', handleOpen);
+    window.addEventListener('toggle-mobile-citizen-drawer', handleOpen); // Always open!
+    window.addEventListener('toggle-mobile-menu', handleOpen); // Always open!
     window.addEventListener('close-mobile-citizen-drawer', handleClose);
-    window.addEventListener('toggle-mobile-menu', handleToggle);
+    window.addEventListener('close-mobile-menu', handleClose);
     window.addEventListener('open-ai-scanner', handleScanner);
 
     return () => {
-      window.removeEventListener('toggle-mobile-citizen-drawer', handleToggle);
       window.removeEventListener('open-mobile-citizen-drawer', handleOpen);
+      window.removeEventListener('open-mobile-menu', handleOpen);
+      window.removeEventListener('toggle-mobile-citizen-drawer', handleOpen);
+      window.removeEventListener('toggle-mobile-menu', handleOpen);
       window.removeEventListener('close-mobile-citizen-drawer', handleClose);
-      window.removeEventListener('toggle-mobile-menu', handleToggle);
+      window.removeEventListener('close-mobile-menu', handleClose);
       window.removeEventListener('open-ai-scanner', handleScanner);
     };
-  }, []);
+  }, [propOnClose]);
 
   const handleNavigate = (path) => {
     setShowDrawer(false);
+    if (propOnClose) propOnClose();
     triggerHaptic(20);
     navigate(path);
   };
 
   const handleLogout = () => {
     setShowDrawer(false);
+    if (propOnClose) propOnClose();
     logout();
     navigate('/login');
   };
@@ -257,7 +297,10 @@ const MobileCitizenNav = () => {
       {/* Backdrop Overlay */}
       {showDrawer && (
         <div 
-          onClick={() => setShowDrawer(false)}
+          onClick={() => {
+            setShowDrawer(false);
+            if (propOnClose) propOnClose();
+          }}
           className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
           style={{ position: 'fixed', inset: 0, zIndex: 99998 }}
         />
@@ -297,7 +340,10 @@ const MobileCitizenNav = () => {
               </div>
             </div>
             <button 
-              onClick={() => setShowDrawer(false)} 
+              onClick={() => {
+                setShowDrawer(false);
+                if (propOnClose) propOnClose();
+              }}
               className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer transition-colors"
               aria-label="Close menu"
             >
@@ -339,6 +385,7 @@ const MobileCitizenNav = () => {
           <div 
             onClick={() => {
               setShowDrawer(false);
+              if (propOnClose) propOnClose();
               if (openDistrictModal) openDistrictModal();
             }}
             className="p-3 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 flex items-center justify-between cursor-pointer active:scale-98 transition-all hover:border-emerald-300 shadow-2xs"
@@ -361,6 +408,7 @@ const MobileCitizenNav = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 setShowDrawer(false);
+                if (propOnClose) propOnClose();
                 if (openDistrictModal) openDistrictModal();
               }}
               className="px-3 py-1.5 bg-[#047857] hover:bg-emerald-800 text-white text-[10px] font-black rounded-full shrink-0 cursor-pointer active:scale-95 transition shadow-sm ml-2"
@@ -529,6 +577,7 @@ const MobileCitizenNav = () => {
               <button 
                 onClick={() => {
                   setShowDrawer(false);
+                  if (propOnClose) propOnClose();
                   triggerHaptic(25);
                   setShowAiScanner(true);
                 }}

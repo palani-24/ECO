@@ -70,6 +70,7 @@ const MobileEcoHome = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showCitizenDrawer, setShowCitizenDrawer] = useState(false);
 
   // Local fallback state if setters are not passed
   const [internalCat, setInternalCat] = useState(calcCategory);
@@ -198,11 +199,13 @@ const MobileEcoHome = ({
           {/* Hamburger Menu Icon */}
           <button 
             type="button" 
-            onClick={() => {
+            id="mobile-eco-hamburger-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               triggerHaptic(20);
-              window.dispatchEvent(new CustomEvent('toggle-mobile-citizen-drawer'));
+              setShowCitizenDrawer(true);
               window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
-              window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
             }}
             className="p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer"
             aria-label="Open Citizen Portal Menu"
@@ -940,7 +943,7 @@ const MobileEcoHome = ({
       </div>
 
       {/* 12. ELEVATED STICKY BOTTOM NAVIGATION BAR WITH CENTER FAB */}
-      <MobileCitizenNav />
+      <MobileCitizenNav isOpen={showCitizenDrawer} onClose={() => setShowCitizenDrawer(false)} />
 
       {/* NOTIFICATION MODAL */}
       <AnimatePresence>

@@ -28,8 +28,8 @@ const Navbar = () => {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
     if (saved) return saved === 'dark';
-    // Default to rich Dark Mode
-    return true;
+    // Default to clean White Mode
+    return false;
   });
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -295,7 +295,9 @@ const Navbar = () => {
                       window.dispatchEvent(new CustomEvent('toggle-mobile-admin-drawer'));
                       window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
                     }}
-                    className={`p-2 rounded-xl text-[#031c15] bg-white hover:bg-emerald-50 transition-all shadow-md cursor-pointer active:scale-95 font-bold`}
+                    className={`p-2 rounded-xl text-white transition-all shadow-sm cursor-pointer active:scale-95 ${
+                      isOpen ? 'bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700'
+                    }`}
                     aria-label="Toggle Portal Menu List"
                     title="Menu List"
                   >

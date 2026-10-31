@@ -3,30 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaBars, FaBell, FaSearch, FaQrcode, FaTimes, FaCheck, 
-  FaCalendarAlt, FaMapMarkerAlt, FaChevronRight, FaChevronDown,
+  FaCalendarAlt, FaMapMarkerAlt, FaChevronRight, 
   FaHome, FaClipboardList, FaUsers, FaUser, FaClock, FaTruck, FaLeaf,
   FaCoins, FaWallet, FaAward, FaComments, FaPhone, FaArrowRight, FaCamera,
   FaStore, FaTrophy, FaCertificate, FaShareAlt, FaCalculator, FaFire,
   FaSeedling, FaTrashAlt, FaExclamationTriangle, FaBolt, FaRedo, FaGift,
-  FaSun, FaMoon, FaCheckCircle, FaStar, FaPlay, FaGraduationCap
+  FaBluetooth, FaCompass, FaCheckCircle
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useDistrict } from '../context/DistrictContext';
 import MobileCitizenNav from './MobileCitizenNav';
-import LiveUberPickupTracker from './LiveUberPickupTracker';
 import { 
   setupMorningWasteReminder, 
   triggerMorningWasteNotification, 
   isMorningReminderEnabled, 
-  setMorningReminderEnabled 
+  setMorningReminderEnabled,
+  MORNING_NOTIF_CONTENT 
 } from '../utils/morningWasteReminder';
 import UPIPayoutModal from './UPIPayoutModal';
 import { triggerConfetti } from '../utils/confetti';
 import { triggerHaptic } from '../utils/mobileNative';
 import { soundFx } from '../utils/audioFeedback';
-import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
 
 const MobileEcoHome = ({ 
   analytics, 
@@ -54,17 +53,17 @@ const MobileEcoHome = ({
   calcWeight = 12,
   setCalcWeight,
   SCRAP_RATES = {
-    plastics: { name: 'PET Bottles & Plastics', ratePerKg: 18, ptsPerKg: 3, icon: '🧴', badge: 'High Demand' },
-    cardboard: { name: 'Cardboard & Paper', ratePerKg: 14, ptsPerKg: 2, icon: '📦', badge: 'Popular' },
-    metals: { name: 'Metals & Tin Cans', ratePerKg: 34, ptsPerKg: 5, icon: '🥫', badge: 'Top Cash' },
-    ewaste: { name: 'E-Waste & Gadgets', ratePerKg: 48, ptsPerKg: 10, icon: '💻', badge: '2X Bonus' },
-    glass: { name: 'Glass Containers', ratePerKg: 6, ptsPerKg: 1, icon: '🍾', badge: 'Eco Classic' }
+    plastics: { name: 'PET Plastics', ratePerKg: 18, ptsPerKg: 3, icon: '🧴' },
+    cardboard: { name: 'Cardboard', ratePerKg: 14, ptsPerKg: 2, icon: '📦' },
+    metals: { name: 'Metals / Tins', ratePerKg: 34, ptsPerKg: 5, icon: '🥫' },
+    ewaste: { name: 'E-Waste', ratePerKg: 48, ptsPerKg: 10, icon: '💻' },
+    glass: { name: 'Glass Bottles', ratePerKg: 6, ptsPerKg: 1, icon: '🍾' }
   },
   SEGREGATION_ITEMS = {
-    plastic_bottle: { id: 'plastic_bottle', name: 'PET Bottle', binColor: 'blue', binName: 'Blue Bin (Dry Recyclables)', icon: '🧴', instructions: 'Rinse lightly, crush flat, leave cap on.', reward: '+₹18/kg • +3 EcoPts' },
-    food_peels: { id: 'food_peels', name: 'Food Peels', binColor: 'green', binName: 'Green Bin (Wet Compost)', icon: '🥬', instructions: 'Keep free from plastic; send to aerobic compost.', reward: '+10 EcoPts' },
-    used_battery: { id: 'used_battery', name: 'Batteries', binColor: 'red', binName: 'Red Bin (Hazardous E-Waste)', icon: '🔋', instructions: 'Wrap terminals with tape to prevent short circuits.', reward: '+₹48/kg • +10 EcoPts' },
-    cardboard_box: { id: 'cardboard_box', name: 'Cardboard Box', binColor: 'blue', binName: 'Blue Bin (Dry Paper)', icon: '📦', instructions: 'Flatten boxes to save storage space.', reward: '+₹14/kg • +2 EcoPts' }
+    plastic_bottle: { id: 'plastic_bottle', name: 'PET Bottle', binName: 'Blue Bin (Dry Recyclables)', icon: '🧴', instructions: 'Rinse lightly, crush flat, leave cap on.', reward: '+18 ₹/kg • +3 EcoPts' },
+    food_peels: { id: 'food_peels', name: 'Food Peels', binName: 'Green Bin (Wet Compost)', icon: '🥬', instructions: 'Keep free from plastic; send to aerobic compost.', reward: '+10 EcoPts' },
+    used_battery: { id: 'used_battery', name: 'Batteries', binName: 'Red Bin (Hazardous E-Waste)', icon: '🔋', instructions: 'Wrap terminals with tape to prevent short circuits.', reward: '+48 ₹/kg • +10 EcoPts' },
+    cardboard_box: { id: 'cardboard_box', name: 'Cardboard Box', binName: 'Blue Bin (Dry Paper)', icon: '📦', instructions: 'Flatten boxes to save storage space.', reward: '+14 ₹/kg • +2 EcoPts' }
   },
   selectedSegKey = 'plastic_bottle',
   setSelectedSegKey
@@ -72,35 +71,14 @@ const MobileEcoHome = ({
   const { user, logout } = useAuth();
   const { addToast } = useToast();
   const { lang, setLang } = useLanguage() || { lang: 'en', setLang: () => {} };
-  const { currentDistrict, openDistrictModal } = useDistrict() || {
-    currentDistrict: { name: 'Coimbatore', corporation: 'Coimbatore City Municipal Corporation' },
-    openDistrictModal: () => {}
-  };
+  const { currentDistrict, openDistrictModal } = useDistrict();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showMorningWasteBanner, setShowMorningWasteBanner] = useState(false);
   const [morningReminderActive, setMorningReminderActive] = useState(isMorningReminderEnabled());
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof document !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
-
-  const toggleDarkMode = () => {
-    triggerHaptic(15);
-    const nextDark = !isDarkMode;
-    setIsDarkMode(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
 
   // Local fallback state if setters are not passed
   const [internalCat, setInternalCat] = useState(calcCategory);
@@ -116,9 +94,10 @@ const MobileEcoHome = ({
   const activeSeg = setSelectedSegKey ? selectedSegKey : internalSeg;
   const updateSeg = setSelectedSegKey || setInternalSeg;
 
-  // Dynamic user points sync
+  // Dynamic live user points calculation with real-time spin/payout sync
   const [bonusPoints, setBonusPoints] = useState(0);
   const [localUpiOpen, setLocalUpiOpen] = useState(false);
+  const [localSpinOpen, setLocalSpinOpen] = useState(false);
 
   useEffect(() => {
     const handlePointsRefresh = (e) => {
@@ -129,10 +108,9 @@ const MobileEcoHome = ({
     return () => window.removeEventListener('refresh-wallet-points', handlePointsRefresh);
   }, []);
 
-  const basePoints = analytics?.walletPoints ?? user?.points ?? 2634;
+  const basePoints = analytics?.walletPoints ?? user?.points ?? 1388;
   const walletPoints = Math.max(0, basePoints + bonusPoints);
   const inrValue = Math.round(walletPoints * 0.25);
-  const displayName = user?.name || 'Palani';
 
   const handleWithdrawUpi = () => {
     triggerHaptic(25);
@@ -145,21 +123,60 @@ const MobileEcoHome = ({
 
   const handleOpenSpinWheel = () => {
     triggerHaptic(25);
-    if (onOpenSpin) onOpenSpin();
+    if (onOpenSpin) {
+      onOpenSpin();
+    } else {
+      setLocalSpinOpen(true);
+    }
   };
 
+  // Auto-slide hero banner
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCarouselIndex(prev => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const heroSlides = [
+    {
+      badge: 'DOORSTEP SCRAP PICKUP',
+      title: 'Schedule & track doorstep pickup at your convenience',
+      desc: 'Certified EV green fleet drivers with digital scales collect scrap at your home.',
+      cta: 'Book Now',
+      image: '/images/citizen/doorstep_pickup_slide.jpg',
+      action: () => navigate('/schedule-pickup')
+    },
+    {
+      badge: 'AI WASTE SCANNER',
+      title: 'Scan trash items to verify recyclability & bonus rates',
+      desc: 'Point your phone camera to instantly classify plastic, paper, and e-waste.',
+      cta: 'Try Scanner',
+      image: '/images/citizen/ai_scanner_slide.jpg',
+      action: () => { if (onOpenScanner) onOpenScanner(); }
+    },
+    {
+      badge: 'INSTANT UPI PAYOUT',
+      title: 'Convert EcoPoints directly into real bank cash',
+      desc: 'Zero-delay UPI payout directly to GPay, PhonePe, or Paytm account.',
+      cta: 'Redeem Cash',
+      image: '/images/citizen/upi_payout_slide.jpg',
+      action: () => { if (onOpenUpi) onOpenUpi(); else navigate('/redeem'); }
+    }
+  ];
+
   const searchableCatalog = [
-    { title: 'PET Bottles & Plastics', subtitle: '₹18/kg • +3 EcoPoints', icon: '🧴', action: () => { updateCategory('plastics'); setSearchQuery(''); addToast('Selected PET Plastics in calculator', 'info'); } },
+    { title: 'PET Plastic Bottles', subtitle: '₹18/kg • +3 EcoPoints', icon: '🧴', action: () => { updateCategory('plastics'); setSearchQuery(''); addToast('Selected PET Plastics in calculator', 'info'); } },
     { title: 'Cardboard & Paper Scrap', subtitle: '₹14/kg • +2 EcoPoints', icon: '📦', action: () => { updateCategory('cardboard'); setSearchQuery(''); addToast('Selected Cardboard in calculator', 'info'); } },
     { title: 'Metals & Beverage Tins', subtitle: '₹34/kg • +5 EcoPoints', icon: '🥫', action: () => { updateCategory('metals'); setSearchQuery(''); addToast('Selected Metals in calculator', 'info'); } },
     { title: 'E-Waste & Electronics', subtitle: '₹48/kg • +10 EcoPoints', icon: '💻', action: () => { updateCategory('ewaste'); setSearchQuery(''); addToast('Selected E-Waste in calculator', 'info'); } },
-    { title: 'Glass Bottles & Containers', subtitle: '₹6/kg • +1 EcoPoints', icon: '🍾', action: () => { updateCategory('glass'); setSearchQuery(''); addToast('Selected Glass in calculator', 'info'); } },
+    { title: 'Glass Bottles & Jars', subtitle: '₹6/kg • +1 EcoPoints', icon: '🍾', action: () => { updateCategory('glass'); setSearchQuery(''); addToast('Selected Glass in calculator', 'info'); } },
     { title: 'Book Doorstep Scrap Pickup', subtitle: 'Schedule EV green fleet pickup', icon: '🚚', action: () => { setSearchQuery(''); navigate('/schedule-pickup'); } },
-    { title: 'Instant UPI Bank Cashout', subtitle: 'Transfer EcoPoints to GPay/PhonePe', icon: '💳', action: () => { setSearchQuery(''); handleWithdrawUpi(); } },
-    { title: 'Daily Eco Spin & Win Wheel', subtitle: 'Win up to 50 EcoPoints daily', icon: '🎡', action: () => { setSearchQuery(''); handleOpenSpinWheel(); } },
+    { title: 'Instant UPI Bank Cashout', subtitle: 'Transfer EcoPoints to GPay/PhonePe', icon: '💰', action: () => { setSearchQuery(''); if (onOpenUpi) onOpenUpi(); else navigate('/redeem'); } },
+    { title: 'Daily Eco Spin & Win Wheel', subtitle: 'Win up to 50 EcoPoints daily', icon: '🎁', action: () => { setSearchQuery(''); if (onOpenSpin) onOpenSpin(); } },
     { title: 'AI Waste & Item Scanner', subtitle: 'Instant camera recognition & prices', icon: '📷', action: () => { setSearchQuery(''); if (onOpenScanner) onOpenScanner(); } },
-    { title: 'Official Green Certificate', subtitle: 'Download ISO verified impact cert', icon: '📜', action: () => { setSearchQuery(''); if (onOpenCert) onOpenCert(); } },
-    { title: 'Track Active Pickups', subtitle: 'Live map & Driver ETA telematics', icon: '📍', action: () => { setSearchQuery(''); navigate('/my-pickups?track=live'); } },
+    { title: 'Official Green Certificate', subtitle: 'Download ISO verified impact cert', icon: '🎖️', action: () => { setSearchQuery(''); if (onOpenCert) onOpenCert(); } },
+    { title: 'Track Active Pickups', subtitle: 'Live map & Driver ETA telematics', icon: '📍', action: () => { setSearchQuery(''); navigate('/my-pickups'); } },
     { title: 'Report Illegal Roadside Dump', subtitle: 'Alert municipality with geo photo', icon: '⚠️', action: () => { setSearchQuery(''); navigate('/report-dump'); } },
   ];
 
@@ -171,8 +188,6 @@ const MobileEcoHome = ({
     : [];
 
   const currentScrap = SCRAP_RATES[activeCategory] || SCRAP_RATES.plastics;
-  const calculatedEarnings = (activeWeight * currentScrap.ratePerKg).toFixed(0);
-  const calculatedPoints = activeWeight * currentScrap.ptsPerKg;
 
   // Last completed pickup for 1-Click Reorder
   const lastCompletedPickup = pickups.find(p => p.status === 'completed') || {
@@ -183,122 +198,66 @@ const MobileEcoHome = ({
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-[#eaf4ee] via-[#f1f7f3] to-[#e6f3eb] dark:from-[#06141a] dark:via-[#091e19] dark:to-[#06141a] text-slate-900 dark:text-slate-100 pb-32 font-sans select-none overflow-x-hidden">
+    <div className="min-h-screen bg-[#F4F7F6] dark:bg-[#07131F] text-slate-900 dark:text-slate-100 pb-28 font-sans select-none">
       
-      {/* Background Cinematic Texture Layer matching screenshot */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center pointer-events-none z-0 opacity-20 dark:opacity-25"
-        style={{
-          backgroundImage: "url('/images/cinematic_eco_dashboard_bg.jpg')",
-          backgroundAttachment: 'fixed',
-          filter: 'brightness(1.02) saturate(1.15)'
-        }}
-      />
-
-      {/* Ambient Luminous Green Glow Orbs */}
-      <div className="fixed top-[-50px] left-[5%] w-[320px] h-[320px] bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="fixed bottom-[120px] right-[5%] w-[280px] h-[280px] bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
-
-      {/* ============================================================== */}
-      {/* 1. TOP HEADER: Matching Screenshot Pixel-for-Pixel             */}
-      {/* ============================================================== */}
-      <header className="sticky top-0 z-40 bg-white/92 dark:bg-[#07161b]/92 backdrop-blur-xl border-b border-emerald-100/90 dark:border-emerald-500/20 shadow-xs transition-colors duration-300">
-        
-        {/* Top Navbar Row */}
-        <div className="px-3.5 py-2.5 flex items-center justify-between gap-2">
+      {/* 1. TOP GREEN APP HEADER */}
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md">
+        <div className="px-4 py-2.5 flex items-center justify-between">
           
-          {/* Brand Logo & Tagline */}
-          <div 
-            onClick={() => navigate('/dashboard')}
-            className="flex items-center space-x-2 cursor-pointer active:scale-98 transition shrink-0"
+          {/* Hamburger Menu Icon */}
+          <button 
+            type="button" 
+            id="mobile-top-hamburger-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              triggerHaptic(20);
+              window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
+            }}
+            className="w-11 h-11 -ml-1 rounded-xl hover:bg-emerald-500/30 active:bg-emerald-500/50 transition-all flex items-center justify-center cursor-pointer text-white touch-manipulation"
+            aria-label="Open Navigation Menu"
+            title="Open Menu"
           >
-            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30">
-              <FaLeaf className="text-base" />
-            </div>
-            <div>
-              <span className="text-xs sm:text-sm font-black tracking-wider uppercase text-emerald-800 dark:text-emerald-400 leading-none block">
-                ECOREWARD
-              </span>
-              <span className="text-[8px] sm:text-[9px] font-bold text-slate-500 dark:text-emerald-300/80 tracking-tight block">
-                recycle today, reward tomorrow
-              </span>
-            </div>
+            <FaBars className="text-xl pointer-events-none" />
+          </button>
+
+          {/* Center App Logo Title */}
+          <div className="flex items-center space-x-1.5 cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <span className="text-base font-black tracking-wider uppercase">
+              ECOREWARD
+            </span>
           </div>
 
-          {/* Right Action Icons Row */}
-          <div className="flex items-center space-x-1.5 shrink-0">
-            
-            {/* Coimbatore District Pill */}
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(15);
-                openDistrictModal();
-              }}
-              className="px-2.5 py-1.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-800 dark:text-emerald-300 text-[10px] font-black flex items-center space-x-1 transition active:scale-95 cursor-pointer"
-              title="Change District"
-            >
-              <FaMapMarkerAlt className="text-emerald-600 text-[9px]" />
-              <span className="truncate max-w-[70px] sm:max-w-none">{currentDistrict?.name || 'Coimbatore'}</span>
-              <FaChevronDown className="text-[8px] opacity-70" />
-            </button>
+          {/* Right Controls: Language Selector & Notifications */}
+          <div className="flex items-center space-x-1.5">
 
-            {/* Dark / Light Mode Toggle */}
-            <button
-              type="button"
-              onClick={toggleDarkMode}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer text-xs"
-              aria-label="Toggle Theme"
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDarkMode ? <FaSun className="text-amber-400" /> : <FaMoon />}
-            </button>
 
-            {/* Notification Bell with Red Badge 1 */}
+            {/* Notification Bell with Red Badge */}
             <button 
               type="button" 
               onClick={() => {
                 triggerHaptic(20);
                 setShowNotificationModal(true);
               }}
-              className="relative p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer text-xs"
+              className="relative p-2 rounded-xl hover:bg-emerald-500/30 transition active:scale-95 cursor-pointer"
               aria-label="Notifications"
             >
-              <FaBell />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs animate-pulse">
-                1
-              </span>
-            </button>
-
-            {/* Hamburger Button (Green Solid Square matching screenshot) */}
-            <button 
-              type="button" 
-              id="mobile-top-hamburger-btn"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerHaptic(25);
-                window.dispatchEvent(new CustomEvent('open-mobile-citizen-drawer'));
-              }}
-              className="w-8 h-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-md shadow-emerald-700/25"
-              aria-label="Open Portal Menu"
-              title="Menu"
-            >
-              <FaBars className="text-sm" />
+              <FaBell className="text-base" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 border border-emerald-700 rounded-full animate-pulse"></span>
             </button>
           </div>
         </div>
 
-        {/* Search & Scanner Pill Bar matching screenshot */}
-        <div className="px-3.5 pb-2.5 relative">
-          <div className="flex items-center bg-[#ebf5ef] dark:bg-slate-900/90 rounded-full px-3 py-1.5 border border-emerald-500/25 text-slate-800 dark:text-slate-100 shadow-inner">
+        {/* 2. SEARCH & QR SCANNER BAR WITH LIVE AUTO-COMPLETE */}
+        <div className="px-4 pb-3 relative">
+          <div className="flex items-center bg-white dark:bg-slate-900 rounded-full px-3.5 py-2 shadow-inner border border-emerald-400/30 text-slate-800 dark:text-slate-100">
             <FaSearch className="text-slate-400 text-xs mr-2 flex-shrink-0" />
             <input 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search pickups, points, locations, recyclables... (Ctrl+K)"
-              className="w-full bg-transparent text-xs font-semibold placeholder-slate-400 outline-none truncate"
+              placeholder="Search scrap rates, pickups, tools..."
+              className="w-full bg-transparent text-xs font-semibold placeholder-slate-400 outline-none"
             />
             {searchQuery && (
               <button 
@@ -318,18 +277,18 @@ const MobileEcoHome = ({
               className="p-1 text-emerald-600 dark:text-emerald-400 hover:scale-110 active:scale-95 transition flex-shrink-0 cursor-pointer"
               title="Open AI Waste & QR Scanner"
             >
-              <FaCamera className="text-sm" />
+              <FaQrcode className="text-base" />
             </button>
           </div>
 
-          {/* Live Search Auto-complete Dropdown */}
+          {/* Live Search Results Dropdown */}
           <AnimatePresence>
             {searchQuery.trim().length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="absolute left-3.5 right-3.5 mt-2 z-50 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-emerald-500/30 overflow-hidden max-h-72 overflow-y-auto"
+                className="absolute left-4 right-4 mt-2 z-50 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-emerald-500/30 overflow-hidden max-h-72 overflow-y-auto"
               >
                 <div className="p-2.5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] font-black uppercase text-slate-400">
                   <span>Quick Results ({searchResults.length})</span>
@@ -368,477 +327,165 @@ const MobileEcoHome = ({
         </div>
       </header>
 
-      {/* ============================================================== */}
-      {/* MAIN BODY CONTAINER                                            */}
-      {/* ============================================================== */}
-      <main className="px-3.5 py-3 space-y-4 max-w-lg mx-auto relative z-10">
+      {/* MAIN BODY CONTAINER */}
+      <div className="px-4 py-3.5 space-y-4 max-w-lg mx-auto">
 
-        {/* 2. CITIZEN PROFILE & LEVEL CARD (From Left Sidebar of screenshot) */}
-        <div className="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3 border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between">
-          <div 
-            onClick={() => navigate('/profile')}
-            className="flex items-center space-x-2.5 cursor-pointer active:scale-98 transition flex-1 min-w-0"
-          >
-            <div className="relative shrink-0">
-              <img 
-                src={getAvatarUrl(user, displayName)} 
-                onError={(e) => handleAvatarError(e, displayName)}
-                alt="Avatar" 
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/60 shadow-xs"
-              />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center space-x-1.5">
-                <h4 className="text-xs font-black text-slate-900 dark:text-white truncate">
-                  {displayName}
-                </h4>
-                <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded-md border border-emerald-300/40">
-                  🌿 Eco Guardian
+        {/* 🌅 MORNING 6:00 AM WASTE REMINDER FLOATING CARD */}
+        <AnimatePresence>
+          {showMorningWasteBanner && (
+            <motion.div
+              initial={{ opacity: 0, y: -15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.98 }}
+              className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 text-white shadow-lg shadow-orange-500/20 border border-white/20 relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between relative z-10">
+                <div className="flex items-start space-x-2.5">
+                  <span className="text-2xl shrink-0 mt-0.5">🌅</span>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">காலை 6:00 AM குப்பை சேகரிப்பு</span>
+                      <span className="text-[10px] font-bold text-amber-200">Daily Alert</span>
+                    </div>
+                    <h4 className="text-xs font-black mt-1 leading-snug">
+                      இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வைக்கவும்! ♻️
+                    </h4>
+                    <p className="text-[10px] text-white/90 font-medium mt-0.5">
+                      எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும். Doorstep Pickup புக் செய்து EcoPoints ரொக்கப் பணம் பெறுங்கள்!
+                    </p>
+                    <div className="mt-2.5 flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          triggerHaptic(20);
+                          navigate('/schedule-pickup');
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 font-black text-[11px] shadow-sm hover:bg-slate-100 active:scale-95 transition cursor-pointer"
+                      >
+                        Doorstep Pickup புக் செய்
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowMorningWasteBanner(false)}
+                        className="px-2.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 text-white font-bold text-[10px] transition cursor-pointer"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowMorningWasteBanner(false)}
+                  className="text-white/80 hover:text-white p-1 cursor-pointer shrink-0"
+                  aria-label="Close"
+                >
+                  <FaTimes className="text-xs" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* 3. CITIZEN WALLET & UPI CASHOUT CARD */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2.5">
+          <div className="flex items-center justify-between">
+            <div 
+              onClick={() => {
+                triggerHaptic(15);
+                navigate('/redeem');
+              }}
+              className="flex items-center space-x-3 cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-lg border border-amber-500/20">
+                <FaCoins />
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase text-slate-400 block leading-tight">EcoPoints Wallet</span>
+                <span className="text-lg font-black text-slate-900 dark:text-white leading-tight">
+                  {walletPoints} <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">pts</span>
+                  <span className="text-[11px] font-semibold text-slate-400 ml-1.5">(≈ ₹{inrValue})</span>
                 </span>
               </div>
-              <div className="flex items-center space-x-2 mt-1">
-                <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400">Level 6 Citizen</span>
-                <div className="w-20 sm:w-28 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full w-[72%]" />
-                </div>
-                <span className="text-[8px] font-bold text-slate-400">777 to Lvl 7</span>
-              </div>
-            </div>
-          </div>
-
-          <div 
-            onClick={() => navigate('/redeem')}
-            className="shrink-0 px-2.5 py-1.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-black text-xs text-right cursor-pointer active:scale-95 transition"
-          >
-            <span className="block leading-none">{walletPoints} pts</span>
-            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-400 block mt-0.5">₹{inrValue} cash</span>
-          </div>
-        </div>
-
-        {/* 3. HERO WELCOME BANNER (Exact reproduction of desktop hero banner) */}
-        <div className="relative overflow-hidden rounded-3xl p-4 sm:p-5 text-slate-900 dark:text-white shadow-md border border-white/90 dark:border-emerald-500/20 bg-white/95 dark:bg-slate-900/90">
-          
-          {/* Panoramic Eco City Skyline Background with Soft Overlay */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-30 dark:opacity-20 pointer-events-none"
-            style={{ backgroundImage: "url('/images/eco_city_skyline_banner.jpg')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/90 via-teal-50/80 to-transparent dark:from-slate-950/95 dark:via-slate-900/90 dark:to-transparent pointer-events-none" />
-
-          {/* Banner Content */}
-          <div className="relative z-10 space-y-3">
-            
-            {/* Top row: Sprout badge + Greeting + EV Green Truck Artwork */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-start space-x-2.5">
-                {/* Sprout in Hand Badge with LVL 4 indicator */}
-                <div className="relative shrink-0">
-                  <div className="w-12 h-12 rounded-2xl overflow-hidden ring-2 ring-emerald-500 shadow-md bg-emerald-100">
-                    <img 
-                      src="/images/hand_holding_sprout.jpg" 
-                      alt="Eco Seedling" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full border border-white dark:border-slate-900 shadow-xs">
-                    LVL 4
-                  </span>
-                </div>
-
-                <div>
-                  <h2 className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                    Welcome back, <span className="text-emerald-600 dark:text-emerald-400">{displayName}!</span> 👋
-                  </h2>
-                  <p className="text-[10px] text-slate-600 dark:text-slate-300 font-medium mt-0.5 leading-snug">
-                    Turn household scrap into verified environmental impact & instant rewards.
-                  </p>
-                </div>
-              </div>
-
-              {/* Modern EV Recycling Truck Image */}
-              <div className="w-16 h-12 rounded-xl overflow-hidden shrink-0 border border-emerald-400/30 shadow-sm bg-white dark:bg-slate-800">
-                <img 
-                  src="/images/eco_green_truck.jpg" 
-                  alt="EV Green Fleet" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
             </div>
 
-            {/* Environmental Telematics Pills (Matching Screenshot) */}
-            <div className="flex items-center space-x-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-              <span className="shrink-0 px-2 py-0.5 bg-emerald-100/90 dark:bg-emerald-950/60 border border-emerald-300/60 text-emerald-800 dark:text-emerald-300 text-[9px] font-black rounded-full flex items-center gap-1">
-                <FaLeaf className="text-[8px] text-emerald-600" /> Eco Guardian
-              </span>
-              <span className="shrink-0 px-2 py-0.5 bg-emerald-100/90 dark:bg-emerald-950/60 border border-emerald-300/60 text-emerald-800 dark:text-emerald-300 text-[9px] font-black rounded-full flex items-center gap-1">
-                <FaMapMarkerAlt className="text-[8px] text-emerald-600" /> {currentDistrict?.name || 'Coimbatore'} Live AQI: 54
-              </span>
-              <span className="shrink-0 px-2 py-0.5 bg-emerald-100/90 dark:bg-emerald-950/60 border border-emerald-300/60 text-emerald-800 dark:text-emerald-300 text-[9px] font-black rounded-full flex items-center gap-1">
-                🍃 Good & Clean Air
-              </span>
-              <span className="shrink-0 px-2 py-0.5 bg-emerald-100/90 dark:bg-emerald-950/60 border border-emerald-300/60 text-emerald-800 dark:text-emerald-300 text-[9px] font-black rounded-full flex items-center gap-1">
-                ☀️ 29°C Pleasant
-              </span>
-            </div>
-
-            {/* Banner Action Buttons */}
-            <div className="flex items-center space-x-2 pt-0.5">
+            <div className="flex items-center space-x-2">
               <button
                 type="button"
-                onClick={() => {
-                  triggerHaptic(20);
-                  navigate('/schedule-pickup');
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-xs shadow-md shadow-emerald-700/20 transition active:scale-95 cursor-pointer flex items-center space-x-1"
+                onClick={handleWithdrawUpi}
+                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center space-x-1.5 cursor-pointer active:scale-95"
               >
-                <span>+ Schedule Pickup</span>
+                <FaWallet className="text-[11px]" />
+                <span>Withdraw UPI</span>
               </button>
-
               <button
                 type="button"
                 onClick={() => {
                   triggerHaptic(20);
-                  if (onOpenScanner) onOpenScanner();
+                  navigate('/redeem');
                 }}
-                className="px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 font-black text-xs shadow-xs transition active:scale-95 cursor-pointer flex items-center space-x-1"
+                className="px-3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition hover:bg-slate-200 cursor-pointer active:scale-95"
               >
-                <FaCamera className="text-[10px]" />
-                <span>AI Scanner</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(20);
-                  if (onOpenStory) onOpenStory();
-                }}
-                className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold text-xs transition active:scale-95 cursor-pointer flex items-center space-x-1"
-              >
-                <FaLeaf className="text-[10px]" />
-                <span>Story</span>
+                Rewards
               </button>
             </div>
           </div>
         </div>
 
-        {/* 4. DOORSTEP PICKUP TRACKER (LIVE GPS) - Directly in Mobile View */}
-        <div className="w-full">
-          <LiveUberPickupTracker 
-            pickup={activePickup}
-            onOpenChat={() => {
-              if (onOpenChat) onOpenChat();
-              else addToast('Starting chat with Driver Karthik Raja', 'info');
-            }}
-          />
-        </div>
+        {/* 4. TAMIL NADU DISTRICT SOLID WASTE SCHEDULE & RECOVERY HUB */}
+        <div 
+          onClick={() => {
+            triggerHaptic(20);
+            openDistrictModal();
+          }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white p-3.5 shadow-md flex items-center justify-between cursor-pointer active:scale-98 transition group border border-emerald-500/30"
+        >
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-emerald-400/10 rounded-full blur-xl pointer-events-none" />
 
-        {/* 5. PORTAL QUICK SERVICES GRID (Directly from Left Sidebar Menu) */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Portal Menu & Quick Tools
-            </span>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live Eco Grid: Net Positive
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            
-            {/* Book a Pickup */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/schedule-pickup');
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-emerald-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm">
-                  <FaCalendarAlt />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Book Pickup</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[8px] font-black">
-                FAST
-              </span>
-            </div>
-
-            {/* Live GPS Tracking */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/my-pickups?track=live');
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-emerald-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center text-sm">
-                  <FaMapMarkerAlt />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Live Tracking</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 text-[8px] font-black animate-pulse">
-                LIVE
-              </span>
-            </div>
-
-            {/* Eco-Store */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/store');
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-emerald-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-sm">
-                  <FaStore />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Eco-Store</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[8px] font-black">
-                NEW
-              </span>
-            </div>
-
-            {/* AI Waste Scanner */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                if (onOpenScanner) onOpenScanner();
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-emerald-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-sm">
-                  <FaCamera />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Waste Scanner</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[8px] font-black">
-                AI
-              </span>
-            </div>
-
-            {/* Report Roadside Dump */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/report-dump');
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-rose-200/60 dark:border-rose-900/40 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-rose-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center text-sm">
-                  <FaExclamationTriangle />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white truncate">Report Dump</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 text-[8px] font-black">
-                ALERT
-              </span>
-            </div>
-
-            {/* Eco Education */}
-            <div 
-              onClick={() => {
-                triggerHaptic(20);
-                navigate('/support');
-              }}
-              className="p-3 bg-white/95 dark:bg-slate-900/90 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 shadow-xs flex items-center justify-between cursor-pointer active:scale-98 transition hover:border-emerald-300"
-            >
-              <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-sm">
-                  <FaGraduationCap />
-                </div>
-                <span className="text-xs font-bold text-slate-900 dark:text-white">Eco Education</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 text-[8px] font-black">
-                LEARN
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* 6. ECOPOINTS WALLET & INSTANT UPI CASHOUT */}
-        <div className="bg-white/95 dark:bg-slate-900/90 border border-emerald-100 dark:border-emerald-500/20 rounded-2xl p-3.5 shadow-xs flex items-center justify-between">
-          <div 
-            onClick={() => {
-              triggerHaptic(15);
-              navigate('/redeem');
-            }}
-            className="flex items-center space-x-3 cursor-pointer"
-          >
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-base border border-amber-500/20">
-              <FaCoins />
+          <div className="flex items-center space-x-3 relative z-10 flex-1 pr-2">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-400/40 text-emerald-300 flex items-center justify-center shrink-0 shadow-inner font-black text-base">
+              🏛️
             </div>
             <div>
-              <span className="text-[10px] font-black uppercase text-slate-400 block leading-tight">EcoPoints Wallet</span>
-              <span className="text-base font-black text-slate-900 dark:text-white leading-tight">
-                {walletPoints} <span className="text-xs text-emerald-600 font-bold">pts</span>
-                <span className="text-[11px] font-semibold text-slate-400 ml-1.5">(₹{inrValue})</span>
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              type="button"
-              onClick={handleWithdrawUpi}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-xs transition flex items-center space-x-1 cursor-pointer active:scale-95"
-            >
-              <FaWallet className="text-[10px]" />
-              <span>Withdraw UPI</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleOpenSpinWheel}
-              className="px-2.5 py-1.5 bg-amber-500/10 text-amber-700 dark:text-amber-400 rounded-xl text-xs font-bold border border-amber-500/20 transition cursor-pointer active:scale-95"
-              title="Daily Spin Wheel"
-            >
-              🎡 Spin
-            </button>
-          </div>
-        </div>
-
-        {/* 7. FAST SCRAP RATE CALCULATOR (With exact rates from screenshot) */}
-        <div className="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-4 border border-emerald-100 dark:border-emerald-500/20 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-emerald-600 text-sm">⚖️</span>
-              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                Live Scrap Rate Calculator
-              </h4>
-            </div>
-            <span className="text-[9px] font-bold text-slate-400">Coimbatore Verified</span>
-          </div>
-
-          {/* Scrap Categories Pills */}
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
-            {Object.entries(SCRAP_RATES).map(([key, item]) => {
-              const isSelected = activeCategory === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    triggerHaptic(15);
-                    updateCategory(key);
-                  }}
-                  className={`p-2 rounded-xl text-left border transition cursor-pointer ${
-                    isSelected
-                      ? 'bg-emerald-500/15 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-2xs ring-1 ring-emerald-500/30'
-                      : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-base leading-none mb-1">
-                    <span>{item.icon}</span>
-                    <span className="text-[8px] font-black text-emerald-600 dark:text-emerald-400">
-                      ₹{item.ratePerKg}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-bold block truncate">{item.name}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Weight Slider */}
-          <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-slate-500">Estimated Weight:</span>
-              <span className="font-black text-emerald-700 dark:text-emerald-400">{activeWeight} kg</span>
-            </div>
-            <input 
-              type="range"
-              min="1"
-              max="50"
-              value={activeWeight}
-              onChange={(e) => updateWeight(Number(e.target.value))}
-              className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-            />
-          </div>
-
-          {/* Payout & Points Summary */}
-          <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/40 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] text-slate-500 block leading-tight">Instant Cash + Points</span>
-              <span className="text-sm font-black text-emerald-700 dark:text-emerald-400">
-                ₹{calculatedEarnings} <span className="text-xs text-slate-400 font-normal">cash</span> + {calculatedPoints} <span className="text-xs text-slate-400 font-normal">pts</span>
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                navigate(`/schedule-pickup?category=${activeCategory}&weight=${activeWeight}`);
-              }}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-xs active:scale-95 transition cursor-pointer"
-            >
-              Book for ₹{calculatedEarnings}
-            </button>
-          </div>
-        </div>
-
-        {/* 8. WASTE SEGREGATION GUIDE */}
-        <div className="bg-white/95 dark:bg-slate-900/90 rounded-2xl p-3.5 border border-emerald-100 dark:border-emerald-500/20 shadow-xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-base">🗑️</span>
-              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                Tamil Nadu 3-Bin Segregation Guide
-              </h4>
-            </div>
-            <span className="text-[9px] font-bold text-emerald-600">SWM Rule 2016</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-            {Object.entries(SEGREGATION_ITEMS).map(([key, item]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => {
-                  triggerHaptic(15);
-                  updateSeg(key);
-                }}
-                className={`p-2 rounded-xl text-left border transition cursor-pointer ${
-                  activeSeg === key
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500'
-                    : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800'
-                }`}
-              >
-                <div className="text-base mb-0.5">{item.icon}</div>
-                <h5 className="text-[10px] font-black text-slate-900 dark:text-white truncate">{item.name}</h5>
-                <span className="text-[8px] font-bold text-emerald-600 block truncate">{item.reward}</span>
-              </button>
-            ))}
-          </div>
-
-          {SEGREGATION_ITEMS[activeSeg] && (
-            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300">
-              <div className="font-bold text-slate-900 dark:text-white mb-0.5">
-                {SEGREGATION_ITEMS[activeSeg].binName}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-black uppercase tracking-wider block">
+                  {currentDistrict.name}
+                </span>
+                <span className="px-1.5 py-0.5 bg-emerald-400 text-slate-950 text-[9px] font-black rounded-full uppercase">
+                  ACTIVE
+                </span>
               </div>
-              <p>{SEGREGATION_ITEMS[activeSeg].instructions}</p>
+              <p className="text-[11px] text-emerald-100 font-medium line-clamp-1">
+                {currentDistrict.corporation} • Daily Doorstep Segregated Collection
+              </p>
             </div>
-          )}
+          </div>
+
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDistrictModal();
+            }}
+            className="px-3 py-1.5 rounded-xl bg-white text-emerald-800 font-black text-xs shadow-md shrink-0 active:scale-95 hover:bg-emerald-50 transition cursor-pointer"
+          >
+            38 Districts
+          </button>
         </div>
 
-        {/* 9. 1-CLICK REORDER CARD */}
-        <div className="p-3 bg-white/95 dark:bg-slate-900/90 border border-emerald-100 dark:border-emerald-500/20 rounded-2xl shadow-xs flex items-center justify-between">
-          <div className="flex items-center space-x-2.5 flex-1 pr-2">
-            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-xs border border-emerald-200 shrink-0 bg-emerald-50">
+        {/* 5. 1-CLICK "REPEAT LAST PICKUP" REORDER CARD (With 3D Box Artwork) */}
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="flex items-center space-x-3 flex-1 pr-2">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800">
               <img 
                 src="/images/citizen/rebook_pickup_card.jpg" 
-                alt="Rebook" 
+                alt="Rebook Pickup" 
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <span className="text-[9px] font-black uppercase text-slate-400 block leading-tight">
+              <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">
                 1-Click Fast Rebook
               </span>
               <h4 className="text-xs font-black text-slate-900 dark:text-white">
@@ -853,22 +500,520 @@ const MobileEcoHome = ({
               triggerHaptic(20);
               navigate(`/schedule-pickup?category=${lastCompletedPickup.categoryKey || 'plastics'}&weight=${lastCompletedPickup.weight || 8.5}`);
             }}
-            className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-black shadow-xs active:scale-95 transition cursor-pointer flex items-center space-x-1"
+            className="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-black shadow-sm active:scale-95 transition cursor-pointer shrink-0 flex items-center space-x-1"
           >
-            <FaRedo className="text-[9px]" />
+            <FaRedo className="text-[10px]" />
             <span>Rebook</span>
           </button>
         </div>
 
-      </main>
+        {/* 6. HERO PROMO CAROUSEL (With 3D Generated Illustrations) */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-600 text-white p-4 shadow-md">
+          {/* Subtle Ambient Light Orb */}
+          <div className="absolute -top-12 -right-12 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
-      {/* ============================================================== */}
-      {/* 10. NOTIFICATIONS MODAL                                        */}
-      {/* ============================================================== */}
+          <div className="flex items-center justify-between gap-3 relative z-10">
+            <div className="space-y-2 flex-1">
+              <span className="text-[9px] font-black uppercase tracking-wider bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full inline-block border border-white/20">
+                {heroSlides[carouselIndex].badge}
+              </span>
+              <h2 className="text-sm sm:text-base font-black leading-snug">
+                {heroSlides[carouselIndex].title}
+              </h2>
+              <button 
+                type="button" 
+                onClick={() => {
+                  triggerHaptic(20);
+                  heroSlides[carouselIndex].action();
+                }}
+                className="px-4 py-2 rounded-full bg-white text-emerald-700 font-black text-xs shadow-md hover:bg-emerald-50 active:scale-95 transition cursor-pointer inline-flex items-center space-x-1.5"
+              >
+                <span>{heroSlides[carouselIndex].cta}</span>
+                <FaArrowRight className="text-[10px]" />
+              </button>
+            </div>
+
+            {/* Generated 3D Slide Image with Glass Border */}
+            <motion.div 
+              key={carouselIndex}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.35 }}
+              onClick={() => {
+                triggerHaptic(20);
+                heroSlides[carouselIndex].action();
+              }}
+              className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-2xl overflow-hidden shadow-xl border-2 border-white/50 ring-2 ring-emerald-300/40 cursor-pointer active:scale-95 transition-transform bg-emerald-700/50"
+            >
+              <img 
+                src={heroSlides[carouselIndex].image} 
+                alt={heroSlides[carouselIndex].title}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center items-center space-x-2 pt-3">
+            {heroSlides.map((_, idx) => (
+              <button 
+                key={idx}
+                type="button" 
+                onClick={() => {
+                  triggerHaptic(15);
+                  setCarouselIndex(idx);
+                }}
+                className={`h-2 rounded-full transition-all cursor-pointer ${
+                  carouselIndex === idx ? 'w-6 bg-white shadow-sm' : 'w-2 bg-white/40 hover:bg-white/60'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+
+        {/* 7. LIVE ACTIVE PICKUP TELEMATICS + BLUETOOTH DIGITAL SCALE & ETA */}
+        {activePickup && (
+          <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 rounded-3xl p-4 space-y-3 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                  Live Doorstep Telematics
+                </h4>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                {activePickup.status || 'PENDING'}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {activePickup.driver?.user?.name ? `Driver ${activePickup.driver.user.name}` : 'Driver Karthik Raja'}
+                </h4>
+                <p className="text-[11px] text-slate-500 font-bold">
+                  EV Green Fleet • {activePickup.wasteCategory || `${activePickup.estimatedWeight || 5} kg scrap`}
+                </p>
+              </div>
+
+              {/* OTP Code */}
+              <div className="text-right">
+                <span className="text-[9px] uppercase font-bold text-slate-400 block leading-tight">
+                  Customer OTP
+                </span>
+                <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-wider">
+                  {activePickup.verificationCode || activePickup.otp || '4829'}
+                </span>
+              </div>
+            </div>
+
+            {/* Live Driver ETA & Bluetooth Certified Scale Pill */}
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-emerald-500/20 text-xs font-bold">
+                <div className="flex items-center space-x-1.5 text-slate-700 dark:text-slate-300 text-[11px]">
+                  <FaCompass className="text-emerald-500 animate-spin" />
+                  <span>Driver is 1.4 km away • ETA 12 mins</span>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-black">
+                  ON TIME
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-400/20 text-xs font-bold text-blue-900 dark:text-blue-300">
+                <div className="flex items-center space-x-1.5 text-[11px]">
+                  <FaBluetooth className="text-blue-500" />
+                  <span>Bluetooth Digital Scale: Live Sync Ready</span>
+                </div>
+                <span className="text-[9px] font-mono text-blue-600 font-black">CERTIFIED</span>
+              </div>
+            </div>
+
+            {/* Contact Driver Controls */}
+            <div className="flex items-center space-x-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (onOpenChat) onOpenChat();
+                }}
+                className="flex-1 py-1.5 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+              >
+                <FaComments />
+                <span>Chat Driver</span>
+              </button>
+              <a
+                href="tel:+919876543210"
+                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-xs cursor-pointer"
+              >
+                <FaPhone />
+                <span>Call</span>
+              </a>
+            </div>
+
+            {/* 4-Step Stepper */}
+            <div className="pt-2 border-t border-emerald-500/20">
+              <div className="grid grid-cols-4 gap-1 text-center">
+                <div>
+                  <div className="h-1.5 rounded-full bg-emerald-500"></div>
+                  <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400 mt-1 block">1. Booked</span>
+                </div>
+                <div>
+                  <div className="h-1.5 rounded-full bg-emerald-500"></div>
+                  <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400 mt-1 block">2. Assigned</span>
+                </div>
+                <div>
+                  <div className={`h-1.5 rounded-full ${['accepted', 'en_route', 'in_progress', 'completed'].includes(activePickup.status) ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                  <span className="text-[9px] font-bold text-slate-500 mt-1 block">3. En Route</span>
+                </div>
+                <div>
+                  <div className={`h-1.5 rounded-full ${activePickup.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                  <span className="text-[9px] font-bold text-slate-500 mt-1 block">4. Collected</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate('/my-pickups')}
+              className="w-full py-2 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-sm flex items-center justify-center space-x-1.5 active:scale-98 transition cursor-pointer"
+            >
+              <FaTruck />
+              <span>Open Detailed Live Route Map</span>
+            </button>
+          </div>
+        )}
+
+        {/* 8. SMART SCRAP BUYBACK CALCULATOR & LIVE RATES */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-teal-500/10 text-teal-600 flex items-center justify-center text-sm">
+                <FaCalculator />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                  Live Scrap Calculator
+                </h4>
+                <p className="text-[10px] text-slate-400">Current Market Rates / kg</p>
+              </div>
+            </div>
+            <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+              Chennai Spot Rates
+            </span>
+          </div>
+
+          {/* Category Chips */}
+          <div className="grid grid-cols-3 gap-1.5">
+            {Object.entries(SCRAP_RATES).map(([key, item]) => {
+              const isSelected = activeCategory === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    triggerHaptic(15);
+                    updateCategory(key);
+                  }}
+                  className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                    isSelected 
+                      ? 'bg-emerald-500/10 border-emerald-500 text-slate-900 dark:text-white shadow-xs' 
+                      : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">{item.icon}</span>
+                    <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400">
+                      ₹{item.ratePerKg}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-black block truncate mt-0.5">{item.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Weight Range Slider */}
+          <div className="space-y-1.5 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+            <div className="flex justify-between items-center text-xs font-black">
+              <span className="text-slate-600 dark:text-slate-300">Weight:</span>
+              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-[11px]">
+                {activeWeight} kg
+              </span>
+            </div>
+            <input 
+              type="range"
+              min="2"
+              max="100"
+              step="1"
+              value={activeWeight}
+              onChange={(e) => updateWeight(Number(e.target.value))}
+              className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+            />
+            <div className="flex justify-between text-[8px] font-bold text-slate-400">
+              <span>2 kg (Min)</span>
+              <span>25 kg</span>
+              <span>50 kg</span>
+              <span>100 kg (Bulk)</span>
+            </div>
+          </div>
+
+          {/* Instant Estimation and 1-Click Sell Scrap */}
+          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 rounded-2xl border border-emerald-500/30">
+            <div>
+              <span className="text-[9px] uppercase font-bold text-slate-400 block">Estimated Payout</span>
+              <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                ₹{activeWeight * currentScrap.ratePerKg}
+              </span>
+              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 ml-1.5">
+                +{(activeWeight * currentScrap.ptsPerKg)} pts
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(20);
+                navigate(`/schedule-pickup?category=${activeCategory}&weight=${activeWeight}`);
+              }}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-sm flex items-center space-x-1 cursor-pointer active:scale-95"
+            >
+              <span>Sell Scrap</span>
+              <FaArrowRight className="text-[10px]" />
+            </button>
+          </div>
+        </div>
+
+        {/* 9. 7-DAY GREEN STREAK & MISSIONS */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center text-sm">
+                <FaFire className="animate-pulse" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                  {streakDays}-Day Green Streak
+                </h4>
+                <p className="text-[10px] text-slate-400">Today: {todayFormattedName}, {todayFormattedDate}</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(30);
+                if (onClaimStreak) onClaimStreak();
+              }}
+              disabled={streakClaimed}
+              className={`px-3 py-1 rounded-xl text-xs font-black transition cursor-pointer ${
+                streakClaimed 
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-default' 
+                  : 'bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-sm'
+              }`}
+            >
+              {streakClaimed ? 'Claimed ✓' : 'Claim +10 Pts'}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, idx) => (
+              <div 
+                key={idx}
+                className="p-1 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 flex flex-col items-center"
+              >
+                <span className="text-[8px] font-bold text-slate-400">{day}</span>
+                <span className="text-xs mt-0.5">
+                  {idx < streakDays ? '🔥' : '⚪'}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {quests && quests.length > 0 && (
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-black uppercase text-slate-400 block">Daily Eco Quests</span>
+              {quests.slice(0, 2).map((q) => (
+                <div 
+                  key={q.id}
+                  className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between"
+                >
+                  <div className="flex items-center space-x-2 min-w-0">
+                    <span className="text-xs">{q.icon || '🌱'}</span>
+                    <div className="min-w-0">
+                      <span className={`text-[11px] font-bold block truncate ${q.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                        {q.title}
+                      </span>
+                      <span className="text-[9px] text-emerald-600 font-extrabold">+{q.points} EcoPoints</span>
+                    </div>
+                  </div>
+
+                  {q.completed ? (
+                    <span className="text-emerald-500 text-xs font-black">✓</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic(20);
+                        if (onCompleteQuest) onCompleteQuest(q);
+                      }}
+                      className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-black cursor-pointer active:scale-95"
+                    >
+                      Start
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 10. UNIFIED VIRTUAL TREE & ENVIRONMENTAL IMPACT BENTO */}
+        <div className="bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 border border-emerald-500/30 rounded-3xl p-4 text-white shadow-md space-y-3">
+          <div className="flex items-center justify-between border-b border-emerald-500/20 pb-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+                <FaSeedling className="animate-bounce" />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                  Virtual Tree & Verified Impact
+                </h4>
+                <p className="text-[10px] text-emerald-300 font-medium">{treeStage.stageTag || 'Level 2'}: {treeStage.name}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (onOpenCert) onOpenCert();
+                }}
+                className="px-2 py-1 bg-amber-500/20 text-amber-300 rounded-lg text-[10px] font-black border border-amber-500/30 flex items-center space-x-1 cursor-pointer"
+              >
+                <FaCertificate />
+                <span>Cert</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  if (onOpenStory) onOpenStory();
+                }}
+                className="px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg text-[10px] font-black border border-emerald-500/30 flex items-center space-x-1 cursor-pointer"
+              >
+                <FaShareAlt />
+                <span>Story</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 bg-slate-950/60 p-3 rounded-2xl border border-emerald-500/20">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-emerald-400/40 ring-2 ring-emerald-500/20 shrink-0 shadow-lg">
+              <img 
+                src="/images/citizen/virtual_eco_tree.jpg" 
+                alt="Virtual Eco Tree" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex-1 space-y-1">
+              <div className="flex justify-between text-[10px] font-black text-emerald-300">
+                <span>Tree Maturity Progress</span>
+                <span>{treeStage.pct || 65}%</span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-emerald-500/30">
+                <div 
+                  className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full rounded-full" 
+                  style={{ width: `${treeStage.pct || 65}%` }}
+                />
+              </div>
+              <p className="text-[9px] text-slate-300 pt-0.5">
+                Total Diverted: <strong className="text-white font-black">{totalKgNumber} kg</strong>
+              </p>
+            </div>
+          </div>
+
+          {/* 4 Core Environmental Badges Grid */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🌳</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.treesPlanted || 142} Trees</span>
+                <span className="text-[8px] text-slate-400 font-bold">Planted</span>
+              </div>
+            </div>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🌊</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.plasticRecoveredKg || 380} kg</span>
+                <span className="text-[8px] text-slate-400 font-bold">Ocean Plastic</span>
+              </div>
+            </div>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">🚇</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.metroKm || '1,250'} km</span>
+                <span className="text-[8px] text-slate-400 font-bold">Clean Commute</span>
+              </div>
+            </div>
+            <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 flex items-center space-x-2">
+              <span className="text-base">⚡</span>
+              <div>
+                <span className="text-xs font-black text-white block">{analytics?.co2Reduced || '24.5'} kg</span>
+                <span className="text-[8px] text-slate-400 font-bold">CO2 Offset</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 11. REPORT ROADSIDE DUMPING BANNER (With 3D GPS Alert Badge) */}
+        <div className="p-3.5 bg-gradient-to-r from-rose-500/10 to-orange-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-rose-400/30 ring-2 ring-rose-500/20 shrink-0 shadow-md">
+              <img 
+                src="/images/citizen/dump_alert_badge.jpg" 
+                alt="Dump Alert" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h5 className="text-xs font-black text-rose-900 dark:text-rose-200">
+                Spotted Roadside Trash?
+              </h5>
+              <p className="text-[10px] text-rose-700 dark:text-rose-400">
+                Snap geo-tagged photo & alert municipality
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(20);
+              navigate('/report-dump');
+            }}
+            className="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-black shadow-sm cursor-pointer active:scale-95 transition shrink-0"
+          >
+            Report
+          </button>
+        </div>
+
+
+      </div>
+
+      {/* 12. ELEVATED STICKY BOTTOM NAVIGATION BAR WITH CENTER FAB */}
+      <MobileCitizenNav />
+
+      {/* NOTIFICATION MODAL */}
       <AnimatePresence>
         {showNotificationModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -879,13 +1024,14 @@ const MobileEcoHome = ({
                   <FaBell className="text-emerald-500" />
                   <span>Citizen Notifications</span>
                 </h3>
-                <button onClick={() => setShowNotificationModal(false)} className="text-slate-400 p-1 cursor-pointer">
+                <button onClick={() => setShowNotificationModal(false)} className="text-slate-400 p-1">
                   <FaTimes />
                 </button>
               </div>
 
               <div className="space-y-2 text-xs">
-                {/* Morning Reminder Notification */}
+
+                {/* 🌅 MORNING 6:00 AM WASTE REMINDER CARD */}
                 <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 rounded-2xl border border-amber-400/40 shadow-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -928,19 +1074,17 @@ const MobileEcoHome = ({
                       }}
                       className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white rounded-xl font-black text-[10px] flex items-center space-x-1 shadow-sm cursor-pointer"
                     >
-                      <span>⚡ Test Alert</span>
+                      <span>⚡ Test Notification Now</span>
                     </button>
                   </div>
                 </div>
-
                 <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-500/20">
                   <p className="font-bold text-slate-900 dark:text-white">🔔 Welcome to EcoReward!</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">Turn household scrap into EcoPoints & direct bank cash payouts.</p>
                 </div>
-                
                 <div className="p-2.5 bg-sky-50 dark:bg-sky-950/40 rounded-xl border border-sky-500/20">
                   <p className="font-bold text-slate-900 dark:text-white">🚚 Daily Doorstep Pickup Active</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">EV Drivers are collecting dry scrap across Coimbatore zones.</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">EV Drivers are collecting dry scrap across Chennai zones.</p>
                 </div>
               </div>
 

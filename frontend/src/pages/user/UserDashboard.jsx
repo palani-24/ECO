@@ -366,140 +366,107 @@ const UserDashboard = () => {
         <UserLayout>
           <div className="space-y-6 w-full pb-8">
         
-        {/* Flagship Eco-Tech Command Center Hero Banner */}
-        <div className="relative overflow-hidden rounded-3xl glass-bright p-6 sm:p-7 text-slate-900 dark:text-white min-h-[175px] flex items-center border border-white/80 dark:border-white/10 shadow-xl">
-          {/* Subtle Ambient Eco Mesh Lighting */}
-          <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-500/15 dark:bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-500/15 dark:bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
-          
-          {/* Gentle translucent soft glass gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-transparent dark:from-slate-950/80 dark:via-slate-900/60 dark:to-transparent pointer-events-none z-0" />
+        {/* Modern Panoramic Eco Landscape Hero Banner with Bright Glassmorphic Design */}
+        <div className="relative overflow-hidden rounded-3xl glass-bright p-6 sm:p-8 text-slate-900 dark:text-white min-h-[170px] flex items-center">
+          {/* Panoramic Eco City Landscape Background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
+            style={{ 
+              backgroundImage: "url('/images/eco_city_skyline_banner.jpg')",
+              filter: 'brightness(1.08) saturate(1.2)'
+            }}
+          />
+          {/* Gentle translucent luminous soft glass gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/45 to-white/10 dark:from-slate-950/80 dark:via-slate-950/50 dark:to-transparent pointer-events-none z-0" />
 
           <div className="relative z-10 w-full flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
             
-            {/* Left: Citizen Level Badge + Personalized Greeting + Environmental Telematics Ribbon */}
+            {/* Left: Hand holding sprout + Welcome greeting + Chips row */}
             <div className="flex items-center space-x-4 sm:space-x-5 max-w-2xl">
-              {/* High-tech Citizen Avatar & Tier Badge */}
+              {/* Hand holding sprout asset with LVL 4 gold badge */}
               <div className="relative shrink-0">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 text-white flex items-center justify-center text-2xl sm:text-3xl font-black shadow-lg shadow-emerald-600/30 ring-4 ring-white dark:ring-slate-800 relative overflow-hidden group">
-                  <span className="transform group-hover:scale-110 transition-transform duration-300">🌱</span>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-lg border border-white/95 dark:border-white/20 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md">
+                  <img 
+                    src="/images/hand_holding_sprout.jpg" 
+                    alt="Eco Level 4 Sprout" 
+                    className="w-full h-full object-cover scale-105"
+                  />
                 </div>
-                <span className="absolute -bottom-1 -right-1 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-sm flex items-center gap-0.5">
-                  <span>★</span> LVL 4
+                <span className="absolute -bottom-1.5 -right-1.5 bg-[#f59e0b] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-sm">
+                  LVL 4
                 </span>
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex items-center space-x-2.5">
-                  <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Welcome back, <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
-                  </h1>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">
-                  Turn household scrap into verified environmental impact & instant UPI cash.
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                  Welcome back, <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">{user?.name ? user.name.split(' ')[0] : 'Palani'}</span>! 👋
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-semibold">
+                  Turn household scrap into verified environmental impact & instant rewards.
                 </p>
 
-                {/* Live Environmental & Smart City Telematics Ribbon */}
-                <div className="flex flex-wrap items-center gap-2 pt-1.5">
-                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-xs flex items-center space-x-1.5">
-                    <span className="h-2 w-2 rounded-full bg-white animate-pulse"></span>
-                    <span>Eco Guardian</span>
+                {/* 4 Soft Pill Badges in a single row */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-xs flex items-center space-x-1">
+                    <span>🌿 Eco Guardian</span>
                   </span>
-
-                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1.5 border border-slate-200/80 dark:border-slate-700">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span>{currentDistrict?.name || 'Coimbatore'} AQI: 54 • Good</span>
+                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1">
+                    <span>🍃 {currentDistrict?.name || 'Coimbatore'} Live AQI: 54</span>
                   </span>
-
                   <span className="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30 shadow-2xs flex items-center space-x-1">
-                    <span>⚡ 100% EV Zero-Emission Active</span>
+                    <span>🌱 Good & Clean Air</span>
                   </span>
-
-                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200/80 dark:border-slate-700">
+                  <span className="glass-bright-pill px-3 py-1 rounded-full text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1">
                     <span>☀️ 29°C Pleasant</span>
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Right: Quick Action Hub + Cyber EV Fleet Telematics Badge */}
-            <div className="flex items-center space-x-4 ml-auto w-full xl:w-auto justify-between xl:justify-end">
+            {/* Right: Action Buttons + Green Collection Truck */}
+            <div className="flex items-center space-x-4 ml-auto">
               <div className="flex flex-wrap items-center gap-2.5">
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => navigate('/schedule-pickup')}
-                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center space-x-2 cursor-pointer border border-emerald-400/40"
+                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xs shadow-md shadow-emerald-600/30 transition-all flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <FaCalendarPlus className="h-4 w-4" />
                   <span>Schedule Pickup</span>
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setShowAiScanner(true)}
-                  className="glass-bright-pill px-4 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs border border-slate-200/90 dark:border-slate-700"
+                  className="glass-bright-pill px-5 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-extrabold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
                   <FaCamera className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>AI Scanner</span>
+                  <span>AI Waste Scanner</span>
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setShowSpinWheel(true)}
-                  className="glass-bright-pill px-4 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs border border-slate-200/90 dark:border-slate-700"
-                  title="Daily Spin & Win EcoPoints"
-                >
-                  <span className="text-amber-500 text-sm">🎡</span>
-                  <span>Daily Spin</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     triggerHaptic(30);
                     setShowEcoStory(true);
                   }}
-                  className="glass-bright-pill px-4 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs border border-slate-200/90 dark:border-slate-700"
-                  title="Shareable Green Impact Story"
+                  className="glass-bright-pill px-5 py-3 rounded-2xl hover:bg-white text-slate-800 dark:text-slate-100 font-extrabold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-xs"
                 >
                   <FaLeaf className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   <span>Eco Story</span>
                 </motion.button>
               </div>
 
-              {/* Integrated Cyber-EV Fleet Telematics Pod (Seamless Vector & Glassmorphism, No Harsh Image Edges) */}
-              <div className="hidden 2xl:flex flex-col justify-between p-3.5 rounded-2xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-emerald-500/25 shadow-md w-48 shrink-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    FLEET TELEMATICS
-                  </span>
-                  <span className="text-[9px] font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
-                    100% EV
-                  </span>
-                </div>
-                <div className="py-2 flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl shadow-xs">
-                    🚚
-                  </div>
-                  <div>
-                    <span className="text-xs font-black text-slate-900 dark:text-white block leading-tight">
-                      Tata Ace EV
-                    </span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
-                      TN-38-AX-9945
-                    </span>
-                  </div>
-                </div>
-                <div className="pt-1.5 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                  <span>Battery: <strong className="text-emerald-600 dark:text-emerald-400">94%</strong></span>
-                  <span>Speed: <strong className="text-slate-800 dark:text-slate-200">24 km/h</strong></span>
-                </div>
+              {/* Green EV Recycling Truck Graphic */}
+              <div className="hidden xl:block w-36 lg:w-44 h-28 shrink-0 relative">
+                <img 
+                  src="/images/eco_green_truck.jpg" 
+                  alt="Green EV Waste Truck" 
+                  className="w-full h-full object-contain filter drop-shadow-md rounded-2xl"
+                />
               </div>
             </div>
 
@@ -512,50 +479,46 @@ const UserDashboard = () => {
           onOpenChat={() => setShowDriverChat(true)}
         />
 
-        {/* Dynamic 4-Metric Glass Bento Grid with Distinct Curated Dark Theme Colors */}
+        {/* Dynamic 4-Metric Glass Bento Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           
-          {/* Card 1: Wallet Balance & EcoPoints (Solar Amber & Gold Glow) */}
-          <div className="p-5 rounded-3xl glass-card dark:bg-gradient-to-br dark:from-amber-950/30 dark:via-slate-900/90 dark:to-slate-950 border dark:border-amber-500/30 hover:border-amber-400 dark:hover:border-amber-400 hover:-translate-y-1 hover:shadow-2xl dark:hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.25)] flex flex-col justify-between space-y-4 transition-all duration-300 group">
+          {/* Card 1: Wallet Balance & EcoPoints */}
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-emerald-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-amber-400 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#f59e0b]"></span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-emerald-400/80">
                 EcoPoints Balance
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base border border-amber-500/30 group-hover:scale-110 transition-transform shadow-sm">
+              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base border border-emerald-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaCoins />
               </div>
             </div>
             <div>
               <div className="flex items-baseline space-x-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                <span className="text-3xl font-black text-slate-900 dark:text-white">
                   {currentPoints}
                 </span>
-                <span className="text-xs font-black text-amber-500 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                  pts
-                </span>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">pts</span>
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-1">
-                ≈ <strong className="text-slate-800 dark:text-amber-300 font-black">₹{inrEquivalent}</strong> direct UPI cash payout
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                ≈ ₹{inrEquivalent} direct bank / UPI cash value
               </span>
             </div>
             <button
               onClick={() => setShowUpiPayout(true)}
-              className="w-full py-2.5 bg-gradient-to-r from-amber-500/15 via-yellow-500/15 to-amber-500/20 hover:from-amber-500 hover:to-yellow-500 text-amber-700 dark:text-amber-300 hover:text-slate-950 font-black text-xs rounded-xl border border-amber-500/35 hover:border-transparent transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm group-hover:shadow-md"
+              className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs rounded-xl border border-emerald-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaWallet className="text-xs" />
               <span>Redeem UPI Cash</span>
             </button>
           </div>
 
-          {/* Card 2: Active Pickup & Status (Electric Cyan & Ice Blue Glow) */}
-          <div className="p-5 rounded-3xl glass-card dark:bg-gradient-to-br dark:from-cyan-950/30 dark:via-slate-900/90 dark:to-slate-950 border dark:border-cyan-500/30 hover:border-cyan-400 dark:hover:border-cyan-400 hover:-translate-y-1 hover:shadow-2xl dark:hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.25)] flex flex-col justify-between space-y-4 transition-all duration-300 group">
+          {/* Card 2: Active Pickup & Status */}
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-sky-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-cyan-400 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#06b6d4]"></span>
-                Active Pickup
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-sky-400/80">
+                Active Doorstep Pickup
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-base border border-cyan-500/30 group-hover:scale-110 transition-transform shadow-sm">
+              <div className="h-10 w-10 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-base border border-sky-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaTruck />
               </div>
             </div>
@@ -563,25 +526,25 @@ const UserDashboard = () => {
               <>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span className="text-base font-black text-slate-900 dark:text-white truncate">
-                      {activePickup.driver?.user?.name || 'Karthik Raja'}
+                      {activePickup.driver?.user?.name || 'Driver Assigned'}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-1">
-                    {activePickup.driver?.vehicleNumber || 'Tata Ace EV'} • Status: <strong className="text-cyan-500 capitalize">{activePickup.status}</strong>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                    {activePickup.driver?.vehicleNumber || 'Vehicle Assigned'} • Status: {activePickup.status}
                   </span>
                 </div>
                 <Link
                   to="/my-pickups"
-                  className="flex items-center justify-between py-2.5 px-3 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-700 dark:text-cyan-300 font-black text-xs rounded-xl border border-cyan-500/35 transition cursor-pointer"
+                  className="flex items-center justify-between py-2 px-3 bg-sky-500/10 hover:bg-sky-500/20 text-sky-700 dark:text-sky-300 font-extrabold text-xs rounded-xl border border-sky-500/20 transition cursor-pointer"
                 >
                   <span className="flex items-center space-x-1.5">
-                    <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
                     <span className="capitalize">{activePickup.status} • Track Live →</span>
                   </span>
                   {activePickup.otpCode && (
-                    <span className="text-[11px] font-mono font-black text-amber-500 dark:text-amber-400 bg-slate-900/80 px-1.5 py-0.5 rounded border border-amber-500/30">OTP: {activePickup.otpCode}</span>
+                    <span className="text-[11px] font-mono font-black text-emerald-600 dark:text-emerald-400">OTP: {activePickup.otpCode}</span>
                   )}
                 </Link>
               </>
@@ -589,94 +552,88 @@ const UserDashboard = () => {
               <>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-slate-500"></span>
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-400"></span>
                     <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
                       No Active Pickup
                     </span>
                   </div>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-1">
-                    Book EV doorstep collection now
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                    Ready to recycle scrap & earn rewards?
                   </span>
                 </div>
                 <Link
                   to="/schedule-pickup"
-                  className="w-full py-2.5 bg-gradient-to-r from-cyan-500/15 via-teal-500/15 to-cyan-500/20 hover:from-cyan-500 hover:to-teal-500 text-cyan-700 dark:text-cyan-300 hover:text-slate-950 font-black text-xs rounded-xl border border-cyan-500/35 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-sm"
+                  className="w-full py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-black text-xs rounded-xl border border-sky-500/25 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
                 >
                   <FaCalendarPlus className="text-xs" />
-                  <span>Book Pickup</span>
+                  <span>Schedule Pickup</span>
                 </Link>
               </>
             )}
           </div>
 
-          {/* Card 3: Carbon Diverted & Target (Cyber Mint & Emerald Glow) */}
-          <div className="p-5 rounded-3xl glass-card dark:bg-gradient-to-br dark:from-emerald-950/30 dark:via-slate-900/90 dark:to-slate-950 border dark:border-emerald-500/30 hover:border-emerald-400 dark:hover:border-emerald-400 hover:-translate-y-1 hover:shadow-2xl dark:hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.25)] flex flex-col justify-between space-y-4 transition-all duration-300 group">
+          {/* Card 3: Carbon Diverted & Monthly Target */}
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-teal-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-emerald-400 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-teal-400/80">
                 Carbon Diverted
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base border border-emerald-500/30 group-hover:scale-110 transition-transform shadow-sm">
+              <div className="h-10 w-10 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-base border border-teal-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaLeaf />
               </div>
             </div>
             <div>
               <div className="flex items-baseline space-x-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                <span className="text-3xl font-black text-slate-900 dark:text-white">
                   {analytics?.co2Reduced || '35.3'}
                 </span>
-                <span className="text-xs font-black text-emerald-500 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                  kg CO₂e
-                </span>
+                <span className="text-xs font-bold text-teal-600 dark:text-teal-400">kg CO₂</span>
               </div>
-              <div className="mt-2.5 space-y-1.5">
+              <div className="mt-2 space-y-1">
                 <div className="flex justify-between text-[10px] font-extrabold text-slate-500 dark:text-slate-400">
                   <span>Goal: 40 kg</span>
-                  <span className="text-emerald-500 dark:text-emerald-400 font-black">71% Reached</span>
+                  <span className="text-emerald-500 font-black">71% Reached</span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden shadow-inner">
-                  <div className="bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 h-full rounded-full shadow-[0_0_10px_#10b981]" style={{ width: '71%' }}></div>
+                <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full" style={{ width: '71%' }}></div>
                 </div>
               </div>
             </div>
             <Link 
               to="/redeem"
-              className="flex items-center justify-between py-2 px-3 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 font-black text-xs rounded-xl border border-emerald-500/30 transition cursor-pointer"
+              className="flex items-center justify-between py-2 px-3 bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 font-extrabold text-xs rounded-xl border border-teal-500/20 transition cursor-pointer"
             >
               <span className="truncate">Reward Goal</span>
-              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-300">
                 11.5 kg to ₹250 Voucher →
               </span>
             </Link>
           </div>
 
-          {/* Card 4: Total Waste Recycled & Certificate (Royal Amethyst & Violet Glow) */}
-          <div className="p-5 rounded-3xl glass-card dark:bg-gradient-to-br dark:from-purple-950/30 dark:via-slate-900/90 dark:to-slate-950 border dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-400 hover:-translate-y-1 hover:shadow-2xl dark:hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.25)] flex flex-col justify-between space-y-4 transition-all duration-300 group">
+          {/* Card 4: Total Waste Recycled & Certificate */}
+          <div className="p-5 rounded-3xl glass-card flex flex-col justify-between space-y-4 hover:border-amber-400/80 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-purple-400 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-purple-400 animate-pulse shadow-[0_0_8px_#a855f7]"></span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-amber-400/80">
                 Total Recycled
               </span>
-              <div className="h-10 w-10 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center text-base border border-purple-500/30 group-hover:scale-110 transition-transform shadow-sm">
+              <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base border border-amber-500/25 group-hover:scale-110 transition-transform shadow-xs">
                 <FaAward />
               </div>
             </div>
             <div>
               <div className="flex items-baseline space-x-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                <span className="text-3xl font-black text-slate-900 dark:text-white">
                   {analytics?.totalRecycledKg || 0}
                 </span>
-                <span className="text-xs font-black text-purple-500 dark:text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
-                  kg diverted
-                </span>
+                <span className="text-xs font-bold text-amber-600 dark:text-amber-400">kg diverted</span>
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-1">
-                Across <strong className="text-purple-600 dark:text-purple-300 font-black">{analytics?.completedCount || 0}</strong> verified door collections
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mt-0.5">
+                Across {analytics?.completedCount || 0} verified door collections
               </span>
             </div>
             <button
               onClick={() => setShowGreenCert(true)}
-              className="w-full py-2.5 bg-gradient-to-r from-purple-500/15 via-fuchsia-500/15 to-purple-500/20 hover:from-purple-500 hover:to-fuchsia-600 text-purple-700 dark:text-purple-300 hover:text-white font-black text-xs rounded-xl border border-purple-500/35 hover:border-transparent transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-sm group-hover:shadow-md"
+              className="w-full py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
             >
               <FaAward className="text-xs" />
               <span>Official Green Certificate</span>
@@ -717,34 +674,26 @@ const UserDashboard = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                 {Object.entries(SCRAP_RATES).map(([key, item]) => {
                   const isSelected = calcCategory === key;
-                  const colorStyles = {
-                    plastics: { active: 'bg-cyan-500/15 border-cyan-400 ring-2 ring-cyan-500/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.3)]', badge: 'bg-cyan-500/20 text-cyan-300', pts: 'text-cyan-400' },
-                    cardboard: { active: 'bg-amber-500/15 border-amber-400 ring-2 ring-amber-500/40 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]', badge: 'bg-amber-500/20 text-amber-300', pts: 'text-amber-400' },
-                    metals: { active: 'bg-sky-500/15 border-sky-400 ring-2 ring-sky-500/40 text-sky-300 shadow-[0_0_15px_rgba(14,165,233,0.3)]', badge: 'bg-sky-500/20 text-sky-300', pts: 'text-sky-400' },
-                    ewaste: { active: 'bg-purple-500/15 border-purple-400 ring-2 ring-purple-500/40 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]', badge: 'bg-purple-500/20 text-purple-300', pts: 'text-purple-400' },
-                    glass: { active: 'bg-emerald-500/15 border-emerald-400 ring-2 ring-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]', badge: 'bg-emerald-500/20 text-emerald-300', pts: 'text-emerald-400' },
-                  }[key] || { active: 'bg-emerald-500/15 border-emerald-400', badge: 'bg-emerald-500/20 text-emerald-300', pts: 'text-emerald-400' };
-
                   return (
                     <button
                       key={key}
                       onClick={() => setCalcCategory(key)}
                       className={`p-2.5 rounded-2xl border text-left transition-all relative cursor-pointer ${
                         isSelected
-                          ? colorStyles.active
-                          : 'bg-white/60 dark:bg-slate-900/60 border-slate-200/70 dark:border-slate-800 hover:border-slate-600'
+                          ? 'bg-emerald-500/15 border-emerald-500/50 ring-2 ring-emerald-500/30 shadow-xs'
+                          : 'bg-white/60 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-800 hover:border-emerald-500/30'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-lg">{item.icon}</span>
-                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${isSelected ? colorStyles.badge : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
+                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                           ₹{item.ratePerKg}/kg
                         </span>
                       </div>
                       <span className="text-xs font-bold text-slate-900 dark:text-slate-100 block truncate">
                         {item.name}
                       </span>
-                      <span className={`text-[10px] font-extrabold block mt-0.5 ${isSelected ? colorStyles.pts : 'text-slate-500 dark:text-slate-400'}`}>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold block mt-0.5">
                         +{item.ptsPerKg} Pts/kg
                       </span>
                     </button>

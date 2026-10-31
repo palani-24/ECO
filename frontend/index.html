@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <script>
       (function() {
         try {
           var savedTheme = localStorage.getItem('theme');
-          if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
+          if (savedTheme === 'light') {
             document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
           }
         } catch (e) {}
       })();

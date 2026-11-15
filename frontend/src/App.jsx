@@ -34,15 +34,15 @@ const Signup = lazyWithRetry(() => import('./pages/Signup'));
 const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
 
-// Smart Root Gateway: Opens Sign In on mobile/PWA directly, or User Dashboard if logged in
+// Smart Root Gateway: Opens Login page directly on both App and Website for all visitors, or User Portal if logged in
 const RootGateway = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center space-y-3">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
         <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-bold text-slate-500">Loading EcoReward...</p>
+        <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
       </div>
     );
   }
@@ -54,12 +54,8 @@ const RootGateway = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const isMobile = window.innerWidth < 1024 || window.matchMedia('(display-mode: standalone)').matches;
-  if (isMobile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <LandingPage />;
+  // Always route directly to the Login page as starting/landing page
+  return <Navigate to="/login" replace />;
 };
 
 // User Pages

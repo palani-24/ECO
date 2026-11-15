@@ -327,6 +327,14 @@ const UserDashboard = () => {
     };
   }, []);
 
+  // Initialize automated 6:00 AM daily waste reminder and device push registration
+  useEffect(() => {
+    const cleanupReminder = setupMorningWasteReminder(addToast, user?._id);
+    return () => {
+      if (typeof cleanupReminder === 'function') cleanupReminder();
+    };
+  }, [user?._id]);
+
   return (
     <>
       {/* 📱 MOBILE VIEW: Exact Native Screen with complete options */}

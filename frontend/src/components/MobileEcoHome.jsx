@@ -1093,7 +1093,7 @@ const MobileEcoHome = ({
                       onClick={async () => {
                         triggerHaptic(25);
                         setShowMorningWasteBanner(true);
-                        await triggerMorningWasteNotification({ isTest: true, addToast });
+                        await triggerMorningWasteNotification({ isTest: true, addToast, triggerBackend: true });
                       }}
                       className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white rounded-xl font-black text-[10px] flex items-center space-x-1 shadow-sm cursor-pointer"
                     >

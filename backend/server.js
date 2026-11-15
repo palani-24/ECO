@@ -19,6 +19,8 @@ import supportRoutes from './routes/supportRoutes.js';
 import storeRoutes from './routes/storeRoutes.js';
 import advancedRoutes from './routes/advancedRoutes.js';
 import municipalityRoutes from './routes/municipalityRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import { startMorningWasteScheduler } from './services/morningScheduler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -79,6 +81,7 @@ app.use('/api/support', supportRoutes);
 app.use('/api/store', storeRoutes);
 app.use('/api/advanced', advancedRoutes);
 app.use('/api/municipality', municipalityRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Root Healthcheck
 app.get('/', (req, res) => {
@@ -109,6 +112,8 @@ const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, () => {
     console.log(`🚀 Server & WebSockets running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    // Start automated 6:00 AM IST daily morning waste alert scheduler
+    startMorningWasteScheduler();
   });
 }
 

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
+import { triggerMorningWasteNotification, subscribeDeviceToPushNotifications } from '../utils/morningWasteReminder';
 
 const SocketContext = createContext(null);
 
@@ -71,6 +72,15 @@ export const SocketProvider = ({ children }) => {
         addToast(notif.message, toastType, notif.title);
       }
     });
+
+    // Real-Time 6:00 AM Morning Waste Alert Broadcast to all connected clients
+    newSocket.on('morning-waste-reminder', (alert) => {
+      console.log('🌅 [Realtime Morning 6:00 AM Waste Reminder Received via Socket]:', alert);
+      triggerMorningWasteNotification({ isTest: alert?.isTest, addToast, triggerBackend: false });
+    });
+
+    // Automatically ensure device push subscription is synchronized
+    subscribeDeviceToPushNotifications(user?._id);
 
     // Real-Time User Points Sync
     newSocket.on('points:updated', (data) => {

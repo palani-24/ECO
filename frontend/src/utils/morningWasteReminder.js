@@ -1,18 +1,98 @@
-// 🌅 Daily 6:00 AM Waste Segregation & Doorstep Pickup Notification Manager
+// 🌅 Daily 6:00 AM Waste Segregation & Doorstep Pickup Notification Manager (Web Push & Sockets)
 import { soundFx } from './audioFeedback';
 import { triggerHaptic } from './mobileNative';
+import api from './api';
 
 const NOTIF_TAG = 'eco-morning-waste-reminder';
 const PREF_KEY = 'eco_morning_waste_reminder_enabled';
 const LAST_SHOWN_KEY = 'eco_morning_waste_last_shown_date';
+const PUSH_REGISTERED_KEY = 'eco_morning_waste_push_registered';
+
+// Default VAPID Public Key fallback (matching backend)
+const DEFAULT_VAPID_PUBLIC_KEY = 'BHgvSy80yvRcvB4g0mV0Ru0H6Xva0et7D0_cGu11Zqb5ycnYfV7FThFriqjSpEXIZSFlvujLpAVjxVgIt3LV4Nw';
 
 export const MORNING_NOTIF_CONTENT = {
-  title: '🌅 காலை 6:00 மணி குப்பை சேகரிப்பு நினைவூட்டல்!',
-  titleEn: '🌅 6:00 AM Daily Waste Pickup Alert!',
+  title: '🌅 காலை 6:00 AM குப்பை நினைவூட்டல்!',
+  titleEn: '🌅 6:00 AM Daily Waste Segregation Alert!',
   message: 'காலை வணக்கம்! இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வெளியே வைக்கவும். எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும்! ♻️',
   messageEn: "Good morning! Please keep today's segregated waste ready for doorstep pickup. Earn EcoPoints today!",
-  icon: '/app-logo.png',
+  icon: '/favicon.svg',
   badge: '/favicon.svg'
+};
+
+/**
+ * Utility to convert base64 VAPID public key to Uint8Array for PushManager
+ */
+export const urlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+};
+
+/**
+ * Subscribe device to Web Push notifications so user gets real 6:00 AM alerts even when app/browser is closed
+ */
+export const subscribeDeviceToPushNotifications = async (userId = null) => {
+  if (typeof window === 'undefined') return null;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Web Push is not supported in this browser environment');
+    return null;
+  }
+
+  try {
+    let permission = Notification.permission;
+    if (permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+    if (permission !== 'granted') {
+      console.log('Notification permission not granted');
+      return null;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    let subscription = await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+      let publicKey = DEFAULT_VAPID_PUBLIC_KEY;
+      try {
+        const res = await api.get('/notifications/vapid-public-key');
+        if (res.data?.success && res.data?.publicKey) {
+          publicKey = res.data.publicKey;
+        }
+      } catch (keyErr) {
+        console.warn('Using fallback VAPID key');
+      }
+
+      const convertedKey = urlBase64ToUint8Array(publicKey);
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: convertedKey
+      });
+    }
+
+    if (subscription) {
+      const subJson = subscription.toJSON();
+      await api.post('/notifications/subscribe', {
+        endpoint: subscription.endpoint,
+        keys: subJson.keys,
+        userId: userId || null,
+        device: navigator.userAgent
+      });
+      localStorage.setItem(PUSH_REGISTERED_KEY, 'true');
+      console.log('✅ [WebPush] Device successfully subscribed for morning waste alerts!');
+      return subscription;
+    }
+  } catch (err) {
+    console.warn('⚠️ [WebPush Subscription Note]:', err.message);
+  }
+  return null;
 };
 
 /**
@@ -42,15 +122,18 @@ export const isMorningReminderEnabled = () => {
 /**
  * Toggle morning reminder setting
  */
-export const setMorningReminderEnabled = (enabled) => {
+export const setMorningReminderEnabled = async (enabled, userId = null) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(PREF_KEY, enabled ? 'true' : 'false');
+  if (enabled) {
+    await subscribeDeviceToPushNotifications(userId);
+  }
 };
 
 /**
- * Show the native notification & in-app alerts
+ * Show the native notification & in-app alerts (and optionally trigger backend broadcast for tests)
  */
-export const triggerMorningWasteNotification = async ({ isTest = false, addToast = null } = {}) => {
+export const triggerMorningWasteNotification = async ({ isTest = false, addToast = null, triggerBackend = false } = {}) => {
   if (typeof window === 'undefined') return false;
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -114,7 +197,7 @@ export const triggerMorningWasteNotification = async ({ isTest = false, addToast
       };
 
       try {
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        if ('serviceWorker' in navigator) {
           const reg = await navigator.serviceWorker.ready;
           if (reg && reg.showNotification) {
             await reg.showNotification(MORNING_NOTIF_CONTENT.title, options);
@@ -136,10 +219,21 @@ export const triggerMorningWasteNotification = async ({ isTest = false, addToast
     }
   }
 
+  // 5. If test is requested with triggerBackend, send push notification from server to all registered devices
+  if (isTest && triggerBackend) {
+    try {
+      api.post('/notifications/broadcast-morning', { isTest: true }).catch((err) => {
+        console.warn('Backend broadcast alert note:', err.message);
+      });
+    } catch (e) {
+      console.warn('Broadcast trigger note:', e);
+    }
+  }
+
   if (addToast) {
     addToast(
       isTest 
-        ? '🌅 6:00 AM குப்பை சேகரிப்பு Notification உடனே அனுப்பப்பட்டது!' 
+        ? '🌅 6:00 AM குப்பை சேகரிப்பு Notification Real-Time-ல் அனுப்பப்பட்டது!' 
         : MORNING_NOTIF_CONTENT.message,
       'success',
       'காலை 6:00 AM குப்பை நினைவூட்டல்'
@@ -150,10 +244,15 @@ export const triggerMorningWasteNotification = async ({ isTest = false, addToast
 };
 
 /**
- * Setup daily 6:00 AM schedule & heartbeat loop
+ * Setup daily 6:00 AM schedule & heartbeat loop + auto push registration
  */
-export const setupMorningWasteReminder = (addToast = null) => {
+export const setupMorningWasteReminder = (addToast = null, userId = null) => {
   if (typeof window === 'undefined') return () => {};
+
+  // Automatically attempt background Web Push subscription
+  if (isMorningReminderEnabled()) {
+    subscribeDeviceToPushNotifications(userId);
+  }
 
   let scheduledTimeoutId = null;
   let heartbeatIntervalId = null;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaDownload, FaTimes, FaMobileAlt, FaRecycle, FaShareAlt, FaPlusSquare } from 'react-icons/fa';
+import { subscribeDeviceToPushNotifications } from '../utils/morningWasteReminder';
 
 const PWAInstallBanner = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -44,10 +45,18 @@ const PWAInstallBanner = () => {
       setShowBanner(true);
     };
 
+    const handleAppInstalled = () => {
+      console.log('EcoReward installed to home screen');
+      setShowBanner(false);
+      subscribeDeviceToPushNotifications();
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
@@ -64,6 +73,7 @@ const PWAInstallBanner = () => {
     if (outcome === 'accepted') {
       console.log('User accepted the PWA install prompt');
       setShowBanner(false);
+      subscribeDeviceToPushNotifications();
     }
     setDeferredPrompt(null);
   };

@@ -11,7 +11,8 @@ import {
   FaCalculator, FaDesktop, FaBox, FaWineBottle, FaSlidersH, FaCrown,
   FaTrophy, FaStar, FaQuestionCircle, FaEnvelope, FaPhoneAlt, FaSyncAlt,
   FaExpand, FaVolumeOff, FaAtom, FaFingerprint, FaLayerGroup, FaMicrochip, FaShieldAlt, FaUserCheck, FaMedal, FaUserPlus,
-  FaBuilding, FaMapMarkerAlt, FaUsers, FaBolt, FaCoins, FaCity
+  FaBuilding, FaMapMarkerAlt, FaUsers, FaBolt, FaCoins, FaCity,
+  FaRupeeSign, FaWeightHanging, FaQrcode, FaClock, FaFire
 } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import api from '../utils/api';
@@ -302,6 +303,20 @@ const LandingPage = () => {
     }
   };
 
+  // LIVE SCRAP RATES BOARD FOR TAMIL NADU
+  const LIVE_SCRAP_RATES = [
+    { name: 'PET Plastic Bottles', rate: '₹18.50', unit: '/ kg', change: '+₹0.80', trend: 'up', icon: '🥤', code: 'PET-1' },
+    { name: 'E-Waste & Mobiles', rate: '₹95.00', unit: '/ kg', change: '+₹6.50', trend: 'up', icon: '💻', code: 'E-WST' },
+    { name: 'Motherboards & PCBs', rate: '₹480.00', unit: '/ kg', change: '+₹15.00', trend: 'up', icon: '⚡', code: 'PCB-G' },
+    { name: 'Aluminium Cans', rate: '₹145.00', unit: '/ kg', change: '+₹3.50', trend: 'up', icon: '🥫', code: 'AL-CAN' },
+    { name: 'Copper Heavy Scrap', rate: '₹495.00', unit: '/ kg', change: '+₹12.00', trend: 'up', icon: '🥉', code: 'CU-99' },
+    { name: 'Corrugated Kraft Box', rate: '₹14.00', unit: '/ kg', change: '+₹0.50', trend: 'up', icon: '📦', code: 'OCC-1' },
+    { name: 'Brass Utensils & Cast', rate: '₹340.00', unit: '/ kg', change: '+₹5.00', trend: 'up', icon: '🪙', code: 'BRS-2' },
+    { name: 'Beverage Glass Bottles', rate: '₹6.50', unit: '/ kg', change: 'Stable', trend: 'flat', icon: '🍾', code: 'GLS-B' },
+    { name: 'Inverter Lead Batteries', rate: '₹88.00', unit: '/ kg', change: '+₹2.50', trend: 'up', icon: '🔋', code: 'PB-BAT' },
+    { name: 'Iron & Mild Steel', rate: '₹28.50', unit: '/ kg', change: '+₹1.00', trend: 'up', icon: '🔩', code: 'FE-SCR' },
+  ];
+
   // AI Scanner Simulator State
   const sampleItems = [
     {
@@ -311,7 +326,11 @@ const LandingPage = () => {
       confidence: 98.6,
       weight: '0.35 kg',
       points: 15,
-      recyclable: '100% Recyclable',
+      cashRate: '₹18.50 / kg',
+      co2Saved: '-1.8 kg CO₂',
+      recyclable: '100% Recyclable • Grade A rPET',
+      purity: '99.8% Pure',
+      color: 'emerald',
       image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=600&auto=format&fit=crop&q=80',
     },
     {
@@ -321,7 +340,11 @@ const LandingPage = () => {
       confidence: 99.4,
       weight: '2.10 kg',
       points: 105,
-      recyclable: 'High Value Metal Recovery',
+      cashRate: '₹480.00 / kg',
+      co2Saved: '-6.5 kg CO₂',
+      recyclable: 'High Value Gold & Rare Metals',
+      purity: '99.9% Recovery',
+      color: 'amber',
       image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
     },
     {
@@ -331,7 +354,11 @@ const LandingPage = () => {
       confidence: 97.9,
       weight: '0.45 kg',
       points: 30,
-      recyclable: 'Infinite Recyclability',
+      cashRate: '₹145.00 / kg',
+      co2Saved: '-4.2 kg CO₂',
+      recyclable: 'Infinite Closed-Loop Smelt',
+      purity: '99.5% Silicate Free',
+      color: 'cyan',
       image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=600&auto=format&fit=crop&q=80',
     },
     {
@@ -341,7 +368,11 @@ const LandingPage = () => {
       confidence: 96.8,
       weight: '1.20 kg',
       points: 25,
-      recyclable: 'Eco Fiber Pulp',
+      cashRate: '₹14.00 / kg',
+      co2Saved: '-1.1 kg CO₂',
+      recyclable: 'Eco Fiber Kraft Pulp',
+      purity: '100% Biodegradable',
+      color: 'teal',
       image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
     },
     {
@@ -351,7 +382,11 @@ const LandingPage = () => {
       confidence: 98.1,
       weight: '0.80 kg',
       points: 18,
-      recyclable: 'Pure Silicate Melt',
+      cashRate: '₹6.50 / kg',
+      co2Saved: '-0.9 kg CO₂',
+      recyclable: 'Pure Silicate Melt 100%',
+      purity: '99.2% Color Sorted',
+      color: 'indigo',
       image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&auto=format&fit=crop&q=80',
     }
   ];
@@ -466,10 +501,11 @@ const LandingPage = () => {
   );
 
   const impactStats = [
-    { value: '25.8K+', label: 'Active Eco Citizens', icon: FaRecycle },
-    { value: '15.3K+', label: 'Pickups Completed', icon: FaTruck },
-    { value: '8.2 Tons', label: 'Waste Recycled', icon: FaChartPie },
-    { value: '12.5K+', label: 'Trees Planted', icon: FaTree }
+    { value: '45,800+', label: 'Active Eco Citizens', icon: FaRecycle, color: 'text-emerald-500' },
+    { value: '₹1.28 Cr+', label: 'Cashback Disbursed', icon: FaRupeeSign, color: 'text-amber-500' },
+    { value: '38 Districts', label: 'Tamil Nadu Clean Grid', icon: FaCity, color: 'text-teal-500' },
+    { value: '820+ Tons', label: 'Landfill Diverted', icon: FaChartPie, color: 'text-cyan-500' },
+    { value: '100% Free', label: 'Doorstep EV Pickups', icon: FaTruck, color: 'text-emerald-500' }
   ];
 
   const mockupFeatures = [
@@ -746,12 +782,12 @@ const LandingPage = () => {
         )}
       </AnimatePresence>
 
-      {/* HERO SECTION WITH SCENIC MOUNTAIN GLASSMORPHISM */}
+      {/* HERO SECTION WITH LUXURY EMERALD & PEARL GLASS */}
       <section 
         onMouseMove={handleMouseMove}
-        className="relative pt-8 pb-16 md:pt-16 md:pb-28 overflow-hidden border-b border-white/40 dark:border-slate-800 transition-colors duration-300"
+        className="relative pt-8 pb-14 md:pt-14 md:pb-24 overflow-hidden border-b border-emerald-500/20 dark:border-slate-800 transition-colors duration-300"
         style={{
-          backgroundImage: "url('/images/white_ambient_curves_bg.png')",
+          backgroundImage: "radial-gradient(ellipse at 50% -20%, rgba(16, 185, 129, 0.2), transparent 70%), url('/images/white_ambient_curves_bg.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
@@ -760,9 +796,18 @@ const LandingPage = () => {
         {/* Soft Ambient Atmospheric Light / Frost Overlay */}
         <div className={`absolute inset-0 pointer-events-none transition-colors duration-300 ${
           isDarkMode 
-            ? 'bg-slate-950/75 backdrop-blur-[2px]' 
-            : 'bg-gradient-to-b from-sky-100/25 via-white/30 to-white/70 backdrop-blur-[1px]'
+            ? 'bg-slate-950/85 backdrop-blur-[2px]' 
+            : 'bg-gradient-to-b from-emerald-50/60 via-white/50 to-emerald-50/40 backdrop-blur-[1px]'
         }`} />
+
+        {/* Subtle Cyber Grid Dots */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-[0.05] dark:opacity-[0.12]"
+          style={{
+            backgroundImage: 'radial-gradient(#10b981 1.2px, transparent 1.2px)',
+            backgroundSize: '28px 28px'
+          }}
+        />
 
         {/* Particle Canvas Background */}
         {isDesktop && (
@@ -773,54 +818,58 @@ const LandingPage = () => {
         )}
 
         {/* Ambient Glow Orbs */}
-        <div className={`absolute top-10 left-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-emerald-500/10' : 'bg-emerald-400/20'}`}></div>
-        <div className={`absolute bottom-10 right-10 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-teal-500/10' : 'bg-cyan-400/15'}`}></div>
-        <div className={`absolute top-1/2 left-1/3 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-cyan-500/5' : 'bg-teal-300/15'}`}></div>
+        <div className={`absolute top-10 left-10 w-[550px] h-[550px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-emerald-500/15' : 'bg-emerald-400/25'}`}></div>
+        <div className={`absolute bottom-10 right-10 w-[550px] h-[550px] rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-teal-500/15' : 'bg-cyan-400/20'}`}></div>
+        <div className={`absolute top-1/2 left-1/3 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-opacity duration-500 ${isDarkMode ? 'bg-amber-500/10' : 'bg-amber-300/15'}`}></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Hero Card - Frosted Glassmorphic Container */}
+            {/* Left Hero Card - Ultra-Premium Glassmorphic Container */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className={`lg:col-span-7 p-7 sm:p-10 rounded-[32px] border shadow-2xl backdrop-blur-2xl space-y-6 text-center lg:text-left transition-all ${
-                isDarkMode 
-                  ? 'bg-slate-900/65 border-white/10 text-white shadow-slate-950/50' 
-                  : 'bg-white/45 border-white/60 text-slate-900 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.18)]'
+              className={`lg:col-span-7 luxury-pearl-card p-7 sm:p-10 rounded-[36px] space-y-6 text-center lg:text-left transition-all duration-300 relative overflow-hidden ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
               }`}
             >
-              <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-sm transition-all ${
+              {/* Corner Specular Rim Glow */}
+              <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-emerald-500/15 via-teal-500/10 to-transparent rounded-bl-full pointer-events-none" />
+
+              <div className={`inline-flex items-center space-x-2.5 px-4 py-2 rounded-full border text-xs font-mono font-bold uppercase tracking-widest shadow-md transition-all ${
                 isDarkMode 
-                  ? 'bg-[#091b2e]/90 border-emerald-500/30 text-emerald-400' 
-                  : 'bg-white/80 border-emerald-500/30 text-emerald-800 shadow-md shadow-emerald-500/10 backdrop-blur-md'
+                  ? 'bg-slate-900/90 border-emerald-500/40 text-emerald-300 shadow-emerald-500/10' 
+                  : 'bg-white/95 border-emerald-500/35 text-emerald-800 shadow-emerald-600/10'
               }`}>
-                <img src="/app-logo.png" alt="EcoReward Emblem" className="h-5 w-auto object-contain" />
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span>CIRCULAR ECO LOGISTICS v4.0</span>
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-[11px] font-mono tracking-wider font-extrabold">CIRCULAR ECO LOGISTICS v4.2 • 38 TN DISTRICTS</span>
+                <span className="hidden sm:inline text-amber-500 font-black">★ LIVE</span>
               </div>
 
-              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] ${
-                isDarkMode ? 'text-white' : 'text-slate-900'
+              <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] ${
+                isDarkMode ? 'text-white' : 'text-slate-950'
               }`}>
                 AI-Powered <br />
-                <span className={isDarkMode ? "animate-cyberEmeraldGlint" : "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(16,185,129,0.25)]"}>
+                <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_2px_14px_rgba(16,185,129,0.25)]">
                   Zero Waste Platform
                 </span>
               </h1>
               
               <p className={`text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed ${
-                isDarkMode ? 'text-slate-300' : 'text-slate-700'
+                isDarkMode ? 'text-slate-200' : 'text-slate-700'
               }`}>
-                Transform household recyclables into instant cash & eco vouchers across all 38 districts of Tamil Nadu. Scan waste with neural camera recognition, schedule doorstep EV pickups, track drivers live, and help build a zero-landfill future!
+                Transform household & commercial recyclables into <strong className="text-emerald-700 dark:text-emerald-400 font-extrabold">instant UPI cashback & eco vouchers</strong> across all 38 districts of Tamil Nadu. Scan scrap with neural camera recognition, schedule <strong className="text-teal-700 dark:text-teal-300 font-extrabold">100% free doorstep EV pickups</strong>, and track verified drivers live!
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-1">
                 <Link 
                   to="/signup" 
                   onClick={() => playSciFiSound('click')}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-black shadow-xl shadow-emerald-500/25 ring-2 ring-emerald-400/30 hover:shadow-emerald-500/40 transition-all transform hover:scale-105 flex items-center justify-center space-x-3 text-base cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-black shadow-xl shadow-emerald-600/30 ring-2 ring-emerald-400/40 hover:shadow-emerald-500/50 transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3 text-base cursor-pointer"
                 >
                   <span>Get Started Free</span>
                   <FaArrowRight className="h-4 w-4" />
@@ -831,115 +880,151 @@ const LandingPage = () => {
                     playSciFiSound('click');
                     setShowVideoModal(true);
                   }}
-                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl border font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-sm cursor-pointer ${
+                  className={`w-full sm:w-auto px-8 py-4 rounded-2xl border-2 font-bold transition-all flex items-center justify-center space-x-2 text-base shadow-md cursor-pointer ${
                     isDarkMode 
-                      ? 'bg-[#091b2e]/80 text-white border-slate-700 hover:bg-[#0c1f35]' 
-                      : 'bg-white/80 hover:bg-white text-slate-800 border-white/60 hover:border-emerald-400 shadow-md backdrop-blur-md'
+                      ? 'bg-slate-900/90 text-white border-emerald-500/30 hover:border-emerald-400 hover:bg-slate-800' 
+                      : 'bg-white/95 hover:bg-emerald-50/80 text-slate-900 border-slate-200/90 hover:border-emerald-500'
                   }`}
                 >
                   <FaVideo className="text-emerald-500 h-4 w-4" />
-                  <span>Watch Trailer</span>
+                  <span>Watch Live Demo</span>
                 </button>
               </div>
 
-              <div className={`pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 text-xs font-medium ${
-                isDarkMode ? 'text-slate-400' : 'text-slate-700'
+              {/* Ticker Quick Jump Hook */}
+              <div className="flex items-center justify-center lg:justify-start gap-3 pt-1 text-xs">
+                <a 
+                  href="#live-rates" 
+                  onClick={() => playSciFiSound('click')}
+                  className="inline-flex items-center space-x-1.5 font-bold text-amber-600 dark:text-amber-400 hover:underline"
+                >
+                  <FaFire className="text-amber-500 animate-bounce" />
+                  <span>View Today's Tamil Nadu Scrap Rates (₹/kg) →</span>
+                </a>
+              </div>
+
+              {/* 4 Micro-Feature Luxury Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                <div className={`p-3 rounded-2xl border transition-all ${
+                  isDarkMode ? 'bg-slate-900/80 border-amber-500/30 text-amber-300' : 'bg-amber-50/90 border-amber-500/30 text-amber-900 shadow-xs'
+                }`}>
+                  <div className="flex items-center space-x-1.5">
+                    <FaRupeeSign className="text-amber-500 h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-[11px] font-black uppercase tracking-tight">Instant UPI</span>
+                  </div>
+                  <span className="text-[10px] opacity-80 block pt-0.5">GPay, PhonePe, Paytm</span>
+                </div>
+
+                <div className={`p-3 rounded-2xl border transition-all ${
+                  isDarkMode ? 'bg-slate-900/80 border-emerald-500/30 text-emerald-300' : 'bg-emerald-50/90 border-emerald-500/30 text-emerald-900 shadow-xs'
+                }`}>
+                  <div className="flex items-center space-x-1.5">
+                    <FaTruck className="text-emerald-500 h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-[11px] font-black uppercase tracking-tight">Free EV Pickup</span>
+                  </div>
+                  <span className="text-[10px] opacity-80 block pt-0.5">Zero-emission doorstep</span>
+                </div>
+
+                <div className={`p-3 rounded-2xl border transition-all ${
+                  isDarkMode ? 'bg-slate-900/80 border-cyan-500/30 text-cyan-300' : 'bg-cyan-50/90 border-cyan-500/30 text-cyan-900 shadow-xs'
+                }`}>
+                  <div className="flex items-center space-x-1.5">
+                    <FaRobot className="text-cyan-500 h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-[11px] font-black uppercase tracking-tight">99.4% AI Vision</span>
+                  </div>
+                  <span className="text-[10px] opacity-80 block pt-0.5">Instant purity rating</span>
+                </div>
+
+                <div className={`p-3 rounded-2xl border transition-all ${
+                  isDarkMode ? 'bg-slate-900/80 border-teal-500/30 text-teal-300' : 'bg-teal-50/90 border-teal-500/30 text-teal-900 shadow-xs'
+                }`}>
+                  <div className="flex items-center space-x-1.5">
+                    <FaCity className="text-teal-500 h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-[11px] font-black uppercase tracking-tight">38 Districts</span>
+                  </div>
+                  <span className="text-[10px] opacity-80 block pt-0.5">Statewide coverage</span>
+                </div>
+              </div>
+
+              {/* Endorsement Rating Bar */}
+              <div className={`pt-1 flex items-center justify-center lg:justify-start space-x-2 text-xs font-semibold ${
+                isDarkMode ? 'text-slate-400' : 'text-slate-600'
               }`}>
-                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
-                  isDarkMode 
-                    ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
-                }`}>
-                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span className="font-semibold">100% Free Account</span>
+                <div className="flex text-amber-400 text-xs">
+                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                 </div>
-                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
-                  isDarkMode 
-                    ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
-                }`}>
-                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span className="font-semibold">Instant UPI Cashback</span>
-                </div>
-                <div className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl border transition-all ${
-                  isDarkMode 
-                    ? 'bg-[#091b2e]/90 border-slate-800' 
-                    : 'bg-white/80 border-white/60 text-slate-800 shadow-xs backdrop-blur-md hover:border-emerald-400'
-                }`}>
-                  <FaCheckCircle className="text-emerald-500 h-3.5 w-3.5" />
-                  <span className="font-semibold">Zero Landfill Mission</span>
-                </div>
+                <span><strong>4.9 / 5</strong> rating from 45,000+ residents in Tamil Nadu</span>
               </div>
             </motion.div>
 
-            {/* Neural Scanner HUD Card - Frosted Glass Container */}
+            {/* Neural Scanner HUD Card - Ultra-Premium Holographic Optical Display */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="lg:col-span-5 flex justify-center relative gpu-layer"
             >
-              <div className={`relative w-full max-w-[480px] p-6 sm:p-7 rounded-[32px] border shadow-2xl space-y-5 backdrop-blur-2xl transition-all ${
-                isDarkMode 
-                  ? 'bg-slate-900/70 border-white/15 shadow-slate-950/60' 
-                  : 'bg-white/45 border-white/60 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.2)]'
-              }`}>
+              <div className="relative w-full max-w-[490px] luxury-pearl-card p-6 sm:p-7 rounded-[36px] space-y-5 transition-all relative overflow-hidden">
                 
+                {/* HUD Header */}
                 <div className={`flex items-center justify-between pb-3 border-b ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
                   <div className="flex items-center space-x-2.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span className={`text-xs font-mono font-black tracking-wider uppercase flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    <span className={`text-xs font-mono font-black tracking-wider uppercase flex items-center gap-1.5 ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
                       <FaFingerprint className="text-emerald-500" />
-                      Neural Scanner HUD
+                      Neural Scanner HUD v4.2
                     </span>
                   </div>
-                  <span className={`text-[10px] font-mono uppercase font-bold px-2.5 py-1 rounded-full border shadow-sm ${
-                    isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-emerald-800 bg-emerald-100/90 border-emerald-500/30 font-black'
+                  <span className={`text-[10px] font-mono uppercase font-bold px-3 py-1 rounded-full border shadow-sm ${
+                    isDarkMode ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-emerald-900 bg-emerald-100/90 border-emerald-500/30 font-black'
                   }`}>
-                    Live Demo
+                    Live AR Demo
                   </span>
                 </div>
 
-                <div className="relative h-60 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group flex items-center justify-center">
+                {/* Cyberpunk Holographic Viewfinder Frame */}
+                <div className="relative h-64 sm:h-72 bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group flex items-center justify-center hud-viewfinder">
                   {imageErrors[activeDemoItem.id] ? (
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col items-center justify-center p-4 text-center space-y-2">
                       <FaRobot className="h-12 w-12 text-emerald-400 animate-bounce" />
                       <span className="text-xs font-mono text-white font-bold">{activeDemoItem.name}</span>
-                      <span className="text-[10px] font-mono text-emerald-400">98.6% Neural AI Accuracy</span>
+                      <span className="text-[10px] font-mono text-emerald-400">99.4% Neural AI Accuracy</span>
                     </div>
                   ) : (
                     <img 
                       src={activeDemoItem.image} 
                       alt={activeDemoItem.name}
                       onError={() => handleImageError(activeDemoItem.id)}
-                      className={`w-full h-full object-cover transition-all duration-300 ${isScanning ? 'opacity-30 blur-sm' : 'opacity-85'}`}
+                      className={`w-full h-full object-cover transition-all duration-300 ${isScanning ? 'opacity-30 blur-sm' : 'opacity-90'}`}
                     />
                   )}
 
                   <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 z-10">
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2 bg-black/80 px-3 py-1 rounded-xl border border-emerald-500/40 text-[10px] text-emerald-400 font-mono">
+                      <div className="flex items-center space-x-2 bg-black/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-[10px] text-emerald-400 font-mono font-bold">
                         <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>{isScanning ? 'SCANNING MATRICES...' : 'NEURAL RECOGNITION ACTIVE'}</span>
                       </div>
-                      <span className="bg-black/80 text-[10px] text-amber-400 font-mono font-bold px-2.5 py-1 rounded-xl border border-amber-500/30">
+                      <span className="bg-black/85 backdrop-blur-md text-[10px] text-amber-400 font-mono font-bold px-2.5 py-1.5 rounded-xl border border-amber-500/40">
                         {activeDemoItem.confidence}% Accuracy
                       </span>
                     </div>
 
-                    <div className="absolute inset-x-6 top-10 bottom-14 border border-dashed border-emerald-400/80 rounded-2xl flex items-center justify-center pointer-events-none overflow-hidden">
-                      <div className="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_20px_#34d399] animate-laserSweep"></div>
+                    {/* Laser Scanning Beam */}
+                    <div className="absolute inset-x-6 top-10 bottom-16 border border-dashed border-emerald-400/80 rounded-2xl flex items-center justify-center pointer-events-none overflow-hidden">
+                      <div className="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_25px_#34d399] animate-laserSweep"></div>
                     </div>
 
                     <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-mono font-bold text-xs px-3.5 py-2 rounded-xl self-start flex items-center space-x-2 shadow-lg">
                       <FaCheckCircle className="h-3.5 w-3.5 text-emerald-200" />
-                      <span>{activeDemoItem.name} • {activeDemoItem.category}</span>
+                      <span>{activeDemoItem.name} • {activeDemoItem.purity}</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Scannable Material Categories Bar */}
                 <div className="space-y-2">
-                  <span className={`text-[10px] uppercase font-mono font-bold tracking-widest block ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  <span className={`text-[10px] uppercase font-mono font-bold tracking-widest block ${isDarkMode ? 'text-slate-400' : 'text-slate-700'}`}>
                     Click item below to scan:
                   </span>
                   <div className="grid grid-cols-5 gap-1.5">
@@ -947,12 +1032,12 @@ const LandingPage = () => {
                       <button
                         key={item.id}
                         onClick={() => handleSelectDemo(item)}
-                        className={`p-2 rounded-xl text-center text-[10px] font-mono font-bold border transition-all ${
+                        className={`p-2 rounded-xl text-center text-[10px] font-mono font-bold border transition-all cursor-pointer ${
                           activeDemoItem.id === item.id 
-                            ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white border-emerald-400 shadow-md shadow-emerald-500/30 scale-105 font-black ring-1 ring-white/40' 
+                            ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white border-emerald-400 shadow-lg shadow-emerald-500/30 scale-105 font-black ring-1 ring-white/50' 
                             : isDarkMode 
                               ? 'bg-[#040c14] text-slate-300 border-slate-800 hover:bg-[#0c1f35]' 
-                              : 'bg-white hover:bg-emerald-50 text-slate-800 border-slate-200 hover:border-emerald-400 shadow-sm font-bold'
+                              : 'bg-white hover:bg-emerald-50 text-slate-900 border-slate-200 hover:border-emerald-400 shadow-xs font-bold'
                         }`}
                       >
                         <span className="block truncate">{item.category}</span>
@@ -961,19 +1046,37 @@ const LandingPage = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className={`p-3.5 rounded-2xl border transition-all ${
-                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-emerald-50/90 to-teal-50/70 border-emerald-500/25 shadow-sm'
+                {/* 3-Column Live Value & Environmental Yield Grid */}
+                <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+                  <div className={`p-3 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-amber-50/90 to-yellow-50/80 border-amber-500/30 shadow-xs'
                   }`}>
-                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Est. Points Earned</span>
-                    <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">+{activeDemoItem.points} EcoPoints</span>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Est. Cash Payout</span>
+                    <span className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 truncate block">{activeDemoItem.cashRate}</span>
                   </div>
-                  <div className={`p-3.5 rounded-2xl border transition-all ${
-                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-emerald-50/90 to-teal-50/70 border-emerald-500/25 shadow-sm'
+                  <div className={`p-3 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-emerald-50/90 to-teal-50/80 border-emerald-500/30 shadow-xs'
                   }`}>
-                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Purity Rating</span>
-                    <span className={`text-xs font-black truncate block ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>{activeDemoItem.recyclable}</span>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">EcoPoints</span>
+                    <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 truncate block">+{activeDemoItem.points} Pts</span>
                   </div>
+                  <div className={`p-3 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-[#040c14] border-slate-800' : 'bg-gradient-to-br from-cyan-50/90 to-sky-50/80 border-cyan-500/30 shadow-xs'
+                  }`}>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 block uppercase font-bold">Carbon Offset</span>
+                    <span className="text-xs sm:text-sm font-black text-teal-600 dark:text-cyan-400 truncate block">{activeDemoItem.co2Saved}</span>
+                  </div>
+                </div>
+
+                {/* Live Dispatch Status Pill */}
+                <div className={`p-2.5 rounded-xl border text-[11px] font-mono flex items-center justify-between ${
+                  isDarkMode ? 'bg-slate-900/60 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700 shadow-xs'
+                }`}>
+                  <span className="flex items-center space-x-1.5 font-bold">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>Doorstep EV Fleet Active</span>
+                  </span>
+                  <span className="font-extrabold text-emerald-600">Avg Arrival: 35m</span>
                 </div>
 
               </div>
@@ -983,25 +1086,185 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* IMPACT COUNTERS BAR WITH FROSTED GLASS */}
+      {/* LIVE TAMIL NADU DAILY SCRAP RATES TICKER BAR */}
+      <section id="live-rates" className={`py-4 border-b overflow-hidden relative ${
+        isDarkMode ? 'bg-[#050f1a] border-slate-800 text-white' : 'bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white border-emerald-800 shadow-inner'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          
+          {/* Static Left Label */}
+          <div className="flex items-center space-x-2 flex-shrink-0 z-10 py-1">
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 text-[10px] font-mono font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+              <FaFire className="animate-pulse" /> LIVE TN INDEX
+            </span>
+            <span className="text-xs font-mono font-bold tracking-tight text-emerald-300">
+              Scrap Exchange Rates:
+            </span>
+          </div>
+
+          {/* Infinite Marquee Ticker */}
+          <div className="overflow-hidden flex-1 relative w-full mask-gradient">
+            <div className="animate-ticker flex items-center space-x-6 py-1">
+              {[...LIVE_SCRAP_RATES, ...LIVE_SCRAP_RATES].map((item, idx) => (
+                <div 
+                  key={idx}
+                  className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/15 transition-all text-xs font-mono whitespace-nowrap cursor-pointer"
+                  onClick={() => playSciFiSound('click')}
+                >
+                  <span className="text-sm">{item.icon}</span>
+                  <span className="font-bold text-white">{item.name}</span>
+                  <span className="font-black text-amber-300">{item.rate}{item.unit}</span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${item.trend === 'up' ? 'text-emerald-400 bg-emerald-500/20' : 'text-slate-300 bg-white/10'}`}>
+                    {item.change}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick CTA Button */}
+          <Link
+            to="/signup"
+            onClick={() => playSciFiSound('click')}
+            className="flex-shrink-0 hidden lg:flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 font-black text-xs hover:shadow-lg hover:scale-105 transition-all"
+          >
+            <span>Sell Scrap Now</span>
+            <FaArrowRight className="text-[10px]" />
+          </Link>
+
+        </div>
+      </section>
+
+      {/* 4-STEP DOORSTEP EV PICKUP JOURNEY SHOWCASE */}
+      <section id="pickup-journey" className={`py-16 border-b transition-colors ${
+        isDarkMode ? 'bg-[#071422] border-slate-800' : 'bg-gradient-to-b from-white via-slate-50 to-emerald-50/30 border-slate-200'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className={`px-4 py-1.5 rounded-full border text-xs font-mono font-bold uppercase tracking-widest ${
+              isDarkMode ? 'bg-[#091b2e] text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-800 border-emerald-500/30 shadow-xs'
+            }`}>
+              Zero Hassle Logistics
+            </span>
+            <h2 className={`text-3xl sm:text-5xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
+              How Doorstep EV Collection Works
+            </h2>
+            <p className={`text-sm sm:text-base font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+              Turn recyclables into UPI bank balance in 4 transparent, zero-emission steps across Tamil Nadu.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            {/* Step 1 */}
+            <div className={`p-7 rounded-3xl border shadow-xl space-y-4 transition-all hover:scale-102 ${
+              isDarkMode ? 'bg-slate-900/80 border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200 hover:border-emerald-500/60 shadow-lg shadow-slate-200/50'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl border border-emerald-500/20 font-black">
+                  <FaCalendarPlus />
+                </div>
+                <span className="text-2xl font-black font-mono text-emerald-500/40">01</span>
+              </div>
+              <h3 className={`text-lg font-black ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
+                1-Click Slot Booking
+              </h3>
+              <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Select your scrap categories (Plastic, Paper, E-waste, Metal) and choose a convenient 2-hour morning or evening slot.
+              </p>
+              <div className="pt-2 border-t border-slate-500/10 text-[11px] font-mono text-emerald-600 font-bold flex items-center gap-1.5">
+                <FaClock /> <span>Instant Slot Confirmation</span>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className={`p-7 rounded-3xl border shadow-xl space-y-4 transition-all hover:scale-102 ${
+              isDarkMode ? 'bg-slate-900/80 border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200 hover:border-emerald-500/60 shadow-lg shadow-slate-200/50'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="h-12 w-12 rounded-2xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl border border-teal-500/20 font-black">
+                  <FaTruck />
+                </div>
+                <span className="text-2xl font-black font-mono text-teal-500/40">02</span>
+              </div>
+              <h3 className={`text-lg font-black ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
+                Zero-Emission EV Dispatch
+              </h3>
+              <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                A verified, background-checked driver arrives at your doorstep in an electric 3-wheeler or tipper van with live GPS tracking.
+              </p>
+              <div className="pt-2 border-t border-slate-500/10 text-[11px] font-mono text-teal-600 font-bold flex items-center gap-1.5">
+                <FaBolt /> <span>100% Electric Vehicle Fleet</span>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className={`p-7 rounded-3xl border shadow-xl space-y-4 transition-all hover:scale-102 ${
+              isDarkMode ? 'bg-slate-900/80 border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200 hover:border-emerald-500/60 shadow-lg shadow-slate-200/50'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center text-xl border border-cyan-500/20 font-black">
+                  <FaWeightHanging />
+                </div>
+                <span className="text-2xl font-black font-mono text-cyan-500/40">03</span>
+              </div>
+              <h3 className={`text-lg font-black ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
+                Bluetooth Digital Scale
+              </h3>
+              <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Scrap is weighed with tare-calibrated digital scales. Exact kilograms sync directly to your customer app with zero deductions.
+              </p>
+              <div className="pt-2 border-t border-slate-500/10 text-[11px] font-mono text-cyan-600 font-bold flex items-center gap-1.5">
+                <FaQrcode /> <span>±5g Certified Precision</span>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className={`p-7 rounded-3xl border shadow-xl space-y-4 transition-all hover:scale-102 ${
+              isDarkMode ? 'bg-slate-900/80 border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200 hover:border-emerald-500/60 shadow-lg shadow-slate-200/50'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-xl border border-amber-500/20 font-black">
+                  <FaRupeeSign />
+                </div>
+                <span className="text-2xl font-black font-mono text-amber-500/40">04</span>
+              </div>
+              <h3 className={`text-lg font-black ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
+                Instant Soundbox UPI Payout
+              </h3>
+              <p className={`text-xs leading-relaxed font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                The driver soundbox chimes approval and cash lands in your GPay / PhonePe within 10 seconds, plus bonus EcoPoints in wallet!
+              </p>
+              <div className="pt-2 border-t border-slate-500/10 text-[11px] font-mono text-amber-600 font-bold flex items-center gap-1.5">
+                <FaCoins /> <span>10-Second UPI Transfer</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* IMPACT COUNTERS BAR WITH LUXURY FROSTED GLASS */}
       <section className={`py-10 border-b backdrop-blur-xl ${
-        isDarkMode ? 'bg-[#081728]/90 text-slate-100 border-slate-800' : 'bg-white/60 text-slate-900 border-white/40'
+        isDarkMode ? 'bg-[#081728]/90 text-slate-100 border-slate-800' : 'bg-white/80 text-slate-900 border-slate-200 shadow-xs'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
             {impactStats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className={`p-5 rounded-2xl border shadow-md flex items-center space-x-3.5 backdrop-blur-md transition-all hover:scale-102 ${
+                <div key={i} className={`p-4 sm:p-5 rounded-2xl border shadow-md flex items-center space-x-3 backdrop-blur-md transition-all hover:scale-102 ${
                   isDarkMode 
-                    ? 'bg-[#091b2e]/80 border-slate-800 hover:border-emerald-500/50' 
-                    : 'bg-white/70 border-white/60 shadow-sm hover:border-emerald-400 hover:bg-white/90'
+                    ? 'bg-[#091b2e]/90 border-slate-800 hover:border-emerald-500/50' 
+                    : 'bg-white/95 border-slate-200/90 shadow-sm hover:border-emerald-400 hover:shadow-emerald-500/10'
                 }`}>
-                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl flex-shrink-0 border border-emerald-500/20">
+                  <div className={`h-11 w-11 rounded-xl bg-emerald-500/10 ${stat.color} flex items-center justify-center text-lg flex-shrink-0 border border-emerald-500/20`}>
                     <Icon />
                   </div>
                   <div>
-                    <span className={`text-xl sm:text-2xl font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                    <span className={`text-lg sm:text-xl font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-950'}`}>
                       {stat.value}
                     </span>
                     <p className={`text-[10px] font-bold uppercase tracking-wider ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>{stat.label}</p>
@@ -1965,44 +2228,104 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* FINAL CALL TO ACTION BANNER WITH MOUNTAIN GLASSMORPHISM */}
+      {/* GOVT ALLIANCE & COMPLIANCE TRUST CERTIFICATES */}
+      <section className={`py-12 border-t border-b transition-colors ${
+        isDarkMode ? 'bg-[#050f1a] border-slate-800' : 'bg-gradient-to-r from-emerald-50 via-teal-50 to-white border-slate-200'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-12 opacity-90">
+            <div className="flex items-center space-x-2.5">
+              <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center border border-emerald-500/20 font-bold">
+                <FaShieldAlt className="h-4 w-4" />
+              </div>
+              <div>
+                <span className={`text-xs font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>TNPCB Compliant</span>
+                <span className="text-[10px] text-slate-500 block">Pollution Control Board</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2.5">
+              <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center border border-amber-500/20 font-bold">
+                <FaAward className="h-4 w-4" />
+              </div>
+              <div>
+                <span className={`text-xs font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>ISO 14001:2015</span>
+                <span className="text-[10px] text-slate-500 block">Certified Environmental Mgmt</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2.5">
+              <div className="h-9 w-9 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center border border-teal-500/20 font-bold">
+                <FaLeaf className="h-4 w-4" />
+              </div>
+              <div>
+                <span className={`text-xs font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Green Tamil Nadu Alliance</span>
+                <span className="text-[10px] text-slate-500 block">Zero-Landfill Mission Partner</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2.5">
+              <div className="h-9 w-9 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center border border-cyan-500/20 font-bold">
+                <FaBolt className="h-4 w-4" />
+              </div>
+              <div>
+                <span className={`text-xs font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>100% Electric Logistics</span>
+                <span className="text-[10px] text-slate-500 block">Zero-Emission Doorstep EV</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2.5">
+              <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center border border-amber-500/20 font-bold">
+                <FaRupeeSign className="h-4 w-4" />
+              </div>
+              <div>
+                <span className={`text-xs font-black block tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>₹1.28+ Crore Disbursed</span>
+                <span className="text-[10px] text-slate-500 block">Instant Citizen Cashback</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CALL TO ACTION BANNER WITH LUXURY GLASSMORPHISM */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-12 sm:mb-0">
         <div 
-          className="relative rounded-[32px] p-10 sm:p-14 overflow-hidden border border-white/50 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 text-slate-900 dark:text-white"
+          className="relative rounded-[36px] p-10 sm:p-14 overflow-hidden border border-emerald-500/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 text-slate-900 dark:text-white transition-all luxury-pearl-card"
           style={{
-            backgroundImage: "url('/images/white_ambient_curves_bg.png')",
+            backgroundImage: "radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.2), transparent 50%), radial-gradient(circle at 0% 100%, rgba(245, 158, 11, 0.15), transparent 50%), url('/images/white_ambient_curves_bg.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           }}
         >
           {/* Frosted Glass Overlay */}
-          <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/70 backdrop-blur-md pointer-events-none" />
+          <div className="absolute inset-0 bg-white/70 dark:bg-slate-950/85 backdrop-blur-xl pointer-events-none" />
 
           <div className="space-y-3 text-center md:text-left z-10">
-            <span className="px-3.5 py-1.5 rounded-full bg-white/60 dark:bg-white/10 text-slate-900 dark:text-white text-[11px] font-mono font-bold uppercase tracking-widest backdrop-blur-md border border-white/60 shadow-xs inline-block">
-              Join 25,800+ Eco Citizens ♻️
+            <span className="px-4 py-1.5 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[11px] font-mono font-bold uppercase tracking-widest backdrop-blur-md border border-emerald-500/30 shadow-xs inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+              Join 45,800+ Eco Citizens Across Tamil Nadu ♻️
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight drop-shadow-xs">
-              Recycle Today, Reward Tomorrow.
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight drop-shadow-sm">
+              Recycle Today, <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-amber-500 bg-clip-text text-transparent">Reward Tomorrow.</span>
             </h2>
             <p className="text-xs sm:text-base text-slate-700 dark:text-slate-300 max-w-xl font-semibold">
-              Turn recyclables into UPI cash and rewards across all 38 districts of Tamil Nadu.
+              Turn recyclables into instant UPI cash and rewards across all 38 districts of Tamil Nadu. Doorstep EV collection at zero cost!
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 z-10 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row items-center gap-3.5 z-10 flex-shrink-0">
             <Link 
               to="/signup" 
               onClick={() => playSciFiSound('click')}
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white font-black text-sm rounded-2xl hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center space-x-2"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm rounded-2xl shadow-xl shadow-emerald-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-2"
             >
               <span>Create Free Account</span>
               <FaArrowRight />
             </Link>
             <Link 
               to="/login" 
-              className="w-full sm:w-auto px-6 py-4 bg-white/70 hover:bg-white text-slate-900 font-bold text-sm rounded-2xl border border-white/70 backdrop-blur-md transition-all shadow-sm text-center"
+              className="w-full sm:w-auto px-7 py-4 bg-white/90 hover:bg-emerald-50 dark:bg-slate-800/90 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-sm rounded-2xl border-2 border-emerald-500/30 hover:border-emerald-500 backdrop-blur-md transition-all shadow-md text-center"
             >
               Sign In
             </Link>

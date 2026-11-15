@@ -22,7 +22,7 @@ const UserLayout = ({ children, hideFooter = false, bgImage }) => {
     : null;
 
   return (
-    <div className="relative min-h-screen bg-[#f3f6fa] dark:bg-[#070e18] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="relative min-h-screen bg-[#F4F7F6] dark:bg-[#07131F] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       
       {/* 🎬 Background Image Layer (Subtle in light mode for max card readability, deep in dark mode) */}
       <div 

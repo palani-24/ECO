@@ -292,6 +292,11 @@ const UserDashboard = () => {
   };
 
   const activePickup = pickups.find(p => p.status !== 'completed' && p.status !== 'cancelled') || null;
+  const lastCompletedPickup = pickups.find(p => p.status === 'completed') || {
+    weight: 8.5,
+    wasteCategory: 'Plastics & Paper',
+    categoryKey: 'plastics'
+  };
 
   const currentPoints = analytics?.walletPoints ?? user?.points ?? 0;
   const inrEquivalent = Math.round(currentPoints * 0.25);
@@ -478,6 +483,119 @@ const UserDashboard = () => {
           pickup={activePickup}
           onOpenChat={() => setShowDriverChat(true)}
         />
+
+        {/* 🏛️ TAMIL NADU DISTRICT SOLID WASTE SCHEDULE & RECOVERY HUB (Mobile Theme Consistent) */}
+        <div 
+          onClick={() => {
+            triggerHaptic(20);
+            openDistrictModal();
+          }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white p-4 sm:p-5 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer active:scale-[0.99] transition-all group border border-emerald-500/30"
+        >
+          {/* Subtle Ambient Glow */}
+          <div className="absolute -right-8 -bottom-8 w-44 h-44 bg-emerald-400/15 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="flex items-center space-x-4 relative z-10 flex-1 pr-2">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-950/60 border border-emerald-400/40 text-emerald-300 flex items-center justify-center shrink-0 shadow-inner font-black text-2xl">
+              🏛️
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-black uppercase tracking-wider block">
+                  {currentDistrict?.name || 'Coimbatore'} Solid Waste Command Hub
+                </span>
+                <span className="px-2 py-0.5 bg-emerald-400 text-slate-950 text-[10px] font-black rounded-full uppercase">
+                  ACTIVE DOORSTEP FLEET
+                </span>
+              </div>
+              <p className="text-xs text-emerald-100 font-medium mt-0.5">
+                {currentDistrict?.corporation || 'Coimbatore Municipal Corporation'} • Daily Doorstep Segregated Collection & Verified ESG Recovery
+              </p>
+            </div>
+          </div>
+
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDistrictModal();
+            }}
+            className="px-4 py-2 rounded-xl bg-white text-emerald-900 font-black text-xs shadow-md shrink-0 active:scale-95 hover:bg-emerald-50 transition cursor-pointer"
+          >
+            Tamil Nadu (38 Districts) →
+          </button>
+        </div>
+
+        {/* ⚡ 1-CLICK FAST REBOOK & DAILY STREAK HUB (Mobile Consistent Design) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {/* 1-Click Rebook */}
+          <div className="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+            <div className="flex items-center space-x-3.5 flex-1 pr-2">
+              <div className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-xs border border-slate-200 dark:border-slate-700 shrink-0 bg-slate-100 dark:bg-slate-800">
+                <img 
+                  src="/images/citizen/rebook_pickup_card.jpg" 
+                  alt="Rebook Pickup" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                  1-Click Instant Rebook
+                </span>
+                <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                  Repeat {lastCompletedPickup?.weight || 8.5} kg {lastCompletedPickup?.wasteCategory || 'Plastics & Paper'}
+                </h4>
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
+                  Quick booking to saved home address
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic(20);
+                navigate(`/schedule-pickup?category=${encodeURIComponent(lastCompletedPickup?.wasteCategory || 'Plastic')}&weight=${lastCompletedPickup?.weight || 8.5}`);
+              }}
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-xs shadow-sm transition shrink-0 cursor-pointer active:scale-95"
+            >
+              Reorder
+            </button>
+          </div>
+
+          {/* 5-Day Streak & Daily Wheel */}
+          <div className="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between">
+            <div className="flex items-center space-x-3.5 flex-1 pr-2">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl border border-amber-500/20 shrink-0">
+                🔥
+              </div>
+              <div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                    {streakDays}-Day Eco Streak!
+                  </span>
+                  <span className="px-2 py-0.5 bg-amber-500/15 text-amber-600 dark:text-amber-400 text-[10px] font-black rounded-full">
+                    +50 pts daily
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">
+                  Keep daily streak active to earn bonus multiplier
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHaptic(20);
+                  setShowSpinWheel(true);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs shadow-sm transition cursor-pointer active:scale-95 flex items-center space-x-1"
+              >
+                <span>🎡 Spin Wheel</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Dynamic 4-Metric Glass Bento Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

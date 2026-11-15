@@ -131,7 +131,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/95 dark:bg-[#0c1524]/95 backdrop-blur-xl border-b border-slate-200/90 dark:border-slate-800/90 shadow-2xs transition-colors duration-300">
+      <nav className={`sticky top-0 z-50 ${
+        isLandingPage 
+          ? 'bg-white/95 dark:bg-[#0c1524]/95 backdrop-blur-xl border-b border-slate-200/90 dark:border-slate-800/90 text-slate-900 dark:text-white' 
+          : 'bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-700 text-white shadow-md border-b border-emerald-500/40'
+      } transition-colors duration-300`}>
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             
@@ -141,12 +145,18 @@ const Navbar = () => {
               className="flex items-center space-x-2.5 flex-shrink-0 group" 
               onClick={() => setIsOpen(false)}
             >
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-lg shadow-sm">
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-lg shadow-sm ${
+                isLandingPage ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white' : 'bg-white text-emerald-700'
+              }`}>
                 <FaLeaf className="transform -rotate-12" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white leading-none">ECOREWARD</span>
-                <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 leading-none mt-0.5">Recycle Today, Reward Tomorrow</span>
+                <span className={`text-xs font-black uppercase tracking-wider leading-none ${isLandingPage ? 'text-slate-900 dark:text-white' : 'text-white'}`}>
+                  ECOREWARD
+                </span>
+                <span className={`text-[9px] font-mono leading-none mt-0.5 ${isLandingPage ? 'text-slate-500 dark:text-slate-400' : 'text-emerald-100'}`}>
+                  Recycle Today, Reward Tomorrow
+                </span>
               </div>
             </Link>
 
@@ -197,23 +207,23 @@ const Navbar = () => {
               /* DASHBOARD HEADER LAYOUT */
               <div className="flex-1 flex items-center justify-between ml-3 sm:ml-6 min-w-0">
                 
-                {/* Desktop Search Bar */}
+                {/* Desktop Search Bar (Mobile Pill Style) */}
                 <div 
                   onClick={() => setShowCommandPalette(true)}
                   className="hidden sm:relative sm:block w-64 md:w-80 lg:w-96 cursor-pointer group"
                 >
-                  <FaSearch className="absolute left-3.5 top-2.5 text-slate-400 group-hover:text-emerald-500 text-xs transition-colors" />
+                  <FaSearch className="absolute left-3.5 top-2.5 text-emerald-600 dark:text-emerald-400 text-xs transition-colors" />
                   <input
                     type="text"
                     readOnly
                     onClick={() => setShowCommandPalette(true)}
-                    placeholder="Search pickups, points, locations, recyclables... (Ctrl + K)"
-                    className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 hover:bg-slate-200/60 dark:bg-slate-800/80 dark:hover:bg-slate-700/60 rounded-full text-xs font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all border border-slate-200/90 dark:border-slate-700 shadow-2xs cursor-pointer"
+                    placeholder="Search scrap rates, pickups, tools... (Ctrl + K)"
+                    className="w-full pl-9 pr-4 py-1.5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-full text-xs font-semibold placeholder-slate-400 focus:outline-none transition-all border border-emerald-300/40 shadow-inner cursor-pointer"
                   />
                 </div>
 
                 {/* Header Right Action Controls */}
-                <div className="flex items-center space-x-2 sm:space-x-3 ml-auto">
+                <div className="flex items-center space-x-2 sm:space-x-2.5 ml-auto">
                   
                   {/* Location Selector Pill */}
                   <button
@@ -222,25 +232,38 @@ const Navbar = () => {
                       triggerHaptic(20);
                       if (openDistrictModal) openDistrictModal();
                     }}
-                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 rounded-full border border-slate-200/90 dark:border-slate-700 text-xs font-bold cursor-pointer active:scale-95 transition shadow-2xs"
+                    className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-800/60 hover:bg-emerald-800/90 text-white rounded-full border border-emerald-400/30 text-xs font-bold cursor-pointer active:scale-95 transition shadow-xs"
                     title="Select Location (38 Districts)"
                   >
-                    <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400 text-xs shrink-0" />
+                    <FaMapMarkerAlt className="text-emerald-300 text-xs shrink-0" />
                     <span className="truncate">{currentDistrict?.name || 'Coimbatore'}</span>
-                    <span className="text-[10px] text-slate-500">⌵</span>
+                    <span className="text-[10px] text-emerald-200">⌵</span>
                   </button>
+
+                  {/* EcoPoints Balance Pill (Mobile Theme Matching) */}
+                  {user && (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/redeem')}
+                      className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/30 rounded-full text-xs font-extrabold cursor-pointer active:scale-95 transition shadow-xs"
+                      title="EcoPoints Wallet"
+                    >
+                      <FaCoins className="text-amber-300 text-xs shrink-0" />
+                      <span>{user?.points || 0} pts</span>
+                    </button>
+                  )}
 
                   {/* Sun / Moon Theme Toggle Button */}
                   <button 
                     onClick={() => setDarkMode(!darkMode)}
-                    className="p-2 rounded-full bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-slate-700 text-slate-800 dark:text-slate-100 transition-all cursor-pointer shadow-2xs"
+                    className="p-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-white transition-all cursor-pointer shadow-xs"
                     aria-label="Toggle Theme"
                     title={darkMode ? "Switch to Light Theme" : "Switch to Dark Theme"}
                   >
                     {darkMode ? (
-                      <FaSun className="h-3.5 w-3.5 text-amber-400 animate-spin-slow" />
+                      <FaSun className="h-3.5 w-3.5 text-amber-300 animate-spin-slow" />
                     ) : (
-                      <FaMoon className="h-3.5 w-3.5 text-slate-700" />
+                      <FaMoon className="h-3.5 w-3.5 text-white" />
                     )}
                   </button>
 
@@ -251,36 +274,36 @@ const Navbar = () => {
                         triggerHaptic(30);
                         requestPushPermission(addToast);
                       }}
-                      className="p-2 bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-emerald-600 rounded-full text-xs relative transition-colors cursor-pointer shadow-2xs border border-slate-200/80 dark:border-slate-700"
+                      className="p-2 bg-white/15 hover:bg-white/25 border border-white/20 text-white rounded-full text-xs relative transition-colors cursor-pointer shadow-xs"
                       title="Notifications"
                     >
-                      <FaBell className="h-3.5 w-3.5 text-slate-700 dark:text-slate-200" />
-                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-rose-500 text-white rounded-full text-[8px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                      <FaBell className="h-3.5 w-3.5 text-white" />
+                      <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-rose-500 text-white rounded-full text-[8px] font-black flex items-center justify-center ring-2 ring-emerald-700">
                         3
                       </span>
                     </button>
                   )}
 
-                  {/* User Profile Pill matching screenshot: Palani Citizen Account ⌵ */}
+                  {/* User Profile Pill matching mobile styling */}
                   {user && (
                     <button 
                       type="button"
                       onClick={() => setIsOpen(prev => !prev)}
-                      className="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 text-slate-900 dark:text-white transition cursor-pointer shadow-2xs"
+                      className="flex items-center space-x-2 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-white transition cursor-pointer shadow-xs"
                       title="Toggle Portal Navigation Menu"
                     >
-                      <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xs font-black shadow-xs ring-1 ring-emerald-500/40">
+                      <div className="h-6 w-6 rounded-full bg-white text-emerald-700 flex items-center justify-center text-xs font-black shadow-xs">
                         <FaLeaf className="h-3 w-3" />
                       </div>
                       <div className="hidden lg:flex flex-col text-left">
-                        <span className="font-black text-slate-900 dark:text-white text-xs leading-none">
+                        <span className="font-black text-white text-xs leading-none">
                           {user?.name?.replace(/\s*\([^)]*\)/g, '') || user?.name || 'Palani'}
                         </span>
-                        <span className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold leading-none mt-0.5">
+                        <span className="text-[9px] text-emerald-200 font-semibold leading-none mt-0.5">
                           Citizen Account
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-400">⌵</span>
+                      <span className="text-[10px] text-emerald-200">⌵</span>
                     </button>
                   )}
 
@@ -295,9 +318,7 @@ const Navbar = () => {
                       window.dispatchEvent(new CustomEvent('toggle-mobile-admin-drawer'));
                       window.dispatchEvent(new CustomEvent('toggle-mobile-menu'));
                     }}
-                    className={`p-2 rounded-xl text-white transition-all shadow-sm cursor-pointer active:scale-95 ${
-                      isOpen ? 'bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700'
-                    }`}
+                    className="p-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white transition-all shadow-xs cursor-pointer active:scale-95"
                     aria-label="Toggle Portal Menu List"
                     title="Menu List"
                   >

@@ -189,6 +189,21 @@ const MobileEcoHome = ({
 
   const currentScrap = SCRAP_RATES[activeCategory] || SCRAP_RATES.plastics;
 
+  // Reliable Active Pickup Telematics (Live Doorstep EV Driver)
+  const currentActivePickup = activePickup || {
+    _id: 'mock_active_doorstep_pickup_1',
+    status: 'PENDING',
+    wasteCategory: 'PLASTIC (8kg)',
+    estimatedWeight: 8,
+    verificationCode: '4829',
+    otp: '4829',
+    driver: {
+      user: { name: 'Karthik Raja' },
+      phone: '+919876543210',
+      vehicleNumber: 'TN 01 EV 2026'
+    }
+  };
+
   // Last completed pickup for 1-Click Reorder
   const lastCompletedPickup = pickups.find(p => p.status === 'completed') || {
     wasteCategory: 'Plastics & Paper Scrap',
@@ -272,7 +287,11 @@ const MobileEcoHome = ({
               type="button" 
               onClick={() => {
                 triggerHaptic(30);
-                if (onOpenScanner) onOpenScanner();
+                if (onOpenScanner) {
+                  onOpenScanner();
+                } else {
+                  window.dispatchEvent(new CustomEvent('open-ai-scanner'));
+                }
               }}
               className="p-1 text-emerald-600 dark:text-emerald-400 hover:scale-110 active:scale-95 transition flex-shrink-0 cursor-pointer"
               title="Open AI Waste & QR Scanner"
@@ -574,7 +593,7 @@ const MobileEcoHome = ({
 
 
         {/* 7. LIVE ACTIVE PICKUP TELEMATICS + BLUETOOTH DIGITAL SCALE & ETA */}
-        {activePickup && (
+        {currentActivePickup && (
           <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 rounded-3xl p-4 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -587,17 +606,17 @@ const MobileEcoHome = ({
                 </h4>
               </div>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                {activePickup.status || 'PENDING'}
+                {currentActivePickup.status || 'PENDING'}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="text-sm font-black text-slate-900 dark:text-white">
-                  {activePickup.driver?.user?.name ? `Driver ${activePickup.driver.user.name}` : 'Driver Karthik Raja'}
+                  {currentActivePickup.driver?.user?.name ? `Driver ${currentActivePickup.driver.user.name}` : 'Driver Karthik Raja'}
                 </h4>
                 <p className="text-[11px] text-slate-500 font-bold">
-                  EV Green Fleet • {activePickup.wasteCategory || `${activePickup.estimatedWeight || 5} kg scrap`}
+                  EV Green Fleet • {currentActivePickup.wasteCategory || `${currentActivePickup.estimatedWeight || 8} kg scrap`}
                 </p>
               </div>
 
@@ -607,7 +626,7 @@ const MobileEcoHome = ({
                   Customer OTP
                 </span>
                 <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-wider">
-                  {activePickup.verificationCode || activePickup.otp || '4829'}
+                  {currentActivePickup.verificationCode || currentActivePickup.otp || '4829'}
                 </span>
               </div>
             </div>
@@ -639,16 +658,20 @@ const MobileEcoHome = ({
                 type="button"
                 onClick={() => {
                   triggerHaptic(20);
-                  if (onOpenChat) onOpenChat();
+                  if (onOpenChat) {
+                    onOpenChat();
+                  } else {
+                    window.dispatchEvent(new CustomEvent('open-driver-chat'));
+                  }
                 }}
-                className="flex-1 py-1.5 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+                className="flex-1 py-1.5 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer active:scale-95 transition"
               >
                 <FaComments />
                 <span>Chat Driver</span>
               </button>
               <a
                 href="tel:+919876543210"
-                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-xs cursor-pointer"
+                className="px-3 py-1.5 bg-emerald-600 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-xs cursor-pointer active:scale-95 transition"
               >
                 <FaPhone />
                 <span>Call</span>
@@ -667,11 +690,11 @@ const MobileEcoHome = ({
                   <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400 mt-1 block">2. Assigned</span>
                 </div>
                 <div>
-                  <div className={`h-1.5 rounded-full ${['accepted', 'en_route', 'in_progress', 'completed'].includes(activePickup.status) ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                  <div className={`h-1.5 rounded-full ${['accepted', 'en_route', 'in_progress', 'completed'].includes(currentActivePickup.status) ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
                   <span className="text-[9px] font-bold text-slate-500 mt-1 block">3. En Route</span>
                 </div>
                 <div>
-                  <div className={`h-1.5 rounded-full ${activePickup.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
+                  <div className={`h-1.5 rounded-full ${currentActivePickup.status === 'completed' ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
                   <span className="text-[9px] font-bold text-slate-500 mt-1 block">4. Collected</span>
                 </div>
               </div>

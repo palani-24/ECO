@@ -158,6 +158,30 @@ const MobileSchedulePickup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
 
+  // Auto-fill from URL query params (e.g. 1-Click Fast Rebook, Scrap Calculator, AI Scanner)
+  useEffect(() => {
+    if (location.search) {
+      const params = new URLSearchParams(location.search);
+      const catParam = params.get('category');
+      const weightParam = params.get('weight');
+      if (catParam) {
+        const cleanCat = catParam.toLowerCase().replace(/s$/, ''); // e.g. plastics -> plastic
+        const matched = CATEGORIES.find(c => 
+          c.id === cleanCat || 
+          c.name.toLowerCase() === cleanCat || 
+          c.id.includes(cleanCat) || 
+          cleanCat.includes(c.id)
+        );
+        if (matched) {
+          setSelectedCategories([matched.id]);
+        }
+      }
+      if (weightParam && !isNaN(Number(weightParam))) {
+        setWeightInput(String(Number(weightParam)));
+      }
+    }
+  }, [location.search]);
+
   // Parse numeric weight safely
   const numericWeight = Math.max(0.5, parseFloat(weightInput) || 5);
 

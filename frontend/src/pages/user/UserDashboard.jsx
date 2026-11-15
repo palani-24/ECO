@@ -1349,25 +1349,29 @@ const UserDashboard = () => {
 
       </div>
 
-      {/* AI Scanner Modal */}
+        </UserLayout>
+      </div>
+
+      {/* Shared Modals - Rendered at root level so they are fully functional on BOTH Mobile & Desktop */}
+      {/* 1. AI Waste & QR Scanner Modal */}
       <AIWasteScannerModal 
         isOpen={showAiScanner} 
         onClose={() => setShowAiScanner(false)} 
         onApplyScannedData={(data) => {
-          window.location.href = `/schedule-pickup?category=${data.category}&weight=${data.estimatedWeight}`;
+          navigate(`/schedule-pickup?category=${data.category}&weight=${data.estimatedWeight}`);
         }}
       />
 
-      {/* Citizen <-> Driver Live Chat Modal */}
+      {/* 2. Citizen <-> Driver Live Chat Modal */}
       <DriverChatModal
         isOpen={showDriverChat}
         onClose={() => setShowDriverChat(false)}
-        pickupId={activePickup?._id}
+        pickupId={activePickup?._id || 'mock_doorstep_pickup_1'}
         recipientName={activePickup?.driver?.user?.name || 'Driver Karthik Raja'}
         recipientRole="driver"
       />
 
-      {/* Official Green Citizen Certificate Modal */}
+      {/* 3. Official Green Citizen Certificate Modal */}
       <GreenCertificateModal
         isOpen={showGreenCert}
         onClose={() => setShowGreenCert(false)}
@@ -1376,7 +1380,7 @@ const UserDashboard = () => {
         points={currentPoints}
       />
 
-      {/* Instant UPI Bank Payout Modal */}
+      {/* 4. Instant UPI Bank Payout Modal */}
       <UPIPayoutModal
         isOpen={showUpiPayout}
         onClose={() => setShowUpiPayout(false)}
@@ -1386,7 +1390,7 @@ const UserDashboard = () => {
         }}
       />
 
-      {/* Shareable 9:16 Instagram & WhatsApp Story Modal */}
+      {/* 5. Shareable 9:16 Instagram & WhatsApp Story Modal */}
       <EcoStoryModal
         isOpen={showEcoStory}
         onClose={() => setShowEcoStory(false)}
@@ -1394,7 +1398,7 @@ const UserDashboard = () => {
         stats={analytics}
       />
 
-      {/* Daily Spin & Win Wheel Modal */}
+      {/* 6. Daily Spin & Win Wheel Modal */}
       <DailySpinWheelModal
         isOpen={showSpinWheel}
         onClose={() => setShowSpinWheel(false)}
@@ -1402,9 +1406,6 @@ const UserDashboard = () => {
           setAnalytics(prev => prev ? ({ ...prev, walletPoints: (prev.walletPoints || 0) + pts }) : prev);
         }}
       />
-
-        </UserLayout>
-      </div>
     </>
   );
 };

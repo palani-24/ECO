@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -26,6 +26,7 @@ const SchedulePickup = () => {
   const { addToast } = useToast();
   const { t } = useLanguage() || { t: (k) => k };
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [systemSettings, setSystemSettings] = useState(null);
 
@@ -68,6 +69,31 @@ const SchedulePickup = () => {
     { category: 'Plastic', estimatedWeight: 5.0, rate: 10 },
     { category: 'Paper', estimatedWeight: 3.0, rate: 8 }
   ]);
+
+  // Auto-populate from URL query params (e.g., 1-Click Fast Rebook, Scrap Calculator, AI Scanner)
+  useEffect(() => {
+    if (location.search) {
+      const params = new URLSearchParams(location.search);
+      const catParam = params.get('category');
+      const weightParam = params.get('weight');
+      if (catParam) {
+        const lowerCat = catParam.toLowerCase();
+        let matchedCat = 'Plastic';
+        if (lowerCat.includes('paper') || lowerCat.includes('cardboard')) matchedCat = 'Paper';
+        else if (lowerCat.includes('metal')) matchedCat = 'Metal';
+        else if (lowerCat.includes('glass')) matchedCat = 'Glass';
+        else if (lowerCat.includes('ewaste') || lowerCat.includes('e-waste')) matchedCat = 'E-Waste';
+        
+        const numericWeight = weightParam && !isNaN(Number(weightParam)) ? Number(weightParam) : 8.5;
+        const rate = systemSettings?.rewardRates?.[matchedCat] || 15;
+        setMultiItems([{
+          category: matchedCat,
+          estimatedWeight: numericWeight,
+          rate
+        }]);
+      }
+    }
+  }, [location.search, systemSettings]);
 
   const categories = [
     { 

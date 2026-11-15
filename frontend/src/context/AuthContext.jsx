@@ -12,44 +12,55 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   });
-  const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on load and sync fresh details
+  // Zero-delay loading: if no token exists, immediately ready (loading: false) in 0ms!
+  const [loading, setLoading] = useState(() => {
+    try {
+      return !!localStorage.getItem('token');
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Check if user is logged in on load and sync fresh details in background
   useEffect(() => {
+    let isMounted = true;
     const fetchUser = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         localStorage.removeItem('eco_user');
-        setUser(null);
-        setLoading(false);
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
         return;
       }
+
       try {
-        const res = await api.get('/auth/profile');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const res = await api.get('/auth/profile', { signal: controller.signal });
+        clearTimeout(timeoutId);
+
         if (res.data?.success && res.data?.data) {
           const freshData = res.data.data;
           localStorage.setItem('eco_user', JSON.stringify(freshData));
-          setUser(freshData);
-        } else {
-          localStorage.removeItem('token');
-          localStorage.removeItem('eco_user');
-          setUser(null);
+          if (isMounted) setUser(freshData);
         }
       } catch (err) {
-        console.error('Session restore failed:', err);
-        // If network error, preserve cached localStorage user if token exists
-        if (!err.response) {
-          console.warn('Network issue: preserving offline user cache');
-        } else {
+        console.warn('Session check notice:', err.message);
+        if (err.response?.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('eco_user');
-          setUser(null);
+          if (isMounted) setUser(null);
         }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
     fetchUser();
+    return () => { isMounted = false; };
   }, []);
 
   // Login

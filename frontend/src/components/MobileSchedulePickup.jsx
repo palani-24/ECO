@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCheck, 
   FaCamera, FaLeaf, FaCoins, FaTrash, FaCheckCircle,
-  FaWeightHanging, FaArrowRight, FaCrosshairs, FaPlus, FaMinus
+  FaWeightHanging, FaArrowRight, FaCrosshairs, FaPlus, FaMinus, FaSpinner
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -155,8 +155,129 @@ const MobileSchedulePickup = () => {
   const [address, setAddress] = useState(
     user?.addresses?.[0]?.street || '12-A, Metro Heights, Anna Nagar, Chennai'
   );
+  const [locationDetails, setLocationDetails] = useState({
+    city: user?.addresses?.[0]?.city || 'Chennai',
+    state: user?.addresses?.[0]?.state || 'Tamil Nadu',
+    zipCode: user?.addresses?.[0]?.zipCode || '600040'
+  });
+  const [isLocating, setIsLocating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
+
+  // Real-time Doorstep GPS Location Detection & High-Accuracy Reverse Geocoding
+  const handleDetectLocation = () => {
+    triggerHaptic(25);
+    if (!navigator.geolocation) {
+      addToast('GPS geolocation is not supported on this device/browser.', 'warning');
+      return;
+    }
+
+    setIsLocating(true);
+    addToast('📍 Locating your doorstep GPS coordinates...', 'info');
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        let resolvedAddress = '';
+
+        // Strategy 1: Fast BigDataCloud Reverse Geocode (High accuracy, CORS friendly)
+        try {
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            const parts = [];
+            const roadOrArea = data.localityInfo?.administrative?.find(a => a.order >= 6)?.name || data.locality || '';
+            const city = data.city || data.localityInfo?.administrative?.find(a => a.order === 5)?.name || '';
+            const state = data.principalSubdivision || 'Tamil Nadu';
+            const zip = data.postcode || '';
+
+            if (roadOrArea) parts.push(roadOrArea);
+            if (city && city !== roadOrArea) parts.push(city);
+            if (state && !parts.includes(state)) parts.push(state);
+            if (zip) parts.push(zip);
+
+            if (parts.length >= 2) {
+              resolvedAddress = parts.join(', ');
+              setLocationDetails({
+                city: city || 'Chennai',
+                state: state || 'Tamil Nadu',
+                zipCode: zip || '600040'
+              });
+            }
+          }
+        } catch (e) {
+          console.warn('BigDataCloud reverse geocode fallback:', e);
+        }
+
+        // Strategy 2: OpenStreetMap Nominatim Reverse Geocode
+        if (!resolvedAddress) {
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
+              { headers: { 'Accept-Language': 'en' } }
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data?.address) {
+                const a = data.address;
+                const road = a.road || a.street || a.suburb || a.neighbourhood || '';
+                const area = a.suburb || a.city_district || '';
+                const city = a.city || a.town || a.municipality || a.county || '';
+                const state = a.state || '';
+                const pin = a.postcode || '';
+
+                const parts = [road, area !== road ? area : '', city, pin].filter(Boolean);
+                if (parts.length > 0) {
+                  resolvedAddress = parts.join(', ');
+                  setLocationDetails({
+                    city: city || 'Chennai',
+                    state: state || 'Tamil Nadu',
+                    zipCode: pin || '600040'
+                  });
+                } else if (data.display_name) {
+                  resolvedAddress = data.display_name.split(',').slice(0, 4).join(', ');
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Nominatim reverse geocode fallback:', e);
+          }
+        }
+
+        // Strategy 3: Coordinates fallback
+        if (!resolvedAddress) {
+          resolvedAddress = `Doorstep GPS Location (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+        }
+
+        setAddress(resolvedAddress);
+        setIsLocating(false);
+        triggerHaptic(30);
+        soundFx?.playSuccessChime?.();
+        addToast(`📍 Location detected: ${resolvedAddress}`, 'success', 'GPS Location Set');
+      },
+      (err) => {
+        setIsLocating(false);
+        console.warn('Geolocation error:', err);
+        let errorMsg = 'Could not access GPS. Please enter your address manually.';
+        if (err.code === 1) {
+          errorMsg = 'Location permission denied. Please allow location access in browser settings.';
+        } else if (err.code === 2) {
+          errorMsg = 'GPS position unavailable. Please check device location.';
+        } else if (err.code === 3) {
+          errorMsg = 'GPS request timed out. Please try again.';
+        }
+        addToast(errorMsg, 'warning');
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 0
+      }
+    );
+  };
 
   // Auto-fill from URL query params (e.g. 1-Click Fast Rebook, Scrap Calculator, AI Scanner)
   useEffect(() => {
@@ -267,9 +388,9 @@ const MobileSchedulePickup = () => {
       pickupTimeSlot: selectedSlot,
       pickupAddress: {
         street: address,
-        city: 'Chennai',
-        state: 'Tamil Nadu',
-        zipCode: '600040'
+        city: locationDetails.city || 'Chennai',
+        state: locationDetails.state || 'Tamil Nadu',
+        zipCode: locationDetails.zipCode || '600040'
       },
       wasteImageUrl: photoPreview || undefined,
       notes: 'Scheduled via Mobile App',
@@ -476,22 +597,21 @@ const MobileSchedulePickup = () => {
             </label>
             <button
               type="button"
-              onClick={() => {
-                triggerHaptic(20);
-                if (navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(
-                    () => {
-                      setAddress('Flat 3B, Green Residency, Anna Nagar West, Chennai');
-                      addToast('📍 GPS Location detected!', 'success');
-                    },
-                    () => addToast('GPS permission denied. Using default address.', 'info')
-                  );
-                }
-              }}
-              className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1 cursor-pointer"
+              disabled={isLocating}
+              onClick={handleDetectLocation}
+              className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center space-x-1.5 cursor-pointer disabled:opacity-50 active:scale-95 transition"
             >
-              <FaCrosshairs />
-              <span>Use GPS</span>
+              {isLocating ? (
+                <>
+                  <FaSpinner className="animate-spin text-xs" />
+                  <span>Detecting GPS...</span>
+                </>
+              ) : (
+                <>
+                  <FaCrosshairs />
+                  <span>Use GPS</span>
+                </>
+              )}
             </button>
           </div>
 

@@ -363,14 +363,14 @@ const MobileEcoHome = ({
                   <span className="text-2xl shrink-0 mt-0.5">🌅</span>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">காலை 6:00 AM குப்பை சேகரிப்பு</span>
+                      <span className="text-xs font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-full">6:00 AM Waste Segregation Alert</span>
                       <span className="text-[10px] font-bold text-amber-200">Daily Alert</span>
                     </div>
                     <h4 className="text-xs font-black mt-1 leading-snug">
-                      இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வைக்கவும்! ♻️
+                      Keep your wet & dry recyclable waste segregated today! ♻️
                     </h4>
                     <p className="text-[10px] text-white/90 font-medium mt-0.5">
-                      எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும். Doorstep Pickup புக் செய்து EcoPoints ரொக்கப் பணம் பெறுங்கள்!
+                      Our EV clean fleet vehicle is arriving in your area soon. Book doorstep pickup and receive instant EcoPoints & cash!
                     </p>
                     <div className="mt-2.5 flex items-center space-x-2">
                       <button
@@ -381,7 +381,7 @@ const MobileEcoHome = ({
                         }}
                         className="px-3.5 py-1.5 rounded-xl bg-white text-slate-900 font-black text-[11px] shadow-sm hover:bg-slate-100 active:scale-95 transition cursor-pointer"
                       >
-                        Doorstep Pickup புக் செய்
+                        Book Doorstep Pickup
                       </button>
                       <button
                         type="button"
@@ -1060,7 +1060,7 @@ const MobileEcoHome = ({
                     <div className="flex items-center space-x-2">
                       <span className="text-base">🌅</span>
                       <div>
-                        <h4 className="text-xs font-black text-slate-900 dark:text-white leading-tight">காலை 6:00 AM குப்பை நினைவூட்டல்</h4>
+                        <h4 className="text-xs font-black text-slate-900 dark:text-white leading-tight">6:00 AM Daily Waste Reminder</h4>
                         <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold block">Daily Waste Segregation & Doorstep Pickup</span>
                       </div>
                     </div>
@@ -1083,11 +1083,11 @@ const MobileEcoHome = ({
                   </div>
 
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
-                    காலை வணக்கம்! இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வெளியே வைக்கவும். எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும்! ♻️
+                    Good morning! Please keep today's segregated recyclable waste ready outside. Our clean EV vehicle will arrive in your neighborhood shortly! ♻️
                   </p>
 
                   <div className="pt-1.5 flex items-center justify-between border-t border-amber-200/60 dark:border-amber-900/40">
-                    <span className="text-[9px] text-slate-400 font-bold">அடுத்த அலாரம்: 6:00 AM</span>
+                    <span className="text-[9px] text-slate-400 font-bold">Next Alert: 6:00 AM</span>
                     <button
                       type="button"
                       onClick={async () => {

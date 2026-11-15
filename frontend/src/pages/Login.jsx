@@ -351,7 +351,7 @@ const Login = () => {
 
       {/* Modern Compact Footer */}
       <footer className="relative z-20 w-full px-6 py-4 text-center text-xs font-semibold text-white/80 drop-shadow-sm">
-        <p>© 2026 EcoReward Platform • Tamil Nadu Smart Waste & EV Recycling Grid</p>
+        <p>© 2026 EcoReward Platform • Smart Zero-Waste & EV Recycling Grid</p>
       </footer>
 
     </div>

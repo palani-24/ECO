@@ -27,9 +27,9 @@ const lazyWithRetry = (componentImport) =>
     }
   });
 
-// Public Pages
+// Public Pages (Direct Login Import for zero-delay instant landing)
+import Login from './pages/Login';
 const LandingPage = lazyWithRetry(() => import('./pages/LandingPage'));
-const Login = lazyWithRetry(() => import('./pages/Login'));
 const Signup = lazyWithRetry(() => import('./pages/Signup'));
 const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
@@ -38,6 +38,14 @@ const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
 const RootGateway = () => {
   const { user, loading } = useAuth();
 
+  // Instant optimistic routing if cached user exists in localStorage
+  if (user) {
+    if (user.role === 'admin') return <Navigate to="/admin" replace />;
+    if (user.role === 'driver') return <Navigate to="/driver" replace />;
+    if (user.role === 'municipality') return <Navigate to="/municipality/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-3">
@@ -45,13 +53,6 @@ const RootGateway = () => {
         <p className="text-xs font-black text-slate-400 tracking-wider">Loading EcoReward...</p>
       </div>
     );
-  }
-
-  if (user) {
-    if (user.role === 'admin') return <Navigate to="/admin" replace />;
-    if (user.role === 'driver') return <Navigate to="/driver" replace />;
-    if (user.role === 'municipality') return <Navigate to="/municipality/dashboard" replace />;
-    return <Navigate to="/dashboard" replace />;
   }
 
   // Always route directly to the Login page as starting/landing page

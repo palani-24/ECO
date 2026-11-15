@@ -53,9 +53,9 @@ export const registerPushSubscription = async ({ endpoint, keys, userId = null, 
  */
 export const broadcastMorningWasteAlert = async ({ isTest = false } = {}) => {
   const payload = {
-    title: '🌅 காலை 6:00 AM குப்பை நினைவூட்டல்!',
+    title: '🌅 6:00 AM Daily Waste Segregation Alert!',
     titleEn: '🌅 6:00 AM Daily Waste Segregation Alert!',
-    body: 'காலை வணக்கம்! இன்று உங்கள் மக்கும் & மறுசுழற்சி குப்பைகளை தரம் பிரித்து வெளியே வைக்கவும். எங்களின் தூய்மை வாகனம் விரைவில் உங்கள் பகுதிக்கு வரும்! ♻️',
+    body: 'Good morning! Please keep today\'s segregated recyclables ready for doorstep collection. Earn instant EcoPoints & cash! ♻️',
     bodyEn: "Good morning! Please keep today's segregated waste ready for doorstep pickup. Earn EcoPoints today!",
     icon: '/favicon.ico',
     badge: '/favicon.ico',

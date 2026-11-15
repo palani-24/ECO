@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import { initSocket } from './config/socket.js';
+import { compressionMiddleware } from './middleware/compression.js';
 
 // Route Imports
 import authRoutes from './routes/authRoutes.js';
@@ -31,6 +32,10 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+// HTTP Keep-Alive & Sockets Configuration for high concurrent throughput
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
 // Initialize Socket.IO Server
 initSocket(server);
 
@@ -44,8 +49,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Serve uploads folder for user DP / profile images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Performance Middleware: HTTP Compression (Gzip / Deflate for fast JSON payloads)
+app.use(compressionMiddleware({ threshold: 1024, level: 6 }));
+
+// Serve uploads folder for user DP / profile images with client-side caching
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '7d',
+  etag: true
+}));
 
 // Body parser with 50mb limit for profile image uploads
 app.use(express.json({ limit: '50mb' }));

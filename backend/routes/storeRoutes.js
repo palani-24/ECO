@@ -5,11 +5,12 @@ import {
   getMyStoreOrders
 } from '../controllers/storeController.js';
 import { protect, authorize } from '../middleware/auth.js';
+import { cacheResponse } from '../middleware/cache.js';
 
 const router = express.Router();
 
-// Public route to view products catalog
-router.get('/products', getStoreProducts);
+// Public route to view products catalog with 60s in-memory caching
+router.get('/products', cacheResponse(60), getStoreProducts);
 
 // Protected routes for authenticated users
 router.use(protect);

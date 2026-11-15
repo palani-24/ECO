@@ -260,7 +260,8 @@ export const getMyPickups = async (req, res) => {
         path: 'driver',
         populate: { path: 'user', select: 'name email profileImage' }
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json({ success: true, data: pickups });
   } catch (error) {
@@ -272,7 +273,7 @@ export const getMyPickups = async (req, res) => {
 // View Transactions
 export const getMyTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const transactions = await Transaction.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: transactions });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -282,7 +283,7 @@ export const getMyTransactions = async (req, res) => {
 // View Redemptions List
 export const getMyRedemptions = async (req, res) => {
   try {
-    const redemptions = await Reward.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const redemptions = await Reward.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: redemptions });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -443,7 +444,7 @@ export const redeemReward = async (req, res) => {
 // Get Notifications
 export const getMyNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: notifications });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -540,7 +541,9 @@ export const getLeaderboard = async (req, res) => {
 // Get User Carbon Impact & ESG Metrics
 export const getImpactMetrics = async (req, res) => {
   try {
-    const pickups = await PickupRequest.find({ user: req.user._id, status: 'completed' });
+    const pickups = await PickupRequest.find({ user: req.user._id, status: 'completed' })
+      .select('actualWeight estimatedWeight wasteCategory')
+      .lean();
     
     let totalWeight = 0;
     const categoryBreakdown = {

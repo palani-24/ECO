@@ -11,15 +11,27 @@ import { emitToUser, emitToRole, broadcastEvent } from '../config/socket.js';
 // Get Admin Analytics Dashboard Metrics
 export const getAdminAnalytics = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments({ role: 'user' });
-    const totalDrivers = await Driver.countDocuments();
-    const totalPickups = await PickupRequest.countDocuments();
-    const completedPickups = await PickupRequest.countDocuments({ status: 'completed' });
-    const pendingPickups = await PickupRequest.countDocuments({ status: 'pending' });
-
-    // Calculate total waste collected by category
-    const wasteSummary = await WasteRecord.aggregate([
-      { $group: { _id: '$category', totalWeight: { $sum: '$weight' }, totalPoints: { $sum: '$points' } } }
+    // Run all database aggregation and count queries in parallel
+    const [
+      totalUsers,
+      totalDrivers,
+      totalPickups,
+      completedPickups,
+      pendingPickups,
+      wasteSummary,
+      totalRedeemedPointsList
+    ] = await Promise.all([
+      User.countDocuments({ role: 'user' }),
+      Driver.countDocuments(),
+      PickupRequest.countDocuments(),
+      PickupRequest.countDocuments({ status: 'completed' }),
+      PickupRequest.countDocuments({ status: 'pending' }),
+      WasteRecord.aggregate([
+        { $group: { _id: '$category', totalWeight: { $sum: '$weight' }, totalPoints: { $sum: '$points' } } }
+      ]),
+      Reward.aggregate([
+        { $group: { _id: null, sumPoints: { $sum: '$pointsRedeemed' } } }
+      ])
     ]);
 
     // Format waste summary
@@ -61,10 +73,7 @@ export const getAdminAnalytics = async (req, res) => {
     const sponsorshipRevenue = 45000;  // Green credits corporate sponsors
     const totalRevenue = recyclingRevenue + subscriptionRevenue + sponsorshipRevenue;
 
-    // Point Redemptions stats
-    const totalRedeemedPointsList = await Reward.aggregate([
-      { $group: { _id: null, sumPoints: { $sum: '$pointsRedeemed' } } }
-    ]);
+    // Point Redemptions stats from concurrent batch
     const totalPointsRedeemed = totalRedeemedPointsList.length > 0 ? totalRedeemedPointsList[0].sumPoints : 0;
 
     // Monthly historical chart simulations (past 6 months)
@@ -119,7 +128,7 @@ export const getAllUsers = async (req, res) => {
         { vehicleNumber: { $regex: search, $options: 'i' } }
       ];
     }
-    const users = await User.find(query).select('-password').sort({ createdAt: -1 });
+    const users = await User.find(query).select('-password').sort({ createdAt: -1 }).lean();
     res.json({ success: true, count: users.length, data: users });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -285,7 +294,7 @@ export const deleteUser = async (req, res) => {
 // Get All Drivers with User Details
 export const getAllDrivers = async (req, res) => {
   try {
-    const drivers = await Driver.find({}).populate('user', '-password').sort({ createdAt: -1 });
+    const drivers = await Driver.find({}).populate('user', '-password').sort({ createdAt: -1 }).lean();
     res.json({ success: true, data: drivers });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -328,7 +337,8 @@ export const getAllPickups = async (req, res) => {
         path: 'driver',
         populate: { path: 'user', select: 'name email profileImage' }
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json({ success: true, data: pickups });
   } catch (error) {

@@ -61,7 +61,8 @@ export const getAssignedPickups = async (req, res) => {
       path: 'driver',
       populate: { path: 'user', select: 'name email profileImage' }
     })
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
 
     res.json({ success: true, data: pickups });
   } catch (error) {

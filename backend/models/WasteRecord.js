@@ -14,5 +14,9 @@ const wasteRecordSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes
+wasteRecordSchema.index({ pickupRequest: 1 });
+wasteRecordSchema.index({ category: 1 });
+
 const WasteRecord = mongoose.model('WasteRecord', wasteRecordSchema);
 export default WasteRecord;

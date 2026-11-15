@@ -23,15 +23,26 @@ const ESG_FACTORS = {
  */
 export const getMunicipalityStats = async (req, res) => {
   try {
-    // 1. Total waste records
-    const wasteRecords = await WasteRecord.find().populate('pickupRequest');
-    const totalPickups = await PickupRequest.countDocuments();
-    const completedPickups = await PickupRequest.countDocuments({ status: 'completed' });
-    const pendingPickups = await PickupRequest.countDocuments({ status: { $in: ['pending', 'assigned', 'accepted'] } });
-    const totalCitizens = await User.countDocuments({ role: 'user' });
-    const activeDrivers = await Driver.countDocuments({ status: 'active' });
-    const openGrievances = await IllegalDumpReport.countDocuments({ status: { $in: ['reported', 'assigned', 'in_progress'] } });
-    const resolvedGrievances = await IllegalDumpReport.countDocuments({ status: 'cleaned' });
+    // 1. Fetch total waste records and dashboard counts concurrently
+    const [
+      wasteRecords,
+      totalPickups,
+      completedPickups,
+      pendingPickups,
+      totalCitizens,
+      activeDrivers,
+      openGrievances,
+      resolvedGrievances
+    ] = await Promise.all([
+      WasteRecord.find().select('category weight points').lean(),
+      PickupRequest.countDocuments(),
+      PickupRequest.countDocuments({ status: 'completed' }),
+      PickupRequest.countDocuments({ status: { $in: ['pending', 'assigned', 'accepted'] } }),
+      User.countDocuments({ role: 'user' }),
+      Driver.countDocuments({ status: 'active' }),
+      IllegalDumpReport.countDocuments({ status: { $in: ['reported', 'assigned', 'in_progress'] } }),
+      IllegalDumpReport.countDocuments({ status: 'cleaned' })
+    ]);
 
     // Aggregate category-wise weights
     const categoryTotals = {
@@ -148,11 +159,14 @@ export const getMunicipalityStats = async (req, res) => {
  */
 export const getHeatmapData = async (req, res) => {
   try {
-    const pickups = await PickupRequest.find({ status: { $in: ['completed', 'accepted', 'assigned'] } })
-      .select('wasteCategory estimatedWeight actualWeight pickupAddress createdAt status');
-
-    const dumpReports = await IllegalDumpReport.find()
-      .select('wasteType estimatedSeverity location status createdAt photoUrl');
+    const [pickups, dumpReports] = await Promise.all([
+      PickupRequest.find({ status: { $in: ['completed', 'accepted', 'assigned'] } })
+        .select('wasteCategory estimatedWeight actualWeight pickupAddress createdAt status')
+        .lean(),
+      IllegalDumpReport.find()
+        .select('wasteType estimatedSeverity location status createdAt photoUrl')
+        .lean()
+    ]);
 
     // Base coordinates around Coimbatore Central (11.0168° N, 76.9558° E)
     const baseLat = 11.0168;

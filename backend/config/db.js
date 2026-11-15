@@ -3,7 +3,13 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
   try {
     const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ecoreward';
-    const conn = await mongoose.connect(connUri);
+    const conn = await mongoose.connect(connUri, {
+      maxPoolSize: 50, // Connection pool for high concurrent load
+      minPoolSize: 10, // Warm standby connections ready for instant queries
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4 // IPv4 to avoid DNS delay
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error connecting to MongoDB: ${error.message}`);

@@ -45,5 +45,9 @@ const supportMessageSchema = new mongoose.Schema(
   }
 );
 
+// Performance Indexes
+supportMessageSchema.index({ user: 1, createdAt: -1 });
+supportMessageSchema.index({ status: 1 });
+
 const SupportMessage = mongoose.model('SupportMessage', supportMessageSchema);
 export default SupportMessage;

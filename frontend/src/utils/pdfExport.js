@@ -1,5 +1,19 @@
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+// Dynamic loaders for heavy PDF and Canvas libraries (saves >500KB on initial load)
+let _html2canvasPromise = null;
+const loadHtml2Canvas = () => {
+  if (!_html2canvasPromise) {
+    _html2canvasPromise = import('html2canvas').then(m => m.default || m);
+  }
+  return _html2canvasPromise;
+};
+
+let _jsPdfPromise = null;
+const loadJsPDF = () => {
+  if (!_jsPdfPromise) {
+    _jsPdfPromise = import('jspdf').then(m => m.default || m);
+  }
+  return _jsPdfPromise;
+};
 
 /**
  * Downloads a DOM element directly as a high-resolution PNG image (saves to phone gallery / downloads)
@@ -7,6 +21,7 @@ import jsPDF from 'jspdf';
 export const downloadElementAsImage = async (element, filename = 'EcoReward_Certificate.png') => {
   if (!element) return false;
   try {
+    const html2canvas = await loadHtml2Canvas();
     const canvas = await html2canvas(element, {
       scale: 2.5, // High-resolution retina scale
       useCORS: true,
@@ -42,6 +57,7 @@ export const downloadElementAsImage = async (element, filename = 'EcoReward_Cert
 export const downloadElementAsPDF = async (element, filename = 'EcoReward_Certificate.pdf', orientation = 'landscape') => {
   if (!element) return false;
   try {
+    const [html2canvas, jsPDF] = await Promise.all([loadHtml2Canvas(), loadJsPDF()]);
     const canvas = await html2canvas(element, {
       scale: 2.5,
       useCORS: true,
@@ -94,8 +110,9 @@ export const downloadElementAsPDF = async (element, filename = 'EcoReward_Certif
 /**
  * Generates and downloads a complete formatted Corporate ESG Audit Statement PDF document
  */
-export const generateESGReportPDF = (data, user) => {
+export const generateESGReportPDF = async (data, user) => {
   try {
+    const jsPDF = await loadJsPDF();
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',

@@ -17,6 +17,7 @@ import {
   rateAndTipPickup
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
+import { cacheResponse } from '../middleware/cache.js';
 
 const router = express.Router();
 
@@ -33,9 +34,9 @@ router.get('/redemptions', getMyRedemptions);
 router.post('/redeem', redeemReward);
 router.get('/notifications', getMyNotifications);
 router.put('/notifications/:id/read', markNotificationRead);
-router.get('/leaderboard', getLeaderboard);
+router.get('/leaderboard', cacheResponse(15), getLeaderboard);
 router.get('/impact', getImpactMetrics);
-router.get('/challenges', getChallenges);
+router.get('/challenges', cacheResponse(30), getChallenges);
 router.post('/challenges/:id/join', joinChallenge);
 router.post('/spin', spinDailyWheel);
 

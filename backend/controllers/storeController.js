@@ -90,12 +90,12 @@ const initialProducts = [
 // @access  Public / Private
 export const getStoreProducts = async (req, res) => {
   try {
-    let products = await EcoProduct.find({ isActive: true }).sort({ isFeatured: -1, createdAt: -1 });
+    let products = await EcoProduct.find({ isActive: true }).sort({ isFeatured: -1, createdAt: -1 }).lean();
     
     // Auto-seed default products if collection is currently empty
     if (products.length === 0) {
       await EcoProduct.insertMany(initialProducts);
-      products = await EcoProduct.find({ isActive: true }).sort({ isFeatured: -1, createdAt: -1 });
+      products = await EcoProduct.find({ isActive: true }).sort({ isFeatured: -1, createdAt: -1 }).lean();
     }
 
     res.json({
@@ -203,7 +203,7 @@ export const redeemStoreProduct = async (req, res) => {
 // @access  Private (User)
 export const getMyStoreOrders = async (req, res) => {
   try {
-    const orders = await StoreOrder.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const orders = await StoreOrder.find({ user: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json({
       success: true,
       count: orders.length,

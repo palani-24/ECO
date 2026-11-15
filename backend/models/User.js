@@ -34,6 +34,12 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes for authentication seek, leaderboards, and role filtering
+userSchema.index({ phone: 1 });
+userSchema.index({ role: 1, points: -1 });
+userSchema.index({ driverStatus: 1 });
+userSchema.index({ ward: 1 });
+
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

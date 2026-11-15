@@ -25,6 +25,9 @@ export default defineConfig({
             if (id.includes('leaflet')) {
               return 'maps-vendor';
             }
+            if (id.includes('jspdf') || id.includes('html2canvas')) {
+              return 'pdf-vendor';
+            }
           }
         }
       }

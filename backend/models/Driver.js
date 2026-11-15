@@ -18,5 +18,9 @@ const driverSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes for driver queries
+driverSchema.index({ user: 1 }, { unique: true });
+driverSchema.index({ status: 1, isApproved: 1 });
+
 const Driver = mongoose.model('Driver', driverSchema);
 export default Driver;

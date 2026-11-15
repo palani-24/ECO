@@ -24,5 +24,9 @@ const rewardSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes
+rewardSchema.index({ user: 1, createdAt: -1 });
+rewardSchema.index({ status: 1 });
+
 const Reward = mongoose.model('Reward', rewardSchema);
 export default Reward;

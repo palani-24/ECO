@@ -9,5 +9,8 @@ const transactionSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Index
+transactionSchema.index({ user: 1, createdAt: -1 });
+
 const Transaction = mongoose.model('Transaction', transactionSchema);
 export default Transaction;

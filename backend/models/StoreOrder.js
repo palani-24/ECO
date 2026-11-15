@@ -48,5 +48,9 @@ const storeOrderSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes
+storeOrderSchema.index({ user: 1, createdAt: -1 });
+storeOrderSchema.index({ status: 1 });
+
 const StoreOrder = mongoose.model('StoreOrder', storeOrderSchema);
 export default StoreOrder;

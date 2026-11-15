@@ -66,5 +66,10 @@ const illegalDumpReportSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes
+illegalDumpReportSchema.index({ reporter: 1, createdAt: -1 });
+illegalDumpReportSchema.index({ status: 1, createdAt: -1 });
+illegalDumpReportSchema.index({ 'location.ward': 1 });
+
 const IllegalDumpReport = mongoose.model('IllegalDumpReport', illegalDumpReportSchema);
 export default IllegalDumpReport;

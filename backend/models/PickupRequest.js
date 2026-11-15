@@ -57,5 +57,12 @@ const pickupRequestSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance Indexes for high-frequency queries and sorting
+pickupRequestSchema.index({ user: 1, createdAt: -1 });
+pickupRequestSchema.index({ driver: 1, status: 1 });
+pickupRequestSchema.index({ status: 1, createdAt: -1 });
+pickupRequestSchema.index({ qrToken: 1 });
+pickupRequestSchema.index({ 'pickupAddress.city': 1 });
+
 const PickupRequest = mongoose.model('PickupRequest', pickupRequestSchema);
 export default PickupRequest;

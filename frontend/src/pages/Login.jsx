@@ -18,7 +18,8 @@ const ROLES = [
     portalDesc: 'Doorstep scrap pickup & instant UPI cash rewards',
     destination: '/dashboard',
     defaultPhone: '9876543211',
-    defaultEmail: 'user@ecoreward.com'
+    defaultEmail: 'user@ecoreward.com',
+    defaultPassword: 'Eco@Secure2026!'
   },
   {
     id: 'driver',
@@ -28,7 +29,8 @@ const ROLES = [
     portalDesc: 'Route pickups, QR weighing & daily logistics earnings',
     destination: '/driver',
     defaultPhone: '9876543212',
-    defaultEmail: 'driver@ecoreward.com'
+    defaultEmail: 'driver@ecoreward.com',
+    defaultPassword: 'Eco@Secure2026!'
   },
   {
     id: 'municipality',
@@ -38,7 +40,8 @@ const ROLES = [
     portalDesc: 'Zonal waste command, GIS heatmap & grievance hub',
     destination: '/municipality/dashboard',
     defaultPhone: '9876543213',
-    defaultEmail: 'municipality@ecoreward.com'
+    defaultEmail: 'municipality@ecoreward.com',
+    defaultPassword: 'Eco@Secure2026!'
   },
   {
     id: 'admin',
@@ -48,7 +51,8 @@ const ROLES = [
     portalDesc: 'Centralized state recycling analytics & ESG control',
     destination: '/admin',
     defaultPhone: '9876543210',
-    defaultEmail: 'admin@ecoreward.com'
+    defaultEmail: 'admin@ecoreward.com',
+    defaultPassword: 'Eco@Secure2026!'
   }
 ];
 
@@ -60,11 +64,12 @@ const Login = () => {
   // Active Role selection (All 4 available for Login)
   const [selectedRole, setSelectedRole] = useState('user');
 
-  // Input states matching Image 1
-  const [emailOrPhone, setEmailOrPhone] = useState('user@ecoreward.com');
-  const [password, setPassword] = useState('Eco@Secure2026!');
+  // Input states - empty by default so user can enter own credentials or click to fill demo
+  const [emailOrPhone, setEmailOrPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [isDemoFilled, setIsDemoFilled] = useState(false);
 
   // Status
   const [error, setError] = useState('');
@@ -73,12 +78,34 @@ const Login = () => {
 
   const activeRole = ROLES.find(r => r.id === selectedRole) || ROLES[0];
 
-  // Sync sample credentials on role toggle
-  const handleRoleChange = (roleId) => {
+  // Fill sample credentials only when clicked
+  const handleRoleChange = (roleId, autoFill = true) => {
     setSelectedRole(roleId);
     setError('');
     const target = ROLES.find(r => r.id === roleId) || ROLES[0];
+    if (autoFill) {
+      setEmailOrPhone(target.defaultEmail);
+      setPassword(target.defaultPassword || 'Eco@Secure2026!');
+      setIsDemoFilled(true);
+      addToast(`Demo credentials loaded for ${target.name}`, 'info', 'Demo Loaded');
+    }
+  };
+
+  const fillDemoCredentials = (roleId = selectedRole) => {
+    const target = ROLES.find(r => r.id === roleId) || ROLES[0];
+    setSelectedRole(roleId);
     setEmailOrPhone(target.defaultEmail);
+    setPassword(target.defaultPassword || 'Eco@Secure2026!');
+    setIsDemoFilled(true);
+    setError('');
+    addToast(`Demo credentials loaded for ${target.name}`, 'info', 'Demo Loaded');
+  };
+
+  const clearCredentials = () => {
+    setEmailOrPhone('');
+    setPassword('');
+    setIsDemoFilled(false);
+    setError('');
   };
 
   // Handle Login Submission
@@ -217,20 +244,21 @@ const Login = () => {
             </h1>
 
             {/* Role Switcher Pills (Citizen, Driver, Municipal, Admin) */}
-            <div className="mb-6 relative z-10">
-              <div className="flex items-center justify-between p-1 rounded-2xl bg-black/20 backdrop-blur-md border border-white/20">
+            <div className="mb-4 relative z-10">
+              <div className="flex items-center justify-between p-1 rounded-2xl bg-black/25 backdrop-blur-md border border-white/20">
                 {ROLES.map((role) => {
                   const isSelected = selectedRole === role.id;
                   return (
                     <button
                       key={role.id}
                       type="button"
-                      onClick={() => handleRoleChange(role.id)}
+                      onClick={() => handleRoleChange(role.id, true)}
                       className={`flex-1 py-1.5 px-1 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                         isSelected
-                          ? 'bg-white text-slate-900 shadow-md font-black scale-102'
+                          ? 'bg-white text-slate-900 shadow-md font-black scale-102 ring-1 ring-white/50'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`}
+                      title={`Click to select ${role.name} & fill demo credentials`}
                     >
                       <span className="text-xs leading-none">{role.icon}</span>
                       <span className="truncate">{role.name}</span>
@@ -238,9 +266,33 @@ const Login = () => {
                   );
                 })}
               </div>
-              <p className="text-[11px] text-center text-white/80 font-medium mt-2 drop-shadow-xs">
-                Signing into <span className="font-bold text-white">{activeRole.name} Portal</span> • {activeRole.badge}
-              </p>
+
+              {/* Role Subtitle & Demo Action */}
+              <div className="flex items-center justify-between mt-2.5 px-1">
+                <p className="text-[11px] text-white/85 font-medium drop-shadow-xs truncate">
+                  Signing into <span className="font-bold text-white">{activeRole.name} Portal</span> • {activeRole.badge}
+                </p>
+                <div className="flex items-center space-x-1.5 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => fillDemoCredentials(selectedRole)}
+                    className="px-2 py-0.5 rounded-lg bg-emerald-500/30 hover:bg-emerald-500/50 border border-emerald-400/40 text-[10px] font-mono font-bold text-emerald-200 hover:text-white transition-all cursor-pointer flex items-center space-x-1"
+                    title={`Fill ${activeRole.name} demo credentials`}
+                  >
+                    <span>⚡ Demo Fill</span>
+                  </button>
+                  {isDemoFilled && (
+                    <button
+                      type="button"
+                      onClick={clearCredentials}
+                      className="px-1.5 py-0.5 rounded-lg bg-white/15 hover:bg-white/25 text-[10px] font-mono text-white/80 hover:text-white transition-all cursor-pointer"
+                      title="Clear to enter your own credentials"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Error Message */}
@@ -262,11 +314,19 @@ const Login = () => {
                 <input
                   type="text"
                   value={emailOrPhone}
-                  onChange={(e) => setEmailOrPhone(e.target.value)}
-                  placeholder="Username"
+                  onChange={(e) => {
+                    setEmailOrPhone(e.target.value);
+                    if (isDemoFilled) setIsDemoFilled(false);
+                  }}
+                  placeholder="Username, Email or Mobile"
                   required
-                  className="w-full bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white rounded-full py-3 px-5 text-white placeholder:text-white/70 font-medium text-sm outline-none transition-all backdrop-blur-md shadow-inner"
+                  className="w-full bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/35 focus:border-white rounded-full py-3 px-5 pr-20 text-white placeholder:text-white/70 font-medium text-sm outline-none transition-all backdrop-blur-md shadow-inner"
                 />
+                {isDemoFilled && (
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/40 text-emerald-200 border border-emerald-400/40 pointer-events-none">
+                    Demo
+                  </span>
+                )}
               </div>
 
               {/* Password Pill Input with Eye Toggle */}
@@ -274,7 +334,10 @@ const Login = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (isDemoFilled) setIsDemoFilled(false);
+                  }}
                   placeholder="Password"
                   autoComplete="new-password"
                   data-lpignore="true"
@@ -328,6 +391,48 @@ const Login = () => {
                 </button>
               </div>
             </form>
+
+            {/* Quick Demo Options Grid (1-Click Fill for Any Role) */}
+            <div className="mt-5 pt-4 border-t border-white/15 relative z-10 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-mono text-emerald-300 px-1">
+                <span className="flex items-center space-x-1.5 font-bold">
+                  <span>⚡</span>
+                  <span>Demo Options:</span>
+                </span>
+                <span className="text-[10px] text-white/70">Click role below to auto-fill</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {ROLES.map((role) => {
+                  const isCurrent = selectedRole === role.id && isDemoFilled;
+                  return (
+                    <button
+                      key={role.id}
+                      type="button"
+                      onClick={() => handleRoleChange(role.id, true)}
+                      className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between ${
+                        isCurrent
+                          ? 'bg-emerald-500/35 border-emerald-400 text-white font-bold ring-1 ring-emerald-300 shadow-md'
+                          : 'bg-black/20 hover:bg-white/15 border-white/20 text-white/90 hover:border-white/40'
+                      }`}
+                    >
+                      <div className="truncate">
+                        <div className="flex items-center space-x-1 text-xs">
+                          <span>{role.icon}</span>
+                          <span className="font-bold truncate">{role.name}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-white/70 block truncate">
+                          {role.defaultEmail}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-white/20 text-emerald-200 ml-1 flex-shrink-0">
+                        Fill
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* Bottom Link Matching Reference Image: Don't have an account? Register */}
             <div className="text-center pt-5 relative z-10 flex items-center justify-center space-x-1.5 text-xs text-white/90">

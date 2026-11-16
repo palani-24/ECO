@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -9,6 +9,7 @@ import {
   FaMapMarkerAlt, FaLock
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { updatePageSEO } from '../utils/seo';
 
 // In Registration: Citizen & Driver ONLY as strictly requested!
 const REGISTRATION_ROLES = [
@@ -43,6 +44,16 @@ const Signup = () => {
 
   // Role Selection (Citizen or Driver ONLY)
   const [selectedRole, setSelectedRole] = useState('user');
+
+  // Dynamic SEO for Signup Page
+  useEffect(() => {
+    updatePageSEO({
+      title: 'Register Free on EcoReward | Zero Waste Recycling Grid',
+      description: 'Create your free citizen or driver account on EcoReward. Start earning cash and rewards for your household recyclables across Tamil Nadu today.',
+      canonicalUrl: 'https://eco-1art-eta.vercel.app/signup',
+      keywords: 'EcoReward signup, register citizen recycling, green driver registration, scrap pickup account'
+    });
+  }, []);
 
   // Input states
   const [name, setName] = useState('');

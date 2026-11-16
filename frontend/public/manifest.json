@@ -1,8 +1,23 @@
 {
   "short_name": "EcoReward",
-  "name": "EcoReward - AI Smart Waste Management",
-  "description": "Recycle waste with AI camera scanner, schedule pickups, earn points, and redeem rewards.",
+  "name": "EcoReward - AI Smart Zero Waste & Scrap Recycling Platform",
+  "description": "Transform household recyclables into cash & EcoPoints. Book doorstep EV pickups, scan waste with neural AI vision, and track drivers live across Tamil Nadu.",
+  "categories": [
+    "environment",
+    "utilities",
+    "productivity",
+    "lifestyle",
+    "finance"
+  ],
+  "lang": "en-IN",
+  "dir": "ltr",
   "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
     {
       "src": "/app-logo.png",
       "type": "image/png",
@@ -16,10 +31,33 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "start_url": "/login",
+  "background_color": "#07131F",
+  "theme_color": "#059669",
   "display": "standalone",
-  "orientation": "portrait",
-  "scope": "/"
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Schedule Doorstep Pickup",
+      "short_name": "Book Pickup",
+      "description": "Schedule EV doorstep scrap collection at your home",
+      "url": "/schedule-pickup",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "AI Waste Scanner",
+      "short_name": "Scan Waste",
+      "description": "Detect recyclable materials using neural camera AI",
+      "url": "/dashboard?openScanner=true",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Check Scrap Rates",
+      "short_name": "Scrap Rates",
+      "description": "View live scrap prices for plastics, metals, paper & e-waste",
+      "url": "/landing#rates",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    }
+  ]
 }

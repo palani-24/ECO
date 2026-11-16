@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaChevronLeft, FaKey, FaSpinner, FaBars, FaTimes } from 'react-icons/fa';
 import api from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { updatePageSEO } from '../utils/seo';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,14 @@ const ForgotPassword = () => {
   const [mockToken, setMockToken] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updatePageSEO({
+      title: 'Reset Password | EcoReward Platform',
+      description: 'Reset your EcoReward account password securely to regain access to your recycling wallet and pickups.',
+      canonicalUrl: 'https://eco-1art-eta.vercel.app/forgot-password'
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

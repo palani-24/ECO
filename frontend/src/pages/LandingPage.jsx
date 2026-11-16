@@ -18,8 +18,18 @@ import Navbar from '../components/Navbar';
 import api from '../utils/api';
 import { useSocket } from '../context/SocketContext';
 import { getAvatarUrl, handleAvatarError } from '../utils/avatar';
+import { updatePageSEO } from '../utils/seo';
 
 const LandingPage = () => {
+  // Dynamic SEO Metadata for Landing Page
+  useEffect(() => {
+    updatePageSEO({
+      title: 'EcoReward | AI Smart Zero Waste & Doorstep Scrap Recycling',
+      description: 'Transform household recyclables into instant cash & EcoPoints across Tamil Nadu. Schedule doorstep EV pickups for plastic, e-waste, metal & paper with neural camera AI scanning.',
+      canonicalUrl: 'https://eco-1art-eta.vercel.app/landing',
+      keywords: 'sell scrap online, plastic recycling Chennai, doorstep scrap pickup, AI waste scanner, Tamil Nadu scrap rates'
+    });
+  }, []);
   // DUAL THEME ENGINE (SYNCHRONIZED WITH NAVBAR SUN/MOON BUTTON)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {

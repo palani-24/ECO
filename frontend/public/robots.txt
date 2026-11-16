@@ -1,0 +1,27 @@
+# Robots.txt for EcoReward AI Smart Waste Platform
+# Allows search engine crawlers to discover all public landing pages and features
+
+User-agent: *
+Allow: /
+Allow: /landing
+Allow: /login
+Allow: /signup
+Allow: /forgot-password
+Allow: /reset-password
+
+# Disallow private user/admin dashboards and internal API from public search indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /driver
+Disallow: /driver/
+Disallow: /municipality
+Disallow: /municipality/
+Disallow: /dashboard
+Disallow: /my-pickups
+Disallow: /wallet
+Disallow: /schedule-pickup
+Disallow: /api/
+
+# Host and Sitemap References
+Host: https://eco-1art-eta.vercel.app
+Sitemap: https://eco-1art-eta.vercel.app/sitemap.xml

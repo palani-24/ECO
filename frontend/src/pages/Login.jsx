@@ -83,7 +83,7 @@ const Login = () => {
     updatePageSEO({
       title: 'Login to EcoReward | Citizen, Driver & Municipal Portal',
       description: 'Sign in to EcoReward to manage doorstep scrap pickups, check EcoPoints wallet balance, track live EV drivers, and redeem instant UPI cashback.',
-      canonicalUrl: 'https://eco-1art-eta.vercel.app/login',
+      canonicalUrl: 'https://eco-liart-eta.vercel.app/login',
       keywords: 'EcoReward login, citizen portal, scrap collection login, driver portal, waste management Tamil Nadu'
     });
   }, []);

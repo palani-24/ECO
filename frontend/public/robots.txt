@@ -23,5 +23,5 @@ Disallow: /schedule-pickup
 Disallow: /api/
 
 # Host and Sitemap References
-Host: https://eco-1art-eta.vercel.app
-Sitemap: https://eco-1art-eta.vercel.app/sitemap.xml
+Host: https://eco-liart-eta.vercel.app
+Sitemap: https://eco-liart-eta.vercel.app/sitemap.xml

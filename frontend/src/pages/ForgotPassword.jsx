@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     updatePageSEO({
       title: 'Reset Password | EcoReward Platform',
       description: 'Reset your EcoReward account password securely to regain access to your recycling wallet and pickups.',
-      canonicalUrl: 'https://eco-1art-eta.vercel.app/forgot-password'
+      canonicalUrl: 'https://eco-liart-eta.vercel.app/forgot-password'
     });
   }, []);
 

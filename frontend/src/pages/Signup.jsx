@@ -50,7 +50,7 @@ const Signup = () => {
     updatePageSEO({
       title: 'Register Free on EcoReward | Zero Waste Recycling Grid',
       description: 'Create your free citizen or driver account on EcoReward. Start earning cash and rewards for your household recyclables across Tamil Nadu today.',
-      canonicalUrl: 'https://eco-1art-eta.vercel.app/signup',
+      canonicalUrl: 'https://eco-liart-eta.vercel.app/signup',
       keywords: 'EcoReward signup, register citizen recycling, green driver registration, scrap pickup account'
     });
   }, []);

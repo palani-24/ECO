@@ -82,89 +82,11 @@ const DriverDashboard = () => {
         api.get('/driver/pickups')
       ]);
 
-      const fallbackProfile = {
-        name: user?.name || 'Palani Driver',
-        phone: user?.phone || '9876543212',
-        vehicleNumber: user?.vehicleNumber || 'TN-01-AX-9945',
-        vehicleType: user?.vehicleType || 'Electric Auto-rickshaw (EV Tipper)',
-        status: 'active',
-        isApproved: true,
-        totalPickups: 24,
-        todaysEarnings: 850,
-        rating: 4.9
-      };
-
-      const fallbackPickups = [
-        {
-          _id: 'pickup_assigned_demo_1',
-          status: 'assigned',
-          wasteCategory: 'Plastics & PET Bottles (8.5kg)',
-          estimatedWeight: 8.5,
-          pickupDate: new Date().toISOString().split('T')[0],
-          pickupTimeSlot: '10:00 AM - 12:00 PM',
-          user: {
-            name: 'Palani (Citizen)',
-            phone: '9876543211',
-            email: 'user@ecoreward.com'
-          },
-          pickupAddress: {
-            street: 'Flat 3B, Green Residency, Anna Nagar West',
-            city: 'Chennai',
-            state: 'Tamil Nadu',
-            zipCode: '600040'
-          },
-          notes: 'Doorstep pickup - segregated PET bottles and cardboard cartons ready',
-          createdAt: new Date().toISOString()
-        }
-      ];
-
-      if (profileRes.data?.success && profileRes.data.data) {
-        setDriverProfile(profileRes.data.data);
-      } else {
-        setDriverProfile(fallbackProfile);
-      }
-
-      if (pickupRes.data?.success && Array.isArray(pickupRes.data.data) && pickupRes.data.data.length > 0) {
-        setPickups(pickupRes.data.data);
-      } else {
-        setPickups(fallbackPickups);
-      }
+      if (profileRes.data?.success) setDriverProfile(profileRes.data.data);
+      if (pickupRes.data?.success) setPickups(pickupRes.data.data);
     } catch (err) {
       console.warn('API fetch warning in driver dashboard', err);
-      setDriverProfile({
-        name: user?.name || 'Palani Driver',
-        phone: user?.phone || '9876543212',
-        vehicleNumber: user?.vehicleNumber || 'TN-01-AX-9945',
-        vehicleType: user?.vehicleType || 'Electric Auto-rickshaw (EV Tipper)',
-        status: 'active',
-        isApproved: true,
-        totalPickups: 24,
-        todaysEarnings: 850,
-        rating: 4.9
-      });
-      setPickups([
-        {
-          _id: 'pickup_assigned_demo_1',
-          status: 'assigned',
-          wasteCategory: 'Plastics & PET Bottles (8.5kg)',
-          estimatedWeight: 8.5,
-          pickupDate: new Date().toISOString().split('T')[0],
-          pickupTimeSlot: '10:00 AM - 12:00 PM',
-          user: {
-            name: 'Palani (Citizen)',
-            phone: '9876543211',
-            email: 'user@ecoreward.com'
-          },
-          pickupAddress: {
-            street: 'Flat 3B, Green Residency, Anna Nagar West',
-            city: 'Chennai',
-            state: 'Tamil Nadu',
-            zipCode: '600040'
-          },
-          notes: 'Doorstep pickup - segregated PET bottles and cardboard cartons ready',
-          createdAt: new Date().toISOString()
-        }
-      ]);
+      setPickups([]);
     } finally {
       setLoading(false);
     }

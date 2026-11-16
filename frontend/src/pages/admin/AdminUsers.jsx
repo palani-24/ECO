@@ -42,159 +42,9 @@ const INITIAL_FORM_STATE = {
   isApproved: true
 };
 
-const FALLBACK_USERS = [
-  {
-    _id: 'u_admin_1',
-    name: 'Palani (Admin HQ)',
-    email: 'admin@ecoreward.com',
-    phone: '9876543210',
-    role: 'admin',
-    points: 5000,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Central HQ - Command',
-    department: 'Smart Waste & ESG Policy Grid',
-    jurisdiction: 'Tamil Nadu Circular Logistics HQ',
-    isApproved: true,
-    createdAt: '2026-01-10T08:00:00Z',
-    addresses: [{ street: '10, Green Tech Park, Guindy', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600032', isDefault: true }]
-  },
-  {
-    _id: 'u_cit_1',
-    name: 'Palani (Citizen Default)',
-    email: 'user@ecoreward.com',
-    phone: '9876543211',
-    role: 'user',
-    points: 2634,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 12 - Anna Nagar West',
-    department: 'Solid Waste Segregation',
-    jurisdiction: 'Greater Chennai Corporation',
-    isApproved: true,
-    createdAt: '2026-02-14T09:30:00Z',
-    addresses: [{ street: 'Flat 3B, Green Residency, Anna Nagar West', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600040', isDefault: true }]
-  },
-  {
-    _id: 'u_cit_2',
-    name: 'Priya Sundaram',
-    email: 'priya.sundaram@gmail.com',
-    phone: '9876543214',
-    role: 'user',
-    points: 1840,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 08 - T. Nagar Central',
-    department: 'Household Circular Scrap',
-    jurisdiction: 'Greater Chennai Corporation',
-    isApproved: true,
-    createdAt: '2026-03-01T11:15:00Z',
-    addresses: [{ street: '24, Venkatnarayana Road, T. Nagar', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600017', isDefault: true }]
-  },
-  {
-    _id: 'u_cit_3',
-    name: 'Karthik Raja (Citizen)',
-    email: 'karthik.raja@gmail.com',
-    phone: '9876543215',
-    role: 'user',
-    points: 1420,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 15 - Adyar South',
-    department: 'Zero-Waste Household',
-    jurisdiction: 'Greater Chennai Corporation',
-    isApproved: true,
-    createdAt: '2026-03-12T14:20:00Z',
-    addresses: [{ street: '12, 1st Cross Street, Gandhi Nagar, Adyar', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600020', isDefault: true }]
-  },
-  {
-    _id: 'u_cit_4',
-    name: 'Anita Selvan',
-    email: 'anita.selvan@gmail.com',
-    phone: '9876543216',
-    role: 'user',
-    points: 980,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 04 - Velachery',
-    department: 'Community Scrap Donor',
-    jurisdiction: 'Greater Chennai Corporation',
-    isApproved: true,
-    createdAt: '2026-04-05T10:00:00Z',
-    addresses: [{ street: '8, Bypass Road, Velachery', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600042', isDefault: true }]
-  },
-  {
-    _id: 'u_drv_1',
-    name: 'Palani Driver',
-    email: 'driver@ecoreward.com',
-    phone: '9876543212',
-    role: 'driver',
-    points: 2150,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 12 - Anna Nagar EV Hub',
-    department: 'Green Waste Logistics Fleet',
-    jurisdiction: 'Greater Chennai Corporation',
-    vehicleNumber: 'TN-01-AX-9945',
-    vehicleType: 'Electric Auto-rickshaw (EV Tipper)',
-    licenseNumber: 'DL-TN01-2022-9945',
-    driverStatus: 'active',
-    isApproved: true,
-    createdAt: '2026-01-18T07:45:00Z',
-    addresses: [{ street: 'EV Charging Depot, 3rd Avenue, Anna Nagar', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600040', isDefault: true }]
-  },
-  {
-    _id: 'u_drv_2',
-    name: 'Ramesh Kumar (Fleet Driver)',
-    email: 'ramesh.driver@ecoreward.com',
-    phone: '9812345678',
-    role: 'driver',
-    points: 1680,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 08 - T. Nagar EV Hub',
-    department: 'Heavy E-Loader Rickshaw Fleet',
-    jurisdiction: 'Greater Chennai Corporation',
-    vehicleNumber: 'TN-38-ECO-9945',
-    vehicleType: 'Heavy E-Loader Rickshaw',
-    licenseNumber: 'DL-TN38-2023-4567',
-    driverStatus: 'active',
-    isApproved: true,
-    createdAt: '2026-02-10T08:15:00Z',
-    addresses: [{ street: 'Green Depot, Cross Cut Road', city: 'Coimbatore', state: 'Tamil Nadu', zipCode: '641012', isDefault: true }]
-  },
-  {
-    _id: 'u_drv_3',
-    name: 'Praveen S (EV Driver)',
-    email: 'praveen.driver@ecoreward.com',
-    phone: '9845612345',
-    role: 'driver',
-    points: 1250,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ward 15 - Adyar Fleet',
-    department: 'Hydraulic Compactor EV Fleet',
-    jurisdiction: 'Greater Chennai Corporation',
-    vehicleNumber: 'TN-38-ECO-1082',
-    vehicleType: 'Hydraulic Compactor EV',
-    licenseNumber: 'DL-TN38-2023-8812',
-    driverStatus: 'active',
-    isApproved: true,
-    createdAt: '2026-02-25T09:00:00Z',
-    addresses: [{ street: 'Municipal Transit Yard, Adyar', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600020', isDefault: true }]
-  },
-  {
-    _id: 'u_mun_1',
-    name: 'Chennai Municipal Officer',
-    email: 'municipality@ecoreward.com',
-    phone: '9876543213',
-    role: 'municipality',
-    points: 0,
-    accountPassword: 'Eco@Secure2026!',
-    ward: 'Ripon Building Zonal HQ',
-    department: 'Solid Waste Management (SWM)',
-    jurisdiction: 'Greater Chennai Corporation',
-    isApproved: true,
-    createdAt: '2026-01-05T09:00:00Z',
-    addresses: [{ street: 'Ripon Building, EVR Salai, Park Town', city: 'Chennai', state: 'Tamil Nadu', zipCode: '600003', isDefault: true }]
-  }
-];
-
 const AdminUsers = () => {
   const { addToast } = useToast();
-  const [users, setUsers] = useState(FALLBACK_USERS);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -213,14 +63,12 @@ const AdminUsers = () => {
     try {
       setLoading(true);
       const res = await api.get('/admin/users');
-      if (res.data?.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
-        setUsers(res.data.data);
-      } else {
-        setUsers(FALLBACK_USERS);
+      if (res.data.success) {
+        setUsers(res.data.data || []);
       }
     } catch (err) {
       console.warn('API error loading users, using fallback data', err);
-      setUsers(FALLBACK_USERS);
+      addToast('Could not reach backend API directly; please ensure backend is running', 'warning', 'API Warning');
     } finally {
       setLoading(false);
     }
